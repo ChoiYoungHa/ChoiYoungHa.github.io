@@ -1,6 +1,6 @@
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useMemo, useRef } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 import type { InstancedMesh, Material, Mesh, Object3D } from 'three'
 import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
@@ -8,6 +8,7 @@ import mainPath from '../data/main-path.json'
 import vistas from '../data/vistas.json'
 import qualityPresets from '../data/quality-presets.json'
 import { useRuntime } from '../store/useRuntime'
+import { WORLD_HALF_EXTENT, WORLD_SIZE } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
@@ -17,6 +18,11 @@ const SPECIES = ['grass', 'flower_yellowA', 'plant_bush'] as const
 const CENTERLINE = mainPath.waypoints.map(({ x, z }) => ({ x, z }))
 /** M1-20 — vista 시선 통로에는 산포하지 않는다. */
 const VISTA_LINES = vistas.markers.map((m) => ({ position: m.position, target: m.target }))
+const MAX_WORLD_CANDIDATES = 200_000
+
+interface PlacedPoint extends ScatterPoint {
+  y: number
+}
 
 interface LoadedModel {
   scene: Object3D
@@ -66,25 +72,24 @@ function SpeciesInstances({
   name,
   geometry,
   points,
-  sampleHeight,
   maxDistance,
+  maxVisible,
 }: {
   name: string
   geometry: BufferGeometry
-  points: ScatterPoint[]
-  sampleHeight: SampleHeight
+  points: PlacedPoint[]
   /** M1-24 종별 최대 표시 거리(m). 이보다 먼 instance 는 draw 하지 않는다. */
   maxDistance: number
+  maxVisible: number
 }) {
   const ref = useRef<InstancedMesh>(null)
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
 
-  /** 지형 높이는 좌표가 안 바뀌므로 한 번만 구한다(매 갱신마다 heightmap 을 다시 타면 스톨이 된다). */
-  const placed = useMemo(
-    () => points.map((p) => ({ ...p, y: sampleHeight(p.x, p.z) })),
-    [points, sampleHeight],
-  )
+  useLayoutEffect(() => {
+    if (ref.current) ref.current.count = 0
+    lastCamera.current.set(Infinity, Infinity, Infinity)
+  }, [points, maxDistance, maxVisible])
 
   // M1-24 — 카메라 거리 밖 instance 표시 0.
   // `mesh.count` 를 줄이면 그 뒤 instance 는 아예 제출되지 않는다.
@@ -96,7 +101,7 @@ function SpeciesInstances({
     lastCamera.current.copy(camera.position)
 
     let visible = 0
-    for (const p of placed) {
+    for (const p of points) {
       if (Math.hypot(p.x - camera.position.x, p.z - camera.position.z) > maxDistance) continue
       transform.position.set(p.x, p.y, p.z)
       transform.rotation.set(0, p.rotationY, 0)
@@ -104,6 +109,7 @@ function SpeciesInstances({
       transform.updateMatrix()
       mesh.setMatrixAt(visible, transform.matrix)
       visible += 1
+      if (visible >= maxVisible) break
     }
     mesh.count = visible
     mesh.instanceMatrix.needsUpdate = true
@@ -111,7 +117,7 @@ function SpeciesInstances({
   })
 
   return (
-    <instancedMesh ref={ref} name={`foliage-${name}`} args={[geometry, undefined, points.length]}>
+    <instancedMesh ref={ref} name={`foliage-${name}`} args={[geometry, undefined, maxVisible]}>
       <meshStandardMaterial vertexColors roughness={0.95} metalness={0} />
     </instancedMesh>
   )
@@ -127,25 +133,32 @@ export function Foliage({ sampleHeight }: FoliageProps) {
     () => SPECIES.map((species) => geometryForSpecies(scene, species)),
     [scene],
   )
-  const pointSets = useMemo(() => {
+  const visibleCounts = useMemo(() => {
     const total = quality.grassInstances.count
     const counts = [Math.floor(total * 0.7), Math.floor(total * 0.2)]
     counts.push(total - counts[0] - counts[1])
+    return counts
+  }, [quality.grassInstances.count])
+  const pointSets = useMemo(() => {
     const radius = quality.grassInstances.radius
+    const density = quality.grassInstances.count / (Math.PI * radius * radius)
+    const candidateTotal = Math.min(MAX_WORLD_CANDIDATES, Math.ceil(density * WORLD_SIZE * WORLD_SIZE))
+    const counts = [Math.floor(candidateTotal * 0.7), Math.floor(candidateTotal * 0.2)]
+    counts.push(candidateTotal - counts[0] - counts[1])
     const pathReject = createPathExclusion(CENTERLINE, 2)
     const slopeReject = createSlopeExclusion(sampleHeight)
     const vistaReject = createVistaExclusion(VISTA_LINES)
     const reject = (x: number, z: number) =>
-      Math.hypot(x, z) > radius || pathReject(x, z) || slopeReject(x, z) || vistaReject(x, z)
+      pathReject(x, z) || slopeReject(x, z) || vistaReject(x, z)
 
     return SPECIES.map((species, index) =>
       scatter(hashSeed(`m1-${species}`), {
         count: counts[index],
-        halfExtent: radius,
+        halfExtent: WORLD_HALF_EXTENT,
         scaleMin: index === 0 ? 0.75 : 0.85,
         scaleMax: index === 0 ? 1.2 : 1.35,
         reject,
-      }),
+      }).map((point) => ({ ...point, y: sampleHeight(point.x, point.z) })),
     )
   }, [quality.grassInstances.count, quality.grassInstances.radius, sampleHeight])
 
@@ -157,8 +170,8 @@ export function Foliage({ sampleHeight }: FoliageProps) {
           name={species}
           geometry={geometries[index]}
           points={pointSets[index]}
-          sampleHeight={sampleHeight}
           maxDistance={quality.grassInstances.radius}
+          maxVisible={visibleCounts[index]}
         />
       ))}
     </group>

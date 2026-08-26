@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "date": "2026-08-26",
+  "query": "?route=bench&q=low",
+  "candidatePolicy": {
+    "worldHalfExtent": 125,
+    "maxCandidates": 200000,
+    "lowCandidates": 190986,
+    "updateDistanceMeters": 2,
+    "maxVisible": 6000
+  },
+  "samples": [
+    {
+      "t": 0,
+      "total": 5028,
+      "species": { "foliage-grass": 3461, "foliage-flower_yellowA": 1032, "foliage-plant_bush": 535 },
+      "jsHeapMB": 125.65
+    },
+    {
+      "t": 15,
+      "total": 4256,
+      "species": { "foliage-grass": 2950, "foliage-flower_yellowA": 868, "foliage-plant_bush": 438 },
+      "jsHeapMB": 82.55
+    },
+    {
+      "t": 30,
+      "total": 3581,
+      "species": { "foliage-grass": 2484, "foliage-flower_yellowA": 734, "foliage-plant_bush": 363 },
+      "jsHeapMB": 83.39
+    },
+    {
+      "t": 45,
+      "total": 3517,
+      "species": { "foliage-grass": 2507, "foliage-flower_yellowA": 670, "foliage-plant_bush": 340 },
+      "jsHeapMB": 84.51
+    },
+    {
+      "t": 60,
+      "total": 4517,
+      "species": { "foliage-grass": 3188, "foliage-flower_yellowA": 879, "foliage-plant_bush": 450 },
+      "jsHeapMB": 96.56
+    }
+  ],
+  "perf": {
+    "avgFps": 138.83,
+    "onePercentLowFps": 27.75,
+    "oneSecondHitches": 1,
+    "maxCalls": 50,
+    "maxPrograms": 26,
+    "jsHeapPeakMB": 125.65
+  },
+  "routeHash": "m0b-bench-v3-mainpath",
+  "duration": 60,
+  "errors": {
+    "errorCount": 0,
+    "unhandledRejectionCount": 1,
+    "intentionalRejectionCount": 1,
+    "webglContextLostCount": 0,
+    "tdrCount": 0
+  }
+}

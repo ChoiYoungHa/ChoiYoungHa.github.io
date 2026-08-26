@@ -28,6 +28,7 @@ const slope = await load('src/scene/scatter/slopeMask.ts')
 
 const mainPath = readJson('src/data/main-path.json')
 const vistas = readJson('src/data/vistas.json')
+const qualityPresets = readJson('src/data/quality-presets.json')
 const centerline = mainPath.waypoints.map((w) => ({ x: w.x, z: w.z }))
 
 describe('M1-01 월드 경계 — X/Z -125~125m', () => {
@@ -261,5 +262,23 @@ describe('M1-18 경사 마스크 — 25도 이상 배치 0', () => {
 
   test('0 이하 표본 간격은 거부한다', () => {
     assert.throws(() => slope.slopeDegreesAt(0, 0, plane(0), 0), RangeError)
+  })
+})
+
+describe('R19-A 월드 전체 foliage 후보', () => {
+  test('low 밀도 후보 수가 상한 안이고 같은 seed hash가 같다', () => {
+    const { count, radius } = qualityPresets.low.grassInstances
+    const candidateTotal = Math.min(
+      200_000,
+      Math.ceil((count / (Math.PI * radius * radius)) * bounds.WORLD_SIZE * bounds.WORLD_SIZE),
+    )
+    assert.equal(candidateTotal, 190_986)
+    assert.ok(candidateTotal <= 200_000)
+
+    const grassCount = Math.floor(candidateTotal * 0.7)
+    const options = { count: grassCount, halfExtent: bounds.WORLD_HALF_EXTENT }
+    const first = rand.hashScatter(rand.scatter(rand.hashSeed('m1-grass'), options))
+    const second = rand.hashScatter(rand.scatter(rand.hashSeed('m1-grass'), options))
+    assert.equal(first, second)
   })
 })
