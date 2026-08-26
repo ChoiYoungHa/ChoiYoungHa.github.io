@@ -1,0 +1,40 @@
+{
+  "buildHash": "73fdaac",
+  "manifestPath": "src/data/loading-manifest.json",
+  "manifestMeasuredFromHead": "d0692ef",
+  "note": "Hash-named dist chunks are snapshot-bound; regenerate loading-manifest.json after the next build if chunk hashes change.",
+  "phaseBytes": {
+    "boot": 3197742,
+    "core": 16900,
+    "detail": 0
+  },
+  "cumulativeBytes": {
+    "boot": 3197742,
+    "core": 3214642,
+    "detail": 3214642
+  },
+  "totalBytes": 3214642,
+  "singleMax": {
+    "id": "boot.sky-hdr",
+    "url": "dist/env/sky_1k.hdr",
+    "bytes": 1428760
+  },
+  "limitsBytes": {
+    "boot": 4000000,
+    "coreCumulative": 12000000,
+    "total": 60000000,
+    "single": 20000000
+  },
+  "checks": {
+    "bootWithinBudget": true,
+    "coreWithinBudget": true,
+    "totalWithinBudget": true,
+    "singleWithinBudget": true,
+    "manifestPhaseSummaryMatches": true,
+    "manifestCumulativeSummaryMatches": true,
+    "duplicateIdCount": 0,
+    "errors": 0
+  },
+  "errors": [],
+  "pass": true
+}

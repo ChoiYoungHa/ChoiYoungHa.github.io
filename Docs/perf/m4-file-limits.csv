@@ -1,5 +1,6 @@
-# build_hash=e2b3ac9,dist_included=true
+# build_hash=73fdaac,dist_included=true
 path,bytes,MB,>20MB,>=25MiB
+dist/_headers,252,0.000252,false,false
 dist/assets/createRenderer-C5ncXYj_.js,941771,0.941771,false,false
 dist/assets/main-BbBB35An.css,673,0.000673,false,false
 dist/assets/main-wrfkKES9.js,826673,0.826673,false,false

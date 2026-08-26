@@ -1,0 +1,18 @@
+M4-16 integration gate dry-run — 2026-08-26
+HEAD: 73fdaac
+
+$ powershell -NoProfile -ExecutionPolicy Bypass -File Automation/build.ps1 -SkipBuild -PerfJson Docs/m2/village-integration-smoke.json
+STEP typecheck
+STEP build SKIPPED (-SkipBuild)
+STEP check-assets
+result: pass=true, assets=13, modelFiles=2, unregistered=0, missingRuntime=0, emptyLicense=0
+STEP check-budgets
+result: pass=true, calls=63/200, tris=unknown/600000, programs=40/40 WARNING, textureGPU=36.88/300MB, JSheap=77.27/900MB
+STEP check-files
+result: 16 files, dist_included=true, report=Docs/perf/m4-file-limits.csv
+STEP check-payload
+result: pass=true, boot=3197742B, core cumulative=3214642B, total=3214642B, single max=1428760B
+BUILD_GATE PASS
+exit=0
+
+Build was not run. The full build path and intentional-failure test remain for the master-directed M4 gate.
