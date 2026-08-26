@@ -10,21 +10,24 @@ if (args.some((arg) => arg !== '--json')) {
 }
 
 const cwd = process.cwd()
-const modelsRoot = resolve(cwd, 'public/models')
+const publicRoots = ['public/models', 'public/env']
 const assetsPath = resolve(cwd, 'src/data/assets.csv')
 const rows = parseCsv(await readFile(assetsPath, 'utf8'))
 const [header, ...records] = rows
 const assets = records.map((record) => Object.fromEntries(header.map((name, index) => [name, record[index] ?? ''])))
 
-const modelFiles = (await walk(modelsRoot))
+const publicFiles = (await Promise.all(publicRoots.map((root) => walk(resolve(cwd, root)))))
+  .flat()
   .map((path) => repoPath(path))
   .filter((path) => !path.endsWith('/.gitkeep'))
   .sort()
-const registeredModels = new Set(
-  assets.map((asset) => normalize(asset.runtime_file)).filter((path) => path.startsWith('public/models/')),
+const registeredPublicPaths = new Set(
+  assets
+    .map((asset) => normalize(asset.runtime_file))
+    .filter((path) => publicRoots.some((root) => path.startsWith(`${root}/`))),
 )
 
-const unregisteredFiles = modelFiles.filter((path) => !registeredModels.has(path))
+const unregisteredFiles = publicFiles.filter((path) => !registeredPublicPaths.has(path))
 const missingRuntimeFiles = []
 const emptyLicenseFields = []
 
@@ -46,8 +49,10 @@ const result = {
   pass,
   counts: {
     assets: assets.length,
-    modelFiles: modelFiles.length,
-    registeredModelPaths: registeredModels.size,
+    publicFiles: publicFiles.length,
+    registeredPublicPaths: registeredPublicPaths.size,
+    modelFiles: publicFiles.filter((path) => path.startsWith('public/models/')).length,
+    envFiles: publicFiles.filter((path) => path.startsWith('public/env/')).length,
   },
   unregisteredFiles,
   missingRuntimeFiles,

@@ -1,12 +1,14 @@
-M4-15 asset ledger check — 2026-08-26
+M4-15 asset ledger check — HDRI scope revalidation 2026-08-26
 
 $ node Automation/check-assets.mjs --json
 {
   "pass": true,
   "counts": {
-    "assets": 13,
+    "assets": 14,
+    "publicFiles": 3,
+    "registeredPublicPaths": 3,
     "modelFiles": 2,
-    "registeredModelPaths": 2
+    "envFiles": 1
   },
   "unregisteredFiles": [],
   "missingRuntimeFiles": [],
@@ -15,21 +17,24 @@ $ node Automation/check-assets.mjs --json
 exit=0
 
 $ node Automation/check-assets.mjs --json
-# public/models/__m4_unregistered_test__.glb intentionally present
+# public/env/__m4_unregistered_test__.hdr intentionally present
 {
   "pass": false,
   "counts": {
-    "assets": 13,
-    "modelFiles": 3,
-    "registeredModelPaths": 2
+    "assets": 14,
+    "publicFiles": 4,
+    "registeredPublicPaths": 3,
+    "modelFiles": 2,
+    "envFiles": 2
   },
   "unregisteredFiles": [
-    "public/models/__m4_unregistered_test__.glb"
+    "public/env/__m4_unregistered_test__.hdr"
   ],
   "missingRuntimeFiles": [],
   "emptyLicenseFields": []
 }
 exit=1
 
-cleanup: public/models/__m4_unregistered_test__.glb deleted
+cleanup: public/env/__m4_unregistered_test__.hdr deleted
 post-cleanup: exit=0, dummy_exists=false
+CSV validation: header + 14 data rows, all 19 columns, invalid rows=0
