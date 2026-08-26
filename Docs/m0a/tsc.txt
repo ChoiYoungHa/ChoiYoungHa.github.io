@@ -1,0 +1,19 @@
+# M0a-03 — TypeScript 게이트 (2026-08-26 KST)
+tsc version: Version 7.0.2
+
+## (1) 로드맵 명령 그대로: npx tsc --noEmit
+exit=0
+검사된 src 파일 수: 0
+-> ★ 0개다. 루트 tsconfig.json이 solution-style("files": [], references만)이라
+   이 명령은 아무 파일도 검사하지 않는다. 게이트 근거로 쓸 수 없다.
+
+## (2) 실제 검사: npx tsc -b (references 빌드 = app+node 타입체크)
+exit=0
+검사된 src 파일 수: 2
+
+## (3) strict 설정
+템플릿 tsconfig.app.json에 "strict"가 없었다(=off). Task 지시 '코드 품질: TypeScript strict'에 따라 true로 켰다.
+strict: true
+
+## 판정
+TS 7.0.2에서 이전 메이저로 내리지 않았다. strict 켠 상태로 (2)가 exit 0이면 PASS.
