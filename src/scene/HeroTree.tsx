@@ -36,6 +36,12 @@ export const HERO_ROOT_Y_PERCENTILE = 0.02
 export const HERO_ROOT_SINK_METERS = 0.5
 /** R100-A — 잎 탈채도: 잎 baseColor 를 팔레트 수관색(#3B3E26, §6-2) 쪽으로 이 비율만큼 섞는다(선형 lerp). */
 export const HERO_LEAF_DESATURATE = 0.55 // R103-A: 0.35(S1 far 채도 14.0) → 0.55 시험
+/** R105-A — 줄기/가지 탈채도: baseColor 를 자기 휘도(무채색) 쪽으로 이 비율만큼 섞는다. S1 원경 밴드 채도 14.0(줄기 갈색 지배) → 목표 ≤12. */
+export const HERO_BARK_DESATURATE = 0.4 // R105-A: 0.3 → S1 far 채도 14.0→12.9·L5 17.8→17.1(개선)이라 0.4 로 한 단계 더
+function desaturateHex(c: { r: number; g: number; b: number }, amount: number): string {
+  const l = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+  return `#${new Color(c.r, c.g, c.b).lerp(new Color(l, l, l), amount).getHexString()}`
+}
 
 /** HUD 가 읽어가는 현재 LOD. 매 프레임 바뀔 수 있어 스토어에 넣지 않는다(계획서 §3-3). */
 let activeLod: Lod = 0
@@ -123,7 +129,7 @@ function prepareHeroGltf(scene: Object3D): GltfMeshes {
       ? undefined
       : kind === 'leaf'
         ? `#${new Color(srcColor.r, srcColor.g, srcColor.b).lerp(new Color(CANOPY_COLOR.r, CANOPY_COLOR.g, CANOPY_COLOR.b), HERO_LEAF_DESATURATE).getHexString()}`
-        : `#${srcColor.getHexString()}`
+        : desaturateHex(srcColor, HERO_BARK_DESATURATE)
     const key = `${kind}:${map?.uuid ?? 'none'}:${color ?? ''}`
     let replaced = cache.get(key)
     if (!replaced) {

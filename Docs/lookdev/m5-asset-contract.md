@@ -17,3 +17,5 @@
 - `node --test Automation/test-look-assets.mjs` — 계약·4경로 분기·placeholder(코드 생성 64×64 PNG·GLB 스텁) 스캔·커밋 JSON 동기화.
 - 자산을 `public/` 에 넣은 뒤 `npm run build`(prebuild 가 JSON 재생성) → 커밋 JSON 이 바뀐다. 테스트가 JSON 과 public/ 불일치를 잡는다.
 - GPU 실측(programs·1%low·L1~L5)은 main 별도 라운드(master).
+
+- R103-A 이후 `placement.props[].scale` 필드는 렌더·발자국 audit 에 쓰이지 않는다(런타임 스케일 = `propsLayout.PROP_TARGET_HEIGHTS / PROP_BASE_HEIGHTS`). 데이터 정리는 master.

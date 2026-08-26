@@ -3,13 +3,14 @@ import { Suspense, useLayoutEffect, useMemo, useRef } from 'react'
 import type { BufferGeometry, InstancedMesh, Material, Mesh, Texture } from 'three'
 import { Color, Object3D } from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
-import type { MeshStandardNodeMaterial } from 'three/webgpu'
+import { mix, texture, uv, vec3 } from 'three/tsl'
+import type { MeshStandardNodeMaterial, Node } from 'three/webgpu'
 import { useLookdevMaterial } from './Atmosphere'
 import placement from '../data/placement.json'
 import { classifyHouseMesh, getLookAssets, HOUSE_KEYS, readForceProcedural, type HouseKey } from '../systems/lookAssets'
 import { sampleHeight } from './terrain/heightmap'
-import { createHouseGeometry, HOUSE_SOCKETS, type HouseId } from './village/houseGeometry'
-import { createRoofGeometry, ROOF_COLORS, type RoofId } from './village/roofGeometry'
+import { createHouseGeometry, HOUSE_SOCKETS, VILLAGE_COLORS, type HouseId } from './village/houseGeometry'
+import { createRoofGeometry, type RoofId } from './village/roofGeometry'
 import { VillageProps } from './village/Props'
 
 const HOUSE_IDS: HouseId[] = ['house-a', 'house-b', 'house-c']
@@ -33,6 +34,27 @@ const VILLAGE = placement.village as VillageEntry[]
  * 스케일 후 GLB 발자국(a 5.1×5.5·b 4.1×5.2·c 5.0×5.7m)보다 크므로 그대로 둔다.
  */
 export const HOUSE_TARGET_HEIGHT_METERS = 6.0
+/**
+ * R105-A — GLB 지붕 3변형 곱색. ROOF_COLORS(#744839 계열)는 절차 지붕 정점색용 저휘도 값이라 텍스처 곱에서 지붕이 검게 뭉개졌다(R103 S2).
+ * 팔레트 §6-2 저채도 빨강 계열 3색을 **휘도 정규화**(c / lum(c) × ROOF_TINT_LUMA)해 곱색이 텍스처 평균 휘도를 대체로 유지하게 한다.
+ */
+export const ROOF_TINT_GLB: Record<RoofId, string> = { 'roof-a': '#9a4f42', 'roof-b': '#a1633f', 'roof-c': '#8d5a55' }
+export const ROOF_TINT_LUMA = 0.9
+function normalizedTint(hex: string, luma = ROOF_TINT_LUMA): Color {
+  const c = new Color(hex)
+  const l = 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+  return c.multiplyScalar(luma / Math.max(l, 1e-4))
+}
+/**
+ * R105-A — 집 본체 난색 틴트. KayKit 석재 텍스처는 청회색(S2 far hue 279°) → colorNode mix(tex, tex×warm, HOUSE_BODY_WARM_MIX).
+ * warm = 팔레트 벽색(#B5AA91) 휘도 정규화. 재질 1개(body·cap 공유) 안의 colorNode 라 재질 추가 0.
+ */
+export const HOUSE_BODY_WARM_MIX = 0.5
+function houseColorNode(map: Texture): Node<'vec3'> {
+  const rgb = texture(map, uv()).rgb
+  const warm = normalizedTint(VILLAGE_COLORS.wall, 1.0)
+  return mix(rgb, rgb.mul(vec3(warm.r, warm.g, warm.b)), HOUSE_BODY_WARM_MIX) as unknown as Node<'vec3'>
+}
 
 /** placement 한 채의 지면 위 변환(집 본체 기준). scaleMultiplier 는 GLB 높이 정규화 배율(절차 집은 1). */
 function placeEntry(transform: Object3D, entry: VillageEntry, liftY: number, scaleMultiplier = 1) {
@@ -192,14 +214,15 @@ function VillageGltf({ houses }: { houses: { id: HouseId; url: string }[] }) {
     [houses, scenes],
   )
   const map = parts.find((p) => p.parts.map)?.parts.map
-  const material = useLookdevMaterial({ map, color: map ? undefined : '#b5aa91', roughness: 0.9, metalness: 0 })
+  const colorNode = useMemo(() => (map ? houseColorNode(map) : undefined), [map])
+  const material = useLookdevMaterial({ map, color: map ? undefined : '#b5aa91', colorNode, roughness: 0.9, metalness: 0 })
   const white = useMemo(() => new Color('#ffffff'), [])
 
   return (
     <>
       {parts.map(({ id, parts: p }) => {
         const entries = VILLAGE.filter((entry) => entry.house === id)
-        const capColors = entries.map((entry) => new Color(ROOF_COLORS[entry.roof]))
+        const capColors = entries.map((entry) => normalizedTint(ROOF_TINT_GLB[entry.roof])) // R105-A: 절차용 ROOF_COLORS 대신 GLB 곱색
         const bodyColors = entries.map(() => white)
         const k = HOUSE_TARGET_HEIGHT_METERS / p.height
         return (
