@@ -13,11 +13,14 @@ export function parseSceneTrisArgs(args) {
   let preset
   let out
   let grassLite = false
+  let rockLite = false
   for (let index = 0; index < args.length; index += 1) {
     const option = args[index]
     const value = args[index + 1]
     if (option === '--grass-lite') {
       grassLite = true
+    } else if (option === '--rock-lite') {
+      rockLite = true
     } else if (option === '--preset') {
       if (!value) throw new Error('--preset requires low or base')
       preset = value
@@ -32,7 +35,12 @@ export function parseSceneTrisArgs(args) {
   }
   if (!PRESETS.has(preset)) throw new Error('--preset must be low or base')
   if (!out) throw new Error('--out is required')
-  return grassLite ? { preset, out, grassLite } : { preset, out }
+  return {
+    preset,
+    out,
+    ...(grassLite ? { grassLite } : {}),
+    ...(rockLite ? { rockLite } : {}),
+  }
 }
 
 export async function buildSceneTrisReport(preset, root = resolve(dirname(SCRIPT_PATH), '..'), options = {}) {
@@ -46,30 +54,63 @@ export async function buildSceneTrisReport(preset, root = resolve(dirname(SCRIPT
     low: buildPresetScenarios('low', shared, presetInputs.low),
     base: buildPresetScenarios('base', shared, presetInputs.base),
   }
+  let activeInputs = presetInputs
   let reports = baselineReports
-  let variant
+  let grassLiteReports
+  const features = []
+  const directGenerators = []
   if (options.grassLite) {
     const generatorRef = 'src/scene/foliage/grassLiteGeometry.ts'
     const module = await import(pathToFileURL(resolve(root, generatorRef)).href)
     const geometry = module.buildGrassLiteGeometry()
-    const liteInputs = {
-      low: applyGrassLite(presetInputs.low, geometry, generatorRef),
-      base: applyGrassLite(presetInputs.base, geometry, generatorRef),
+    activeInputs = {
+      low: applyGrassLite(activeInputs.low, geometry, generatorRef),
+      base: applyGrassLite(activeInputs.base, geometry, generatorRef),
     }
     reports = {
-      low: buildPresetScenarios('low', shared, liteInputs.low),
-      base: buildPresetScenarios('base', shared, liteInputs.base),
+      low: buildPresetScenarios('low', shared, activeInputs.low),
+      base: buildPresetScenarios('base', shared, activeInputs.base),
     }
-    variant = {
+    grassLiteReports = reports
+    const metadata = {
       id: 'grassLite',
-      enabled: true,
       source: generatorRef,
       seed: geometry.seed,
       trianglesPerGrass: geometry.triangleCount,
       bounds: geometry.bounds,
-      baselineComparison: buildComparison(baselineReports),
     }
+    features.push(metadata)
+    directGenerators.push({ ref: generatorRef, values: { trianglesPerGrass: geometry.triangleCount, seed: geometry.seed } })
   }
+  if (options.rockLite) {
+    const generatorRef = 'src/scene/foliage/rockLiteGeometry.ts'
+    const module = await import(pathToFileURL(resolve(root, generatorRef)).href)
+    const geometry = module.buildRockLiteGeometry()
+    activeInputs = {
+      low: applyRockLite(activeInputs.low, geometry, generatorRef),
+      base: applyRockLite(activeInputs.base, geometry, generatorRef),
+    }
+    reports = {
+      low: buildPresetScenarios('low', shared, activeInputs.low),
+      base: buildPresetScenarios('base', shared, activeInputs.base),
+    }
+    const metadata = {
+      id: 'rockLite',
+      source: generatorRef,
+      seed: geometry.seed,
+      trianglesPerRock: geometry.triangleCount,
+      bounds: geometry.bounds,
+    }
+    features.push(metadata)
+    directGenerators.push({ ref: generatorRef, values: { trianglesPerRock: geometry.triangleCount, seed: geometry.seed } })
+  }
+  const variant = features.length > 0 ? {
+    id: features.map(({ id }) => id).join('+'),
+    enabled: true,
+    ...(features.length === 1 ? features[0] : { features: Object.fromEntries(features.map(({ id, ...metadata }) => [id, metadata])) }),
+    baselineComparison: buildComparison(baselineReports),
+    ...(features.length > 1 && grassLiteReports ? { grassLiteComparison: buildComparison(grassLiteReports) } : {}),
+  } : undefined
   const selected = reports[preset]
 
   return {
@@ -86,14 +127,14 @@ export async function buildSceneTrisReport(preset, root = resolve(dirname(SCRIPT
       ...shared.sourceSummary,
       directGenerator: [
         ...shared.sourceSummary.directGenerator,
-        { ref: variant.source, values: { trianglesPerGrass: variant.trianglesPerGrass, seed: variant.seed } },
+        ...directGenerators,
       ],
     } : shared.sourceSummary,
     limitations: [
       'Worst case and typical both conservatively retain all 16 terrain chunks, path, village, foliage, and rocks; typical changes only the hero tree to LOD1.',
       'No camera pose was supplied for a reproducible frustum/instance visibility reduction, so this report does not claim a lower on-screen count.',
       variant
-        ? 'grass uses the direct procedural generator; flower, bush, and rock triangles remain ledger values cross-checked against their GLBs.'
+        ? `${options.grassLite ? 'grass uses grassLite; ' : ''}${options.rockLite ? 'rocks use rockLite; ' : ''}remaining GLB species use ledger values cross-checked against their binaries.`
         : 'GLB per-species triangles come from the 19-column asset ledger; procedural hero triangles are executed directly from the pure generator.',
     ],
   }
@@ -241,14 +282,18 @@ function buildPresetScenarios(preset, shared, presetInputs) {
       presetInputs.foliage.grassLite ? 'direct-generator+assets-csv+runtime-policy' : 'assets-csv+glb-total+runtime-policy',
       presetInputs.foliage.refs,
     ),
-    rockInstances: component(presetInputs.rocks.triangleCount, 'assets-csv+glb-total+runtime-policy', presetInputs.rocks.refs),
+    rockInstances: component(
+      presetInputs.rocks.triangleCount,
+      presetInputs.rocks.rockLite ? 'direct-generator+runtime-policy' : 'assets-csv+glb-total+runtime-policy',
+      presetInputs.rocks.refs,
+    ),
   }
   const worst = scenario('worstCase', {
     ...common,
     heroTree: component(shared.heroTree.lod0Triangles, 'direct-generator', shared.refs.hero),
   }, [
     'hero tree LOD0',
-    `all ${presetInputs.foliage.totalInstances} foliage and ${presetInputs.rocks.totalInstances} rocks visible; grass=${presetInputs.foliage.grassLite ? 'procedural grassLite' : 'current GLB LOD0'}`,
+    `all ${presetInputs.foliage.totalInstances} foliage and ${presetInputs.rocks.totalInstances} rocks visible; grass=${presetInputs.foliage.grassLite ? 'procedural grassLite' : 'current GLB LOD0'}; rocks=${presetInputs.rocks.rockLite ? 'procedural rockLite' : 'current GLB LOD0'}`,
     'all 16 terrain chunks, path, and 8 village buildings retained',
   ])
   const typical = scenario('typical', {
@@ -281,6 +326,31 @@ function applyGrassLite(presetInput, geometry, generatorRef) {
         enabled: true,
         seed: geometry.seed,
         trianglesPerGrass: geometry.triangleCount,
+        bounds: geometry.bounds,
+      },
+    },
+  }
+}
+
+function applyRockLite(presetInput, geometry, generatorRef) {
+  const rocks = presetInput.rocks
+  const counts = rocks.countsBySpecies
+  const trianglesEach = Object.fromEntries(Object.keys(counts).map((species) => [species, geometry.triangleCount]))
+  const trianglesBySpecies = Object.fromEntries(
+    Object.entries(counts).map(([species, count]) => [species, count * trianglesEach[species]]),
+  )
+  return {
+    ...presetInput,
+    rocks: {
+      ...rocks,
+      trianglesEach,
+      trianglesBySpecies,
+      triangleCount: Object.values(trianglesBySpecies).reduce((sum, value) => sum + value, 0),
+      refs: `${rocks.refs} + ${generatorRef}`,
+      rockLite: {
+        enabled: true,
+        seed: geometry.seed,
+        trianglesPerRock: geometry.triangleCount,
         bounds: geometry.bounds,
       },
     },
@@ -488,12 +558,15 @@ async function main() {
   try {
     args = parseSceneTrisArgs(process.argv.slice(2))
   } catch (error) {
-    process.stderr.write(`error: ${error.message}\nusage: node Automation/scene-tris.mjs --preset low|base [--grass-lite] --out <json>\n`)
+    process.stderr.write(`error: ${error.message}\nusage: node Automation/scene-tris.mjs --preset low|base [--grass-lite] [--rock-lite] --out <json>\n`)
     process.exitCode = 2
     return
   }
   const root = resolve(dirname(SCRIPT_PATH), '..')
-  const report = await buildSceneTrisReport(args.preset, root, { grassLite: args.grassLite === true })
+  const report = await buildSceneTrisReport(args.preset, root, {
+    grassLite: args.grassLite === true,
+    rockLite: args.rockLite === true,
+  })
   const outPath = resolve(root, args.out)
   await mkdir(dirname(outPath), { recursive: true })
   await writeFile(outPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8')

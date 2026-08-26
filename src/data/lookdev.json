@@ -48,6 +48,13 @@
     "palette": "#3B3E26",
     "query": "grassLite=1"
   },
+  "rockLite": {
+    "enabled": false,
+    "seed": 539363366,
+    "maxTrianglesPerInstance": 8,
+    "palette": "#575142",
+    "query": "rockLite=1"
+  },
   "integration": {
     "connected": true,
     "connectedRows": [

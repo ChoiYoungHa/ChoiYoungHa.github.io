@@ -20,6 +20,14 @@ test('CLI requires a supported preset and output path', () => {
   assert.throws(() => parseSceneTrisArgs(['--preset', 'low']), /--out/)
 })
 
+test('CLI accepts rockLite independently while keeping the default shape stable', () => {
+  assert.deepEqual(parseSceneTrisArgs(['--preset', 'base', '--rock-lite', '--out', 'result.json']), {
+    preset: 'base',
+    out: 'result.json',
+    rockLite: true,
+  })
+})
+
 test('low sums every component and exposes auditable sources', async () => {
   const report = await buildSceneTrisReport('low', ROOT)
   assert.equal(report.inputs.heroTree.lod0Triangles, 2416)
