@@ -3,6 +3,8 @@
 /**
  * Inspect GLB v2 files without loading WebGL or a browser.
  * R76-A output includes triangles, unique skin joints, animations, images, and bytes.
+ * R87-A adds world-space bounds and tree-shape evidence (crown width, trunk-base
+ * radius, and leaf-triangle share) without WebGL or a browser.
  *
  * Usage:
  *   node Automation/check-glb.mjs --out Docs/qa/m5-char-glb.json public/models/char_player.glb public/models/npc_stan.glb public/models/npc_maya.glb
@@ -81,6 +83,267 @@ function componentReader(componentType) {
   if (componentType === 5125) return { bytes: 4, read: (buffer, offset) => buffer.readUInt32LE(offset) }
   if (componentType === 5126) return { bytes: 4, read: (buffer, offset) => buffer.readFloatLE(offset) }
   throw new Error(`Unsupported accessor componentType: ${componentType}`)
+}
+
+const COMPONENTS = {
+  SCALAR: 1,
+  VEC2: 2,
+  VEC3: 3,
+  VEC4: 4,
+  MAT2: 4,
+  MAT3: 9,
+  MAT4: 16,
+}
+
+function accessorValues(json, binary, accessorIndex) {
+  const accessor = json.accessors?.[accessorIndex]
+  if (!accessor) throw new Error(`Missing accessor ${accessorIndex}`)
+  if (accessor.sparse) throw new Error(`Sparse accessor ${accessorIndex} is not supported by R87-A shape audit`)
+  const components = COMPONENTS[accessor.type]
+  if (!components) throw new Error(`Unsupported accessor type: ${accessor.type}`)
+  const reader = componentReader(accessor.componentType)
+  if (accessor.bufferView === undefined) {
+    return Array.from({ length: accessor.count }, () => components === 1 ? 0 : Array(components).fill(0))
+  }
+  const view = json.bufferViews[accessor.bufferView]
+  const packedStride = reader.bytes * components
+  const stride = view.byteStride || packedStride
+  const start = (view.byteOffset || 0) + (accessor.byteOffset || 0)
+  const result = []
+  for (let index = 0; index < accessor.count; index += 1) {
+    const base = start + index * stride
+    if (components === 1) result.push(reader.read(binary, base))
+    else result.push(Array.from({ length: components }, (_, component) => reader.read(binary, base + component * reader.bytes)))
+  }
+  return result
+}
+
+function identityMatrix() {
+  return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+}
+
+function multiplyMatrices(a, b) {
+  const result = Array(16).fill(0)
+  for (let column = 0; column < 4; column += 1) {
+    for (let row = 0; row < 4; row += 1) {
+      for (let index = 0; index < 4; index += 1) {
+        result[column * 4 + row] += a[index * 4 + row] * b[column * 4 + index]
+      }
+    }
+  }
+  return result
+}
+
+function nodeMatrix(node) {
+  if (node.matrix?.length === 16) return node.matrix
+  const [x, y, z, w] = node.rotation ?? [0, 0, 0, 1]
+  const [sx, sy, sz] = node.scale ?? [1, 1, 1]
+  const [tx, ty, tz] = node.translation ?? [0, 0, 0]
+  const xx = x * x
+  const yy = y * y
+  const zz = z * z
+  const xy = x * y
+  const xz = x * z
+  const yz = y * z
+  const xw = x * w
+  const yw = y * w
+  const zw = z * w
+  return [
+    (1 - 2 * (yy + zz)) * sx,
+    2 * (xy + zw) * sx,
+    2 * (xz - yw) * sx,
+    0,
+    2 * (xy - zw) * sy,
+    (1 - 2 * (xx + zz)) * sy,
+    2 * (yz + xw) * sy,
+    0,
+    2 * (xz + yw) * sz,
+    2 * (yz - xw) * sz,
+    (1 - 2 * (xx + yy)) * sz,
+    0,
+    tx,
+    ty,
+    tz,
+    1,
+  ]
+}
+
+function transformPoint(matrix, point) {
+  const [x, y, z] = point
+  return [
+    matrix[0] * x + matrix[4] * y + matrix[8] * z + matrix[12],
+    matrix[1] * x + matrix[5] * y + matrix[9] * z + matrix[13],
+    matrix[2] * x + matrix[6] * y + matrix[10] * z + matrix[14],
+  ]
+}
+
+function meshInstances(json) {
+  const result = []
+  const childNodes = new Set((json.nodes ?? []).flatMap((node) => node.children ?? []))
+  const roots = json.scenes?.[json.scene ?? 0]?.nodes ?? (json.nodes ?? []).map((_, index) => index).filter((index) => !childNodes.has(index))
+  const visit = (nodeIndex, parentMatrix) => {
+    const node = json.nodes?.[nodeIndex]
+    if (!node) return
+    const worldMatrix = multiplyMatrices(parentMatrix, nodeMatrix(node))
+    if (node.mesh !== undefined) result.push({ meshIndex: node.mesh, nodeIndex, nodeName: node.name ?? '', worldMatrix })
+    for (const child of node.children ?? []) visit(child, worldMatrix)
+  }
+  for (const root of roots) visit(root, identityMatrix())
+  if (result.length === 0) {
+    for (let meshIndex = 0; meshIndex < (json.meshes?.length ?? 0); meshIndex += 1) {
+      result.push({ meshIndex, nodeIndex: null, nodeName: '', worldMatrix: identityMatrix() })
+    }
+  }
+  return result
+}
+
+function primitiveTriangleCount(json, primitive) {
+  const mode = primitive.mode ?? 4
+  const count = primitive.indices !== undefined
+    ? json.accessors[primitive.indices].count
+    : json.accessors[primitive.attributes.POSITION].count
+  if (mode === 4) return Math.floor(count / 3)
+  if (mode === 5 || mode === 6) return Math.max(0, count - 2)
+  return 0
+}
+
+function isLeafPrimitive(json, mesh, primitive, nodeName) {
+  const material = primitive.material === undefined ? undefined : json.materials?.[primitive.material]
+  const evidence = `${nodeName} ${mesh.name ?? ''} ${material?.name ?? ''}`.toLowerCase()
+  const [red = 1, green = 1, blue = 1] = material?.pbrMetallicRoughness?.baseColorFactor ?? []
+  const greenDominant = green > red * 1.25 && green > blue * 1.25
+  return Boolean(
+    /leaf|leaves|leafs|foliage|canopy|crown/u.test(evidence)
+      || (material?.alphaMode && material.alphaMode !== 'OPAQUE' && !/bark|trunk|wood/u.test(evidence))
+      || (!/bark|trunk|wood/u.test(evidence) && greenDominant),
+  )
+}
+
+function emptyBounds() {
+  return { min: [Infinity, Infinity, Infinity], max: [-Infinity, -Infinity, -Infinity] }
+}
+
+function includePoint(bounds, point) {
+  for (let axis = 0; axis < 3; axis += 1) {
+    bounds.min[axis] = Math.min(bounds.min[axis], point[axis])
+    bounds.max[axis] = Math.max(bounds.max[axis], point[axis])
+  }
+}
+
+function finishBounds(bounds) {
+  if (!Number.isFinite(bounds.min[0])) return null
+  const size = bounds.max.map((value, axis) => value - bounds.min[axis])
+  return {
+    min: bounds.min.map(roundMetric),
+    max: bounds.max.map(roundMetric),
+    size: size.map(roundMetric),
+  }
+}
+
+function percentile(values, ratio) {
+  if (values.length === 0) return null
+  const sorted = [...values].sort((a, b) => a - b)
+  return sorted[Math.min(sorted.length - 1, Math.max(0, Math.floor((sorted.length - 1) * ratio)))]
+}
+
+function median(values) {
+  return percentile(values, 0.5)
+}
+
+function roundMetric(value) {
+  return Number.isFinite(value) ? Number(value.toFixed(6)) : null
+}
+
+function geometryAudit(json, binary) {
+  const overallBounds = emptyBounds()
+  const leafBounds = emptyBounds()
+  const trunkPoints = []
+  let leafTriangles = 0
+  let totalTriangles = 0
+  let leafPrimitiveCount = 0
+  let primitiveCount = 0
+  let vertexColorPrimitiveCount = 0
+  let uvPrimitiveCount = 0
+  const primitiveSummaries = []
+
+  for (const instance of meshInstances(json)) {
+    const mesh = json.meshes?.[instance.meshIndex]
+    if (!mesh) continue
+    for (let primitiveIndex = 0; primitiveIndex < (mesh.primitives?.length ?? 0); primitiveIndex += 1) {
+      const primitive = mesh.primitives[primitiveIndex]
+      if (primitive.attributes?.POSITION === undefined) continue
+      const positions = accessorValues(json, binary, primitive.attributes.POSITION)
+      const rawIndices = primitive.indices === undefined
+        ? positions.map((_, index) => index)
+        : accessorValues(json, binary, primitive.indices)
+      const usedIndices = [...new Set(rawIndices)]
+      const leaf = isLeafPrimitive(json, mesh, primitive, instance.nodeName)
+      const triangles = primitiveTriangleCount(json, primitive)
+      primitiveCount += 1
+      totalTriangles += triangles
+      if (leaf) {
+        leafPrimitiveCount += 1
+        leafTriangles += triangles
+      }
+      if (primitive.attributes.COLOR_0 !== undefined) vertexColorPrimitiveCount += 1
+      if (primitive.attributes.TEXCOORD_0 !== undefined) uvPrimitiveCount += 1
+      for (const index of usedIndices) {
+        const point = transformPoint(instance.worldMatrix, positions[index])
+        includePoint(overallBounds, point)
+        if (leaf) includePoint(leafBounds, point)
+        else trunkPoints.push(point)
+      }
+      primitiveSummaries.push({
+        node: instance.nodeName || null,
+        mesh: mesh.name || null,
+        primitive: primitiveIndex,
+        material: primitive.material === undefined ? null : json.materials?.[primitive.material]?.name ?? null,
+        triangles,
+        leaf,
+        vertexColor: primitive.attributes.COLOR_0 !== undefined,
+        uv: primitive.attributes.TEXCOORD_0 !== undefined,
+      })
+    }
+  }
+
+  const bounds = finishBounds(overallBounds)
+  const crownBounds = finishBounds(leafBounds)
+  const height = bounds?.size[1] ?? null
+  const crownWidth = crownBounds ? Math.max(crownBounds.size[0], crownBounds.size[2]) : null
+  const baseUpperY = bounds && height !== null ? bounds.min[1] + height * 0.12 : null
+  const basePoints = baseUpperY === null ? [] : trunkPoints.filter((point) => point[1] <= baseUpperY)
+  const centerX = median(basePoints.map((point) => point[0]))
+  const centerZ = median(basePoints.map((point) => point[2]))
+  const baseRadius = centerX === null || centerZ === null
+    ? null
+    : percentile(basePoints.map((point) => Math.hypot(point[0] - centerX, point[2] - centerZ)), 0.9)
+  const crownWidthHeightRatio = height && crownWidth !== null ? crownWidth / height : null
+  const trunkBaseRadiusHeightRatio = height && baseRadius !== null ? baseRadius / height : null
+  const leafTriangleRatio = totalTriangles > 0 ? leafTriangles / totalTriangles : null
+
+  return {
+    bounds,
+    meshCount: json.meshes?.length ?? 0,
+    primitiveCount,
+    materialCount: json.materials?.length ?? 0,
+    vertexColorPrimitiveCount,
+    uvPrimitiveCount,
+    primitives: primitiveSummaries,
+    treeShape: {
+      method: 'R87-A world-space indexed vertices; leaf material/name classifier; trunk bottom 12% slice; radius p90 from median XZ center',
+      height: roundMetric(height),
+      crownWidth: roundMetric(crownWidth),
+      crownWidthHeightRatio: roundMetric(crownWidthHeightRatio),
+      trunkBaseRadius: roundMetric(baseRadius),
+      trunkBaseRadiusHeightRatio: roundMetric(trunkBaseRadiusHeightRatio),
+      baseSliceVertexCount: basePoints.length,
+      leafTriangles,
+      totalTriangles,
+      leafTriangleRatio: roundMetric(leafTriangleRatio),
+      leafPrimitiveCount,
+      classified: leafPrimitiveCount > 0 && trunkPoints.length > 0,
+    },
+  }
 }
 
 function accessorRange(json, binary, accessorIndex) {
@@ -201,6 +464,7 @@ export function inspectGlb(file) {
   const animations = animationSummary(json, binary)
   const images = imageSummary(json, binary)
   const triangles = triangleCount(json)
+  const geometry = geometryAudit(json, binary)
   const isPlayer = path.basename(absolute).toLowerCase() === 'char_player.glb'
   return {
     file: path.relative(process.cwd(), absolute).replaceAll('\\', '/'),
@@ -212,9 +476,15 @@ export function inspectGlb(file) {
     animations,
     textures: json.textures?.length ?? 0,
     images,
+    geometry,
     validation: validateReferences(json, binary),
     constraints: {
       singleFileLe20MiB: bytes.length <= 20 * 1024 * 1024,
+      treeTrianglesLe40K: triangles <= 40_000,
+      treeFileLe10MiB: bytes.length <= 10 * 1024 * 1024,
+      treeCrownWidthHeightGte0_7: geometry.treeShape.crownWidthHeightRatio !== null && geometry.treeShape.crownWidthHeightRatio >= 0.7,
+      treeTrunkBaseRadiusHeightGte0_04: geometry.treeShape.trunkBaseRadiusHeightRatio !== null && geometry.treeShape.trunkBaseRadiusHeightRatio >= 0.04,
+      treeLeafTriangleRatioGte0_4: geometry.treeShape.leafTriangleRatio !== null && geometry.treeShape.leafTriangleRatio >= 0.4,
       ...(isPlayer ? {
         playerTrianglesLe18K: triangles <= 18_000,
         playerBonesLe45: joints.size <= 45,
@@ -233,7 +503,7 @@ function main() {
   const report = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
-    generator: 'Automation/check-glb.mjs R76-A',
+    generator: 'Automation/check-glb.mjs R76-A + R87-A geometry audit',
     files: options.files.map(inspectGlb),
   }
   const json = `${JSON.stringify(report, null, 2)}\n`

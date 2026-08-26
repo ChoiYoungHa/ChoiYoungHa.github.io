@@ -1,0 +1,87 @@
+{
+  "schema": "tree-shape-audit/1",
+  "generatedAt": "2026-08-27",
+  "criteria": {
+    "crownWidthHeightRatioMin": 0.7,
+    "trunkBaseRadiusHeightRatioMin": 0.04,
+    "leafTriangleRatioMin": 0.4,
+    "trianglesMax": 40000,
+    "bytesMax": 10485760
+  },
+  "method": "Automation/check-glb.mjs R87-A; world-space indexed vertices, leaf material/name classifier, trunk bottom 12% slice, radius p90 from median XZ center",
+  "candidates": [
+    {
+      "name": "Big Tree",
+      "author": "3Donimus",
+      "source": "https://poly.pizza/m/dNWh762PN-6",
+      "license": "CC-BY-3.0",
+      "bytes": 3407832,
+      "triangles": 34980,
+      "crownWidthHeightRatio": 0.770071,
+      "trunkBaseRadiusHeightRatio": 0.141181,
+      "leafTriangleRatio": 0.773585,
+      "pass": true,
+      "adoptedAs": "asset.hero.tree.b"
+    },
+    {
+      "name": "tree_oak",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/nature-kit",
+      "license": "CC0",
+      "bytes": 14644,
+      "triangles": 196,
+      "crownWidthHeightRatio": 0.603184,
+      "trunkBaseRadiusHeightRatio": 0.157389,
+      "leafTriangleRatio": 0.326531,
+      "pass": false
+    },
+    {
+      "name": "tree_fat",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/nature-kit",
+      "license": "CC0",
+      "bytes": 5576,
+      "triangles": 50,
+      "crownWidthHeightRatio": 0.656301,
+      "trunkBaseRadiusHeightRatio": 0.169214,
+      "leafTriangleRatio": 0.8,
+      "pass": false
+    },
+    {
+      "name": "tree_blocks",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/nature-kit",
+      "license": "CC0",
+      "bytes": 10128,
+      "triangles": 132,
+      "crownWidthHeightRatio": 0.506329,
+      "trunkBaseRadiusHeightRatio": 0.166483,
+      "leafTriangleRatio": 0.863636,
+      "pass": false
+    },
+    {
+      "name": "tree_detailed",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/nature-kit",
+      "license": "CC0",
+      "bytes": 31412,
+      "triangles": 402,
+      "crownWidthHeightRatio": 0.635773,
+      "trunkBaseRadiusHeightRatio": 0.124807,
+      "leafTriangleRatio": 0.696517,
+      "pass": false
+    },
+    {
+      "name": "BirchTree_2",
+      "author": "Quaternius",
+      "source": "https://quaternius.com/packs/ultimatestylizednature.html",
+      "license": "CC0",
+      "bytes": 1389012,
+      "triangles": 7660,
+      "crownWidthHeightRatio": 0.442055,
+      "trunkBaseRadiusHeightRatio": 0.020029,
+      "leafTriangleRatio": 0.286684,
+      "pass": false
+    }
+  ]
+}
