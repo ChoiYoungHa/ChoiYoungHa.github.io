@@ -35,7 +35,7 @@ export interface BenchResult {
 declare global {
   interface Window {
     __bench?: BenchResult | Record<string, unknown>
-    __benchMode?: 'bench' | 'manual'
+    __benchMode?: 'bench' | 'final' | 'manual'
   }
 }
 

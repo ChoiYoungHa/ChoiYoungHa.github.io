@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { runBenchRoute } from './systems/bench/benchRoute'
+import { runFinalRoute } from './systems/bench/finalRouteRunner'
 import { startErrorCollector, triggerIntentionalRejection } from './systems/errors'
 import { collectPerf } from './systems/perf'
 import { parseQualityPreset, useRuntime } from './store/useRuntime'
@@ -16,11 +17,13 @@ declare global {
 }
 
 const params = new URLSearchParams(location.search)
-const mode = params.get('route') === 'bench' ? 'bench' : 'manual'
+// R52-A: `?route=final` 은 M4-01 최종 동선(75초) 재생. bench 경로·routeHash·CSV 스키마는 불변.
+const routeParam = params.get('route')
+const mode = routeParam === 'bench' ? 'bench' : routeParam === 'final' ? 'final' : 'manual'
 window.__benchMode = mode
 useRuntime.getState().set({ preset: parseQualityPreset(params.get('q')) })
 
-if (mode === 'bench') blockHumanInput()
+if (mode !== 'manual') blockHumanInput()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -28,14 +31,14 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-if (mode === 'bench') void runBench()
+if (mode !== 'manual') void runBench()
 
 async function runBench() {
   const errors = startErrorCollector()
   try {
     const renderer = await waitForRenderer()
     triggerIntentionalRejection()
-    const [route, perf] = await Promise.all([runBenchRoute(), collectPerf(renderer)])
+    const [route, perf] = await Promise.all([mode === 'final' ? runFinalRoute() : runBenchRoute(), collectPerf(renderer)])
     const result = { ...route, perf, errors: errors.snapshot(), mode, hud: readHudText() }
     window.__bench = result
     console.info(`BENCH_RESULT ${JSON.stringify(result)}`)

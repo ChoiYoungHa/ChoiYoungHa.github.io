@@ -41,6 +41,9 @@ function VistaCamera({ id }: { id: string }) {
     const eye = vistas.eyeHeightMeters
     camera.position.set(m.position.x, sampleHeight(m.position.x, m.position.z) + eye, m.position.z)
     camera.lookAt(m.target.x, sampleHeight(m.target.x, m.target.z) + eye, m.target.z)
+    // R52-A: 선택 필드 pitchDeg — lookAt 시선에서 추가로 올려보는 각(+ = 위). 부재·0 이면 기존 동작 그대로.
+    const pitchDeg = 'pitchDeg' in m && typeof m.pitchDeg === 'number' ? m.pitchDeg : 0
+    if (pitchDeg !== 0) camera.rotateX((pitchDeg * Math.PI) / 180)
     camera.updateProjectionMatrix()
   }, [camera, id])
   return null
