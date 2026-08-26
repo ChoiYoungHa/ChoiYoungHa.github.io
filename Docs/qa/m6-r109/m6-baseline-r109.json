@@ -1,0 +1,46 @@
+{
+  "mode": "baseline",
+  "tag": "r109",
+  "at": "2026-08-26T18:26:04.035Z",
+  "url": null,
+  "shots": [],
+  "walkLog": [],
+  "q=low": {
+    "url": "http://127.0.0.1:5190/?q=low",
+    "overlay": false,
+    "runtime": false,
+    "gameChunks": [],
+    "jsRequests": 3,
+    "errors": {
+      "console": [],
+      "exceptions": [],
+      "log": [],
+      "total": 0
+    },
+    "hud": {
+      "stats": null,
+      "quest": null,
+      "hasHud": false
+    }
+  },
+  "q=low&route=bench": {
+    "url": "http://127.0.0.1:5190/?q=low&route=bench",
+    "overlay": false,
+    "runtime": false,
+    "gameChunks": [],
+    "jsRequests": 3,
+    "errors": {
+      "console": [],
+      "exceptions": [
+        "Error: m0b-intentional-rejection\n    at Zy (http://127.0.0.1:5190/assets/main-DmVhi7jH.js:4129:98487)\n    at tb (http://127.0.0.1:5190/assets/main-DmVhi7jH.js:4129:98909)"
+      ],
+      "log": [],
+      "total": 1
+    },
+    "hud": {
+      "stats": null,
+      "quest": null,
+      "hasHud": false
+    }
+  }
+}
