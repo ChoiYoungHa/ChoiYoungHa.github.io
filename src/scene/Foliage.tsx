@@ -10,6 +10,7 @@ import qualityPresets from '../data/quality-presets.json'
 import { useRuntime } from '../store/useRuntime'
 import { WORLD_HALF_EXTENT, WORLD_SIZE } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
+import { useLookdevMaterial } from './Atmosphere'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
@@ -32,10 +33,18 @@ export interface FoliageProps {
   sampleHeight: SampleHeight
 }
 
-function materialColor(material: Material | Material[]): Color {
-  const candidate = Array.isArray(material) ? material[0] : material
-  if ('color' in candidate && candidate.color instanceof Color) return candidate.color
-  return new Color('#3b3e26')
+/**
+ * M3-06·M3-08 (R30-A) — 종별 정점 색을 팔레트로 고정한다. 이전엔 GLB 재질 색(Kenney 키트의 고채도 청록 계열)을
+ * 그대로 구워 R21·R24 에서 "식생이 청록" 으로 보고됐다(m2-vista 원경 hue 234°). §6-2 수목/식생 #3B3E26 기준.
+ */
+const SPECIES_COLOR: Record<(typeof SPECIES)[number], string> = {
+  grass: '#3b3e26',
+  flower_yellowA: '#5c5834', // 저채도 황록 — 꽃은 살짝 밝게, 채도 상한 §6-2 28% 안
+  plant_bush: '#363a25',
+}
+
+function materialColor(_material: Material | Material[], species: string): Color {
+  return new Color(SPECIES_COLOR[species as (typeof SPECIES)[number]] ?? '#3b3e26')
 }
 
 /** 여러 원본 재질을 vertex color로 굽혀 종별 draw call을 하나로 만든다. */
@@ -50,7 +59,7 @@ function geometryForSpecies(scene: Object3D, species: string): BufferGeometry {
     if (!mesh.isMesh) return
     const geometry = mesh.geometry.clone()
     geometry.applyMatrix4(mesh.matrixWorld)
-    const color = materialColor(mesh.material)
+    const color = materialColor(mesh.material, species)
     const colors = new Float32Array(geometry.attributes.position.count * 3)
     for (let i = 0; i < geometry.attributes.position.count; i++) {
       colors[i * 3] = color.r
@@ -85,6 +94,8 @@ function SpeciesInstances({
   const ref = useRef<InstancedMesh>(null)
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
+  // M3-05 (R30-A) — 거리 그레이딩 재질(종별 1개)
+  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 })
 
   useLayoutEffect(() => {
     if (ref.current) ref.current.count = 0
@@ -117,9 +128,7 @@ function SpeciesInstances({
   })
 
   return (
-    <instancedMesh ref={ref} name={`foliage-${name}`} args={[geometry, undefined, maxVisible]}>
-      <meshStandardMaterial vertexColors roughness={0.95} metalness={0} />
-    </instancedMesh>
+    <instancedMesh ref={ref} name={`foliage-${name}`} args={[geometry, material, maxVisible]} />
   )
 }
 

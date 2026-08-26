@@ -1,6 +1,6 @@
 import { Canvas, useThree } from '@react-three/fiber'
 import { Suspense, useEffect } from 'react'
-import { createRenderer } from './gl/createRenderer'
+import { applyToneMapping, createRenderer } from './gl/createRenderer'
 import { SkyDome } from './scene/SkyDome'
 import { Atmosphere } from './scene/Atmosphere'
 import { Lighting } from './scene/Lighting'
@@ -12,8 +12,11 @@ import { Village } from './scene/Village'
 import { Foliage } from './scene/Foliage'
 import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
-import { Player } from './player/Controller'
+import { Player, setMouseSensitivity } from './player/Controller'
 import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
+import { ControlsHint } from './systems/ui/ControlsHint'
+import { Settings } from './systems/ui/Settings'
+import { LoadingScreen, useLoadingState } from './systems/ui/LoadingScreen'
 import { CAMERA } from './player/FollowCamera'
 import { useRuntime } from './store/useRuntime'
 import { reportIfRequested } from './systems/report'
@@ -51,6 +54,7 @@ export default function App() {
   const pushError = useRuntime((s) => s.pushError)
   const preset = useRuntime((s) => s.preset)
   const quality = qualityPresets[preset]
+  const loading = useLoadingState()
   const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
   const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
 
@@ -72,6 +76,8 @@ export default function App() {
     <div className="stage" style={{ width, height }}>
       <Canvas
         gl={createRenderer}
+        flat // M3-14 (R30-A): R3F 기본 톤매퍼(ACES) 주입을 끄고 아래 onCreated 에서 lookdev.json / ?tonemap= 을 적용한다
+        onCreated={({ gl }) => applyToneMapping(gl)}
         dpr={quality.dprCap}
         shadows
         camera={{ fov: CAMERA.fov, near: CAMERA.near, far: CAMERA.far, position: [0, 3, 8] }}
@@ -99,6 +105,10 @@ export default function App() {
         {shot ? <VistaCamera id={shot} /> : <Player />}
       </Canvas>
       <RuntimeHud />
+      {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
+      {shot ? null : <ControlsHint />}
+      {shot ? null : <Settings onSensitivityChange={setMouseSensitivity} />}
+      <LoadingScreen phase={loading.phase} progress={loading.progress} error={loading.error} onRetry={loading.retry} />
     </div>
   )
 }

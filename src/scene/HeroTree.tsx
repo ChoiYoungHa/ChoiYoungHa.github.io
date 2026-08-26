@@ -1,6 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef, useState } from 'react'
 import { BufferAttribute, BufferGeometry, type Mesh } from 'three'
+import { useLookdevMaterial } from './Atmosphere'
 import placement from '../data/placement.json' with { type: 'json' }
 import { buildHeroTree, type Lod } from './hero/heroTreeGeometry'
 import { sampleHeight } from './terrain/heightmap'
@@ -54,6 +55,9 @@ export function HeroTree() {
     }
   })
 
+  // 정점 색 하나로 줄기(#5A4632)와 수관(#3B3E26)을 모두 칠한다 — 재질 1개. M3-05·M3-08 (R30-A): 거리 그레이딩 재질
+  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.92, metalness: 0 })
+
   return (
     <mesh
       ref={ref}
@@ -64,9 +68,7 @@ export function HeroTree() {
       scale={SPEC.scale}
       castShadow
       receiveShadow
-    >
-      {/* 정점 색 하나로 줄기(#5A4632)와 수관(#3B3E26)을 모두 칠한다 — 재질 1개 */}
-      <meshStandardMaterial vertexColors roughness={0.92} metalness={0} />
-    </mesh>
+      material={material}
+    />
   )
 }

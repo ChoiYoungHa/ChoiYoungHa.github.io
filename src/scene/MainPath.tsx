@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { BufferAttribute, BufferGeometry } from 'three'
+import { useLookdevMaterial } from './Atmosphere'
 import mainPath from '../data/main-path.json' with { type: 'json' }
 import { sampleCenterline, type PathPoint } from './scatter/exclusionMask'
 import { sampleHeight } from './terrain/heightmap'
@@ -84,10 +85,7 @@ function buildPathGeometry(): BufferGeometry {
 
 export function MainPath() {
   const geometry = useMemo(buildPathGeometry, [])
-  return (
-    <mesh name="main-path" geometry={geometry} receiveShadow>
-      {/* 지형(#4b4a33)보다 살짝 밝은 저채도 흙길. §6-1 채도 중앙값 22% 이하 유지 */}
-      <meshStandardMaterial color="#6b6653" roughness={0.9} metalness={0} />
-    </mesh>
-  )
+  // 지형(#4b4a33)보다 살짝 밝은 저채도 흙길. §6-1 채도 중앙값 22% 이하 유지. M3-05 (R30-A): 거리 그레이딩 재질
+  const material = useLookdevMaterial({ color: '#6f674a', roughness: 0.9, metalness: 0 }) // R30-A: S13%→20%
+  return <mesh name="main-path" geometry={geometry} receiveShadow material={material} />
 }

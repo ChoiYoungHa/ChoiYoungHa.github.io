@@ -11,6 +11,7 @@ import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
 import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
+import { useLookdevMaterial } from '../scene/Atmosphere'
 
 /**
  * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
@@ -18,8 +19,22 @@ import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
  *
  * 상태는 스토어에 넣지 않는다(§3-3). 위치·yaw 는 ref 로만 흐른다.
  */
+/**
+ * M4-05 (R30-A) — 마우스 감도 배율. Settings 가 바꾸고 드래그 핸들러가 읽는다.
+ * 매 프레임 값이 아니라 설정값이라 모듈 변수로 충분하다(스토어 §3-3 규칙과 무관). 영속하지 않는다.
+ */
+let mouseSensitivity = 1
+export function setMouseSensitivity(multiplier: number): void {
+  mouseSensitivity = Number.isFinite(multiplier) && multiplier > 0 ? multiplier : 1
+}
+export function getMouseSensitivity(): number {
+  return mouseSensitivity
+}
+
 export function Player() {
   const bodyRef = useRef<Mesh>(null)
+  // M3-05 (R30-A) — 플레이어 큐브도 같은 거리 그레이딩 재질
+  const bodyMaterial = useLookdevMaterial({ color: '#8fa0b0', roughness: 0.6, metalness: 0 })
   const posRef = useRef<Vec3>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0 })
   const yawRef = useRef(0)
 
@@ -55,7 +70,7 @@ export function Player() {
     }
     const move = (e: PointerEvent) => {
       if (!dragging) return
-      yawRef.current -= (e.clientX - lastX) * 0.005
+      yawRef.current -= (e.clientX - lastX) * 0.005 * mouseSensitivity // M4-05 (R30-A) 감도 배율
       lastX = e.clientX
     }
     const up = () => {
@@ -94,9 +109,8 @@ export function Player() {
 
   return (
     <>
-      <mesh ref={bodyRef} position={[0, RAYCAST_DEFAULTS.eyeOffset, 0]}>
+      <mesh ref={bodyRef} position={[0, RAYCAST_DEFAULTS.eyeOffset, 0]} material={bodyMaterial}>
         <boxGeometry args={[0.8, 1.8, 0.8]} />
-        <meshStandardMaterial color="#8fa0b0" roughness={0.6} metalness={0} />
       </mesh>
       <FollowCamera targetRef={posRef} yawRef={yawRef} />
     </>

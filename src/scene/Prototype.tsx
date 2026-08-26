@@ -14,6 +14,10 @@
  * `SkyDome` 의 HDR 은 비동기 로드이고 실패 경로가 있어서(console.error),
  * 그때 씬이 완전히 어두워지지 않게 한다.
  */
+// M3 (R30-A) — HDR 환경광과 이중이라 기본 0. HDR 로드 실패를 재현하려면 `?ambient=0.35`.
+// R26-A 실측: 근경 휘도 140(목표 60~75)의 원인 중 하나가 이 0.35 였다(m3-plan.md §1).
 export function Prototype() {
-  return <ambientLight intensity={0.35} />
+  const ambient = Number(new URLSearchParams(location.search).get('ambient'))
+  if (!(Number.isFinite(ambient) && ambient > 0)) return null
+  return <ambientLight intensity={ambient} />
 }
