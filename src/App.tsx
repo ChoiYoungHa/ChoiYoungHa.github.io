@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber'
-import { memo, Suspense, useEffect } from 'react'
+import { lazy, memo, Suspense, useEffect } from 'react'
 import { applyToneMapping, createRenderer } from './gl/createRenderer'
 import { SkyDome } from './scene/SkyDome'
 import { Atmosphere } from './scene/Atmosphere'
@@ -17,12 +17,16 @@ import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
 import { ControlsHint } from './systems/ui/ControlsHint'
 import { Settings } from './systems/ui/Settings'
 import { LoadingScreen, useLoadingState } from './systems/ui/LoadingScreen'
+import { GAME_INPUT_ENABLED } from './player/input'
 import { CAMERA } from './player/FollowCamera'
 import { useRuntime } from './store/useRuntime'
 import { reportIfRequested } from './systems/report'
 import qualityPresets from './data/quality-presets.json'
 import vistas from './data/vistas.json' with { type: 'json' }
 import './App.css'
+
+const GameRuntime = lazy(() => import('./scene/GameRuntime'))
+const GameOverlay = lazy(() => import('./systems/ui/GameOverlay'))
 
 /**
  * M0a-05 — async 렌더러 팩토리를 `<Canvas gl={...}>` 에 주입한다.
@@ -89,7 +93,7 @@ const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { w
         <Foliage sampleHeight={sampleHeight} />
         <RockInstances sampleHeight={sampleHeight} />
       </Suspense>
-      {shot ? <VistaCamera id={shot} /> : <Player />}
+      {shot ? <VistaCamera id={shot} /> : <><Player />{GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameRuntime /></Suspense> : null}</>}
     </Canvas>
   )
 })
@@ -124,6 +128,7 @@ export default function App() {
     <div className="stage" style={{ width, height }}>
       <Stage width={width} height={height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
       <RuntimeHud />
+      {!shot && GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameOverlay loading={loading} preset={preset} /></Suspense> : null}
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
       {/* R48-A: 로딩 ready 뒤에 마운트 — 5초 타이머 시작점 = ready(로드 중 메인 스레드 정지 구간을 피한다) */}
       {shot || loading.phase !== 'ready' ? null : <ControlsHint />}

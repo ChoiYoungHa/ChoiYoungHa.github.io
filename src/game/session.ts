@@ -18,7 +18,7 @@ import type { QuestDefinition } from './rules/quest.ts'
 import { beginDeath, stepRespawn, type RespawnState } from './rules/respawn.ts'
 import { mulberry32 } from './rules/rng.ts'
 import { createSkillState, tryCastSkill, type SkillDefinition, type SkillState } from './rules/skills.ts'
-import { createInitialState, type FaceParts, type GameState, type JobId } from './state.ts'
+import { createInitialState, type FaceParts, type GameScene, type GameState, type JobId } from './state.ts'
 import { resolveIpMode, type IpMode } from './i18n.ts'
 import type { TutorialInputEvent } from './tutorial.ts'
 import { findInteractable } from './world/interact.ts'
@@ -147,6 +147,7 @@ export interface GameSession {
 export interface CreateSessionOptions {
   seed: number
   ipMode: IpMode
+  initialScene?: GameScene
 }
 
 function mergeInputs(queue: readonly SessionInputs[], direct: SessionInputs): SessionInputs {
@@ -202,6 +203,7 @@ function inGate(position: SessionPosition): boolean {
 export function createSession(options: CreateSessionOptions): GameSession {
   const sessionIpMode = resolveIpMode(options.ipMode)
   let game: GameState = { ...createInitialState(null, ''), ipMode: sessionIpMode }
+  if (options.initialScene !== undefined) game = enter(options.initialScene, game)
   let nowMs = 0
   let playerPos: SessionPosition = { x: 0, z: 24 }
   let playerYaw = 0
@@ -220,14 +222,14 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let drops: DropEntity[] = []
   let burns: BurnState[] = []
   let dropSequence = 0
-  let skillState = createSkillState(0)
+  let skillState = createSkillState(game.mp)
   let basicReadyAtMs = 0
-  let playerCombat: PlayerCombatState = { hp: 0, invulnerableUntilSeconds: 0 }
+  let playerCombat: PlayerCombatState = { hp: game.hp, invulnerableUntilSeconds: 0 }
   let respawnState: RespawnState = {
     phase: 'alive',
-    hp: 0,
-    maxHp: 0,
-    mp: 0,
+    hp: game.hp,
+    maxHp: game.maxHp,
+    mp: game.mp,
     meso: game.meso,
     position: { x: playerPos.x, z: playerPos.z },
     dyingUntilSeconds: null,

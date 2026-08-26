@@ -177,3 +177,37 @@ const ipMode = import.meta.env.PROD
 - [ ] gate 진입 카메라 이징이 1회이고 2초 뒤 9m다.
 - [ ] 배포 ipMode가 own이며 debug scene/story 경로가 production에서 비활성 또는 통제된다.
 - [ ] 헤드리스→브라우저 story→캡처 순서로 증거를 갱신했다.
+
+## R107 구현 결과 (2026-08-27)
+
+R107-B는 승인 대기 입력과 M6 런타임을 **기본 OFF**로 통합했다. `src/player/input.ts:40-48`의 `GAME_INPUT_ENABLED`는 `?game=1` 또는 `VITE_GAME=1`에서만 켜지며, `src/App.tsx:28-29,96,132`는 게임 런타임과 DOM 오버레이를 lazy chunk로 분리해 기본 URL·`?route=bench`·`?route=final`에서 import/마운트하지 않는다. `Space`는 edge 입력만 만들고 점프 물리는 이번 라운드에 넣지 않았다.
+
+| 순서 | 결과 | 구현 파일·핵심 지점 |
+|---:|---|---|
+| ① 세션·스토어 | 완료 | `src/game/bootstrap.ts:20-50`이 game/scene/ipMode를 파싱하고 seed 45 세션을 한 번 생성해 `session.bind(useGame)`한다. `src/game/session.ts:150,206`은 개발용 `initialScene`을 상태 머신으로 진입시킨다. |
+| ② App 마운트 | 완료 | `src/App.tsx:28-29,96,132`의 lazy `GameRuntime`·`GameOverlay`가 gate와 `!shot` 안에서만 마운트된다. 기존 Stage memo 경계와 3개 UI 수명은 유지했다. |
+| ③ projector | 완료 | `src/systems/ui/projector.ts:16-42`가 R3F 카메라의 `Vector3.project` 결과를 Canvas px로 바꾸고 NDC x/y/z 밖을 숨긴다. `GameRuntime.tsx:142-145,157`에서 안정 함수에 설치한다. |
+| ④ 위치·yaw·tick | 완료 | `src/scene/GameRuntime.tsx:183-200`의 이 파일 유일 `useFrame`이 `readPlayerFrame()` 위치와 실제 카메라 방향 yaw를 `src/game/bridge.ts:29-58`에 공급한다. bridge가 dt를 50ms로 clamp하고 `session.tick`을 호출한다. |
+| ⑤ 입력 | 완료 | `src/player/input.ts:7-35,70-118`에 Action 6개와 Space/F/1/2/I/Enter edge를 추가했다. `GameRuntime.tsx:158-170` effect가 StrictMode-safe하게 listener를 만들고 정리하며 bridge가 `session.enqueueInput`한다. |
+| ⑥ NPC·아치·공원 | 완료 | `src/scene/GameRuntime.tsx:116-269`가 Stan/Maya GLB, `collisionRadiusMeters` hit proxy, 돼지 GLB InstancedMesh ≤10, stonewall 석상, `park-terraces.json` 3개 원판의 기존 seeded `scatter`/rock geometry를 연결한다. 아치는 기존 placement 메시를 유지하고 `src/game/session.ts:191,450-461`이 같은 `triggers.villageGate` 진입을 사용한다. |
+| ⑦ 카메라 이징 | 완료 | `src/game/bridge.ts:42-49`가 첫 `camera-ease-start`부터 `easeDistance` 배율을 발행하고 `src/player/FollowCamera.tsx:40-43`이 gate 안에서 거리 상수에 곱한다. 0/1/2초 6/7.5/9m이며 dispose 시 6m로 복구한다. |
+| ⑧ 드롭·플로터·HP | 완료 | `src/scene/GameRuntime.tsx:145-154,219-235,268`은 `/ui/items/itm-meso.png` 단일 재질 InstancedMesh ≤24 billboard를 갱신한다. `src/systems/ui/GameOverlay.tsx:68-99,124-125`는 세션 이벤트/스냅샷을 R90 `DamageFloater`·`MobHpBar` DOM에 연결한다. |
+
+### CPU 검증 결과
+
+- `npx tsc -b`: exit 0.
+- `npm run build`: exit 0, 706 modules. 기본 main chunk는 865.61kB이고 게임은 `GameRuntime` 7.16kB, `GameOverlay` 57.22kB 등 lazy chunk로 분리됐다.
+- 관련 회귀 10파일: 73/73 통과(`final-route`, `colliders`, `input`, `raycast`, `game-integration`, `session`, `camera-ease`, `npc-placement`, `park-layout`, `run-story`).
+- 전체 `Automation/test-*.mjs`: 420개 중 410 통과, 10 실패. 실패는 양쪽 merge parent에 이미 있던 `src/data/assets.csv`의 `asset.hero.tree.a` 20열/헤더 19열 불일치로 `grass-lite` 2, `rock-lite` 3, `scene-tris` 5가 같은 parser 오류를 낸 것이며 R107 수정 파일과 무관하다.
+- `npm run lint`: exit 0(기존 경고만), `node Automation/check-ip.mjs --src`: PASS. 별도 dist 감사는 own-visible string 0은 통과했지만 lazy 게임 청크에 conti 비교표/내부 영문 식별자가 남고 기존 normal map 2개가 ledger 미등록이라 FAIL이며 후속 tree-shaking/ledger 정리가 필요하다.
+- `node Automation/run-story.mjs`: exit 0, 84.981초·10처치·3,785메소·Lv4·quest done·이벤트 순서 위반 0. 이 worker는 지시대로 브라우저를 실행하지 않았다.
+
+### worker-claude main 브라우저 검증 절차
+
+1. 먼저 `/`, `?route=bench`, `?route=final`을 각각 열어 `[data-game-overlay]`와 `m6-game-runtime`이 없고 기존 캡처·renderer/program/프레임 관문이 그대로인지 확인한다.
+2. `?game=1`에서 타이틀→생성→필드로 진입하고 Enter/Space/F/1/2/I edge가 한 keydown에 한 번만 동작하는지, 입력/버튼 포커스와 key repeat이 무시되는지 확인한다. Space 점프 물리는 아직 없어야 한다.
+3. 개발 서버에서 `?game=1&scene=create`, `?game=1&scene=hunt`로 화면·DOM projector를 확인한다. 정지한 채 카메라만 돌린 뒤 F/공격/스킬 조준, 화면 밖 floater/HP bar 숨김도 확인한다.
+4. 아치를 통과해 카메라 거리가 2초 동안 6→9m로 한 번만 이징되는지 보고, Stan/Maya 접지·yaw·충돌 반경, 돼지 10마리 이하 접지, 단구 3원판·석상 실루엣, 처치 드롭 billboard/플로터/HP bar를 확인한다.
+5. WebGPU low 1280×720에서 S00/S01/S04/S05/S07/S09/S10과 NPC·gate·park·drop 추가 컷을 캡처하고 console/shader error 0, programs 예산, 아치/집/지형 관통 0을 기록한다.
+
+씬/플레이어 수정 범위는 `src/App.tsx`, 신설 `src/scene/GameRuntime.tsx`, `src/player/input.ts`, `src/player/FollowCamera.tsx`에 한정했다. 다른 `src/scene/*`와 `src/player/controllers/*`는 수정하지 않았다.

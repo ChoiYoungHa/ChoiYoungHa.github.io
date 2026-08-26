@@ -167,22 +167,33 @@ describe('M0b-11 부가 — 접지·경계 불변식', () => {
   })
 })
 
-describe('M0b-10 입력 계약 — action 8개, jump·Interact 0', () => {
-  test('DEFAULT_BINDINGS 와 Action 유니온이 8개이고 jump·interact 가 없다', () => {
-    // lookX/lookY 는 포인터 delta 라 키 바인딩이 없다 → 바인딩은 6개
+describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기본 OFF', () => {
+  test('DEFAULT_BINDINGS 와 Action 유니온이 M6 의미 동작 6개를 포함한다', () => {
+    // lookX/lookY 는 포인터 delta 라 키 바인딩이 없다 → 바인딩은 12개
     assert.deepEqual(Object.keys(DEFAULT_BINDINGS).sort(), [
+      'attack',
+      'confirm',
+      'interact',
+      'inventory',
+      'jump',
       'moveBack',
       'moveForward',
       'moveLeft',
       'moveRight',
       'run',
+      'skill',
       'toggleQuality',
     ])
     const src = readFileSync(join(PLAYER, 'input.ts'), 'utf8').replace(/\r\n/g, '\n') // R44-C CRLF
     const union = src.match(/export type Action =([\s\S]*?)\n\n/)?.[1] ?? ''
     const actions = [...union.matchAll(/'([a-zA-Z]+)'/g)].map((m) => m[1])
-    assert.equal(actions.length, 8, `Action 개수=${actions.length}`)
+    assert.equal(actions.length, 14, `Action 개수=${actions.length}`)
     assert.deepEqual(actions.sort(), [
+      'attack',
+      'confirm',
+      'interact',
+      'inventory',
+      'jump',
       'lookX',
       'lookY',
       'moveBack',
@@ -190,17 +201,11 @@ describe('M0b-10 입력 계약 — action 8개, jump·Interact 0', () => {
       'moveLeft',
       'moveRight',
       'run',
+      'skill',
       'toggleQuality',
     ])
-    // Action 유니온·키 바인딩 어디에도 jump·interact 가 없어야 한다
-    assert.equal(actions.filter((a) => /jump|interact/i.test(a)).length, 0)
-    assert.equal(
-      Object.keys(DEFAULT_BINDINGS).filter((k) => /jump|interact/i.test(k)).length,
-      0,
-    )
-    // 스페이스바가 어떤 동작에도 묶여 있지 않아야 한다(점프 금지의 실질 검증)
-    const allCodes = Object.values(DEFAULT_BINDINGS).flat()
-    assert.equal(allCodes.includes('Space'), false, 'Space 가 바인딩돼 있다')
+    assert.deepEqual(DEFAULT_BINDINGS.jump, ['Space'])
+    assert.match(src, /GAME_INPUT_ENABLED/)
   })
 })
 
