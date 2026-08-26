@@ -84,7 +84,9 @@ test('--rock-lite combines with grassLite without changing either preset contrac
   assert.equal(low.scenarios.worstCase.budget.status, 'pass')
   assert.equal(base.scenarios.worstCase.totalTriangles, 675234)
   assert.equal(base.scenarios.typical.totalTriangles, 673536)
-  assert.equal(base.scenarios.worstCase.budget.status, 'fail')
+  // R65-B §4-1 프리셋별: base tris limit is 1,100,000.
+  assert.equal(base.scenarios.worstCase.budget.limit, 1100000)
+  assert.equal(base.scenarios.worstCase.budget.status, 'pass')
   assert.equal(base.variant.grassLiteComparison.base.worstCaseTriangles, 704834)
 })
 

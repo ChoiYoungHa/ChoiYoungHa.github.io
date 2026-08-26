@@ -70,7 +70,9 @@ test('--grass-lite recalculates low/base while preserving the baseline compariso
   assert.equal(low.scenarios.worstCase.budget.status, 'pass')
   assert.equal(base.scenarios.worstCase.totalTriangles, 704834)
   assert.equal(base.scenarios.typical.totalTriangles, 703136)
-  assert.equal(base.scenarios.worstCase.budget.status, 'fail')
+  // R65-B §4-1 프리셋별: base tris limit is 1,100,000.
+  assert.equal(base.scenarios.worstCase.budget.limit, 1100000)
+  assert.equal(base.scenarios.worstCase.budget.status, 'pass')
 })
 
 test('CLI writes a grassLite evidence report without a browser', () => {
