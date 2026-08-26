@@ -19,6 +19,26 @@
     { "id": "village-07", "house": "house-a", "roof": "roof-a", "position": [13, -11], "rotationYDeg": 12, "scale": 0.85 },
     { "id": "village-08", "house": "house-b", "roof": "roof-b", "position": [-17, -17], "rotationYDeg": -20, "scale": 0.88 }
   ],
+  "npcs": [
+    {
+      "id": "stan",
+      "role": "quest",
+      "position": [-4.104056, 3.276014],
+      "yaw": -1.815775,
+      "collisionRadiusMeters": 0.45,
+      "sourceHouseId": "village-04",
+      "source": "Projection of village-04 (house-a) onto main-path waypoints 1-2, then 2.5m to route-right; house remains on the shot's left"
+    },
+    {
+      "id": "maya",
+      "role": "shop",
+      "position": [-5.44966, 17.660593],
+      "yaw": 1.91382,
+      "collisionRadiusMeters": 0.45,
+      "sourceHouseId": "village-02",
+      "source": "Projection of village-02 (house-b) onto main-path waypoints 0-1, then 3.0m toward the house"
+    }
+  ],
   "props": [
     { "kind": "arch", "position": [-1.5, 19.8], "yaw": 0.343, "scale": 3 },
     { "kind": "stonewall", "position": [4.06, 17.82], "yaw": 1.913, "scale": 3 },
@@ -35,6 +55,8 @@
     { "kind": "fence", "position": [8, -12.5], "yaw": 0, "scale": 2.2 },
     { "kind": "banner", "position": [10, 16.4], "yaw": -0.209, "scale": 4 },
     { "kind": "banner", "position": [12, 6.5], "yaw": -0.436, "scale": 4 },
-    { "kind": "banner", "position": [11, -4.5], "yaw": 0.349, "scale": 4 }
+    { "kind": "banner", "position": [11, -4.5], "yaw": 0.349, "scale": 4 },
+    { "kind": "statue", "position": [-104, 20], "yaw": 1.571, "scale": 2, "runtimeMeshKind": "stonewall", "note": "M6-16 pig-statue placeholder; reuse prop_stonewall mesh/material until a dedicated model is approved" },
+    { "kind": "statue", "position": [-104, -4], "yaw": 1.571, "scale": 2, "runtimeMeshKind": "stonewall", "note": "M6-16 pig-statue placeholder; reuse prop_stonewall mesh/material until a dedicated model is approved" }
   ]
 }

@@ -5,13 +5,13 @@
   "minimumSpacingMeters": 6,
   "source": "src/game/data/zones.json zones.park",
   "points": [
-    { "id": "park-pig-01", "x": -80, "z": 8 },
-    { "id": "park-pig-02", "x": -92, "z": 8 },
-    { "id": "park-pig-03", "x": -68, "z": 8 },
-    { "id": "park-pig-04", "x": -80, "z": 20 },
-    { "id": "park-pig-05", "x": -80, "z": -4 },
-    { "id": "park-pig-06", "x": -92, "z": 20 },
-    { "id": "park-pig-07", "x": -68, "z": 20 },
-    { "id": "park-pig-08", "x": -92, "z": -4 }
+    { "id": "park-pig-01", "x": -80, "y": -1.860559, "z": 8 },
+    { "id": "park-pig-02", "x": -92, "y": -1.242562, "z": 8 },
+    { "id": "park-pig-03", "x": -68, "y": -2.450276, "z": 8 },
+    { "id": "park-pig-04", "x": -80, "y": -1.954783, "z": 20 },
+    { "id": "park-pig-05", "x": -80, "y": -1.83523, "z": -4 },
+    { "id": "park-pig-06", "x": -92, "y": -1.360666, "z": 20 },
+    { "id": "park-pig-07", "x": -68, "y": -2.506531, "z": 20 },
+    { "id": "park-pig-08", "x": -92, "y": -1.215838, "z": -4 }
   ]
 }
