@@ -1,6 +1,8 @@
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import type { BufferGeometry, InstancedMesh } from 'three'
-import { MeshStandardMaterial, Object3D } from 'three'
+import { Object3D } from 'three'
+import type { MeshStandardNodeMaterial } from 'three/webgpu'
+import { useLookdevMaterial } from './Atmosphere'
 import placement from '../data/placement.json'
 import { sampleHeight } from './terrain/heightmap'
 import { createHouseGeometry, HOUSE_SOCKETS, type HouseId } from './village/houseGeometry'
@@ -31,7 +33,7 @@ function Instances({
   geometry: BufferGeometry
   entries: VillageEntry[]
   roof: boolean
-  material: MeshStandardMaterial
+  material: MeshStandardNodeMaterial
 }) {
   const ref = useRef<InstancedMesh>(null)
 
@@ -66,10 +68,8 @@ function Instances({
 
 /** placement.json의 8채를 geometry 6종·공유 vertex-color 재질 1개로 그린다. */
 export function Village() {
-  const material = useMemo(
-    () => new MeshStandardMaterial({ vertexColors: true, roughness: 0.9, metalness: 0 }),
-    [],
-  )
+  // M3-05 (R30-A) — 거리 그레이딩 재질(공유 1개, 프로그램 예산 유지)
+  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.9, metalness: 0 })
   const houses = useMemo(
     () => Object.fromEntries(HOUSE_IDS.map((id) => [id, createHouseGeometry(id)])) as Record<HouseId, BufferGeometry>,
     [],

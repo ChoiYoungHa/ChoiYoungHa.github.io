@@ -1,0 +1,291 @@
+{
+  "schema": "lookdev-measure/1",
+  "file": "Docs/lookdev/m3-t5-2.png",
+  "sha256": "409f31767e00dcf2017cafe41056d9fa88cf6405367210b81536d0e11ba8fdad",
+  "width": 1280,
+  "height": 720,
+  "channels": 4,
+  "alphaBelow255": 0,
+  "targets": "src/data/lookdev-targets.json",
+  "bands": [
+    {
+      "index": 0,
+      "y0": 0,
+      "y1": 90,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 135.3,
+        "g": 145.7,
+        "b": 157.3
+      },
+      "hex": "#87929D",
+      "hsl": {
+        "h": 212,
+        "s": 10,
+        "l": 57
+      },
+      "saturationPct": 11.2,
+      "hueDeg": 211.7,
+      "luma": 144.3
+    },
+    {
+      "index": 1,
+      "y0": 90,
+      "y1": 180,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 127.4,
+        "g": 138,
+        "b": 149.6
+      },
+      "hex": "#7F8A96",
+      "hsl": {
+        "h": 211,
+        "s": 10,
+        "l": 54
+      },
+      "saturationPct": 11.2,
+      "hueDeg": 211.4,
+      "luma": 136.6
+    },
+    {
+      "index": 2,
+      "y0": 180,
+      "y1": 270,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 111.8,
+        "g": 123.5,
+        "b": 135.9
+      },
+      "hex": "#707C88",
+      "hsl": {
+        "h": 211,
+        "s": 10,
+        "l": 49
+      },
+      "saturationPct": 12.2,
+      "hueDeg": 210.8,
+      "luma": 121.9
+    },
+    {
+      "index": 3,
+      "y0": 270,
+      "y1": 360,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 114.7,
+        "g": 124.4,
+        "b": 134
+      },
+      "hex": "#737C86",
+      "hsl": {
+        "h": 210,
+        "s": 8,
+        "l": 49
+      },
+      "saturationPct": 9.4,
+      "hueDeg": 209.8,
+      "luma": 123.1
+    },
+    {
+      "index": 4,
+      "y0": 360,
+      "y1": 450,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 80.4,
+        "g": 80.1,
+        "b": 67.5
+      },
+      "hex": "#505044",
+      "hsl": {
+        "h": 59,
+        "s": 9,
+        "l": 29
+      },
+      "saturationPct": 16.7,
+      "hueDeg": 58.8,
+      "luma": 79.2
+    },
+    {
+      "index": 5,
+      "y0": 450,
+      "y1": 540,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 74,
+        "g": 69.7,
+        "b": 46.1
+      },
+      "hex": "#4A462E",
+      "hsl": {
+        "h": 51,
+        "s": 23,
+        "l": 24
+      },
+      "saturationPct": 26.9,
+      "hueDeg": 50.8,
+      "luma": 68.9
+    },
+    {
+      "index": 6,
+      "y0": 540,
+      "y1": 630,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 75.7,
+        "g": 70.1,
+        "b": 42.3
+      },
+      "hex": "#4C462A",
+      "hsl": {
+        "h": 50,
+        "s": 28,
+        "l": 23
+      },
+      "saturationPct": 30,
+      "hueDeg": 49.8,
+      "luma": 69.3
+    },
+    {
+      "index": 7,
+      "y0": 630,
+      "y1": 720,
+      "pixels": 115200,
+      "meanRgb": {
+        "r": 76.7,
+        "g": 70.4,
+        "b": 40.6
+      },
+      "hex": "#4D4629",
+      "hsl": {
+        "h": 50,
+        "s": 31,
+        "l": 23
+      },
+      "saturationPct": 32.9,
+      "hueDeg": 49.5,
+      "luma": 69.6
+    }
+  ],
+  "global": {
+    "saturationMedianPct": 13.1
+  },
+  "regions": {
+    "near": {
+      "bands": [
+        6,
+        7
+      ],
+      "pixels": 230400,
+      "hex": "#4C4629",
+      "saturationPct": 31.5,
+      "hueDeg": 49.7,
+      "luma": 69.4
+    },
+    "far": {
+      "bands": [
+        2
+      ],
+      "pixels": 115200,
+      "hex": "#707C88",
+      "saturationPct": 12.2,
+      "hueDeg": 210.8,
+      "luma": 121.9
+    }
+  },
+  "checks": {
+    "L1": {
+      "title": "깊이에 따라 채도가 4배 이상 벌어진다",
+      "metric": "saturationPct",
+      "near": {
+        "value": 31.5,
+        "range": [
+          30,
+          36
+        ],
+        "pass": true
+      },
+      "far": {
+        "value": 12.2,
+        "range": [
+          8,
+          12
+        ],
+        "pass": false
+      },
+      "pass": false
+    },
+    "L2": {
+      "title": "깊이에 따라 색상이 온난→한랭으로 이동한다",
+      "metric": "hueDeg",
+      "near": {
+        "value": 49.7,
+        "range": [
+          45,
+          55
+        ],
+        "pass": true
+      },
+      "far": {
+        "value": 210.8,
+        "range": [
+          205,
+          215
+        ],
+        "pass": true
+      },
+      "pass": true
+    },
+    "L3": {
+      "title": "원경이 근경보다 밝다",
+      "metric": "luma",
+      "near": {
+        "value": 69.4,
+        "range": [
+          60,
+          75
+        ],
+        "pass": true
+      },
+      "far": {
+        "value": 121.9,
+        "range": [
+          130,
+          145
+        ],
+        "pass": false
+      },
+      "pass": false
+    },
+    "L4": {
+      "title": "랜드마크 실루엣이 역광 대비만으로 읽힌다",
+      "manual": true,
+      "pass": null,
+      "method": "흑백 변환 후 거대 수목·지붕군 구분을 육안 확인(계획서 §1-1). 자동 판정 대상 아님 — measure.mjs 는 'manual' 로 표기한다"
+    },
+    "L5": {
+      "title": "전 화면 채도 중앙값이 22% 이하다",
+      "metric": "globalSaturationMedianPct",
+      "value": 13.1,
+      "max": 22,
+      "pass": true
+    }
+  },
+  "summary": {
+    "autoJudged": 4,
+    "passCount": 2,
+    "failCount": 2,
+    "manual": [
+      "L4"
+    ]
+  },
+  "definitions": {
+    "saturationPct": "mean of per-pixel HSL S (0~100)",
+    "hueDeg": "HSL hue of band mean RGB",
+    "luma": "Rec.709 luma of band mean RGB (0~255)",
+    "globalSaturationMedianPct": "median of per-pixel HSL S (0.1 resolution, lower median for even N)",
+    "bands": "band i = [floor(i*H/8), floor((i+1)*H/8))"
+  }
+}

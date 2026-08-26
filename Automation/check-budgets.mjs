@@ -21,9 +21,13 @@ const specs = [
 
 const checks = Object.fromEntries(
   specs.map(([name, value, limit, allowUnknown]) => {
-    const unknown = typeof value !== 'number' || !Number.isFinite(value)
+    const unavailable = typeof value !== 'number' || !Number.isFinite(value)
+    const webGpuTrianglesUnsupported = name === 'tris' && (value === 0 || unavailable)
+    const unknown = webGpuTrianglesUnsupported || unavailable
     const status = unknown ? 'unknown' : Number(value) <= limit ? 'pass' : 'fail'
-    return [name, { value: unknown ? '확인 불가' : Number(value), limit, status, allowUnknown }]
+    const check = { value: unknown ? '확인 불가' : Number(value), limit, status, allowUnknown }
+    if (webGpuTrianglesUnsupported) check.reason = 'WebGPU renderer.info.triangles 미지원'
+    return [name, check]
   }),
 )
 const failed = Object.values(checks).some(

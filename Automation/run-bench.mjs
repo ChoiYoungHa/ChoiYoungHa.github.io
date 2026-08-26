@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
 import { execFile, spawn } from 'node:child_process'
-import { access, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { access, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { createConnection } from 'node:net'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { promisify } from 'node:util'
 
 const execFileAsync = promisify(execFile)
@@ -33,71 +33,79 @@ const CSV_COLUMNS = [
   'errors',
 ]
 
-const options = parseArgs(process.argv.slice(2))
-if (options.help) {
-  printHelp()
-  process.exit(0)
-}
-
+let options
 let receiver
 let preview
 let browser
 let previewStarted = false
 let cleanupStarted = false
 
-for (const signal of ['SIGINT', 'SIGTERM']) {
-  process.once(signal, () => {
-    void cleanup().finally(() => process.exit(signal === 'SIGINT' ? 130 : 143))
-  })
-}
+async function main(argv) {
+  options = parseBenchArgs(argv)
+  if (options.help) {
+    printHelp()
+    return
+  }
 
-try {
-  validateOptions(options)
-  await assertPortFree(PREVIEW_PORT)
-  await runForeground(npmCommand(), npmArgs(['run', 'build']))
-  const buildHash = (await capture('git', ['rev-parse', '--short', 'HEAD'])).trim()
+  for (const signal of ['SIGINT', 'SIGTERM']) {
+    process.once(signal, () => {
+      void cleanup().finally(() => process.exit(signal === 'SIGINT' ? 130 : 143))
+    })
+  }
 
-  receiver = createResultReceiver()
-  await receiver.listen()
-  preview = startPreview()
-  await waitForPreview(preview)
-  previewStarted = true
-
-  const chromePath = await findChrome()
-  const warmupUrl = makeUrl({ gl: options.gl })
-  browser = await startBrowser(chromePath, warmupUrl)
-  process.stdout.write(`warmup ${options.warmup}s\n`)
-  await sleep(options.warmup * 1000)
-
-  if (options.soak !== undefined) {
-    const result = await runSoak(buildHash)
-    await writeSoakReport(result)
-    if (!result.pass) process.exitCode = 1
-  } else {
-    const rows = []
-    for (let index = 1; index <= options.runs; index += 1) {
-      process.stdout.write(`bench run ${index}/${options.runs}\n`)
-      const result = await runBenchNavigation(index, buildHash)
-      rows.push(result.row)
+  try {
+    if (options.buildMode === 'skip') await assertExistingDist(resolve(ROOT, 'dist'))
+    await assertPortFree(PREVIEW_PORT)
+    if (options.buildMode === 'once') {
+      await runForeground(npmCommand(), npmArgs(['run', 'build']))
     }
-    const output = options.output ?? defaultCsvPath(options.gl)
-    await writeCsv(output, rows)
-    const pass = validateRows(rows, options.gl)
-    process.stdout.write(`CSV ${output}\n`)
-    if (!pass) process.exitCode = 1
-  }
-} catch (error) {
-  process.stderr.write(`${error instanceof Error ? error.stack ?? error.message : String(error)}\n`)
-  process.exitCode = 1
-} finally {
-  await cleanup()
-  if (await isPortOpen(PREVIEW_PORT)) {
-    process.stderr.write(`cleanup failed: port ${PREVIEW_PORT} is still listening\n`)
-    process.exitCode = 1
-  } else {
-    process.stdout.write(`cleanup PASS: port ${PREVIEW_PORT} listener 0\n`)
+    const buildHash = (await capture('git', ['rev-parse', '--short', 'HEAD'])).trim()
+
+    receiver = createResultReceiver()
+    await receiver.listen()
+    preview = startPreview()
+    await waitForPreview(preview)
+    previewStarted = true
+
+    const chromePath = await findChrome()
+    const warmupUrl = makeUrl({ gl: options.gl })
+    browser = await startBrowser(chromePath, warmupUrl)
+    process.stdout.write(`warmup ${options.warmup}s\n`)
+    await sleep(options.warmup * 1000)
+
+    if (options.soak !== undefined) {
+      const result = await runSoak(buildHash)
+      await writeSoakReport(result)
+      if (!result.pass) process.exitCode = 1
+    } else {
+      const rows = []
+      for (let index = 1; index <= options.runs; index += 1) {
+        process.stdout.write(`bench run ${index}/${options.runs}\n`)
+        const result = await runBenchNavigation(index, buildHash)
+        rows.push(result.row)
+      }
+      const output = options.output ?? defaultCsvPath(options.gl)
+      await writeCsv(output, rows)
+      const pass = validateRows(rows, options.gl)
+      process.stdout.write(`CSV ${output}\n`)
+      if (!pass) process.exitCode = 1
+    }
+  } catch (error) {
+    process.stderr.write(`${error instanceof Error ? error.stack ?? error.message : String(error)}\n`)
+    process.exitCode = Number.isInteger(error?.exitCode) ? error.exitCode : 1
+  } finally {
+    await cleanup()
+    if (await isPortOpen(PREVIEW_PORT)) {
+      process.stderr.write(`cleanup failed: port ${PREVIEW_PORT} is still listening\n`)
+      process.exitCode = 1
+    } else {
+      process.stdout.write(`cleanup PASS: port ${PREVIEW_PORT} listener 0\n`)
+    }
   }
 }
+
+const isMain = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url
+if (isMain) await main(process.argv.slice(2))
 
 async function runSoak(buildHash) {
   const startedAt = Date.now()
@@ -617,7 +625,9 @@ function defaultCsvPath(gl) {
   return gl === 'webgl' ? 'Docs/perf/m0b-webgl-runs.csv' : 'Docs/perf/m0b-runs.csv'
 }
 
-function parseArgs(args) {
+export function parseBenchArgs(args) {
+  let buildOnceExplicit = false
+  let skipBuildExplicit = false
   const result = {
     runs: 3,
     warmup: 30,
@@ -626,19 +636,47 @@ function parseArgs(args) {
     output: undefined,
     soakOutput: undefined,
     help: false,
+    buildMode: 'once',
   }
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index]
     if (arg === '--help' || arg === '-h') result.help = true
-    else if (arg === '--runs') result.runs = Number(args[++index])
-    else if (arg === '--warmup') result.warmup = Number(args[++index])
-    else if (arg === '--gl') result.gl = args[++index]
-    else if (arg === '--soak') result.soak = Number(args[++index])
-    else if (arg === '--output') result.output = args[++index]
-    else if (arg === '--soak-output') result.soakOutput = args[++index]
+    else if (arg === '--build-once') {
+      if (skipBuildExplicit) throw new Error('--skip-build and --build-once are mutually exclusive')
+      buildOnceExplicit = true
+      result.buildMode = 'once'
+    } else if (arg === '--skip-build') {
+      if (buildOnceExplicit) throw new Error('--skip-build and --build-once are mutually exclusive')
+      skipBuildExplicit = true
+      result.buildMode = 'skip'
+    } else if (arg === '--runs') result.runs = Number(requireOptionValue(args, ++index, arg))
+    else if (arg === '--warmup') result.warmup = Number(requireOptionValue(args, ++index, arg))
+    else if (arg === '--gl') result.gl = requireOptionValue(args, ++index, arg)
+    else if (arg === '--soak') result.soak = Number(requireOptionValue(args, ++index, arg))
+    else if (arg === '--output') result.output = requireOptionValue(args, ++index, arg)
+    else if (arg === '--soak-output') result.soakOutput = requireOptionValue(args, ++index, arg)
     else throw new Error(`unknown option: ${arg}`)
   }
+  validateOptions(result)
   return result
+}
+
+function requireOptionValue(args, index, option) {
+  const value = args[index]
+  if (value === undefined || value.startsWith('--')) throw new Error(`${option} requires a value`)
+  return value
+}
+
+export async function assertExistingDist(distPath) {
+  try {
+    const details = await stat(distPath)
+    if (details.isDirectory()) return
+  } catch {
+    // The common missing/inaccessible path is reported uniformly below.
+  }
+  const error = new Error(`--skip-build requires an existing dist directory: ${distPath}`)
+  error.exitCode = 2
+  throw error
 }
 
 function validateOptions(value) {
@@ -652,7 +690,9 @@ function validateOptions(value) {
 
 function printHelp() {
   process.stdout.write(
-    'usage: node Automation/run-bench.mjs [--runs 3] [--warmup 30] [--gl webgl] [--soak 900] [--output path] [--soak-output path]\n',
+    'usage: node Automation/run-bench.mjs [--build-once|--skip-build] [--runs 3] [--warmup 30] [--gl webgl] [--soak 900] [--output path] [--soak-output path]\n' +
+      '  --build-once  build dist once before this invocation (default)\n' +
+      '  --skip-build  reuse an existing dist directory; mutually exclusive with --build-once\n',
   )
 }
 

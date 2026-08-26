@@ -1,0 +1,337 @@
+{
+  "id": "m3-atmosphere-webgl",
+  "at": "2026-08-26",
+  "backendExpected": "WebGL2",
+  "stages": [
+    {
+      "stage": "A",
+      "query": "?shot=vista-mid&q=low&gl=webgl&atmo=A",
+      "png": "Docs/lookdev/m3-glA-1.png",
+      "backend": "WebGL2",
+      "errorCount": 0,
+      "errors": [],
+      "calls": 23,
+      "blackPixelRatio": 0.0,
+      "bands": [
+        {
+          "i": 0,
+          "S": 10.3,
+          "H": 214.2,
+          "Y": 157.9
+        },
+        {
+          "i": 1,
+          "S": 10.2,
+          "H": 213.6,
+          "Y": 149.7
+        },
+        {
+          "i": 2,
+          "S": 11.4,
+          "H": 212.2,
+          "Y": 134.1
+        },
+        {
+          "i": 3,
+          "S": 7.8,
+          "H": 210.7,
+          "Y": 135.1
+        },
+        {
+          "i": 4,
+          "S": 17.1,
+          "H": 57.3,
+          "Y": 77.6
+        },
+        {
+          "i": 5,
+          "S": 27.7,
+          "H": 50.8,
+          "Y": 66.7
+        },
+        {
+          "i": 6,
+          "S": 31,
+          "H": 49.9,
+          "Y": 67.2
+        },
+        {
+          "i": 7,
+          "S": 33.9,
+          "H": 49.5,
+          "Y": 67.5
+        }
+      ],
+      "near": {
+        "bands": [
+          6,
+          7
+        ],
+        "pixels": 230400,
+        "hex": "#4A4427",
+        "saturationPct": 32.4,
+        "hueDeg": 49.7,
+        "luma": 67.3
+      },
+      "far": {
+        "bands": [
+          2
+        ],
+        "pixels": 115200,
+        "hex": "#7D8793",
+        "saturationPct": 11.4,
+        "hueDeg": 212.2,
+        "luma": 134.1
+      },
+      "pass": true
+    },
+    {
+      "stage": "B",
+      "query": "?shot=vista-mid&q=low&gl=webgl&atmo=B",
+      "png": "Docs/lookdev/m3-glB-1.png",
+      "backend": "WebGL2",
+      "errorCount": 0,
+      "errors": [],
+      "calls": 23,
+      "blackPixelRatio": 0.0,
+      "bands": [
+        {
+          "i": 0,
+          "S": 10.3,
+          "H": 214.2,
+          "Y": 157.9
+        },
+        {
+          "i": 1,
+          "S": 10.2,
+          "H": 213.6,
+          "Y": 149.7
+        },
+        {
+          "i": 2,
+          "S": 11.4,
+          "H": 212.2,
+          "Y": 134.1
+        },
+        {
+          "i": 3,
+          "S": 7.8,
+          "H": 210.7,
+          "Y": 135.1
+        },
+        {
+          "i": 4,
+          "S": 17,
+          "H": 57.2,
+          "Y": 77.5
+        },
+        {
+          "i": 5,
+          "S": 27.7,
+          "H": 50.8,
+          "Y": 66.7
+        },
+        {
+          "i": 6,
+          "S": 31,
+          "H": 49.9,
+          "Y": 67.2
+        },
+        {
+          "i": 7,
+          "S": 33.9,
+          "H": 49.5,
+          "Y": 67.5
+        }
+      ],
+      "near": {
+        "bands": [
+          6,
+          7
+        ],
+        "pixels": 230400,
+        "hex": "#4A4427",
+        "saturationPct": 32.4,
+        "hueDeg": 49.7,
+        "luma": 67.3
+      },
+      "far": {
+        "bands": [
+          2
+        ],
+        "pixels": 115200,
+        "hex": "#7D8793",
+        "saturationPct": 11.4,
+        "hueDeg": 212.2,
+        "luma": 134.1
+      },
+      "pass": true
+    },
+    {
+      "stage": "C",
+      "query": "?shot=vista-mid&q=low&gl=webgl&atmo=C",
+      "png": "Docs/lookdev/m3-glC-1.png",
+      "backend": "WebGL2",
+      "errorCount": 0,
+      "errors": [],
+      "calls": 23,
+      "blackPixelRatio": 0.0,
+      "bands": [
+        {
+          "i": 0,
+          "S": 10.3,
+          "H": 214.2,
+          "Y": 157.9
+        },
+        {
+          "i": 1,
+          "S": 10.2,
+          "H": 213.6,
+          "Y": 149.7
+        },
+        {
+          "i": 2,
+          "S": 11.4,
+          "H": 212.2,
+          "Y": 134.1
+        },
+        {
+          "i": 3,
+          "S": 7.8,
+          "H": 210.7,
+          "Y": 135.1
+        },
+        {
+          "i": 4,
+          "S": 17,
+          "H": 310.3,
+          "Y": 70.3
+        },
+        {
+          "i": 5,
+          "S": 27.7,
+          "H": 312.6,
+          "Y": 52.5
+        },
+        {
+          "i": 6,
+          "S": 31,
+          "H": 310.1,
+          "Y": 49.4
+        },
+        {
+          "i": 7,
+          "S": 33.9,
+          "H": 310.5,
+          "Y": 48.4
+        }
+      ],
+      "near": {
+        "bands": [
+          6,
+          7
+        ],
+        "pixels": 230400,
+        "hex": "#4A2744",
+        "saturationPct": 32.4,
+        "hueDeg": 310.3,
+        "luma": 48.9
+      },
+      "far": {
+        "bands": [
+          2
+        ],
+        "pixels": 115200,
+        "hex": "#7D8793",
+        "saturationPct": 11.4,
+        "hueDeg": 212.2,
+        "luma": 134.1
+      },
+      "pass": true
+    },
+    {
+      "stage": "D",
+      "query": "?shot=vista-mid&q=low&gl=webgl&atmo=D",
+      "png": "Docs/lookdev/m3-glD-1.png",
+      "backend": "WebGL2",
+      "errorCount": 0,
+      "errors": [],
+      "calls": 23,
+      "blackPixelRatio": 0.0,
+      "bands": [
+        {
+          "i": 0,
+          "S": 10.3,
+          "H": 214.2,
+          "Y": 157.9
+        },
+        {
+          "i": 1,
+          "S": 10.2,
+          "H": 213.6,
+          "Y": 149.7
+        },
+        {
+          "i": 2,
+          "S": 11.4,
+          "H": 212.2,
+          "Y": 134.1
+        },
+        {
+          "i": 3,
+          "S": 7.8,
+          "H": 210.7,
+          "Y": 135.1
+        },
+        {
+          "i": 4,
+          "S": 17,
+          "H": 57.7,
+          "Y": 78.5
+        },
+        {
+          "i": 5,
+          "S": 27.7,
+          "H": 50.8,
+          "Y": 66.7
+        },
+        {
+          "i": 6,
+          "S": 31,
+          "H": 49.9,
+          "Y": 67.2
+        },
+        {
+          "i": 7,
+          "S": 33.9,
+          "H": 49.5,
+          "Y": 67.5
+        }
+      ],
+      "near": {
+        "bands": [
+          6,
+          7
+        ],
+        "pixels": 230400,
+        "hex": "#4A4427",
+        "saturationPct": 32.4,
+        "hueDeg": 49.7,
+        "luma": 67.3
+      },
+      "far": {
+        "bands": [
+          2
+        ],
+        "pixels": 115200,
+        "hex": "#7D8793",
+        "saturationPct": 11.4,
+        "hueDeg": 212.2,
+        "luma": 134.1
+      },
+      "pass": true
+    }
+  ],
+  "method": "단계 A(FogExp2만)/B(+채도 감쇄)/C(+색상 시프트)/D(+휘도 상승)를 ?atmo= 로 켜고 vista-mid 를 캡처. shader error 는 페이지 error 수집기(errorCount)와 검은 화면 비율로 판정. 원경 밴드 2 는 하늘이라 B~D 차이는 밴드 4~7(지상 40m+)에서 본다.",
+  "result": "PASS"
+}

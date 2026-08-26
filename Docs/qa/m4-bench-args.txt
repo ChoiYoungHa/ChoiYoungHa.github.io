@@ -1,0 +1,45 @@
+R37-C run-bench args / budget semantics verification
+date: 2026-08-26 KST
+worktree: web3d-wt-codexA
+branch: wt/bench
+base HEAD: f8b4c63
+
+$ node --check Automation/run-bench.mjs
+exit: 0
+(no output)
+
+$ node --check Automation/check-budgets.mjs
+exit: 0
+(no output)
+
+$ node --check Automation/test-bench-args.mjs
+exit: 0
+(no output)
+
+$ node --test Automation/test-bench-args.mjs
+exit: 0
+tests: 14
+pass: 14
+fail: 0
+cancelled: 0
+skipped: 0
+todo: 0
+
+Passing contracts:
+- default policy builds exactly once
+- --skip-build selects an existing dist
+- --skip-build / --build-once mutual exclusion in both orders
+- invalid runs, warmup, gl, soak, missing value, and unknown option rejected
+- missing dist produces a clear --skip-build error with exitCode 2
+- --help documents both build modes without starting a benchmark
+- WebGPU triangle zero/unavailable is allowUnknown with reason "WebGPU renderer.info.triangles 미지원"
+
+$ node Automation/run-bench.mjs --help
+exit: 0
+usage: node Automation/run-bench.mjs [--build-once|--skip-build] [--runs 3] [--warmup 30] [--gl webgl] [--soak 900] [--output path] [--soak-output path]
+  --build-once  build dist once before this invocation (default)
+  --skip-build  reuse an existing dist directory; mutually exclusive with --build-once
+
+Safety observation:
+- The help invocation emitted only usage text.
+- No build, preview server, or headless browser command was run during this verification.
