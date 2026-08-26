@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "testedHead": "322be8e",
-  "manifestMeasuredFromHead": "d0692ef",
+  "testedHead": "4ba174b",
+  "manifestMeasuredFromHead": "30665a7",
   "phaseOrder": [
     "boot",
     "core",
@@ -33,19 +33,19 @@
       "detail": 5
     },
     "manifestDeclared": {
-      "boot": 3197742,
-      "core": 16900,
-      "detail": 1428760
+      "boot": 3314538,
+      "core": 4801137,
+      "detail": 3177620
     },
     "mockObserved": {
-      "boot": 3197742,
-      "core": 16900,
-      "detail": 1428760
+      "boot": 3314538,
+      "core": 4801137,
+      "detail": 3177620
     },
     "currentBuildStat": {
-      "boot": 3289947,
-      "core": 16900,
-      "detail": 1428760
+      "boot": 3314538,
+      "core": 4801137,
+      "detail": 3177620
     },
     "currentBuildStatComplete": {
       "boot": true,
@@ -53,7 +53,7 @@
       "detail": true
     },
     "declaredMatchesCurrentBuild": {
-      "boot": false,
+      "boot": true,
       "core": true,
       "detail": true
     }
@@ -71,28 +71,28 @@
     {
       "phase": "boot",
       "id": "boot.js-main",
-      "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-CStXYTtw.js",
+      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
+      "physicalPath": "dist/assets/main-s_PwUn7H.js",
       "exists": true,
-      "statBytes": 847769,
-      "declaredBytes": 826673
+      "statBytes": 870195,
+      "declaredBytes": 870195
     },
     {
       "phase": "boot",
       "id": "boot.js-renderer",
-      "manifestUrl": "dist/assets/createRenderer-C5ncXYj_.js",
-      "physicalPath": "dist/assets/createRenderer-DXIrHnan.js",
+      "manifestUrl": "dist/assets/createRenderer-CPda_t-U.js",
+      "physicalPath": "dist/assets/createRenderer-CPda_t-U.js",
       "exists": true,
-      "statBytes": 1012880,
-      "declaredBytes": 941771
+      "statBytes": 1015045,
+      "declaredBytes": 1015045
     },
     {
       "phase": "boot",
       "id": "boot.heightmap-procedural",
-      "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-CStXYTtw.js",
+      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
+      "physicalPath": "dist/assets/main-s_PwUn7H.js",
       "exists": true,
-      "statBytes": 847769,
+      "statBytes": 870195,
       "declaredBytes": 0
     },
     {
@@ -107,10 +107,10 @@
     {
       "phase": "core",
       "id": "core.terrain-procedural",
-      "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-CStXYTtw.js",
+      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
+      "physicalPath": "dist/assets/main-s_PwUn7H.js",
       "exists": true,
-      "statBytes": 847769,
+      "statBytes": 870195,
       "declaredBytes": 0
     },
     {
@@ -125,28 +125,73 @@
     {
       "phase": "core",
       "id": "core.hero-lod1-procedural",
-      "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-CStXYTtw.js",
+      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
+      "physicalPath": "dist/assets/main-s_PwUn7H.js",
       "exists": true,
-      "statBytes": 847769,
+      "statBytes": 870195,
       "declaredBytes": 0
+    },
+    {
+      "phase": "core",
+      "id": "core.terrain-grass-diffuse",
+      "manifestUrl": "dist/textures/ground_grass_diffuse.jpg",
+      "physicalPath": "dist/textures/ground_grass_diffuse.jpg",
+      "exists": true,
+      "statBytes": 955945,
+      "declaredBytes": 955945
+    },
+    {
+      "phase": "core",
+      "id": "core.terrain-dirt-diffuse",
+      "manifestUrl": "dist/textures/ground_dirt_diffuse.jpg",
+      "physicalPath": "dist/textures/ground_dirt_diffuse.jpg",
+      "exists": true,
+      "statBytes": 716010,
+      "declaredBytes": 716010
+    },
+    {
+      "phase": "core",
+      "id": "core.terrain-grass-normal",
+      "manifestUrl": "dist/textures/ground_grass_normal.jpg",
+      "physicalPath": "dist/textures/ground_grass_normal.jpg",
+      "exists": true,
+      "statBytes": 1440314,
+      "declaredBytes": 1440314
+    },
+    {
+      "phase": "core",
+      "id": "core.terrain-dirt-normal",
+      "manifestUrl": "dist/textures/ground_dirt_normal.jpg",
+      "physicalPath": "dist/textures/ground_dirt_normal.jpg",
+      "exists": true,
+      "statBytes": 831959,
+      "declaredBytes": 831959
+    },
+    {
+      "phase": "core",
+      "id": "core.grass-card",
+      "manifestUrl": "dist/textures/grass_card.png",
+      "physicalPath": "dist/textures/grass_card.png",
+      "exists": true,
+      "statBytes": 840009,
+      "declaredBytes": 840009
     },
     {
       "phase": "detail",
       "id": "detail.village-procedural",
-      "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-CStXYTtw.js",
+      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
+      "physicalPath": "dist/assets/main-s_PwUn7H.js",
       "exists": true,
-      "statBytes": 847769,
+      "statBytes": 870195,
       "declaredBytes": 0
     },
     {
       "phase": "detail",
       "id": "detail.hero-lod0-procedural",
-      "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-CStXYTtw.js",
+      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
+      "physicalPath": "dist/assets/main-s_PwUn7H.js",
       "exists": true,
-      "statBytes": 847769,
+      "statBytes": 870195,
       "declaredBytes": 0
     },
     {
@@ -157,6 +202,42 @@
       "exists": true,
       "statBytes": 1428760,
       "declaredBytes": 1428760
+    },
+    {
+      "phase": "detail",
+      "id": "detail.hero-tree-glb",
+      "manifestUrl": "dist/models/hero_tree.glb",
+      "physicalPath": "dist/models/hero_tree.glb",
+      "exists": true,
+      "statBytes": 1389012,
+      "declaredBytes": 1389012
+    },
+    {
+      "phase": "detail",
+      "id": "detail.house-a-glb",
+      "manifestUrl": "dist/models/house_a.glb",
+      "physicalPath": "dist/models/house_a.glb",
+      "exists": true,
+      "statBytes": 72524,
+      "declaredBytes": 72524
+    },
+    {
+      "phase": "detail",
+      "id": "detail.house-b-glb",
+      "manifestUrl": "dist/models/house_b.glb",
+      "physicalPath": "dist/models/house_b.glb",
+      "exists": true,
+      "statBytes": 99296,
+      "declaredBytes": 99296
+    },
+    {
+      "phase": "detail",
+      "id": "detail.house-c-glb",
+      "manifestUrl": "dist/models/house_c.glb",
+      "physicalPath": "dist/models/house_c.glb",
+      "exists": true,
+      "statBytes": 188028,
+      "declaredBytes": 188028
     }
   ],
   "browserVerification": "pending-after-merge",
@@ -170,85 +251,5 @@
     "HTML/JavaScript are bootstrap-resident when this store starts, so they count declared bytes without duplicate fetch.",
     "The current <=2K background tier uses the measured 1K HDR fallback because no 2K HDR exists in public/env.",
     "Preview, browser UI, and GPU behavior must be verified by master after merge."
-  ],
-  "browser": {
-    "at": "2026-08-26",
-    "head": "c35137a",
-    "method": "헤드리스 Chrome CDP + Fetch 도메인. /models/vegetation_kit.glb 의 2번째 요청(로딩 스토어 core fetch; 1번째는 drei preload)만 404 로 응답 또는 네트워크 실패(Fetch.failRequest)로 만들고, 오류 UI·재시도 버튼을 확인한 뒤 버튼 클릭 → 3번째 요청 통과 → ready.",
-    "normal": {
-      "phaseOrder": [
-        "phase boot",
-        "boot -> core",
-        "core -> detail",
-        "detail -> ready"
-      ],
-      "overlayShownMs": 367,
-      "overlayGoneMs": 565,
-      "consoleErrorCount": 0
-    },
-    "http404": {
-      "errorMessage": "불러오기에 실패했습니다: HTTP 404 Not Found: core.vegetation-glb (/models/vegetation_kit.glb)",
-      "retryButton": true,
-      "phaseAtError": "core",
-      "errorShownAtMs": 514,
-      "retryClickedAtMs": 522,
-      "phaseLogs": [
-        "[loading] phase boot",
-        "[loading] boot -> core",
-        "[loading] core -> boot",
-        "[loading] boot -> core",
-        "[loading] core -> detail",
-        "[loading] detail -> ready"
-      ],
-      "readyAfterRetry": true,
-      "interceptedRequests": [
-        {
-          "n": 2,
-          "url": "http://127.0.0.1:5183/models/vegetation_kit.glb",
-          "action": "load404"
-        }
-      ],
-      "requestCount": 3,
-      "consoleErrorCount": 1,
-      "consoleErrors": [
-        "Failed to load resource: the server responded with a status of 404 (Not Found)"
-      ]
-    },
-    "offline": {
-      "errorMessage": "네트워크에 연결되어 있지 않습니다. 연결을 확인한 뒤 다시 시도하세요.",
-      "retryButton": true,
-      "phaseAtError": "core",
-      "errorShownAtMs": 421,
-      "retryClickedAtMs": 427,
-      "phaseLogs": [
-        "[loading] phase boot",
-        "[loading] boot -> core",
-        "[loading] core -> boot",
-        "[loading] boot -> core",
-        "[loading] core -> detail",
-        "[loading] detail -> ready"
-      ],
-      "readyAfterRetry": true,
-      "interceptedRequests": [
-        {
-          "n": 2,
-          "url": "http://127.0.0.1:5183/models/vegetation_kit.glb",
-          "action": "loadoffline"
-        }
-      ],
-      "requestCount": 3,
-      "consoleErrorCount": 1,
-      "consoleErrors": [
-        "Failed to load resource: net::ERR_FAILED"
-      ]
-    },
-    "judgement": {
-      "orderBootCoreDetailReady": true,
-      "errorShown404": true,
-      "errorShownOffline": true,
-      "retrySucceeded": true,
-      "note": "consoleErrorCount 1 은 차단된 요청 자체의 네트워크 오류 로그(의도된 실패). 재시도 후 ready 도달, 오버레이 제거."
-    },
-    "result": "PASS"
-  }
+  ]
 }

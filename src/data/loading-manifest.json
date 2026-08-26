@@ -1,32 +1,139 @@
 {
   "schemaVersion": 1,
-  "measuredFromHead": "d0692ef",
-  "measurement": "Node node:fs statSync against current dist/ and public/ files; procedural entries are included in the boot JS and therefore add 0 separate bytes.",
+  "measuredFromHead": "30665a7",
+  "measurement": "R77-A: Node node:fs statSync against dist/ (npm run build at 30665a7); procedural entries are included in the boot JS and add 0 bytes; look-asset textures (core) and GLBs (detail) added from Automation/look-assets.mjs manifestSuggestions.",
   "phases": {
     "boot": [
-      { "id": "boot.index-html", "url": "dist/index.html", "bytes": 538, "kind": "html" },
-      { "id": "boot.js-main", "url": "dist/assets/main-wrfkKES9.js", "bytes": 826673, "kind": "javascript" },
-      { "id": "boot.js-renderer", "url": "dist/assets/createRenderer-C5ncXYj_.js", "bytes": 941771, "kind": "javascript" },
-      { "id": "boot.heightmap-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
-      { "id": "boot.sky-hdr", "url": "dist/env/sky_1k.hdr", "bytes": 1428760, "kind": "hdr" }
+      { "id": "boot.index-html",
+        "url": "dist/index.html",
+        "bytes": 538,
+        "kind": "html"
+      },
+      { "id": "boot.js-main",
+        "url": "dist/assets/main-s_PwUn7H.js",
+        "bytes": 870195,
+        "kind": "javascript"
+      },
+      { "id": "boot.js-renderer",
+        "url": "dist/assets/createRenderer-CPda_t-U.js",
+        "bytes": 1015045,
+        "kind": "javascript"
+      },
+      { "id": "boot.heightmap-procedural",
+        "url": "dist/assets/main-s_PwUn7H.js",
+        "bytes": 0,
+        "kind": "procedural-in-boot-js"
+      },
+      { "id": "boot.sky-hdr",
+        "url": "dist/env/sky_1k.hdr",
+        "bytes": 1428760,
+        "kind": "hdr"
+      }
     ],
     "core": [
-      { "id": "core.terrain-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
-      { "id": "core.vegetation-glb", "url": "dist/models/vegetation_kit.glb", "bytes": 16900, "kind": "glb" },
-      { "id": "core.hero-lod1-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" }
+      { "id": "core.terrain-procedural",
+        "url": "dist/assets/main-s_PwUn7H.js",
+        "bytes": 0,
+        "kind": "procedural-in-boot-js"
+      },
+      { "id": "core.vegetation-glb",
+        "url": "dist/models/vegetation_kit.glb",
+        "bytes": 16900,
+        "kind": "glb"
+      },
+      { "id": "core.hero-lod1-procedural",
+        "url": "dist/assets/main-s_PwUn7H.js",
+        "bytes": 0,
+        "kind": "procedural-in-boot-js"
+      },
+      { "id": "core.terrain-grass-diffuse",
+        "url": "dist/textures/ground_grass_diffuse.jpg",
+        "bytes": 955945,
+        "kind": "texture"
+      },
+      { "id": "core.terrain-dirt-diffuse",
+        "url": "dist/textures/ground_dirt_diffuse.jpg",
+        "bytes": 716010,
+        "kind": "texture"
+      },
+      { "id": "core.terrain-grass-normal",
+        "url": "dist/textures/ground_grass_normal.jpg",
+        "bytes": 1440314,
+        "kind": "texture"
+      },
+      { "id": "core.terrain-dirt-normal",
+        "url": "dist/textures/ground_dirt_normal.jpg",
+        "bytes": 831959,
+        "kind": "texture"
+      },
+      { "id": "core.grass-card",
+        "url": "dist/textures/grass_card.png",
+        "bytes": 840009,
+        "kind": "texture"
+      }
     ],
     "detail": [
-      { "id": "detail.village-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
-      { "id": "detail.hero-lod0-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
-      { "id": "detail.background-2k-tier", "url": "dist/env/sky_1k.hdr", "bytes": 1428760, "kind": "hdr-2k-tier-fallback-1k" }
+      { "id": "detail.village-procedural",
+        "url": "dist/assets/main-s_PwUn7H.js",
+        "bytes": 0,
+        "kind": "procedural-in-boot-js",
+        "note": "R77-A: house_{a,b,c}.glb 존재 시 GLB 항목이 대신 로드되고 이 절차 경로는 Suspense fallback·LOD1 용으로 남는다(0B)"
+      },
+      { "id": "detail.hero-lod0-procedural",
+        "url": "dist/assets/main-s_PwUn7H.js",
+        "bytes": 0,
+        "kind": "procedural-in-boot-js",
+        "note": "R77-A: hero_tree.glb 존재 시 GLB 항목이 대신 로드되고 이 절차 경로는 Suspense fallback·LOD1 용으로 남는다(0B)"
+      },
+      { "id": "detail.background-2k-tier",
+        "url": "dist/env/sky_1k.hdr",
+        "bytes": 1428760,
+        "kind": "hdr-2k-tier-fallback-1k"
+      },
+      { "id": "detail.hero-tree-glb",
+        "url": "dist/models/hero_tree.glb",
+        "bytes": 1389012,
+        "kind": "glb"
+      },
+      { "id": "detail.house-a-glb",
+        "url": "dist/models/house_a.glb",
+        "bytes": 72524,
+        "kind": "glb"
+      },
+      { "id": "detail.house-b-glb",
+        "url": "dist/models/house_b.glb",
+        "bytes": 99296,
+        "kind": "glb"
+      },
+      { "id": "detail.house-c-glb",
+        "url": "dist/models/house_c.glb",
+        "bytes": 188028,
+        "kind": "glb"
+      }
     ]
   },
   "summary": {
-    "phaseBytes": { "boot": 3197742, "core": 16900, "detail": 1428760 },
-    "cumulativeBytes": { "boot": 3197742, "core": 3214642, "detail": 4643402 },
-    "limitsBytes": { "boot": 4000000, "coreCumulative": 12000000, "total": 60000000 },
-    "checks": { "bootWithinBudget": true, "coreWithinBudget": true, "totalWithinBudget": true },
-    "itemCount": 11,
+    "phaseBytes": {
+      "boot": 3314538,
+      "core": 4801137,
+      "detail": 3177620
+    },
+    "cumulativeBytes": {
+      "boot": 3314538,
+      "core": 8115675,
+      "detail": 11293295
+    },
+    "limitsBytes": {
+      "boot": 4000000,
+      "coreCumulative": 12000000,
+      "total": 60000000
+    },
+    "checks": {
+      "bootWithinBudget": true,
+      "coreWithinBudget": true,
+      "totalWithinBudget": true
+    },
+    "itemCount": 20,
     "duplicateIdCount": 0,
     "detailTierNote": "No 2K HDR is present in public/env; the current <=2K tier preloads the measured sky_1k.hdr fallback."
   }
