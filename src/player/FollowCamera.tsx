@@ -6,6 +6,13 @@ import { GAME_INPUT_ENABLED } from './input'
 import { readCameraDistanceMultiplier } from '../game/cameraDistance'
 import { cameraIntroAt } from '../game/cameraIntro'
 import { readCameraIntroElapsedMs } from '../game/runtimeSignals'
+import { clampCameraDistance } from './cameraCollision'
+import { VILLAGE_COLLIDERS } from '../scene/colliders/village'
+import { heroTreeCollider } from '../scene/colliders/heroTree'
+import placement from '../data/placement.json'
+
+/** D6 카메라 캐스트용 거대 수목 줄기 원(플레이어 충돌 원과 동일 반경). */
+const HERO_CAMERA_CIRCLES = [(() => { const c = heroTreeCollider(placement.heroTree); return { x: c.x, z: c.z, radius: c.radius } })()]
 
 /**
  * 계획서.md §3-4 팔로우 카메라.
@@ -45,7 +52,17 @@ export function FollowCamera({ targetRef, yawRef }: Props) {
 
     // 카메라는 yaw 기준 뒤쪽으로 distance, 위로 height. pitch 만큼 더 올라간다.
     const pitch = (-(intro?.pitchDeg ?? CAMERA.pitchDeg) * Math.PI) / 180 // 음수 pitch = 내려다봄 = 카메라를 그만큼 위로 올림
-    const back = distance * Math.cos(pitch)
+    let back = distance * Math.cos(pitch)
+    // R114-A (D6): 게이트 안에서만 집·거대 수목 콜라이더에 카메라 거리를 캐스트해 지붕 관통을 막는다.
+    if (GAME_INPUT_ENABLED && intro === null) {
+      const clamp = clampCameraDistance(
+        { x: t.x, z: t.z },
+        { x: t.x + Math.sin(yaw) * back, z: t.z + Math.cos(yaw) * back },
+        VILLAGE_COLLIDERS,
+        HERO_CAMERA_CIRCLES,
+      )
+      if (clamp.blocked) back = clamp.distance
+    }
     const up = distance * Math.sin(pitch)
     desired.current.set(
       t.x + Math.sin(yaw) * back,

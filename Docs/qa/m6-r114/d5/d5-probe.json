@@ -1,0 +1,63 @@
+{
+  "q": "low",
+  "steps": [
+    "1-receiveShadow-off",
+    "2-castShadow-off",
+    "3-normals-recomputed",
+    "4-plain-standard-material",
+    "6-tint-pink-gain2",
+    "7-novertexcolor-pink",
+    "8-tint-pink-gain3",
+    "5-flat-shading"
+  ],
+  "setup": {
+    "material": {
+      "type": "MeshStandardNodeMaterial",
+      "color": "ffffff",
+      "map": false,
+      "vertexColors": true,
+      "metalness": 0,
+      "roughness": 0.88,
+      "emissive": "000000",
+      "side": 0,
+      "wobble": true,
+      "positionNode": true,
+      "transparent": false,
+      "opacity": 1
+    },
+    "geometry": {
+      "hasNormal": true,
+      "hasColor": true,
+      "hasUv": true,
+      "normalSample": [
+        -0.256,
+        -0.364,
+        0.896,
+        -0.578,
+        -0.689,
+        0.437
+      ],
+      "bbox": [
+        [
+          -99,
+          0,
+          -179.4
+        ],
+        [
+          99,
+          255.9,
+          179.4
+        ]
+      ],
+      "hasSpeed": true
+    },
+    "cast": true,
+    "receive": true,
+    "player": [
+      0,
+      -1.4826036262798064,
+      24
+    ]
+  },
+  "errors": 0
+}

@@ -21,6 +21,7 @@ test('default policy builds exactly once', () => {
     soak: undefined,
     output: undefined,
     soakOutput: undefined,
+    preset: 'low',
     help: false,
     buildMode: 'once',
   })

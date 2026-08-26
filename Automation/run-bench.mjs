@@ -133,7 +133,7 @@ async function runSoak(buildHash) {
     cycles: rows.length,
     buildHash,
     backend: commonValue(rows, 'backend'),
-    preset: 'low',
+    preset: options?.preset ?? 'low',
     crash,
     tdr,
     contextLost,
@@ -166,7 +166,7 @@ async function runBenchNavigation(index, buildHash) {
         build_hash: buildHash,
         backend: UNKNOWN,
         angle: UNKNOWN,
-        preset: 'low',
+        preset: options?.preset ?? 'low',
         routeHash: UNKNOWN,
         avg_fps: UNKNOWN,
         low1_fps: UNKNOWN,
@@ -203,7 +203,7 @@ function resultToRow(index, buildHash, report, hud) {
       build_hash: buildHash,
       backend: hud.backend || UNKNOWN,
       angle: hud.angle || UNKNOWN,
-      preset: 'low',
+      preset: options?.preset ?? 'low',
       routeHash: report?.routeHash ?? UNKNOWN,
       avg_fps: measured(perf.avgFps),
       low1_fps: measured(perf.onePercentLowFps),
@@ -500,8 +500,9 @@ async function waitForPreview(child) {
   throw new Error(`preview readiness timeout\n${child.log}`)
 }
 
-function makeUrl({ gl, reportName, reportOrigin }) {
-  const params = new URLSearchParams({ q: 'low' })
+function makeUrl({ gl, reportName, reportOrigin, preset = options?.preset ?? 'low' }) {
+  // R114-A: `--preset base` 로 base 프리셋 관문 실측. 기본값 low 는 불변.
+  const params = new URLSearchParams({ q: preset })
   if (gl === 'webgl') params.set('gl', 'webgl')
   if (reportName) {
     params.set('route', 'bench')
@@ -635,6 +636,7 @@ export function parseBenchArgs(args) {
     soak: undefined,
     output: undefined,
     soakOutput: undefined,
+    preset: 'low',
     help: false,
     buildMode: 'once',
   }
@@ -655,6 +657,7 @@ export function parseBenchArgs(args) {
     else if (arg === '--soak') result.soak = Number(requireOptionValue(args, ++index, arg))
     else if (arg === '--output') result.output = requireOptionValue(args, ++index, arg)
     else if (arg === '--soak-output') result.soakOutput = requireOptionValue(args, ++index, arg)
+    else if (arg === '--preset') result.preset = requireOptionValue(args, ++index, arg)
     else throw new Error(`unknown option: ${arg}`)
   }
   validateOptions(result)
@@ -683,6 +686,7 @@ function validateOptions(value) {
   if (!Number.isInteger(value.runs) || value.runs < 1) throw new Error('--runs must be a positive integer')
   if (!Number.isFinite(value.warmup) || value.warmup < 0) throw new Error('--warmup must be >= 0')
   if (value.gl !== undefined && value.gl !== 'webgl') throw new Error('--gl only accepts webgl')
+  if (value.preset !== 'low' && value.preset !== 'base') throw new Error('--preset must be low or base')
   if (value.soak !== undefined && (!Number.isFinite(value.soak) || value.soak <= 0)) {
     throw new Error('--soak must be > 0 seconds')
   }
@@ -690,7 +694,7 @@ function validateOptions(value) {
 
 function printHelp() {
   process.stdout.write(
-    'usage: node Automation/run-bench.mjs [--build-once|--skip-build] [--runs 3] [--warmup 30] [--gl webgl] [--soak 900] [--output path] [--soak-output path]\n' +
+    'usage: node Automation/run-bench.mjs [--build-once|--skip-build] [--runs 3] [--warmup 30] [--gl webgl] [--preset low|base] [--soak 900] [--output path] [--soak-output path]\n' +
       '  --build-once  build dist once before this invocation (default)\n' +
       '  --skip-build  reuse an existing dist directory; mutually exclusive with --build-once\n',
   )
