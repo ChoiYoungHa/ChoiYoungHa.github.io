@@ -1,0 +1,139 @@
+{
+  "id": "m3-11-lighting-audit",
+  "date": "2026-08-26",
+  "head": "03a9c91",
+  "scope": "src/** full-text audit on wt/bench after main merge",
+  "premiseVariance": "The merged src/scene/Prototype.tsx still declares a query-only AmbientLight fallback; it is removed from the default render path, not from source code.",
+  "requirements": {
+    "roadmap": "M3-11: dynamic GI code 0 and auxiliary-light count recorded",
+    "plan": "계획서 §6-3: IBL first, AO, one shadow-casting directional light; no dynamic GI",
+    "research": "리서치/04-웹3D스택.md §3-2: no Lumen-equivalent dynamic GI; baked light/light probe/AO are substitutes"
+  },
+  "search": {
+    "dynamicGI": {
+      "count": 0,
+      "files": [],
+      "tokens": [
+        "dynamic GI",
+        "global illumination",
+        "globalIllumination",
+        "webgl_simple_gi"
+      ]
+    },
+    "lightProbe": {
+      "count": 0,
+      "files": [],
+      "tokens": [
+        "LightProbe",
+        "lightProbe",
+        "IrradianceVolume"
+      ]
+    },
+    "reflectionProbe": {
+      "count": 0,
+      "files": [],
+      "tokens": [
+        "ReflectionProbe",
+        "reflectionProbe",
+        "CubeCamera"
+      ]
+    }
+  },
+  "lights": {
+    "DirectionalLight": {
+      "declaredInstances": 1,
+      "defaultActive": 1,
+      "file": "src/scene/Lighting.tsx",
+      "construction": "new DirectionalLight(0xffffff, 1)",
+      "intensity": 1,
+      "castShadow": true
+    },
+    "AmbientLight": {
+      "declaredInstances": 1,
+      "defaultActive": 0,
+      "file": "src/scene/Prototype.tsx",
+      "construction": "<ambientLight intensity={ambient} />",
+      "intensity": "positive finite value from ?ambient; documented diagnostic example 0.35",
+      "activation": "query-only; absent/empty/zero/invalid returns null",
+      "castShadow": false
+    },
+    "HemisphereLight": {
+      "declaredInstances": 0,
+      "defaultActive": 0,
+      "files": [],
+      "castShadow": false
+    },
+    "PointLight": {
+      "declaredInstances": 0,
+      "defaultActive": 0,
+      "files": [],
+      "castShadow": false
+    },
+    "SpotLight": {
+      "declaredInstances": 0,
+      "defaultActive": 0,
+      "files": [],
+      "castShadow": false
+    },
+    "RectAreaLight": {
+      "declaredInstances": 0,
+      "defaultActive": 0,
+      "files": [],
+      "castShadow": false
+    }
+  },
+  "counts": {
+    "declaredAnalyticLights": 2,
+    "defaultActiveAnalyticLights": 1,
+    "declaredAuxiliaryLights": 1,
+    "defaultActiveAuxiliaryLights": 0,
+    "shadowCastingLights": 1
+  },
+  "ibl": {
+    "enabled": true,
+    "file": "src/scene/SkyDome.tsx",
+    "assignment": "scene.environment = sky",
+    "texture": "/env/sky_1k.hdr",
+    "mapping": "EquirectangularReflectionMapping",
+    "environmentIntensity": 1.0,
+    "environmentOverride": "?envi=<finite number >= 0>",
+    "backgroundIntensity": 1.75,
+    "backgroundOverride": "?bgi=<finite number >= 0>",
+    "source": "src/data/lookdev.json"
+  },
+  "shadowCasterAudit": {
+    "count": 1,
+    "expected": 1,
+    "pass": true,
+    "light": "src/scene/Lighting.tsx DirectionalLight"
+  },
+  "hemisphereDecision": {
+    "added": false,
+    "requestedCandidate": {
+      "skyColor": "#8FA0B0",
+      "groundColor": "#4B4A33",
+      "maxStartIntensity": 0.15,
+      "default": "off",
+      "query": "?hemi=1"
+    },
+    "reasons": [
+      "An existing query-only AmbientLight is already the declared auxiliary fallback, so the declared auxiliary-light count is not zero.",
+      "The merged 5/5 look evidence records ambientLight 0 and programs 40; adding another light is not needed for the default scene.",
+      "three r185 WebGLPrograms includes numHemiLights in its program cache key, and WebGPU LightsNode.customCacheKey includes every light ID; programs-count invariance when enabled cannot be guaranteed without a GPU measurement."
+    ],
+    "threeR185Evidence": [
+      "node_modules/three/src/renderers/webgl/WebGLPrograms.js:476",
+      "node_modules/three/src/nodes/lighting/LightsNode.js:146-173"
+    ],
+    "defaultProgramsImpact": "none: Lighting.tsx is unchanged and no HemisphereLight is constructed",
+    "baselinePrograms": 40
+  },
+  "result": {
+    "dynamicGICodeZero": true,
+    "shadowCasterCountPass": true,
+    "iblPrimaryPass": true,
+    "auxiliaryLightCountRecorded": true,
+    "status": "PASS_WITH_NOTE",
+    "note": "The auxiliary AmbientLight is diagnostic-only and default-active auxiliary count remains zero; HemisphereLight was intentionally not added because programs invariance is not guaranteed."
+  }
+}

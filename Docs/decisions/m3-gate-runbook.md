@@ -1,11 +1,17 @@
-# M3-GATE 실행 runbook — R30-A 직후
+# M3-GATE 실행 runbook — 병합 HEAD 사전 점검
 
 - 갱신일: 2026-08-26
-- runbook 갱신 기준 HEAD: `f8b4c63`(실제 측정 build hash는 실행 시 확정)
+- runbook 갱신 기준 HEAD: `03a9c91`(main `8edb15e` 병합 완료; 실제 측정 build hash는 실행 시 확정)
 - 실행자: codex-A `54c832e9`
 - 실행 시점: R30-A 산출물을 master가 검토·커밋하고 GPU 단독 사용을 보장한 뒤
 - 예상 소요: **약 54분(50~60분)**. 영하님 RAM 수동 캡처 대기 시간은 제외한다.
 - 단계 수: **11단계**
+
+## 사전 점검 스냅샷
+
+- 룩 결정: `Docs/lookdev/l1-l5-decision.json`의 `passCount=5`, 즉 **L1~L5 5/5 PASS**. gate 최소 조건은 기존대로 `≥4/5`다.
+- 성능 경계: 같은 파일의 단발 측정은 programs `40/40`, 1% low `19.9fps`다. programs는 여유 0이고 1% low는 20fps 관문보다 0.1 낮으므로, 단발 FAIL로 확정하지 않고 아래 동일 조건 3회 중앙값과 편차로 재판정한다.
+- M2 델타 기준 파일: WebGPU `Docs/perf/m2-runs.csv`, WebGL2 `Docs/perf/m2-webgl-runs.csv`.
 
 ## 확정된 build 정책
 
@@ -74,6 +80,7 @@ node Automation/run-bench.mjs --build-once --runs 3 --warmup 30 --output Docs/pe
 
 - 이 명령만 내부에서 `npm run build`를 정확히 한 번 실행한다. exit `0`과 build hash를 `Docs/qa/m3-smoke.md`에 기록한다.
 - CSV 스키마는 기존과 동일하며 run 1~3과 median 행, backend `WebGPU`, preset `low`, 동일 routeHash, crash/errors 0이어야 한다.
+- 특히 programs `≤40`과 1% low `≥20fps`를 run별·중앙값으로 기록한다. `40` 또는 `19.9` 부근이면 반올림 전 원값과 3회 범위를 함께 병기한다.
 
 ### 6. WebGL2 3회 — 약 5분
 
@@ -83,6 +90,7 @@ node Automation/run-bench.mjs --skip-build --runs 3 --warmup 30 --gl webgl --out
 
 - 5단계의 `dist`를 재사용하며 build를 호출하지 않는다.
 - 세 run과 median의 backend는 `WebGL2`이고 routeHash는 WebGPU와 같아야 한다.
+- WebGPU와 동일하게 programs 40 상한·1% low 20fps 관문을 run별·중앙값으로 감시한다.
 
 ### 7. 900초 soak — 약 16분
 
@@ -120,7 +128,7 @@ node Automation/measure.mjs Docs/lookdev/m3-after-3.png --targets src/data/lookd
 - `Docs/lookdev/l1-l5-decision.json`이 9단계의 세 metrics hash와 값을 참조하는지 대조한다.
 - L1·L2·L3·L5는 자동 재측정과 값/판정이 같아야 한다.
 - L4는 S3 흑백에서 줄기/수관/하늘 3체크의 수동 근거가 있어야 하며 `null`을 PASS로 세지 않는다.
-- 최종 룩 조건은 5개 명제 중 **L≥4/5 PASS**다. 불일치는 고치지 않고 gate 초안에서 FAIL/보류로 기록한다.
+- 병합 시점의 `Docs/lookdev/l1-l5-decision.json`은 **5/5 PASS**다. 재측정과 대조 후에도 최종 룩 조건은 5개 명제 중 **L≥4/5 PASS**이며, 불일치는 고치지 않고 gate 초안에서 FAIL/보류로 기록한다.
 
 ### 11. gate 초안·RAM·종료 정리 — 약 10분
 
