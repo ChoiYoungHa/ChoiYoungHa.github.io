@@ -1,0 +1,16 @@
+Asset: Pig
+Source: Poly Pizza
+Author: Poly by Google
+Asset page: https://poly.pizza/m/6yc3isbjZST
+Direct GLB: https://static.poly.pizza/ccb61b1c-854d-42a1-b16f-04a433f3b359.glb
+License: Creative Commons Attribution 3.0 (CC BY 3.0)
+License URL: https://creativecommons.org/licenses/by/3.0/
+Attribution required: yes
+Redistribution allowed: yes, with attribution
+Acquired: 2026-08-27
+Processing: CPU-only derivative. Three.js SimplifyModifier reduced the source from
+1742 to 1489 triangles. One material was retained, embedded textures and skinning
+are absent, and vertex colors were authored as a gray body (#73777F) with a pink
+snout (#E995AA). The source silhouette (chubby body and short legs) was retained.
+
+Required attribution: "Pig" by Poly by Google, licensed under CC BY 3.0.
