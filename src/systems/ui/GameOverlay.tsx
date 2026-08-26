@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { PortraitSelection } from '../../game/portrait/compose.ts'
+import { gameBootstrap } from '../../game/bootstrap.ts'
 import { DEFAULT_PORTRAIT_SELECTION } from '../../game/portrait/compose.ts'
-import type { GameSession, SessionPosition, SessionSnapshot } from '../../game/session.ts'
+import type { GameSession, SessionSnapshot } from '../../game/session.ts'
 import type { JobId } from '../../game/state.ts'
 import { useGame, selectHudProps, selectScene } from '../../store/useGame.ts'
+import { useRuntime } from '../../store/useRuntime.ts'
 import type { LoadingState } from '../loading.ts'
 import { CharacterCreate } from './CharacterCreate.tsx'
 import { cyclePortraitPart, randomCharacterSelection, type PortraitPartKey } from './characterCreateLogic.ts'
@@ -19,16 +21,11 @@ import { ShopPanel } from './ShopPanel.tsx'
 import { TitleScreen } from './TitleScreen.tsx'
 import { TutorialHints } from './TutorialHints.tsx'
 import { ZoneBanner } from './ZoneBanner.tsx'
+import { gameProjector, type GameProjector } from './projector.ts'
 
 const JOBS: readonly JobId[] = ['warrior', 'archer', 'mage', 'thief']
 
-export interface ProjectedPoint {
-  x: number
-  y: number
-  visible?: boolean
-}
-
-export type GameProjector = (position: SessionPosition) => ProjectedPoint
+export type { GameProjector, ProjectedPoint } from './projector.ts'
 
 export interface GameOverlayProps {
   session: GameSession
@@ -37,6 +34,11 @@ export interface GameOverlayProps {
   preset: string
   projector: GameProjector
   bgUrl?: string
+}
+
+export interface GameOverlayRuntimeProps {
+  loading: LoadingState
+  preset: string
 }
 
 function useSessionSnapshot(session: GameSession): SessionSnapshot {
@@ -64,8 +66,6 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
   })
   const [hoveredSlot, setHoveredSlot] = useState<number | null>(null)
   const randomSeed = useRef(95)
-
-  useEffect(() => session.bind(useGame), [session])
 
   const floaters = useMemo(() => {
     let state = createDamageFloaterState()
@@ -122,5 +122,12 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
       <DamageFloater state={floaters} nowMs={snapshot.nowMs} />
       <MobHpBar mobs={mobBars} />
     </div>
+  )
+}
+
+export default function GameOverlayRuntime(props: GameOverlayRuntimeProps) {
+  const backend = useRuntime((state) => state.backend)
+  return gameBootstrap === null ? null : (
+    <GameOverlay {...props} backend={backend} session={gameBootstrap.session} projector={gameProjector} />
   )
 }

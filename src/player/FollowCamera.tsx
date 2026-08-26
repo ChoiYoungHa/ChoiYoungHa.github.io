@@ -2,6 +2,8 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Vector3 } from 'three'
 import type { Vec3 } from './controllers/types'
+import { GAME_INPUT_ENABLED } from './input'
+import { readCameraDistanceMultiplier } from '../game/cameraDistance'
 
 /**
  * 계획서.md §3-4 팔로우 카메라.
@@ -35,11 +37,12 @@ export function FollowCamera({ targetRef, yawRef }: Props) {
     const t = targetRef.current
     if (!t) return
     const yaw = yawRef.current ?? 0
+    const distance = CAMERA.distance * (GAME_INPUT_ENABLED ? readCameraDistanceMultiplier() : 1)
 
     // 카메라는 yaw 기준 뒤쪽으로 distance, 위로 height. pitch 만큼 더 올라간다.
     const pitch = (-CAMERA.pitchDeg * Math.PI) / 180 // 음수 pitch = 내려다봄 = 카메라를 그만큼 위로 올림
-    const back = CAMERA.distance * Math.cos(pitch)
-    const up = CAMERA.distance * Math.sin(pitch)
+    const back = distance * Math.cos(pitch)
+    const up = distance * Math.sin(pitch)
     desired.current.set(
       t.x + Math.sin(yaw) * back,
       t.y + CAMERA.height + up,

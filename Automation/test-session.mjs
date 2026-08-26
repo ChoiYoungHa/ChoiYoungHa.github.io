@@ -36,6 +36,14 @@ test('title and character inputs advance one session while the bound store mirro
   })
 })
 
+test('debug initialScene enters through the session state machine and repairs prerequisites', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const hunt = createSession({ seed: 45, ipMode: 'own', initialScene: 'hunt' }).getSnapshot()
+  assert.equal(hunt.game.scene, 'hunt')
+  assert.equal(hunt.game.jobId, 'warrior')
+  assert.equal(hunt.game.quest.status, 'active')
+})
+
 test('I-10 에필로그 액션은 에필로그 밖에서 스토리를 우회하지 못한다', async () => {
   const { createSession } = await load('src/game/session.ts')
   const session = createSession({ seed: 1, ipMode: 'own' })

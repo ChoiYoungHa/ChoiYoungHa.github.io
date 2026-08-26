@@ -1,6 +1,6 @@
 /**
  * 계획서.md §3-4 — 입력은 키가 아니라 **동작명**으로 추상화한다.
- * jump·interact 는 범위 밖(§1-2 제출 후 선택). Action 타입에 미리 넣지 않는다.
+ * M6 확장 동작은 GAME_INPUT_ENABLED 일 때만 edge 이벤트를 낸다. 이동 계약은 항상 유지한다.
  */
 
 export type Action =
@@ -12,6 +12,12 @@ export type Action =
   | 'lookX'
   | 'lookY'
   | 'toggleQuality'
+  | 'jump'
+  | 'interact'
+  | 'attack'
+  | 'skill'
+  | 'inventory'
+  | 'confirm'
 
 export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string[]> = {
   moveForward: ['KeyW', 'ArrowUp'],
@@ -20,7 +26,25 @@ export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string
   moveRight: ['KeyD', 'ArrowRight'],
   run: ['ShiftLeft', 'ShiftRight'],
   toggleQuality: ['KeyQ'],
+  jump: ['Space'],
+  interact: ['KeyF'],
+  attack: ['Digit1'],
+  skill: ['Digit2'],
+  inventory: ['KeyI'],
+  confirm: ['Enter'],
 }
+
+export const GAMEPLAY_ACTIONS = ['jump', 'interact', 'attack', 'skill', 'inventory', 'confirm'] as const
+export type GameplayAction = typeof GAMEPLAY_ACTIONS[number]
+
+export function isGameInputEnabled(search = '', viteGame = ''): boolean {
+  return new URLSearchParams(search).get('game') === '1' || viteGame === '1'
+}
+
+export const GAME_INPUT_ENABLED = isGameInputEnabled(
+  typeof location === 'undefined' ? '' : location.search,
+  import.meta.env?.VITE_GAME,
+)
 
 /** 컨트롤러가 매 프레임 받는 입력 상태. 키 코드가 아니라 의미만 담는다. */
 export interface InputState {
@@ -33,11 +57,31 @@ export interface InputState {
 
 export const NEUTRAL_INPUT: InputState = { forward: 0, strafe: 0, run: false, yaw: 0 }
 
-/** 키보드를 InputState 로 바꾸는 최소 구독기. M0-a 범위: 이동·달리기만. */
-export function createKeyboardInput(target: EventTarget = window) {
+export interface KeyboardInputOptions {
+  gameInputEnabled?: boolean
+}
+
+function acceptsGameKey(target: EventTarget | null): boolean {
+  if (typeof HTMLElement === 'undefined' || !(target instanceof HTMLElement)) return true
+  return !target.isContentEditable && !['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(target.tagName)
+}
+
+/** 키보드를 InputState 와 게이트된 M6 edge 동작으로 바꾸는 최소 구독기. */
+export function createKeyboardInput(
+  target: EventTarget = window,
+  options: KeyboardInputOptions = {},
+) {
   const pressed = new Set<string>()
+  const pressedEdges = new Set<GameplayAction>()
+  const gameInputEnabled = options.gameInputEnabled ?? GAME_INPUT_ENABLED
   const onDown = (e: Event) => {
-    pressed.add((e as KeyboardEvent).code)
+    const keyboard = e as KeyboardEvent
+    const firstPress = !pressed.has(keyboard.code)
+    pressed.add(keyboard.code)
+    if (!gameInputEnabled || !firstPress || keyboard.repeat || !acceptsGameKey(e.target)) return
+    for (const action of GAMEPLAY_ACTIONS) {
+      if (DEFAULT_BINDINGS[action].includes(keyboard.code)) pressedEdges.add(action)
+    }
   }
   const onUp = (e: Event) => {
     pressed.delete((e as KeyboardEvent).code)
@@ -58,10 +102,16 @@ export function createKeyboardInput(target: EventTarget = window) {
       }
     },
     isDown: (action: keyof typeof DEFAULT_BINDINGS) => held(action),
+    consumePressed(): GameplayAction[] {
+      const edges = [...pressedEdges]
+      pressedEdges.clear()
+      return edges
+    },
     dispose() {
       target.removeEventListener('keydown', onDown)
       target.removeEventListener('keyup', onUp)
       pressed.clear()
+      pressedEdges.clear()
     },
   }
 }
