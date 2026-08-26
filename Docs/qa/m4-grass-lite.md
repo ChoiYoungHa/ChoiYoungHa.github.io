@@ -26,16 +26,16 @@ Kenney grass의 원본 accessor 범위(높이 0.254m, XZ 반경 약 0.24m)에 �
 
 ## 합산 전후
 
-`node Automation/scene-tris.mjs --preset low --grass-lite --out Docs/perf/m4-scene-tris.json`으로 생성했다. grass 종만 132→12 tris이며 flower(76)·bush(32)는 GLB를 유지한다.
+`node Automation/scene-tris.mjs --preset low --grass-lite --out Docs/perf/m4-scene-tris-grass-lite.json`으로 생성했다. grass 종만 132→12 tris이며 flower(76)·bush(32)는 GLB를 유지한다.
 
-| preset | 시나리오 | 전 | grassLite 후 | 감소 | 600K |
+| preset | 시나리오 | 전 | grassLite 후 | 감소 | §4-1 프리셋별 판정 |
 |---|---|---:|---:|---:|---|
-| low | worst | 816,434 | 312,434 | 504,000 | PASS |
-| low | typical(hero LOD1) | 814,736 | 310,736 | 504,000 | PASS |
-| base | worst | 2,384,834 | 704,834 | 1,680,000 | FAIL(+104,834) |
-| base | typical(hero LOD1) | 2,383,136 | 703,136 | 1,680,000 | FAIL(+103,136) |
+| low | worst | 816,434 | 312,434 | 504,000 | 600K PASS |
+| low | typical(hero LOD1) | 814,736 | 310,736 | 504,000 | 600K PASS |
+| base | worst | 2,384,834 | 704,834 | 1,680,000 | 1.1M PASS(395,166 여유) |
+| base | typical(hero LOD1) | 2,383,136 | 703,136 | 1,680,000 | 1.1M PASS(396,864 여유) |
 
-low의 식생 합계는 664,800→160,800 tris다. base는 2,216,000→536,000 tris로 크게 줄지만 전체 worst는 여전히 600K를 넘으므로, 이 옵션만으로 base 예산을 닫았다고 판정하지 않는다.
+low의 식생 합계는 664,800→160,800 tris다. base는 2,216,000→536,000 tris로 줄어 §4-1 원계약 1.1M을 통과한다. 다만 기본값은 off이므로 low 예산 완료에는 GPU 룩 검증 후 grassLite 활성화 결정이 필요하다.
 
 ## 기본 off 불변 근거
 

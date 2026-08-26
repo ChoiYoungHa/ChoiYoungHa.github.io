@@ -2,8 +2,9 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import type { InstancedMesh, Material, Mesh, Object3D } from 'three'
-import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
+import lookdev from '../data/lookdev.json'
 import mainPath from '../data/main-path.json'
 import vistas from '../data/vistas.json'
 import { useRuntime } from '../store/useRuntime'
@@ -11,6 +12,7 @@ import { WORLD_HALF_EXTENT } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { useLookdevMaterial } from './Atmosphere'
 import { lodConfigForPreset } from './foliage/lodConfig'
+import { buildRockLiteGeometry, ROCK_LITE_SEED } from './foliage/rockLiteGeometry'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
@@ -60,6 +62,23 @@ function geometryForSpecies(scene: Object3D, species: string): BufferGeometry {
   if (!merged) throw new Error(`Could not merge rock geometry: ${species}`)
   merged.computeBoundingSphere()
   return merged
+}
+
+export function readRockLiteEnabled(search: string = location.search): boolean {
+  const query = new URLSearchParams(search).get('rockLite')
+  if (query !== null) return query === '1'
+  return lookdev.rockLite.enabled
+}
+
+function rockLiteGeometry(seed: number): BufferGeometry {
+  const data = buildRockLiteGeometry(seed)
+  const geometry = new BufferGeometry()
+  geometry.setAttribute('position', new BufferAttribute(data.positions, 3))
+  geometry.setAttribute('normal', new BufferAttribute(data.normals, 3))
+  geometry.setAttribute('color', new BufferAttribute(data.colors, 3))
+  geometry.setIndex(new BufferAttribute(data.index, 1))
+  geometry.computeBoundingSphere()
+  return geometry
 }
 
 function RockSpecies({
@@ -127,10 +146,13 @@ export function RockInstances({ sampleHeight }: RockInstancesProps) {
   const preset = useRuntime((state) => state.preset)
   const lod = lodConfigForPreset(preset)
   const total = lod.rockInstances
+  const rockLiteEnabled = readRockLiteEnabled()
 
   const geometries = useMemo(
-    () => SPECIES.map((species) => geometryForSpecies(scene, species)),
-    [scene],
+    () => SPECIES.map((species, index) => rockLiteEnabled
+      ? rockLiteGeometry((ROCK_LITE_SEED + index * 0x9e37_79b9) >>> 0)
+      : geometryForSpecies(scene, species)),
+    [rockLiteEnabled, scene],
   )
   const pointSets = useMemo(() => {
     const counts = [Math.floor(total / 3), Math.floor(total / 3)]
