@@ -1,9 +1,9 @@
 # D-1 제출 증거 인덱스
 
-- 실측 시각: `2026-08-26T21:32:02.654+09:00`
-- build hash: `322be8e`(main ref)
-- 실측 방법: main 저장소 루트 `C:\Users\USER\Desktop\claude\해커톤\web3d`에서 각 경로를 Node `fs.existsSync`로 검사
-- 범위: `로드맵.md §5 마감 D-1 우선순위`의 11개 행 + M3 룩 증거 1개 행
+- 실측 시각: `2026-08-26T22:21:46.982+09:00`
+- build hash: `3f93572`(`wt/bench`, main 병합 HEAD, tag `v0.3.0-m3`)
+- 실측 방법: worktree 루트 `C:\Users\USER\Desktop\claude\해커톤\web3d-wt-codexA`에서 각 경로를 Node `fs.existsSync`로 검사
+- 범위: `로드맵.md §5 마감 D-1 우선순위`의 11개 행 + M3 룩 증거 1개 행 + M3-GATE 증거 1개 행
 
 | 순서 | ID | 실제 증거 경로와 존재 여부 | 행 완비 |
 |---:|---|---|---|
@@ -19,17 +19,18 @@
 | 10 | M0a-13 | `Docs/deploy/m0a-url.txt` ❌ | ❌ |
 | 11 | M0a-GATE | `Docs/decisions/m0a-gate.md` ❌ | ❌ |
 | 12 | M3-01,M3-14,M3-19D | `Docs/lookdev/l1-l5-decision.json` ✅ · `Docs/lookdev/m3-tonemap.md` ✅<br>`Docs/lookdev/m3-before-1-metrics.json` ✅ · `Docs/lookdev/m3-before-2-metrics.json` ✅ · `Docs/lookdev/m3-before-3-metrics.json` ✅<br>`Docs/lookdev/m3-after-1-metrics.json` ✅ · `Docs/lookdev/m3-after-2-metrics.json` ✅ · `Docs/lookdev/m3-after-3-metrics.json` ✅<br>`Docs/lookdev/m3-before-1.png` ✅ · `Docs/lookdev/m3-before-2.png` ✅ · `Docs/lookdev/m3-before-3.png` ✅<br>`Docs/lookdev/m3-after-1.png` ✅ · `Docs/lookdev/m3-after-2.png` ✅ · `Docs/lookdev/m3-after-3.png` ✅ · `Docs/lookdev/m3-after-1-bw.png` ✅<br>`Docs/qa/m3-l4-s3.json` ✅ | ✅ |
+| 13 | M3-GATE,M3-20 | `Docs/decisions/m3-gate.md` ✅ · `Docs/perf/m3-runs.csv` ✅ · `Docs/perf/m3-webgl-runs.csv` ✅<br>`Docs/perf/m3-delta.md` ✅ · `Docs/qa/m3-15min.md` ✅ · `Docs/qa/m3-smoke.md` ✅<br>`Docs/lookdev/m3-gate-1-metrics.json` ✅ · `Docs/lookdev/m3-gate-2-metrics.json` ✅ · `Docs/lookdev/m3-gate-3-metrics.json` ✅ | ✅ |
 
 ## 합계
 
-- 검사 항목: **41개 중 존재 38개, 부재 3개**(기존 D-1 25개 중 22개 존재 + M3 16개 중 16개 존재)
-- 전체 행: **12개 중 완비 9개, 미완비 3개**
-- D-1 우선순위 행: **11개 중 완비 8개, 미완비 3개**; M3 룩 행: **1개 중 완비 1개**
+- 검사 항목: **50개 중 존재 47개, 부재 3개**(기존 D-1 25개 중 22개 존재 + M3 룩 16개 중 16개 존재 + M3-GATE 9개 중 9개 존재)
+- 전체 행: **13개 중 완비 10개, 미완비 3개**
+- D-1 우선순위 행: **11개 중 완비 8개, 미완비 3개**; M3 룩·GATE 행: **2개 중 완비 2개**
 - 부재 증거: production 배포 로그, 공개 URL 검증, M0a 최종 GATE 문서
 
 파일 존재는 해당 완료 조건의 PASS와 같지 않다. 특히 `wrangler-help.txt`가 있어도 production 배포 로그가 없으므로 M0a-11·12 묶음은 미완비다.
 
-M3 행의 16개 증거는 모두 존재한다. 룩 판정은 `l1-l5-decision.json`의 5/5 PASS를 인용하지만, 성능·soak를 포함한 M3-GATE 판정은 별도 R45-C 증거가 생길 때까지 이 인덱스에서 완료로 간주하지 않는다.
+M3 룩 16개와 M3-GATE 9개 증거는 모두 존재한다. `m3-gate.md`의 master 절은 자동 지표·룩 5/5 PASS와 프로세스 RAM 보류를 근거로 **조건부 PASS**, tag `v0.3.0-m3`를 기록한다.
 
 ## 부재 3건 해소 경로
 
