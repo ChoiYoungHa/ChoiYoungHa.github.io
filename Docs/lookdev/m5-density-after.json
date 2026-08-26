@@ -1,0 +1,87 @@
+{
+  "schema": "asset-density/1",
+  "capture": {
+    "file": "Docs/lookdev/m5-tree-after.png",
+    "sha256": "c60d5b84cfcc566c0efa3decef1dcbcf40e47a9c1bd86cca78a62e6af9c29b44",
+    "width": 1280,
+    "height": 720
+  },
+  "stats": {
+    "file": "Docs/perf/m5-scene-tris-low.json",
+    "schema": "scene-tris/1"
+  },
+  "baseline": {
+    "file": null,
+    "heroSilhouetteRatio": null
+  },
+  "metrics": {
+    "textureCount": {
+      "value": null,
+      "source": null,
+      "reason": "renderer.info.memory.textures unavailable"
+    },
+    "meshKinds": {
+      "value": 16,
+      "source": "scene-tris/1 inputs distinct geometry sources",
+      "reason": null
+    },
+    "heroSilhouetteRatio": {
+      "value": 0.074908,
+      "boundaryPixels": 1155,
+      "maskPixels": 15419,
+      "roi": {
+        "left": 553,
+        "top": 89,
+        "right": 739,
+        "bottom": 302
+      },
+      "maskBbox": {
+        "left": 580,
+        "top": 89,
+        "right": 739,
+        "bottom": 302
+      },
+      "sky": {
+        "pixels": 11440,
+        "luma": 145.5,
+        "saturationPct": 10.7,
+        "margin": 40
+      },
+      "thresholds": {
+        "luma": 18,
+        "saturationPct": 12
+      },
+      "method": "M3 L4 S2 ROI + side-sky mean; largest |luma delta|/|HSL saturation delta| mask component; 4-neighbour boundary pixels / mask pixels"
+    }
+  },
+  "checks": {
+    "textureCount": {
+      "value": null,
+      "minimum": 6,
+      "pass": null
+    },
+    "meshKinds": {
+      "value": 16,
+      "minimum": 8,
+      "pass": true
+    },
+    "heroSilhouetteRatio": {
+      "value": 0.074908,
+      "baseline": null,
+      "minimum": null,
+      "pass": null
+    }
+  },
+  "targets": {
+    "textureCountMinimum": 6,
+    "meshKindsMinimum": 8,
+    "heroSilhouetteMultiplierVsM3": 2,
+    "heroSilhouetteMinimum": 0.149816,
+    "heroSilhouetteMinimumBasis": "current capture recorded as M3 baseline candidate"
+  },
+  "definitions": {
+    "textureCount": "renderer.info.memory.textures (or bench smoke perf.maxTextures)",
+    "meshKinds": "renderer.info.memory.geometries; scene-tris/1 fallback counts distinct submitted geometry sources",
+    "heroSilhouetteRatio": "largest sky-contrast hero mask 4-neighbour boundary pixels / mask pixels"
+  }
+}

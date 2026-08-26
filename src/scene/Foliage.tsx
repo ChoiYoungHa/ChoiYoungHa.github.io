@@ -88,14 +88,28 @@ export function readGrassLiteEnabled(search: string = location.search): boolean 
   return lookdev.grassLite.enabled
 }
 
-function grassLiteGeometry(): BufferGeometry {
+/**
+ * R91-A(D3) — grass_card.png 는 단일 카드가 아니라 **아틀라스**(Poly Haven 계열, 투명=검정)라 쿼드 전체(0~1)에 매핑하면
+ * 검은 조각만 남는다. 아틀라스 하단 중앙 클럼프 영역(u 0.21~0.47, v 0.11~0.25; v=0 이 아래)만 쓴다. 자산이 바뀌면 이 값도 바뀐다.
+ */
+export const GRASS_CARD_ATLAS_RECT = { u0: 0.21, v0: 0.11, u1: 0.47, v1: 0.25 } as const
+
+function grassLiteGeometry(useAtlasRect = false): BufferGeometry {
   const data = buildGrassLiteGeometry(lookdev.grassLite.seed)
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new BufferAttribute(data.positions, 3))
   geometry.setAttribute('normal', new BufferAttribute(data.normals, 3))
   geometry.setAttribute('color', new BufferAttribute(data.colors, 3))
   // R75-C — 카드 텍스처 UV. 정점색 경로에선 재질이 읽지 않는다.
-  geometry.setAttribute('uv', new BufferAttribute(data.uvs, 2))
+  const uvs = data.uvs.slice()
+  if (useAtlasRect) {
+    const r = GRASS_CARD_ATLAS_RECT
+    for (let i = 0; i < uvs.length; i += 2) {
+      uvs[i] = r.u0 + uvs[i] * (r.u1 - r.u0)
+      uvs[i + 1] = r.v0 + uvs[i + 1] * (r.v1 - r.v0)
+    }
+  }
+  geometry.setAttribute('uv', new BufferAttribute(uvs, 2))
   geometry.setIndex(new BufferAttribute(data.index, 1))
   geometry.computeBoundingSphere()
   return geometry
@@ -128,7 +142,7 @@ function SpeciesInstances({
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
   // M3-05 (R30-A) — 거리 그레이딩 재질(종별 1개)
-  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.95, metalness: 0, map, alphaTest: map ? 0.5 : undefined })
+  const material = useLookdevMaterial({ vertexColors: !map, roughness: 0.95, metalness: 0, map, alphaTest: map ? 0.5 : undefined }) // R91-A(D3): 카드 텍스처면 정점색(#3B3E26, 선형 0.05) 곱을 빼 이중 어두움 제거
 
   useLayoutEffect(() => {
     if (ref.current) ref.current.count = 0
@@ -174,7 +188,7 @@ export function Foliage({ sampleHeight }: FoliageProps) {
 
   const geometries = useMemo(
     () => SPECIES.map((species) => species === 'grass' && grassLiteEnabled
-      ? grassLiteGeometry()
+      ? grassLiteGeometry(LOOK.grass.mode === 'texture')
       : geometryForSpecies(scene, species)),
     [grassLiteEnabled, scene],
   )
