@@ -1,0 +1,280 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-26T16:24:08.669Z",
+  "generator": "Automation/check-glb.mjs R76-A + R87-A geometry audit",
+  "files": [
+    {
+      "file": "public/models/house_a_split.glb",
+      "bytes": 79272,
+      "triangles": 1011,
+      "bones": 0,
+      "skins": 0,
+      "clips": 0,
+      "animations": [],
+      "textures": 1,
+      "images": [
+        {
+          "name": "image-0",
+          "mimeType": "image/png",
+          "bytes": 15783,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "geometry": {
+        "bounds": {
+          "min": [
+            -0.39598,
+            0,
+            -0.468652
+          ],
+          "max": [
+            0.39598,
+            0.93,
+            0.385
+          ],
+          "size": [
+            0.79196,
+            0.93,
+            0.853652
+          ]
+        },
+        "meshCount": 2,
+        "primitiveCount": 2,
+        "materialCount": 1,
+        "vertexColorPrimitiveCount": 0,
+        "uvPrimitiveCount": 2,
+        "primitives": [
+          {
+            "node": "building_home_A_red_body",
+            "mesh": "building_home_A_red_body",
+            "primitive": 0,
+            "material": "hexagons_medieval",
+            "triangles": 859,
+            "leaf": false,
+            "vertexColor": false,
+            "uv": true
+          },
+          {
+            "node": "building_home_A_red_roof",
+            "mesh": "building_home_A_red_roof",
+            "primitive": 0,
+            "material": "hexagons_medieval",
+            "triangles": 152,
+            "leaf": false,
+            "vertexColor": false,
+            "uv": true
+          }
+        ],
+        "treeShape": {
+          "method": "R87-A world-space indexed vertices; leaf material/name classifier; trunk bottom 12% slice; radius p90 from median XZ center",
+          "height": 0.93,
+          "crownWidth": null,
+          "crownWidthHeightRatio": null,
+          "trunkBaseRadius": 0.611249,
+          "trunkBaseRadiusHeightRatio": 0.657257,
+          "baseSliceVertexCount": 236,
+          "leafTriangles": 0,
+          "totalTriangles": 1011,
+          "leafTriangleRatio": 0,
+          "leafPrimitiveCount": 0,
+          "classified": false
+        }
+      },
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "constraints": {
+        "singleFileLe20MiB": true,
+        "treeTrianglesLe40K": true,
+        "treeFileLe10MiB": true,
+        "treeCrownWidthHeightGte0_7": false,
+        "treeTrunkBaseRadiusHeightGte0_04": true,
+        "treeLeafTriangleRatioGte0_4": false
+      }
+    },
+    {
+      "file": "public/models/house_b_split.glb",
+      "bytes": 108340,
+      "triangles": 1393,
+      "bones": 0,
+      "skins": 0,
+      "clips": 0,
+      "animations": [],
+      "textures": 1,
+      "images": [
+        {
+          "name": "image-0",
+          "mimeType": "image/png",
+          "bytes": 15783,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "geometry": {
+        "bounds": {
+          "min": [
+            -0.438753,
+            0,
+            -0.538652
+          ],
+          "max": [
+            0.436175,
+            1.28,
+            0.56
+          ],
+          "size": [
+            0.874928,
+            1.28,
+            1.098652
+          ]
+        },
+        "meshCount": 2,
+        "primitiveCount": 2,
+        "materialCount": 1,
+        "vertexColorPrimitiveCount": 0,
+        "uvPrimitiveCount": 2,
+        "primitives": [
+          {
+            "node": "building_home_B_red_body",
+            "mesh": "building_home_B_red_body",
+            "primitive": 0,
+            "material": "hexagons_medieval",
+            "triangles": 1193,
+            "leaf": false,
+            "vertexColor": false,
+            "uv": true
+          },
+          {
+            "node": "building_home_B_red_roof",
+            "mesh": "building_home_B_red_roof",
+            "primitive": 0,
+            "material": "hexagons_medieval",
+            "triangles": 200,
+            "leaf": false,
+            "vertexColor": false,
+            "uv": true
+          }
+        ],
+        "treeShape": {
+          "method": "R87-A world-space indexed vertices; leaf material/name classifier; trunk bottom 12% slice; radius p90 from median XZ center",
+          "height": 1.28,
+          "crownWidth": null,
+          "crownWidthHeightRatio": null,
+          "trunkBaseRadius": 0.623164,
+          "trunkBaseRadiusHeightRatio": 0.486847,
+          "baseSliceVertexCount": 366,
+          "leafTriangles": 0,
+          "totalTriangles": 1393,
+          "leafTriangleRatio": 0,
+          "leafPrimitiveCount": 0,
+          "classified": false
+        }
+      },
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "constraints": {
+        "singleFileLe20MiB": true,
+        "treeTrianglesLe40K": true,
+        "treeFileLe10MiB": true,
+        "treeCrownWidthHeightGte0_7": false,
+        "treeTrunkBaseRadiusHeightGte0_04": true,
+        "treeLeafTriangleRatioGte0_4": false
+      }
+    },
+    {
+      "file": "public/models/house_c_split.glb",
+      "bytes": 206664,
+      "triangles": 2992,
+      "bones": 0,
+      "skins": 0,
+      "clips": 0,
+      "animations": [],
+      "textures": 1,
+      "images": [
+        {
+          "name": "image-0",
+          "mimeType": "image/png",
+          "bytes": 15783,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "geometry": {
+        "bounds": {
+          "min": [
+            -0.594979,
+            -0.000003,
+            -0.702317
+          ],
+          "max": [
+            0.576749,
+            1.396647,
+            0.630001
+          ],
+          "size": [
+            1.171728,
+            1.39665,
+            1.332318
+          ]
+        },
+        "meshCount": 2,
+        "primitiveCount": 2,
+        "materialCount": 1,
+        "vertexColorPrimitiveCount": 0,
+        "uvPrimitiveCount": 2,
+        "primitives": [
+          {
+            "node": "building_tavern_red_body",
+            "mesh": "building_tavern_red_body",
+            "primitive": 0,
+            "material": "hexagons_medieval",
+            "triangles": 2918,
+            "leaf": false,
+            "vertexColor": false,
+            "uv": true
+          },
+          {
+            "node": "building_tavern_red_roof",
+            "mesh": "building_tavern_red_roof",
+            "primitive": 0,
+            "material": "hexagons_medieval",
+            "triangles": 74,
+            "leaf": false,
+            "vertexColor": false,
+            "uv": true
+          }
+        ],
+        "treeShape": {
+          "method": "R87-A world-space indexed vertices; leaf material/name classifier; trunk bottom 12% slice; radius p90 from median XZ center",
+          "height": 1.39665,
+          "crownWidth": null,
+          "crownWidthHeightRatio": null,
+          "trunkBaseRadius": 1.050208,
+          "trunkBaseRadiusHeightRatio": 0.751948,
+          "baseSliceVertexCount": 1424,
+          "leafTriangles": 0,
+          "totalTriangles": 2992,
+          "leafTriangleRatio": 0,
+          "leafPrimitiveCount": 0,
+          "classified": false
+        }
+      },
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "constraints": {
+        "singleFileLe20MiB": true,
+        "treeTrianglesLe40K": true,
+        "treeFileLe10MiB": true,
+        "treeCrownWidthHeightGte0_7": false,
+        "treeTrunkBaseRadiusHeightGte0_04": true,
+        "treeLeafTriangleRatioGte0_4": false
+      }
+    }
+  ]
+}

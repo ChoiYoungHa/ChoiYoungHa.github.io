@@ -1,7 +1,7 @@
 import { useTexture } from '@react-three/drei'
 import { Suspense, useMemo } from 'react'
 import { BufferAttribute, PlaneGeometry, RepeatWrapping, SRGBColorSpace, type Texture } from 'three'
-import { attribute, color, float, mix, normalMap, positionWorld, texture, vec2 } from 'three/tsl'
+import { attribute, color, float, luminance, mix, normalMap, positionWorld, texture, vec2, vec3 } from 'three/tsl'
 import type { MeshStandardNodeMaterial, Node } from 'three/webgpu'
 import { useLookdevMaterial } from './Atmosphere'
 import { WORLD_SIZE } from './bounds'
@@ -37,10 +37,14 @@ export const PATH_BLEND_FEATHER = 2.5
 /** PBR 타일 크기(m). 1K 텍스처가 4m 마다 반복 — 근경(2~6m)에서 픽셀이 뭉개지지 않는 최소. */
 export const TERRAIN_TILE_METERS = 4
 /**
- * 텍스처 곱색. 사진 텍스처(평균 밝기 ~0.5)를 팔레트 #504B2B 근처로 끌어오는 값 — 화면 측정(L1·L5)으로 튜닝한다.
- * 곱색 = TERRAIN_COLOR × 2 (텍스처 중간 회색 0.5 에서 현행 단색과 같은 밝기).
+ * R91-A(D2) — 텍스처 곱색 = mix(백색, 휘도 정규화 팔레트(TERRAIN_COLOR/자기 휘도), paletteMix) × lumaScale.
+ * 텍스처 밝기를 대체로 보존하면서 hue·채도만 팔레트(52°) 쪽으로 조금 옮긴다.
+ * 이전(R75-C) TERRAIN_COLOR×2 는 선형 팔레트(0.08,0.07,0.02)×2 를 선형 텍스처(~0.12)에 곱해 근경 휘도 51·hue 355°(자홍, 근흑에서 hue 불안정)를 만들었다.
+ * R91-A 실측(S1/S3 근경): 곱색 없음 → 채도 29.9·hue 42.8°·휘도 77.9 / 정규화 팔레트 100% → 43.3·44.6°·79.6. L1~L3 near 범위(채도 30~36·hue 45~55·휘도 60~75).
+ * 2차: mix 0.35·luma 0.9 → 채도 34.1~35.7(PASS)·hue 43.3·휘도 76.2. hue 를 45° 위로 올리려 곱색 기준색을 팔레트보다 따뜻한 #5C5A28(hue 57°)로.
+ * 3차: #5C5A28·0.35·0.85 → S1/S3 근경 채도 34.6/36.3·hue 44.6/44.9·휘도 75.1/75.4 — 경계 0.4 미달이라 기준색 hue 60°·mix 0.3·luma 0.83 으로 4차.
  */
-export const TERRAIN_TEXTURE_TINT_SCALE = 2.0
+export const TERRAIN_TEXTURE_TINT = { color: '#5f5f26', paletteMix: 0.3, lumaScale: 0.83 } as const
 
 /** 청크 하나의 지오메트리. 정점 y 를 heightmap 으로 밀어올리고 길 마스크를 정점 속성으로 넣는다. */
 function buildChunkGeometry(originX: number, originZ: number, withPathMask: boolean): PlaneGeometry {
@@ -127,7 +131,8 @@ function TerrainPbr({ urls }: { urls: { grassDiffuse: string; dirtDiffuse: strin
     const [grass, dirt] = diffuse.map((t) => prepareTile(t, true))
     const uv = worldTileUv()
     const mask = attribute('pathMask', 'float') as unknown as Node<'float'>
-    const tint = color(TERRAIN_COLOR).mul(TERRAIN_TEXTURE_TINT_SCALE)
+    const palette = color(TERRAIN_TEXTURE_TINT.color)
+    const tint = mix(vec3(1.0), palette.div(luminance(palette)), float(TERRAIN_TEXTURE_TINT.paletteMix)).mul(TERRAIN_TEXTURE_TINT.lumaScale)
     const colorNode = mix(texture(grass, uv).rgb, texture(dirt, uv).rgb, mask).mul(tint) as unknown as Node<'vec3'>
     let normalNode: Node<'vec3'> | undefined
     if (normals.length === 2) {

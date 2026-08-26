@@ -1,0 +1,13 @@
+Asset: Big Tree
+Source: Poly Pizza
+Author: 3Donimus
+Asset page: https://poly.pizza/m/dNWh762PN-6
+Direct GLB: https://static.poly.pizza/712dc981-3f74-4e74-b31d-d8060709759f.glb
+License: Creative Commons Attribution 3.0 (CC BY 3.0)
+License URL: https://creativecommons.org/licenses/by/3.0/
+Attribution required: yes
+Redistribution allowed: yes, with attribution
+Acquired: 2026-08-27
+Processing: none; the source GLB was retained byte-for-byte.
+
+Required attribution: "Big Tree" by 3Donimus, licensed under CC BY 3.0.

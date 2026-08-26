@@ -1,0 +1,302 @@
+{
+  "id": "m5-programs",
+  "round": "R91-A",
+  "head": "343b681",
+  "at": "2026-08-26T16:37:40.884Z",
+  "measuredAt": "?q=low&shot=vista-mid (S1) 12초 시점, WebGPU",
+  "counts": {
+    "infoPrograms": 55,
+    "pipelines": 36,
+    "stages": {
+      "vertex": 36,
+      "fragment": 19,
+      "compute": 0
+    },
+    "materialObjects": 12,
+    "shadowCastingLights": 1,
+    "benchRoutePrograms": 64,
+    "note": "renderer.info.memory.programs = 셰이더 스테이지 모듈 수(vertex 36 + fragment 19 = 55 @S1; bench 동선 64). 파이프라인 36개 = (재질 노드그래프 × 지오메트리 레이아웃(instancing·uv·color) × 패스(main/shadow depth)) 조합마다 vertex 모듈 1개, fragment 는 공유."
+  },
+  "materials": [
+    {
+      "name": "Mesh",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": true,
+      "normalNode": true,
+      "alphaTest": 0,
+      "vertexColors": false,
+      "side": 0,
+      "instanced": 0,
+      "instanceColor": 0,
+      "castShadowMeshes": 0,
+      "meshCount": 16,
+      "meshes": [
+        "Mesh"
+      ]
+    },
+    {
+      "name": "main-path",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": false,
+      "side": 0,
+      "instanced": 0,
+      "instanceColor": 0,
+      "castShadowMeshes": 0,
+      "meshCount": 1,
+      "meshes": [
+        "main-path"
+      ]
+    },
+    {
+      "name": "Cube002",
+      "type": "MeshStandardNodeMaterial",
+      "map": true,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": false,
+      "side": 0,
+      "instanced": 0,
+      "instanceColor": 0,
+      "castShadowMeshes": 1,
+      "meshCount": 1,
+      "meshes": [
+        "Cube002"
+      ]
+    },
+    {
+      "name": "Cube002_1",
+      "type": "MeshStandardNodeMaterial",
+      "map": true,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0.5,
+      "vertexColors": false,
+      "side": 2,
+      "instanced": 0,
+      "instanceColor": 0,
+      "castShadowMeshes": 1,
+      "meshCount": 1,
+      "meshes": [
+        "Cube002_1"
+      ]
+    },
+    {
+      "name": "village-house-a-body",
+      "type": "MeshStandardNodeMaterial",
+      "map": true,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": false,
+      "side": 0,
+      "instanced": 3,
+      "instanceColor": 3,
+      "castShadowMeshes": 3,
+      "meshCount": 3,
+      "meshes": [
+        "village-house-a-body",
+        "village-house-b-body",
+        "village-house-c-body"
+      ]
+    },
+    {
+      "name": "village-prop-fence",
+      "type": "MeshStandardNodeMaterial",
+      "map": true,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": false,
+      "side": 0,
+      "instanced": 4,
+      "instanceColor": 0,
+      "castShadowMeshes": 1,
+      "meshCount": 4,
+      "meshes": [
+        "village-prop-fence",
+        "village-prop-stonewall",
+        "village-prop-arch",
+        "village-prop-banner"
+      ]
+    },
+    {
+      "name": "foliage-grass",
+      "type": "MeshStandardNodeMaterial",
+      "map": true,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0.5,
+      "vertexColors": false,
+      "side": 0,
+      "instanced": 1,
+      "instanceColor": 0,
+      "castShadowMeshes": 0,
+      "meshCount": 1,
+      "meshes": [
+        "foliage-grass"
+      ]
+    },
+    {
+      "name": "foliage-flower_yellowA",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": true,
+      "side": 0,
+      "instanced": 1,
+      "instanceColor": 0,
+      "castShadowMeshes": 0,
+      "meshCount": 1,
+      "meshes": [
+        "foliage-flower_yellowA"
+      ]
+    },
+    {
+      "name": "foliage-plant_bush",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": true,
+      "side": 0,
+      "instanced": 1,
+      "instanceColor": 0,
+      "castShadowMeshes": 0,
+      "meshCount": 1,
+      "meshes": [
+        "foliage-plant_bush"
+      ]
+    },
+    {
+      "name": "rock-rock_smallA",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": true,
+      "side": 0,
+      "instanced": 1,
+      "instanceColor": 0,
+      "castShadowMeshes": 1,
+      "meshCount": 1,
+      "meshes": [
+        "rock-rock_smallA"
+      ]
+    },
+    {
+      "name": "rock-rock_smallFlatA",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": true,
+      "side": 0,
+      "instanced": 1,
+      "instanceColor": 0,
+      "castShadowMeshes": 1,
+      "meshCount": 1,
+      "meshes": [
+        "rock-rock_smallFlatA"
+      ]
+    },
+    {
+      "name": "rock-rock_tallA",
+      "type": "MeshStandardNodeMaterial",
+      "map": false,
+      "colorNode": false,
+      "normalNode": false,
+      "alphaTest": 0,
+      "vertexColors": true,
+      "side": 0,
+      "instanced": 1,
+      "instanceColor": 0,
+      "castShadowMeshes": 1,
+      "meshCount": 1,
+      "meshes": [
+        "rock-rock_tallA"
+      ]
+    }
+  ],
+  "classification": [
+    {
+      "group": "지형 PBR(colorNode+normalNode, 청크 16, receiveShadow)",
+      "materials": 1,
+      "estPipelines": "1 main (+1 depth 없음: castShadow 아님)",
+      "note": "R75-C 신규. normalMap 변형"
+    },
+    {
+      "group": "hero GLB bark / leaves(alphaTest 0.5·DoubleSide)",
+      "materials": 2,
+      "estPipelines": "2 main + 2 shadow depth(alphaTest 컷아웃 depth 변형 포함)",
+      "note": "R75-C 신규. 이전 절차 수목(vertexColors) 1 재질 대체"
+    },
+    {
+      "group": "village GLB body(instanceColor) + props 4종(fence 등, map)",
+      "materials": 2,
+      "estPipelines": "(1 body + 1 props) × (main + shadow) = 4, 인스턴스 레이아웃 vertex 변형",
+      "note": "R75-C·R84 신규. 절차 집/지붕 재질 1 대체"
+    },
+    {
+      "group": "foliage grass 카드(map+alphaTest) / flower / bush(vertexColors)",
+      "materials": 3,
+      "estPipelines": "3 main (castShadow 없음)",
+      "note": "flower·bush 는 같은 옵션인데 재질 객체 2개 — 공유 실험(R91-A) 시 programs 불변(파이프라인 키가 재질 객체가 아니라 노드그래프·레이아웃 기준)"
+    },
+    {
+      "group": "rock 3종(vertexColors, castShadow)",
+      "materials": 3,
+      "estPipelines": "3 main + 3 shadow",
+      "note": "같은 옵션 재질 3개 — 공유해도 programs 불변(실측 55→55, 재질 12→9). 절감은 geometry 병합(3종→1 InstancedMesh)일 때만"
+    },
+    {
+      "group": "main-path(color)",
+      "materials": 1,
+      "estPipelines": "1",
+      "note": ""
+    },
+    {
+      "group": "플레이어·캐릭터·UI·배경(backgroundNode)·쉐도우 depth 공용",
+      "materials": "-",
+      "estPipelines": "나머지",
+      "note": "bench 동선에서 64 (S1 55 대비 +9: 플레이어 캐릭터·LOD1 절차 수목·거리별 LOD)"
+    }
+  ],
+  "reductionProposals": [
+    {
+      "item": "그림자 캐스터 축소: rock 3종·props 4종 castShadow=false",
+      "estSaving": "vertex ≈ -7(shadow depth 파이프라인 7개)",
+      "risk": "바위/소품 그림자 소실(원경에서 거의 안 보임)",
+      "decision": "master"
+    },
+    {
+      "item": "rock 3종 → 지오메트리 병합 1 InstancedMesh(색 정점색 유지)",
+      "estSaving": "≈ -4(main 2 + shadow 2)",
+      "risk": "RockInstances 개편(다른 워커 파일)",
+      "decision": "master"
+    },
+    {
+      "item": "hero leaves DoubleSide → FrontSide + 양면 지오메트리",
+      "estSaving": "0(프로그램 수 무관, 오버드로만)",
+      "risk": "-",
+      "decision": "보류"
+    },
+    {
+      "item": "programs 예산 40 재정의: 텍스처 자산 도입 후 실측 55(S1)/64(bench). 예산이 절차 자산 시절 기준이라 자산 채택과 양립 불가 — 60~70 으로 상향 또는 pipelines(36) 기준으로 변경",
+      "estSaving": "-",
+      "risk": "계획서 §4-1 정정 필요",
+      "decision": "master·영하님"
+    }
+  ],
+  "changedThisRound": "없음(재질 공유 캐시 실험 후 되돌림 — programs 불변)"
+}
