@@ -3,6 +3,8 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import {
   Color,
+  DynamicDrawUsage,
+  InstancedBufferAttribute,
   MeshBasicMaterial,
   Object3D as Transform,
   PlaneGeometry,
@@ -18,14 +20,23 @@ import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js'
 import placement from '../data/placement.json' with { type: 'json' }
 import { gameBootstrap, type GameBootstrap } from '../game/bootstrap.ts'
 import { createGameFrameBridge } from '../game/bridge.ts'
+import monsterData from '../game/data/monsters.json' with { type: 'json' }
 import terraceData from '../game/data/park-terraces.json' with { type: 'json' }
 import spawnData from '../game/data/spawns.json' with { type: 'json' }
 import { parabolicPosition } from '../game/rules/pickup.ts'
+import {
+  commitMobWobbleSpeeds,
+  createMobWobbleMaterial,
+  setMobWobbleSpeed,
+} from '../shaders/mobWobble.ts'
+import { createSkillFxMaterial } from '../shaders/skillFx.ts'
 import { hashSeed, scatter } from './scatter/seededRandom.ts'
 import { createKeyboardInput } from '../player/input.ts'
 import { readPlayerFrame } from '../store/playerBridge.ts'
 import { createGameProjector, installGameProjector } from '../systems/ui/projector.ts'
 import { sampleHeight } from './terrain/heightmap.ts'
+import { LevelUpRing } from './fx/LevelUpRing.tsx'
+import { SkillFx } from './fx/SkillFx.tsx'
 
 const NPC_SCALE = 0.01
 const PIG_SCALE = 0.005
@@ -121,6 +132,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
   const rocks = useGLTF('/models/props_rocks.glb')
   const stonewall = useGLTF('/models/prop_stonewall.glb')
   const dropTexture = useTexture('/ui/items/itm-meso.png')
+  const fxTexture = useTexture('/textures/fx_atlas.png')
   const pigRef = useRef<InstancedMesh>(null)
   const dropRef = useRef<InstancedMesh>(null)
   const terraceRef = useRef<InstancedMesh>(null)
@@ -137,6 +149,12 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     [stonewall.scene],
   )
   const pigAsset = useMemo(() => bakeAsset(pig.scene), [pig.scene])
+  const pigMaterial = useMemo(() => createMobWobbleMaterial(pigAsset.material), [pigAsset.material])
+  const pigSpeed = useMemo(() => {
+    const attribute = new InstancedBufferAttribute(new Float32Array(MAX_PIGS), 1).setUsage(DynamicDrawUsage)
+    pigAsset.geometry.setAttribute('speed', attribute)
+    return attribute
+  }, [pigAsset.geometry])
   const rockAsset = useMemo(() => bakeAsset(rocks.scene, 'rock_smallA'), [rocks.scene])
   const terracePoints = useMemo(() => makeTerracePoints(), [])
   const projector = useMemo(
@@ -153,6 +171,13 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
   const dropMaterial = useMemo(() => {
     return new MeshBasicMaterial({ map: spriteTexture, transparent: true, alphaTest: 0.25, toneMapped: false, vertexColors: true })
   }, [spriteTexture])
+  const fxAtlas = useMemo(() => {
+    const texture = fxTexture.clone()
+    texture.colorSpace = SRGBColorSpace
+    texture.needsUpdate = true
+    return texture
+  }, [fxTexture])
+  const fxMaterial = useMemo(() => createSkillFxMaterial(fxAtlas), [fxAtlas])
 
   useEffect(() => installGameProjector(projector), [projector])
   useEffect(() => {
@@ -171,7 +196,11 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     dropGeometry.dispose()
     dropMaterial.dispose()
     spriteTexture.dispose()
-  }, [dropGeometry, dropMaterial, pigAsset.geometry, rockAsset.geometry, spriteTexture])
+    fxMaterial.dispose()
+    fxAtlas.dispose()
+    if (Array.isArray(pigMaterial)) pigMaterial.forEach((material) => material.dispose())
+    else pigMaterial.dispose()
+  }, [dropGeometry, dropMaterial, fxAtlas, fxMaterial, pigAsset.geometry, pigMaterial, rockAsset.geometry, spriteTexture])
   useEffect(() => {
     const mesh = terraceRef.current
     if (mesh === null) return
@@ -210,10 +239,14 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
         transform.scale.setScalar(PIG_SCALE)
         transform.updateMatrix()
         pigs.setMatrixAt(count, transform.matrix)
+        const walking = result.snapshot.nowMs / 1000 >= mob.frozenUntilSeconds
+          && (mob.state === 'wander' || mob.state === 'chase')
+        setMobWobbleSpeed(pigSpeed, count, walking ? monsterData.pig.speed * (mob.state === 'wander' ? 0.5 : 1) : 0)
         count += 1
       }
       pigs.count = count
       pigs.instanceMatrix.needsUpdate = true
+      commitMobWobbleSpeeds(pigSpeed)
     }
 
     const drops = dropRef.current
@@ -251,7 +284,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
           </mesh>
         </group>
       ))}
-      <instancedMesh ref={pigRef} args={[pigAsset.geometry, pigAsset.material, MAX_PIGS]} frustumCulled={false} castShadow receiveShadow />
+      <instancedMesh ref={pigRef} args={[pigAsset.geometry, pigMaterial, MAX_PIGS]} frustumCulled={false} castShadow receiveShadow />
       <instancedMesh ref={terraceRef} args={[rockAsset.geometry, rockAsset.material, terracePoints.length]} castShadow receiveShadow />
       {placement.props.filter(({ kind }) => kind === 'statue').map((statue, index) => (
         <primitive
@@ -264,6 +297,8 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
         />
       ))}
       <instancedMesh ref={dropRef} args={[dropGeometry, dropMaterial, MAX_DROPS]} frustumCulled={false} />
+      <SkillFx session={bootstrap.session} material={fxMaterial} />
+      <LevelUpRing session={bootstrap.session} material={fxMaterial} />
     </group>
   )
 }

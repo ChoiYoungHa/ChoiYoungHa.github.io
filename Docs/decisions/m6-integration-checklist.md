@@ -211,3 +211,26 @@ R107-B는 승인 대기 입력과 M6 런타임을 **기본 OFF**로 통합했다
 5. WebGPU low 1280×720에서 S00/S01/S04/S05/S07/S09/S10과 NPC·gate·park·drop 추가 컷을 캡처하고 console/shader error 0, programs 예산, 아치/집/지형 관통 0을 기록한다.
 
 씬/플레이어 수정 범위는 `src/App.tsx`, 신설 `src/scene/GameRuntime.tsx`, `src/player/input.ts`, `src/player/FollowCamera.tsx`에 한정했다. 다른 `src/scene/*`와 `src/player/controllers/*`는 수정하지 않았다.
+
+## R110 렌더부 (2026-08-27)
+
+R110-B는 기존 `?game=1` lazy chunk 안에만 SkillFx·레벨업 링·돼지 wobble을 연결했다. `src/game/session.ts:78,598-622`가 성공한 스킬마다 위치·yaw·대상·impact·landing을 포함한 `fx-spawn`을 1회 내고, `src/scene/fx/fxInstances.ts:86,140-210`이 `fxTimeline`을 이용해 동시 3개·최대 30 인스턴스로 제한한다. 궁수는 한 프레임에 화살 5+리본 5, 얼음은 stagger 고드름 3을 포함한다.
+
+### 렌더와 재질 계약
+
+| 대상 | 구현 | 활성 재질 증감 | programs 예상 |
+|---|---|---:|---:|
+| SkillFx | `src/shaders/skillFx.ts:5-35`, `src/scene/fx/SkillFx.tsx:20-77`; atlas rect+frame UV, 선형 instanceColor, alphaTest 0.5, DoubleSide, `life` 중심축소, full/y billboard | +1 | +1 |
+| LevelUpRing | `src/scene/fx/LevelUpRing.tsx:19-70`; 같은 재질·atlas (0.75,0.75) 링 3개가 200ms stagger로 상승하고 1.2s에 종료 | +0(공유) | +0(공유) |
+| 돼지 wobble | `src/shaders/mobWobble.ts:5-46`, `src/scene/GameRuntime.tsx:152-157,239-249,286`; GLB 원재질을 1:1 NodeMaterial로 교체, `speed` instance 속성·instanceId 위상·y<0.3 z wobble, 정지/빙결 0 | +0(교체) | +1 |
+| 드롭 billboard | `src/scene/GameRuntime.tsx:171-173,251-269,299` 기존 재질 유지 | +0 | +0(기존) |
+
+R107 대비 활성 재질은 총 **+1**, 예상 shader programs는 **+2**, 새 draw call은 SkillFx+LevelUpRing **+2**다. SkillFx와 LevelUpRing은 한 `MeshBasicNodeMaterial` 인스턴스를 공유한다. 드롭 아이콘은 `/ui/items/itm-meso.png`로 FX atlas 밖의 별도 map이어서 같은 material 객체로 합치면 atlas UV 계약 또는 아이콘이 깨지므로, 지시된 예외에 따라 기존 `MeshBasicMaterial`을 유지했다.
+
+### CPU·GPU 확인점
+
+- CPU: `Automation/test-fx-instances.mjs`가 이벤트→uvRect/color/frame/life/attachment, 화살5+리본5, 4번째 요청 시 최신 3개, 상한 30, 레벨 링 1.2s를 검증한다. `Automation/test-wobble.mjs`는 진폭 0.06·주파수 8·y<0.3 mask·speed 0 정지를 검증한다.
+- 회귀·빌드: 전체 `Automation/test-*.mjs` 425/425, `npx tsc -b`, `npm run build`가 모두 exit 0이다(714 modules, `GameRuntime` lazy chunk 17.45kB). `npm run lint`도 exit 0이며 새 R110 경고는 0건이고 기존 파일 경고만 남는다. 헤드리스 story는 84.981초·10처치·`fx-spawn` 5·순서 위반 0이며 브라우저는 이 worker가 실행하지 않았다.
+- worker-claude는 main에서 `?game=1&scene=hunt`와 직업 4종 실제 선택으로 스킬 4장을 캡처한다: 전사 부채꼴+화염, 궁수 화살5+리본5, 마법사 고드름3+빙결, 도적 landing X참격+링. 카메라 회전 시 full/y billboard, 동시 4번째 교체, 화면 잔상 0을 본다.
+- 같은 경로에서 돼지 이동/정지/빙결의 하체만 흔들리는지, 10마리 위상이 같은 박자로 겹치지 않는지 확인한다. 레벨업 순간 발밑 금색 링 3개의 순차 상승과 1.2s 종료를 캡처한다.
+- GPU 증거에는 R107 같은 preset/해상도에서 material **+1**, programs **+2 이하**, calls **+2 이하**, console/shader error 0을 기록한다. 실측이 예상보다 크면 우선 SkillFx/LevelUp이 동일 material UUID인지와 pig 원재질이 씬에 중복 잔존하는지 확인한다.

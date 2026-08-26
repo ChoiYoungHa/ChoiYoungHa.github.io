@@ -16,6 +16,7 @@ export type FxAttachment =
   | 'landing-point'
 export type FxCellRect = readonly [u: number, v: number, width: number, height: number]
 export type FxScale = readonly [width: number, height: number]
+export type FxBillboard = 'full' | 'y'
 
 interface FxLayerDefinition {
   id: string
@@ -28,6 +29,7 @@ interface FxLayerDefinition {
   instanceStaggerMs?: number
   instanceLifetimeMs?: number
   attachment?: FxAttachment
+  billboard?: FxBillboard
   scale: FxScale
 }
 
@@ -35,6 +37,8 @@ interface FxSkillDefinition {
   attachment: FxAttachment
   lifetimeMs: number
   instanceColors: readonly string[]
+  projectileCount?: number
+  billboard?: FxBillboard
   layers: readonly FxLayerDefinition[]
 }
 
@@ -47,10 +51,12 @@ export interface FxLayerSample {
   id: string
   active: boolean
   frameIndex: number
+  baseCellRect: FxCellRect
   cellRect: FxCellRect
   scale: FxScale
   attachment: FxAttachment
   instanceColors: readonly string[]
+  billboard: FxBillboard
   instances: FxLayerInstanceSample[]
 }
 
@@ -58,6 +64,7 @@ export interface FxLayerInstanceSample {
   instanceIndex: number
   active: boolean
   elapsedMs: number
+  life: number
 }
 
 export interface FxSample {
@@ -97,7 +104,7 @@ export function sampleFx(instance: FxInstance, timeMs: number): FxSample {
     .filter((layer) => elapsedMs >= layer.startMs)
     .map((layer): FxLayerSample => {
       const layerElapsedMs = elapsedMs - layer.startMs
-      const instanceCount = layer.instanceCount ?? 1
+      const instanceCount = layer.instanceCount ?? definition.projectileCount ?? 1
       const instanceStaggerMs = layer.instanceStaggerMs ?? 0
       const instanceLifetimeMs = layer.instanceLifetimeMs ?? layer.lifetimeMs
       const instances = Array.from({ length: instanceCount }, (_, instanceIndex) => {
@@ -106,6 +113,7 @@ export function sampleFx(instance: FxInstance, timeMs: number): FxSample {
           instanceIndex,
           active: instanceElapsedMs >= 0 && instanceElapsedMs < instanceLifetimeMs,
           elapsedMs: instanceElapsedMs,
+          life: Math.max(0, Math.min(1, 1 - instanceElapsedMs / instanceLifetimeMs)),
         }
       })
       const active = layerElapsedMs < layer.lifetimeMs && instances.some((instance) => instance.active)
@@ -117,10 +125,12 @@ export function sampleFx(instance: FxInstance, timeMs: number): FxSample {
         id: layer.id,
         active,
         frameIndex,
+        baseCellRect: layer.cellRects[0],
         cellRect: layer.cellRects[frameIndex],
         scale: layer.scale,
         attachment: layer.attachment ?? definition.attachment,
         instanceColors: definition.instanceColors,
+        billboard: layer.billboard ?? definition.billboard ?? 'full',
         instances,
       }
     })
