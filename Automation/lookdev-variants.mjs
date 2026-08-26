@@ -2,7 +2,7 @@
 // R55-A — 룩 옵션 일괄 검증 러너. GATE 후 GPU 세션이 **한 줄**로 대기 중인 룩 변형을 캡처·측정·판정한다.
 //
 // 사용: node Automation/lookdev-variants.mjs --variants default --out-dir Docs/lookdev/variants [--dry-run] [--skip-build]
-//       --variants <preset|json 경로>  : 기본 프리셋 'default' = baseline + hazeDir + heroContrast + vistaPitch
+//       --variants <preset|json 경로>  : 기본 프리셋 'default' = baseline + hazeDir + heroContrast + vistaPitch + grassLite + combo
 //       --out-dir <dir>                : 캡처 png/json·measure·l4·결과표(variants-result.md/json) 저장처
 //       --dry-run                      : 빌드·서버·크롬 없이 실행 계획(명령·URL·산출 경로)만 출력 (GPU 금지 세션용)
 //       --skip-build                   : dist 를 그대로 사용(없으면 에러)
@@ -22,7 +22,7 @@
 // 판정 규칙(judge):
 //   변형의 자동 PASS 합계(3장 × L1·L2·L3·L5 = 12)가 baseline 보다 작으면 REJECT.
 //   그 위에서 변형별 목표(targets)를 전부 만족하면 'ADOPT 후보', 아니면 REJECT + 수치.
-//   쿼리 스위치가 src 에 없으면(예: hazeDir 는 wt/loading) UNSUPPORTED — 캡처하지 않는다.
+//   쿼리 스위치가 src 에 없거나 trisCheck 스크립트(scene-tris.mjs, wt/loading)가 없으면 UNSUPPORTED — 캡처하지 않는다.
 
 import { spawn, execFile } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs'
@@ -92,7 +92,55 @@ export const DEFAULT_VARIANTS = [
     // S2·S3 는 이 변형과 무관 → baseline 값을 그대로 합산한다(reuseBaselineFor).
     reuseBaselineFor: ['S2', 'S3'],
   },
+  {
+    name: 'grassLite',
+    label: '?grassLite=1 — 절차적 저폴리 풀(worker-codex, wt/loading). 목표 자동 PASS 합계 ≥ baseline 그리고 low worst-case tris ≤600K(scene-tris.mjs --grass-lite)',
+    query: 'grassLite=1',
+    switches: ['grassLite'],
+    shots: ['S1', 'S2', 'S3'],
+    noHero: [],
+    targets: [{ metric: 'tris.worstCase', op: '<=', value: 600000 }],
+    trisCheck: { script: 'Automation/scene-tris.mjs', args: ['--preset', 'low', '--grass-lite'] },
+  },
+  {
+    name: 'combo',
+    label: 'hazeDir + heroContrast(K1) + grassLite 동시 — 최종 후보',
+    query: 'hazeDir=1&heroContrast=1&heroTrunk=0.75&heroCanopy=1.1&grassLite=1',
+    switches: ['hazeDir', 'heroContrast', 'grassLite'],
+    shots: ['S1', 'S2', 'S3'],
+    noHero: ['S2'],
+    targets: [
+      { metric: 's3.far.luma', op: '<=', value: 145 },
+      { metric: 'l4.trunkCanopyDelta', op: '>=', value: 10 },
+      { metric: 'l4.minDelta', op: '>=', value: 10 },
+      { metric: 'tris.worstCase', op: '<=', value: 600000 },
+    ],
+    trisCheck: { script: 'Automation/scene-tris.mjs', args: ['--preset', 'low', '--grass-lite'] },
+  },
 ]
+
+/** trisCheck 스크립트(worker-codex, wt/loading)가 이 트리에 있는지. 없으면 그 변형은 UNSUPPORTED. */
+export function detectScripts(variants, exists = (p) => existsSync(join(ROOT, p))) {
+  return Object.fromEntries(variants.filter((v) => v.trisCheck).map((v) => [v.name, exists(v.trisCheck.script)]))
+}
+
+/** scene-tris.mjs 를 실행해 low worst-case tris 를 읽는다(리포트 json 은 out-dir 에 남긴다). */
+export async function runTrisCheck(variant, { outDir }) {
+  const out = join(outDir, `tris-${variant.name}.json`)
+  await new Promise((res, rej) => {
+    const child = spawn(process.execPath, [join(ROOT, variant.trisCheck.script), ...variant.trisCheck.args, '--out', out], { cwd: ROOT, stdio: 'inherit', windowsHide: true })
+    child.once('error', rej)
+    child.once('exit', (code) => (code === 0 ? res() : rej(new Error(`${variant.trisCheck.script} exited ${code}`))))
+  })
+  return trisMetricsFromReport(JSON.parse(readFileSync(out, 'utf8')))
+}
+
+/** scene-tris 리포트 → metrics.tris (순수). */
+export function trisMetricsFromReport(report) {
+  const worst = report?.scenarios?.worstCase
+  if (!worst || !Number.isFinite(worst.totalTriangles)) throw new Error('scene-tris report: scenarios.worstCase.totalTriangles 없음')
+  return { worstCase: worst.totalTriangles, typical: report.scenarios.typical?.totalTriangles ?? null, budgetStatus: worst.budget?.status ?? null, budgetLimit: worst.budget?.limit ?? report.budgetLimitTriangles ?? null }
+}
 
 export function loadVariants(spec) {
   if (!spec || spec === 'default') return structuredClone(DEFAULT_VARIANTS)
@@ -117,6 +165,7 @@ export function validateVariants(list) {
       if (!['<=', '>=', '<', '>'].includes(t.op) || typeof t.metric !== 'string' || !Number.isFinite(t.value)) throw new Error(`variants[${v.name}]: bad target ${JSON.stringify(t)}`)
     }
     v.reuseBaselineFor ??= []
+    if (v.trisCheck !== undefined && (typeof v.trisCheck?.script !== 'string' || !Array.isArray(v.trisCheck.args))) throw new Error(`variants[${v.name}]: trisCheck must be {script, args[]}`)
   }
   if (!names.has('baseline')) throw new Error("variants: 'baseline' 이 있어야 판정 기준이 된다")
   return list
@@ -283,12 +332,12 @@ export function renderResultMd(rows, { baselineName = 'baseline', at = '' } = {}
     '',
     `기준: baseline 자동 PASS 합계(3장 × L1·L2·L3·L5). 변형은 합계를 줄이지 않고 목표를 전부 만족하면 ADOPT 후보.`,
     '',
-    '| 변형 | 판정 | 자동 PASS | S3 원경 휘도 | L4 줄기/수관 Δ | L4 최소 Δ | S1 수목 bbox top | 사유 |',
-    '|---|---|---|---|---|---|---|---|',
+    '| 변형 | 판정 | 자동 PASS | S3 원경 휘도 | L4 줄기/수관 Δ | L4 최소 Δ | S1 수목 bbox top | low worst tris | 사유 |',
+    '|---|---|---|---|---|---|---|---|---|',
   ]
   for (const r of rows) {
     const m = r.metrics ?? {}
-    lines.push(`| ${r.name}${r.name === baselineName ? ' (기준)' : ''} | **${r.verdict}** | ${r.passCount ?? '-'} | ${m.s3?.far?.luma ?? '-'} | ${m.l4?.trunkCanopyDelta ?? '-'} | ${m.l4?.minDelta ?? '-'} | ${m.s1?.treeBboxTop ?? '-'} | ${(r.reasons ?? []).join('; ') || '-'} |`)
+    lines.push(`| ${r.name}${r.name === baselineName ? ' (기준)' : ''} | **${r.verdict}** | ${r.passCount ?? '-'} | ${m.s3?.far?.luma ?? '-'} | ${m.l4?.trunkCanopyDelta ?? '-'} | ${m.l4?.minDelta ?? '-'} | ${m.s1?.treeBboxTop ?? '-'} | ${m.tris?.worstCase ?? '-'} | ${(r.reasons ?? []).join('; ') || '-'} |`)
   }
   return lines.join('\n') + '\n'
 }
@@ -373,12 +422,16 @@ export async function main(argv) {
   const srcText = readAllSrc()
   const allSwitches = [...new Set(variants.flatMap((v) => v.switches))]
   const supported = detectSwitches(allSwitches, srcText)
+  const scripts = detectScripts(variants)
+  const isSupported = (v) => v.switches.every((s) => supported[s]) && (!v.trisCheck || scripts[v.name])
+  const missingOf = (v) => [...v.switches.filter((s) => !supported[s]), ...(v.trisCheck && !scripts[v.name] ? [v.trisCheck.script] : [])]
   const plan = planCaptures(variants, { shots: o.shots, port: o.port })
-  const runnable = plan.filter((p) => variants.find((v) => v.name === p.variant).switches.every((s) => supported[s]))
+  const runnable = plan.filter((p) => isSupported(variants.find((v) => v.name === p.variant)))
 
   const header = [
     `lookdev-variants: ${variants.length} variants, ${plan.length} captures (${runnable.length} runnable), out-dir ${outDir}`,
     `switches in src: ${allSwitches.map((s) => `${s}=${supported[s] ? 'yes' : 'NO'}`).join(' ')}`,
+    `scripts: ${Object.entries(scripts).map(([n, ok]) => `${n}:${variants.find((v) => v.name === n).trisCheck.script}=${ok ? 'yes' : 'NO'}`).join(' ') || '(없음)'}`,
     `build: ${o.skipBuild ? 'skip (dist 재사용)' : 'npm run build (1회)'} · port ${o.port} · settle ${o.settleMs}ms(report.ts shot 지연 12000 고정) · timeout ${o.timeoutMs}ms`,
     `예상 소요: 빌드 ~40s + 캡처 ${runnable.length} × ~25s ≈ ${Math.round(40 + runnable.length * 25)}s`,
   ]
@@ -386,8 +439,9 @@ export async function main(argv) {
 
   if (o.dryRun) {
     for (const v of variants) {
-      const ok = v.switches.every((s) => supported[s])
-      process.stdout.write(`\n[${v.name}] ${ok ? '' : 'UNSUPPORTED (스위치 미구현: ' + v.switches.filter((s) => !supported[s]).join(',') + ') '}${v.label}\n  targets: ${v.targets.map((t) => `${t.metric} ${t.op} ${t.value}`).join(', ') || '(기준)'}\n`)
+      const ok = isSupported(v)
+      process.stdout.write(`\n[${v.name}] ${ok ? '' : 'UNSUPPORTED (미구현: ' + missingOf(v).join(',') + ') '}${v.label}\n  targets: ${v.targets.map((t) => `${t.metric} ${t.op} ${t.value}`).join(', ') || '(기준)'}\n`)
+      if (v.trisCheck) process.stdout.write(`  tris: node ${v.trisCheck.script} ${v.trisCheck.args.join(' ')} --out ${join(o.outDir, `tris-${v.name}.json`)}\n`)
       for (const p of plan.filter((p) => p.variant === v.name)) {
         process.stdout.write(`  ${p.kind.padEnd(6)} ${p.shot} → ${join(o.outDir, p.name + '.png')}\n         node Automation/probe-server.mjs ${o.port} 1 ${o.timeoutMs} & chrome ${chromeArgs('<tmp-profile>', p.url).slice(-1)[0]}\n`)
       }
@@ -429,9 +483,9 @@ export async function main(argv) {
   rows.push({ name: 'baseline', verdict: '기준', passCount: baselineResult.passCount, metrics: baselineResult.metrics, reasons: [] })
   for (const v of variants) {
     if (v === baseline) continue
-    const ok = v.switches.every((s) => supported[s])
-    if (!ok) { rows.push({ name: v.name, ...judge(baselineResult, { supported: false, missing: v.switches.filter((s) => !supported[s]) }), passCount: null, metrics: null }); continue }
+    if (!isSupported(v)) { rows.push({ name: v.name, ...judge(baselineResult, { supported: false, missing: missingOf(v) }), passCount: null, metrics: null }); continue }
     const r = computeMetrics(captured[v.name] ?? {}, { targetsPath, baselineMeasured: baselineResult.measured, reuseBaselineFor: v.reuseBaselineFor })
+    if (v.trisCheck) r.metrics.tris = await runTrisCheck(v, { outDir })
     const verdict = judge(baselineResult, { name: v.name, supported: true, passCount: r.passCount, metrics: r.metrics, targets: v.targets })
     rows.push({ name: v.name, ...verdict, passCount: r.passCount, metrics: r.metrics })
   }

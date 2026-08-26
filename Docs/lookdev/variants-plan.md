@@ -20,7 +20,9 @@ node Automation/lookdev-variants.mjs --variants default --out-dir Docs/lookdev/v
 | baseline | (없음) | S1·S2·S3 + S2 nohero | 기준(자동 PASS 합계·L4 Δ) | — |
 | hazeDir | `hazeDir=1` | S1·S2·S3 | `s3.far.luma ≤ 145` | worker-codex `wt/loading` — **wt/claude 에 없음 → 병합 전엔 UNSUPPORTED** |
 | heroContrast | `heroContrast=1&heroTrunk=0.75&heroCanopy=1.1` | S1·S2·S3 + S2 nohero | `l4.trunkCanopyDelta ≥ 10`, `l4.minDelta ≥ 10` | R54-A `HeroTree.tsx` ✓ |
-| vistaPitch | `vistaPitch=22.1` | S1 + S1 nohero (S2·S3 는 baseline 재사용) | `s1.treeBboxTop > 0`(수관 꼭대기가 프레임 안) | **미구현** — `App.tsx` VistaCamera 에 `?vistaPitch=` 1줄 필요(§4) |
+| vistaPitch | `vistaPitch=22.1` | S1 + S1 nohero (S2·S3 는 baseline 재사용) | `s1.treeBboxTop > 0`(수관 꼭대기가 프레임 안) | R57-A `App.tsx` VistaCamera ✓(master 승인, `?vistaPitch=` 우선 → marker.pitchDeg → 0) |
+| grassLite (R57-A) | `grassLite=1` | S1·S2·S3 | 자동 PASS 합계 ≥ baseline **그리고** `tris.worstCase ≤ 600000`(`scene-tris.mjs --preset low --grass-lite` 실행, 리포트 `scenarios.worstCase.totalTriangles`) | worker-codex `wt/loading`(`Foliage.tsx`·`grassLiteGeometry.ts`·`scene-tris.mjs`) — 병합 전 UNSUPPORTED |
+| combo (R57-A) | `hazeDir=1&heroContrast=1&heroTrunk=0.75&heroCanopy=1.1&grassLite=1` | S1·S2·S3 + S2 nohero | hazeDir·heroContrast·grassLite 목표 4개 전부 | 셋 다 있어야 함 — **최종 후보** |
 
 판정(`judge`, 순수 함수):
 1. 자동 PASS 합계(3장 × L1·L2·L3·L5 = 12; 현재 baseline 8/12)가 baseline 보다 **작으면 REJECT**.
@@ -46,7 +48,21 @@ HDR 로드 대기 규칙(R22·R30 교훈 재사용): 캡처 후 상단 2밴드 �
 
 ## 5. 이번 라운드 제약·결함
 
-- `vistaPitch` 쿼리 스위치는 이 라운드 허용 파일 밖(`App.tsx`)이라 넣지 않았다. 필요한 변경 1줄: `VistaCamera` 의 `pitchDeg` 계산에 `Number(new URLSearchParams(location.search).get('vistaPitch'))`(부재 null 은 0 으로 떨어지므로 raw null 을 먼저 거른다) 를 우선 적용. master 승인 후 R56 이후.
-- `hazeDir` 는 `wt/loading` 병합 뒤에만 지원 → 그 전 실행은 UNSUPPORTED 로 기록된다.
+- ~~`vistaPitch` 쿼리 스위치 미구현~~ → R57-A 에서 master 승인으로 `App.tsx` VistaCamera 에 적용(`?vistaPitch=` raw null 먼저 거름 → marker.pitchDeg → 0). dry-run `vistaPitch=yes`.
+- `hazeDir`·`grassLite`·`scene-tris.mjs` 는 `wt/loading` 병합 뒤에만 지원 → 그 전 실행은 UNSUPPORTED 로 기록된다(현재 dry-run: 6 변형 20 캡처 중 10 runnable).
+
+## 6. 병합 대비 점검 (R57-A, 읽기만 — main `87ee4d6`)
+
+| 브랜치 | main 대비 변경 | 파일 수 |
+|---|---|---|
+| `wt/claude` | `Automation/{l4-contrast,lookdev-variants,test-final-route,test-hero-contrast,test-lookdev-variants}.mjs` · `Docs/lookdev/{l4-contrast-plan,variants-plan,vista-pitch-candidates}.md` · `Docs/qa/m3-l4-contrast.json` · `src/App.tsx` · **`src/data/lookdev.json`** · `src/data/vistas.json` · `src/main.tsx` · `src/scene/HeroTree.tsx` · `src/scene/hero/heroTreeGeometry.ts` · `src/systems/bench/{benchRoute,finalRoute,finalRouteRunner}.ts` | 18 (+1,724 −13) |
+| `wt/loading` | `Automation/{check-budgets,scene-tris,test-grass-lite,test-haze-direction,test-scene-tris}.mjs` · `Docs/perf/m4-scene-tris.json` · `Docs/qa/{m3-hazedir-design,m4-grass-lite}.md` · **`src/data/lookdev.json`** · `src/scene/Foliage.tsx` · `src/scene/SkyDome.tsx` · `src/scene/foliage/grassLiteGeometry.ts` · `src/scene/sky/hazeDirection.ts` | 13 (+1,595 −14) |
+| `wt/bench` | (main 과 차이 없음 — 이미 병합됨) | 0 |
+
+**겹치는 파일: `src/data/lookdev.json` 1개뿐.** `Foliage.tsx`·`SkyDome.tsx` 는 loading 만, `HeroTree.tsx`·`App.tsx` 는 claude 만 건드린다.
+- claude: 파일 끝에 `heroContrast` 키 추가(7줄). loading: `volumetricClouds` 뒤 `grassLite` 키(7줄) + `sky` 안 `hazeDirection`(6줄).
+- `git merge-tree --write-tree wt/claude wt/loading` → 충돌 0, "Auto-merging src/data/lookdev.json". 병합 트리의 lookdev.json 키: `skyTexture,exposure,toneMapping,sun,volumetricClouds,grassLite,integration,sky,heroContrast` + `sky.hazeDirection` — 세 키 전부 보존.
+
+**병합 순서 제안**: ① `wt/loading` → main(tris 예산 FAIL 대응·hazeDir 는 GATE 판정에 직접 걸리는 항목) ② `wt/claude` → main(러너·hero 파라미터는 전부 기본 off, 충돌 없음) ③ 병합된 main 에서 `node Automation/lookdev-variants.mjs --variants default --out-dir Docs/lookdev/variants` 1회(6 변형 20 캡처 ≈ 9분) → 결과표로 채택 결정. 순서를 바꿔도(claude 먼저) 결과는 같다 — lookdev.json 이 auto-merge 되므로. 어느 쪽이든 병합 후 `npx tsc -b`·`node --test Automation/test-hero-contrast.mjs Automation/test-lookdev-variants.mjs Automation/test-grass-lite.mjs` 로 회귀 확인.
 - `run-bench.mjs` 의 Chrome 기동 인자·`findChrome`·`killChromeProfile` 은 export 되지 않아 **최소 복제**했다(CDP 연결은 하지 않는다 — 종료 판정은 probe-server 의 `RESULT` 로그). `probe-server.mjs` 는 `Docs/m0a/` 에 저장하므로 캡처마다 `--out-dir` 로 **이동**한다.
 - 흑백 PNG 는 러너가 Rec.709 로 만든다(colorType 0). `measure.mjs` 는 gray 를 거부하므로 L4 는 `l4-contrast.mjs` 디코더로 읽는다(테스트로 고정).

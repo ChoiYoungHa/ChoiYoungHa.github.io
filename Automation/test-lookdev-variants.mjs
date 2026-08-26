@@ -41,7 +41,10 @@ describe('parseArgs', () => {
 describe('변형 스키마', () => {
   test('기본 프리셋 4종 · baseline 포함 · 검증 통과', () => {
     const list = V.loadVariants('default')
-    assert.deepEqual(list.map((v) => v.name), ['baseline', 'hazeDir', 'heroContrast', 'vistaPitch'])
+    assert.deepEqual(list.map((v) => v.name), ['baseline', 'hazeDir', 'heroContrast', 'vistaPitch', 'grassLite', 'combo'])
+    assert.deepEqual(list[4].trisCheck, { script: 'Automation/scene-tris.mjs', args: ['--preset', 'low', '--grass-lite'] })
+    assert.deepEqual(list[5].switches, ['hazeDir', 'heroContrast', 'grassLite'])
+    assert.equal(list[5].targets.length, 4)
     assert.doesNotThrow(() => V.validateVariants(list))
     assert.equal(list[0].query, '')
     assert.equal(list[2].query, 'heroContrast=1&heroTrunk=0.75&heroCanopy=1.1')
@@ -59,13 +62,17 @@ describe('변형 스키마', () => {
     assert.throws(() => V.validateVariants([{ ...ok, name: 'baseline', noHero: ['S2'] }]), /noHero/)
     assert.throws(() => V.validateVariants([{ ...ok, name: 'baseline', targets: [{ metric: 'x', op: '==', value: 1 }] }]), /bad target/)
     assert.throws(() => V.validateVariants([{ ...ok, name: 'bad name' }]), /bad name/)
+    assert.throws(() => V.validateVariants([{ ...ok, name: 'baseline', trisCheck: { script: 1 } }]), /trisCheck/)
   })
 })
 
 describe('planCaptures', () => {
-  test('기본 프리셋 → 13 캡처, 이름·URL 규칙', () => {
+  test('기본 프리셋 → 20 캡처, 이름·URL 규칙', () => {
     const plan = V.planCaptures(V.loadVariants('default'))
-    assert.equal(plan.length, 13)
+    assert.equal(plan.length, 20)
+    const combo = plan.find((p) => p.name === 'lv-combo-S3')
+    assert.equal(new URL(combo.url).searchParams.get('grassLite'), '1')
+    assert.equal(new URL(combo.url).searchParams.get('hazeDir'), '1')
     const s2n = plan.find((p) => p.name === 'lv-heroContrast-S2-nohero')
     assert.ok(s2n)
     const u = new URL(s2n.url)
@@ -79,7 +86,7 @@ describe('planCaptures', () => {
   })
   test('--shots 제한·포트', () => {
     const plan = V.planCaptures(V.loadVariants('default'), { shots: ['S3'], port: 5190 })
-    assert.deepEqual(plan.map((p) => p.name), ['lv-baseline-S3', 'lv-hazeDir-S3', 'lv-heroContrast-S3'])
+    assert.deepEqual(plan.map((p) => p.name), ['lv-baseline-S3', 'lv-hazeDir-S3', 'lv-heroContrast-S3', 'lv-grassLite-S3', 'lv-combo-S3'])
     assert.ok(plan.every((p) => p.url.startsWith('http://127.0.0.1:5190/')))
   })
   test('detectSwitches — src 텍스트에 get(\'name\') 이 있어야 지원', () => {
@@ -114,6 +121,21 @@ describe('judge (순수 판정)', () => {
     const r = V.judge(baseline, { supported: false, missing: ['hazeDir'] })
     assert.equal(r.verdict, 'UNSUPPORTED')
     assert.match(r.reasons[0], /hazeDir/)
+  })
+  test('grassLite 규칙: 합계 유지 + tris ≤600K → ADOPT, 초과 → REJECT 수치', () => {
+    const t = [{ metric: 'tris.worstCase', op: '<=', value: 600000 }]
+    assert.equal(V.judge(baseline, { supported: true, passCount: 8, metrics: { tris: { worstCase: 512340 } }, targets: t }).verdict, 'ADOPT 후보')
+    const r = V.judge(baseline, { supported: true, passCount: 8, metrics: { tris: { worstCase: 816000 } }, targets: t })
+    assert.equal(r.verdict, 'REJECT')
+    assert.deepEqual(r.reasons, ['tris.worstCase 816000 !<= 600000'])
+  })
+  test('detectScripts / trisMetricsFromReport', () => {
+    const vs = V.loadVariants('default')
+    assert.deepEqual(V.detectScripts(vs, () => false), { grassLite: false, combo: false })
+    assert.deepEqual(V.detectScripts(vs, () => true), { grassLite: true, combo: true })
+    const m = V.trisMetricsFromReport({ scenarios: { worstCase: { totalTriangles: 512340, budget: { status: 'pass', limit: 600000 } }, typical: { totalTriangles: 300000 } } })
+    assert.deepEqual(m, { worstCase: 512340, typical: 300000, budgetStatus: 'pass', budgetLimit: 600000 })
+    assert.throws(() => V.trisMetricsFromReport({}), /worstCase/)
   })
   test('readMetric 경로', () => {
     assert.equal(V.readMetric(baseline.metrics, 's3.far.luma'), 166)
