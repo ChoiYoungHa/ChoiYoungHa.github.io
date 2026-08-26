@@ -25,6 +25,8 @@ export interface FinalRouteResult {
   /** waypoint 시각마다 실제 위치. 어느 waypoint 에서 벗어났는지 종료 위치만으로는 알 수 없다. */
   trace: { t: number; id: string; x: number; z: number }[]
   integratedSeconds: number
+  /** 벽시계 경과(참고). R74-A 부터 라우트 시각은 벽시계가 아니라 integratedSeconds 로 구동된다. */
+  wallClockSeconds: number
   grounding: { ungroundedFrames: number; minY: number }
 }
 
@@ -47,11 +49,14 @@ export async function runFinalRoute(): Promise<FinalRouteResult> {
   // t=0 waypoint 는 시작 직후 첫 틱에서 기록된다.
   let nextWaypoint = 0
 
-  setInputSource(() => finalInputAt(route, (performance.now() - startedAt) / 1000))
+  // R74-A: 라우트 시각 = 컨트롤러가 실제 적분한 시간(Controller dt≤1/20 클램프 반영). 벽시계로 구동하면
+  // 로드 워밍업(저fps) 동안 잃은 이동(≈2.2s·7m)만큼 목표 앞에서 멈춘다(R73-A). Node 시뮬(dt 1/60)과 같은 시간축.
+  const routeSeconds = () => readIntegratedSeconds() - secondsAtStart
+  setInputSource(() => finalInputAt(route, routeSeconds()))
 
   return new Promise((resolve) => {
     const tick = (now: number) => {
-      const elapsed = (now - startedAt) / 1000
+      const elapsed = routeSeconds()
       while (nextWaypoint < route.waypoints.length && elapsed >= route.waypoints[nextWaypoint].timeSeconds) {
         const w = route.waypoints[nextWaypoint]
         const f = readPlayerFrame()
@@ -81,6 +86,7 @@ export async function runFinalRoute(): Promise<FinalRouteResult> {
         finalPosition: frame ? { ...frame.position } : { x: NaN, y: NaN, z: NaN },
         trace,
         integratedSeconds: Math.round((readIntegratedSeconds() - secondsAtStart) * 1000) / 1000,
+        wallClockSeconds: Math.round(now - startedAt) / 1000,
         grounding: readGroundingStats(),
       }
       window.__bench = { ...result }

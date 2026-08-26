@@ -1,8 +1,8 @@
 {
   "id": "m4-final-route-run",
-  "at": "2026-08-26T14:21:30.809Z",
-  "round": "R74-A",
-  "head": "d8e733f",
+  "at": "2026-08-26T14:14:14.070Z",
+  "round": "R73-A",
+  "head": "d304105",
   "url": "?route=final&q=low (127.0.0.1:5183, secure context OK)",
   "route": "final",
   "routeId": "m4-final-route-v1",
@@ -11,24 +11,24 @@
   "hashMatchesFile": true,
   "duration": 75,
   "waypointCount": 11,
-  "sampleCount": 10733,
-  "integratedSeconds": 75.002,
+  "sampleCount": 10379,
+  "integratedSeconds": 72.755,
   "finalPosition": {
-    "x": 37.14237336951526,
-    "y": 0.9972414048090699,
-    "z": -93.10508603812482
+    "x": 38.42002130506748,
+    "y": 0.8105036697978729,
+    "z": -88.65476130174382
   },
-  "finalWaypointDevM": 0.58,
+  "finalWaypointDevM": 4.16,
   "grounding": {
     "ungroundedFrames": 0,
-    "minY": -2.268216632917918
+    "minY": -2.2304000293925945
   },
   "errors": {
     "issues": [
       {
         "type": "unhandledrejection",
         "message": "m0b-intentional-rejection",
-        "at": 4055.399999976158,
+        "at": 3830.2999999523163,
         "intentional": true
       }
     ],
@@ -42,36 +42,36 @@
   "hud": "backend: WebGPUcanvas: 1280×720preset: lowmode: finaladapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 144 · calls: 41 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -4° · near 0.1 / far 400heroTree LOD: 0 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선",
   "perf": {
     "note": "collectPerf 는 60초 창(final 75초 중 0~60s, 로드 워밍업 포함)",
-    "avgFps": 138.14,
-    "low1Fps": 25.26,
+    "avgFps": 136.91,
+    "low1Fps": 22.65,
     "hitches": 0,
     "maxCalls": 57,
     "maxPrograms": 40,
     "textureGpuMB": 34.55,
-    "jsHeapPeakMB": 89.37,
+    "jsHeapPeakMB": 81.42,
     "secondsFpsMin5": [
-      2.43,
-      11.93,
-      143.91,
-      143.11,
-      141.99
+      1.98,
+      10.95,
+      143,
+      142.05,
+      141.03
     ],
     "raw": {
       "duration": 60,
-      "sampleCount": 8289,
-      "avgFps": 138.14,
-      "onePercentLowFps": 25.26,
+      "sampleCount": 8215,
+      "avgFps": 136.91,
+      "onePercentLowFps": 22.65,
       "oneSecondHitches": 0,
       "maxCalls": 57,
       "maxTriangles": "확인 불가",
       "maxPrograms": 40,
       "maxTextures": 8,
       "textureGpuMB": 34.55,
-      "jsHeapPeakMB": 89.37,
+      "jsHeapPeakMB": 81.42,
       "seconds": [
         {
           "second": 1,
-          "fps": 2.43,
+          "fps": 1.98,
           "calls": 57,
           "triangles": "확인 불가",
           "programs": 40,
@@ -79,7 +79,7 @@
         },
         {
           "second": 2,
-          "fps": 11.93,
+          "fps": 10.95,
           "calls": 36,
           "triangles": "확인 불가",
           "programs": 40,
@@ -87,23 +87,23 @@
         },
         {
           "second": 3,
-          "fps": 143.91,
-          "calls": 36,
+          "fps": 143,
+          "calls": 35,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 4,
-          "fps": 143.11,
-          "calls": 36,
+          "fps": 142.05,
+          "calls": 35,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 5,
-          "fps": 141.99,
+          "fps": 141.03,
           "calls": 35,
           "triangles": "확인 불가",
           "programs": 40,
@@ -111,47 +111,47 @@
         },
         {
           "second": 6,
-          "fps": 144.02,
-          "calls": 34,
+          "fps": 141.99,
+          "calls": 35,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 7,
-          "fps": 142,
-          "calls": 35,
+          "fps": 143.01,
+          "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 8,
-          "fps": 142.99,
-          "calls": 35,
+          "fps": 141.99,
+          "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 9,
-          "fps": 144.01,
-          "calls": 34,
+          "fps": 143.03,
+          "calls": 35,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 10,
-          "fps": 143.01,
-          "calls": 34,
+          "fps": 143,
+          "calls": 35,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 11,
-          "fps": 143.01,
+          "fps": 142,
           "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
@@ -167,7 +167,7 @@
         },
         {
           "second": 13,
-          "fps": 143.04,
+          "fps": 143.01,
           "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
@@ -175,7 +175,7 @@
         },
         {
           "second": 14,
-          "fps": 143.99,
+          "fps": 142.46,
           "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
@@ -183,47 +183,47 @@
         },
         {
           "second": 15,
-          "fps": 143,
-          "calls": 33,
+          "fps": 143.54,
+          "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 16,
-          "fps": 142.97,
-          "calls": 33,
+          "fps": 142.02,
+          "calls": 34,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 17,
-          "fps": 143.96,
-          "calls": 33,
+          "fps": 143,
+          "calls": 32,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 18,
-          "fps": 143.04,
-          "calls": 31,
+          "fps": 126.78,
+          "calls": 32,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 19,
-          "fps": 141.98,
-          "calls": 28,
+          "fps": 134.29,
+          "calls": 29,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 20,
-          "fps": 143.07,
+          "fps": 143,
           "calls": 28,
           "triangles": "확인 불가",
           "programs": 40,
@@ -247,7 +247,7 @@
         },
         {
           "second": 23,
-          "fps": 141.99,
+          "fps": 142,
           "calls": 26,
           "triangles": "확인 불가",
           "programs": 40,
@@ -255,7 +255,7 @@
         },
         {
           "second": 24,
-          "fps": 143,
+          "fps": 143.03,
           "calls": 26,
           "triangles": "확인 불가",
           "programs": 40,
@@ -263,38 +263,6 @@
         },
         {
           "second": 25,
-          "fps": 143.98,
-          "calls": 26,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 26,
-          "fps": 142.03,
-          "calls": 26,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 27,
-          "fps": 144.03,
-          "calls": 26,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 28,
-          "fps": 143.99,
-          "calls": 26,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 29,
           "fps": 142.99,
           "calls": 26,
           "triangles": "확인 불가",
@@ -302,16 +270,48 @@
           "textures": 8
         },
         {
-          "second": 30,
-          "fps": 143.01,
+          "second": 26,
+          "fps": 143,
           "calls": 26,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
+          "second": 27,
+          "fps": 143.99,
+          "calls": 26,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
+          "second": 28,
+          "fps": 142.02,
+          "calls": 26,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
+          "second": 29,
+          "fps": 143,
+          "calls": 25,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
+          "second": 30,
+          "fps": 143,
+          "calls": 25,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
           "second": 31,
-          "fps": 143.01,
+          "fps": 143.99,
           "calls": 25,
           "triangles": "확인 불가",
           "programs": 40,
@@ -319,15 +319,15 @@
         },
         {
           "second": 32,
-          "fps": 144.01,
-          "calls": 25,
+          "fps": 144.02,
+          "calls": 24,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 33,
-          "fps": 142,
+          "fps": 142.99,
           "calls": 24,
           "triangles": "확인 불가",
           "programs": 40,
@@ -335,7 +335,7 @@
         },
         {
           "second": 34,
-          "fps": 144.01,
+          "fps": 143,
           "calls": 24,
           "triangles": "확인 불가",
           "programs": 40,
@@ -343,7 +343,7 @@
         },
         {
           "second": 35,
-          "fps": 143.99,
+          "fps": 144,
           "calls": 24,
           "triangles": "확인 불가",
           "programs": 40,
@@ -351,15 +351,15 @@
         },
         {
           "second": 36,
-          "fps": 142.01,
-          "calls": 24,
+          "fps": 138,
+          "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 37,
-          "fps": 143.01,
+          "fps": 143,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -383,7 +383,7 @@
         },
         {
           "second": 40,
-          "fps": 143.01,
+          "fps": 143.99,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -391,7 +391,7 @@
         },
         {
           "second": 41,
-          "fps": 141,
+          "fps": 143.03,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -399,7 +399,7 @@
         },
         {
           "second": 42,
-          "fps": 142.99,
+          "fps": 143.99,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -407,7 +407,7 @@
         },
         {
           "second": 43,
-          "fps": 143.01,
+          "fps": 142.03,
           "calls": 22,
           "triangles": "확인 불가",
           "programs": 40,
@@ -415,7 +415,7 @@
         },
         {
           "second": 44,
-          "fps": 142.02,
+          "fps": 143.99,
           "calls": 22,
           "triangles": "확인 불가",
           "programs": 40,
@@ -423,7 +423,7 @@
         },
         {
           "second": 45,
-          "fps": 144,
+          "fps": 143.98,
           "calls": 22,
           "triangles": "확인 불가",
           "programs": 40,
@@ -431,7 +431,7 @@
         },
         {
           "second": 46,
-          "fps": 143.99,
+          "fps": 144.03,
           "calls": 22,
           "triangles": "확인 불가",
           "programs": 40,
@@ -447,7 +447,7 @@
         },
         {
           "second": 48,
-          "fps": 144.01,
+          "fps": 144,
           "calls": 22,
           "triangles": "확인 불가",
           "programs": 40,
@@ -455,30 +455,6 @@
         },
         {
           "second": 49,
-          "fps": 144.01,
-          "calls": 22,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 50,
-          "fps": 144,
-          "calls": 22,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 51,
-          "fps": 144,
-          "calls": 22,
-          "triangles": "확인 불가",
-          "programs": 40,
-          "textures": 8
-        },
-        {
-          "second": 52,
           "fps": 143.99,
           "calls": 22,
           "triangles": "확인 불가",
@@ -486,9 +462,33 @@
           "textures": 8
         },
         {
-          "second": 53,
-          "fps": 144.01,
+          "second": 50,
+          "fps": 144.02,
           "calls": 22,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
+          "second": 51,
+          "fps": 143.99,
+          "calls": 22,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
+          "second": 52,
+          "fps": 144,
+          "calls": 23,
+          "triangles": "확인 불가",
+          "programs": 40,
+          "textures": 8
+        },
+        {
+          "second": 53,
+          "fps": 144,
+          "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
@@ -503,7 +503,7 @@
         },
         {
           "second": 55,
-          "fps": 143,
+          "fps": 144,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -511,7 +511,7 @@
         },
         {
           "second": 56,
-          "fps": 144.01,
+          "fps": 144,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -519,23 +519,23 @@
         },
         {
           "second": 57,
-          "fps": 143.99,
-          "calls": 22,
+          "fps": 142.99,
+          "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 58,
-          "fps": 143,
-          "calls": 22,
+          "fps": 144.02,
+          "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
           "textures": 8
         },
         {
           "second": 59,
-          "fps": 144.01,
+          "fps": 143.99,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -543,7 +543,7 @@
         },
         {
           "second": 60,
-          "fps": 144.04,
+          "fps": 144.08,
           "calls": 23,
           "triangles": "확인 불가",
           "programs": 40,
@@ -563,160 +563,158 @@
     "villageBreaches": 0,
     "stuckSegments": 0,
     "ungroundedFrames": 0,
-    "minY": -2.268216632917918,
+    "minY": -2.2304000293925945,
     "note": "trace 는 waypoint 시각(11점)에서만 기록 — 점 사이 구간은 grounding(매 프레임 접지 실패 수·최저 y)으로만 보강된다. 관통 판정은 waypoint 지점 기준."
   },
   "trace": [
     {
       "t": 0,
       "id": "spawn",
-      "x": 0,
+      "x": -0.02,
       "z": 23.97,
       "groundY": -2.383,
-      "distToHeroCenter": 125.844,
+      "distToHeroCenter": 125.85,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.03,
+      "devFromWaypointM": 0.04,
       "movedSincePrevM": null,
       "stuck": false
     },
     {
       "t": 5,
       "id": "village-gap",
-      "x": -4.57,
-      "z": 9.27,
+      "x": -3.58,
+      "z": 16.34,
       "groundY": -2.383,
-      "distToHeroCenter": 113.552,
+      "distToHeroCenter": 119.788,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.85,
-      "movedSincePrevM": 15.39,
+      "devFromWaypointM": 6.5,
+      "movedSincePrevM": 8.42,
       "stuck": false
     },
     {
       "t": 10,
       "id": "village-north",
-      "x": -10.33,
-      "z": -5.53,
+      "x": -9.33,
+      "z": 1.54,
       "groundY": -2.384,
-      "distToHeroCenter": 102.57,
+      "distToHeroCenter": 108.417,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 1.41,
+      "devFromWaypointM": 7.55,
       "movedSincePrevM": 15.88,
       "stuck": false
     },
     {
       "t": 17,
       "id": "meadow-entry",
-      "x": -7.6,
-      "z": -27.46,
-      "groundY": -3.09,
-      "distToHeroCenter": 82.323,
+      "x": -6.58,
+      "z": -20.39,
+      "groundY": -2.566,
+      "distToHeroCenter": 87.774,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 1.69,
+      "devFromWaypointM": 7.63,
       "movedSincePrevM": 22.1,
       "stuck": false
     },
     {
       "t": 24,
       "id": "gentle-rise",
-      "x": 4.68,
-      "z": -46.06,
-      "groundY": -2.475,
-      "distToHeroCenter": 60.035,
+      "x": 5.71,
+      "z": -38.98,
+      "groundY": -2.654,
+      "distToHeroCenter": 65.528,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.68,
+      "devFromWaypointM": 7.23,
       "movedSincePrevM": 22.29,
       "stuck": false
     },
     {
       "t": 30,
       "id": "mid-vista",
-      "x": 18.65,
-      "z": -59.22,
-      "groundY": -1.434,
-      "distToHeroCenter": 41.559,
+      "x": 19.68,
+      "z": -52.13,
+      "groundY": -1.661,
+      "distToHeroCenter": 47.542,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 1.02,
+      "devFromWaypointM": 8.05,
       "movedSincePrevM": 19.19,
       "stuck": false
     },
     {
       "t": 37,
       "id": "tree-approach",
-      "x": 31.97,
-      "z": -76.98,
-      "groundY": -0.595,
-      "distToHeroCenter": 19.953,
+      "x": 32.99,
+      "z": -69.91,
+      "groundY": -0.737,
+      "distToHeroCenter": 26.567,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.98,
-      "movedSincePrevM": 22.2,
+      "devFromWaypointM": 6.17,
+      "movedSincePrevM": 22.21,
       "stuck": false
     },
     {
       "t": 43,
       "id": "hero-approach",
-      "x": 37.14,
-      "z": -93.11,
-      "groundY": 0.097,
-      "distToHeroCenter": 3.015,
+      "x": 38.41,
+      "z": -88.27,
+      "groundY": -0.108,
+      "distToHeroCenter": 7.741,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.58,
-      "movedSincePrevM": 16.94,
+      "devFromWaypointM": 4.52,
+      "movedSincePrevM": 19.14,
       "stuck": false
     },
     {
       "t": 50,
       "id": "hero-look",
-      "x": 37.14,
-      "z": -93.11,
-      "groundY": 0.097,
-      "distToHeroCenter": 3.015,
+      "x": 38.42,
+      "z": -88.65,
+      "groundY": -0.09,
+      "distToHeroCenter": 7.362,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.58,
-      "movedSincePrevM": 0,
+      "devFromWaypointM": 4.16,
+      "movedSincePrevM": 0.38,
       "stuck": false
     },
     {
       "t": 65,
       "id": "turn-back",
-      "x": 37.14,
-      "z": -93.11,
-      "groundY": 0.097,
-      "distToHeroCenter": 3.015,
+      "x": 38.42,
+      "z": -88.65,
+      "groundY": -0.09,
+      "distToHeroCenter": 7.362,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.58,
+      "devFromWaypointM": 4.16,
       "movedSincePrevM": 0,
       "stuck": false
     },
     {
       "t": 75,
       "id": "village-lookback",
-      "x": 37.14,
-      "z": -93.11,
-      "groundY": 0.097,
-      "distToHeroCenter": 3.015,
+      "x": 38.42,
+      "z": -88.65,
+      "groundY": -0.09,
+      "distToHeroCenter": 7.362,
       "heroClear": true,
       "insideVillage": [],
-      "devFromWaypointM": 0.58,
+      "devFromWaypointM": 4.16,
       "movedSincePrevM": 0,
       "stuck": false
     }
   ],
-  "wallClockSeconds": 76.948,
   "simComparison": {
-    "source": "node Automation/fit-final-route.mjs --verify (dt 1/60, hash 6ad0996f1aff)",
+    "source": "node Automation/fit-final-route.mjs --verify (dt 1/60, R71-B 재적합, hash 6ad0996f1aff)",
     "simFinalDevM": 0.584,
     "simFinalHeroCenterDistM": 3.016,
-    "routeClock": "R74-A: finalRouteRunner 라우트 시각 = readIntegratedSeconds (컨트롤러 적분 시간). 벽시계 76.948s 동안 적분 75.002s",
     "rows": [
       {
         "t": 0,
@@ -726,17 +724,17 @@
           "z": 24
         },
         "browser": {
-          "x": 0,
+          "x": -0.02,
           "z": 23.97
         },
         "sim": {
           "x": 0,
           "z": 24
         },
-        "devBrowserM": 0.03,
+        "devBrowserM": 0.04,
         "devSimM": 0,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 125.844
+        "browserVsSimM": 0.04,
+        "distToHeroCenterM": 125.85
       },
       {
         "t": 5,
@@ -746,17 +744,17 @@
           "z": 10
         },
         "browser": {
-          "x": -4.57,
-          "z": 9.27
+          "x": -3.58,
+          "z": 16.34
         },
         "sim": {
           "x": -4.558,
           "z": 9.293
         },
-        "devBrowserM": 0.85,
+        "devBrowserM": 6.5,
         "devSimM": 0.833,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 113.552
+        "browserVsSimM": 7.11,
+        "distToHeroCenterM": 119.788
       },
       {
         "t": 10,
@@ -766,17 +764,17 @@
           "z": -6
         },
         "browser": {
-          "x": -10.33,
-          "z": -5.53
+          "x": -9.33,
+          "z": 1.54
         },
         "sim": {
           "x": -10.33,
           "z": -5.502
         },
-        "devBrowserM": 1.41,
+        "devBrowserM": 7.55,
         "devSimM": 1.42,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 102.57
+        "browserVsSimM": 7.11,
+        "distToHeroCenterM": 108.417
       },
       {
         "t": 17,
@@ -786,17 +784,17 @@
           "z": -28
         },
         "browser": {
-          "x": -7.6,
-          "z": -27.46
+          "x": -6.58,
+          "z": -20.39
         },
         "sim": {
           "x": -7.611,
           "z": -27.434
         },
-        "devBrowserM": 1.69,
+        "devBrowserM": 7.63,
         "devSimM": 1.707,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 82.323
+        "browserVsSimM": 7.12,
+        "distToHeroCenterM": 87.774
       },
       {
         "t": 24,
@@ -806,17 +804,17 @@
           "z": -46
         },
         "browser": {
-          "x": 4.68,
-          "z": -46.06
+          "x": 5.71,
+          "z": -38.98
         },
         "sim": {
           "x": 4.66,
           "z": -46.037
         },
-        "devBrowserM": 0.68,
+        "devBrowserM": 7.23,
         "devSimM": 0.661,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 60.035
+        "browserVsSimM": 7.13,
+        "distToHeroCenterM": 65.528
       },
       {
         "t": 30,
@@ -826,17 +824,17 @@
           "z": -60
         },
         "browser": {
-          "x": 18.65,
-          "z": -59.22
+          "x": 19.68,
+          "z": -52.13
         },
         "sim": {
           "x": 18.63,
           "z": -59.193
         },
-        "devBrowserM": 1.02,
+        "devBrowserM": 8.05,
         "devSimM": 1.024,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 41.559
+        "browserVsSimM": 7.14,
+        "distToHeroCenterM": 47.542
       },
       {
         "t": 37,
@@ -846,17 +844,17 @@
           "z": -76
         },
         "browser": {
-          "x": 31.97,
-          "z": -76.98
+          "x": 32.99,
+          "z": -69.91
         },
         "sim": {
           "x": 31.958,
           "z": -76.953
         },
-        "devBrowserM": 0.98,
+        "devBrowserM": 6.17,
         "devSimM": 0.954,
-        "browserVsSimM": 0.03,
-        "distToHeroCenterM": 19.953
+        "browserVsSimM": 7.12,
+        "distToHeroCenterM": 26.567
       },
       {
         "t": 43,
@@ -866,17 +864,17 @@
           "z": -92.552
         },
         "browser": {
-          "x": 37.14,
-          "z": -93.11
+          "x": 38.41,
+          "z": -88.27
         },
         "sim": {
           "x": 37.155,
           "z": -93.105
         },
-        "devBrowserM": 0.58,
+        "devBrowserM": 4.52,
         "devSimM": 0.584,
-        "browserVsSimM": 0.02,
-        "distToHeroCenterM": 3.015
+        "browserVsSimM": 5,
+        "distToHeroCenterM": 7.741
       },
       {
         "t": 50,
@@ -886,17 +884,17 @@
           "z": -92.552
         },
         "browser": {
-          "x": 37.14,
-          "z": -93.11
+          "x": 38.42,
+          "z": -88.65
         },
         "sim": {
           "x": 37.155,
           "z": -93.105
         },
-        "devBrowserM": 0.58,
+        "devBrowserM": 4.16,
         "devSimM": 0.584,
-        "browserVsSimM": 0.02,
-        "distToHeroCenterM": 3.015
+        "browserVsSimM": 4.63,
+        "distToHeroCenterM": 7.362
       },
       {
         "t": 65,
@@ -906,17 +904,17 @@
           "z": -92.552
         },
         "browser": {
-          "x": 37.14,
-          "z": -93.11
+          "x": 38.42,
+          "z": -88.65
         },
         "sim": {
           "x": 37.155,
           "z": -93.105
         },
-        "devBrowserM": 0.58,
+        "devBrowserM": 4.16,
         "devSimM": 0.584,
-        "browserVsSimM": 0.02,
-        "distToHeroCenterM": 3.015
+        "browserVsSimM": 4.63,
+        "distToHeroCenterM": 7.362
       },
       {
         "t": 75,
@@ -926,33 +924,40 @@
           "z": -92.552
         },
         "browser": {
-          "x": 37.14,
-          "z": -93.11
+          "x": 38.42,
+          "z": -88.65
         },
         "sim": {
           "x": 37.155,
           "z": -93.105
         },
-        "devBrowserM": 0.58,
+        "devBrowserM": 4.16,
         "devSimM": 0.584,
-        "browserVsSimM": 0.02,
-        "distToHeroCenterM": 3.015
+        "browserVsSimM": 4.63,
+        "distToHeroCenterM": 7.362
       }
-    ]
+    ],
+    "lagAnalysis": {
+      "lostSeconds": 2.245,
+      "walkSpeed": 3.2,
+      "predictedLagM": 7.18,
+      "observedLagM_t5_t37": "7.11~7.14",
+      "cause": "finalRouteRunner 라우트 시각 = performance.now() 벽시계, Controller.tsx dt=min(rawDt,1/20) 클램프 → 로드 워밍업(1초차 1.98fps·2초차 10.95fps) 동안 컨트롤러 적분 시간이 벽시계보다 2.245s 짧아 동선이 7.1m 뒤처진 채 forward=0(t=43) 전환"
+    }
   },
   "verdict": {
-    "finalDevM": 0.58,
+    "finalDevM": 4.16,
     "finalDevLimitM": 1.5,
-    "finalDevPass": true,
-    "heroCenterDistM": 3.02,
+    "finalDevPass": false,
+    "heroCenterDistM": 7.36,
     "heroCenterRange": [
       3,
       6
     ],
-    "heroCenterPass": true,
+    "heroCenterPass": false,
     "hashPass": true,
     "breachPass": true,
     "errorsPass": true,
-    "overall": "PASS (편차 0.58m ≤1.5m, 밑동 3.02m, 브라우저−시뮬 ≤0.03m)"
+    "overall": "FAIL (편차 4.16m > 1.5m, 밑동 7.36m > 6m) — 수정은 worker-codex"
   }
 }
