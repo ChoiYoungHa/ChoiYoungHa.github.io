@@ -41,6 +41,13 @@
     "azimuthDeg": 135
   },
   "volumetricClouds": 0,
+  "grassLite": {
+    "enabled": false,
+    "seed": 539363366,
+    "maxTrianglesPerInstance": 12,
+    "palette": "#3B3E26",
+    "query": "grassLite=1"
+  },
   "integration": {
     "connected": true,
     "connectedRows": [
@@ -54,6 +61,12 @@
     "backgroundIntensity": 1.75,
     "environmentIntensity": 1.0,
     "hazeMix": 0.4,
+    "hazeDirection": {
+      "enabled": false,
+      "brightYawDeg": -20.0803,
+      "gain": 0.86,
+      "maxAttenuation": 0.15
+    },
     "note": "R30-A 실측: bgi 1.75 → S1(vista-mid) 원경 휘도 134(목표 130~145). hazeMix 0.4 = 하늘을 안개색 #8FA0B0 쪽으로 40% 섞음(scene.backgroundNode) → 원경 hue 212°·채도 11.4%. S3(vista-village) 하늘은 166 으로 밝지만 L3 판정은 S1 기준."
   }
 }
