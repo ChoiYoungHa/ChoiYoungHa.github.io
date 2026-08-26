@@ -1,4 +1,7 @@
 import type { InputState } from '../input'
+// 확장자를 명시한다(tsconfig.app.json `allowImportingTsExtensions: true`).
+// 이래야 `node --test`가 이 파일을 빌드 없이 그대로 실행할 수 있다(M0b-11 완료 조건).
+// 타입 전용 import 는 Node 가 지워버리므로 확장자가 필요 없다.
 import {
   RAYCAST_DEFAULTS,
   type GroundSampler,
@@ -6,7 +9,7 @@ import {
   type RaycastParams,
   type StepResult,
   type Vec3,
-} from './types'
+} from './types.ts'
 
 /**
  * 계획서.md §3-4 구현 A — 레이캐스트/하이트샘플 접지 컨트롤러 (M0).
