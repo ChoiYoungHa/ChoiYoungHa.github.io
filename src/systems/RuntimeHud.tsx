@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { isForcedWebGL, readBackend, type Backend } from '../gl/createRenderer'
 import { useRuntime } from '../store/useRuntime'
 import { CAMERA } from '../player/FollowCamera'
+import { LOD_SWITCH_DISTANCE, readHeroTreeLod } from '../scene/HeroTree'
 import { sampleRendererFrame, type RendererForPerf } from './perf'
 
 /**
@@ -64,6 +65,7 @@ export function RuntimeProbe() {
     maxFrameCalls.current = Math.max(maxFrameCalls.current, perf.calls)
     if (acc.current >= 1) {
       set({
+        heroTreeLod: readHeroTreeLod(),
         fps: Math.round(frames.current / acc.current),
         calls: maxFrameCalls.current,
         triangles: 0,
@@ -114,6 +116,9 @@ export function RuntimeHud() {
           FOV {CAMERA.fov}° · dist {CAMERA.distance}m · h {CAMERA.height}m · pitch{' '}
           {CAMERA.pitchDeg}° · near {CAMERA.near} / far {CAMERA.far}
         </b>
+      </div>
+      <div>
+        heroTree LOD: <b data-testid="hud-herotree-lod">{s.heroTreeLod}</b> (전환 {LOD_SWITCH_DISTANCE}m)
       </div>
       <div className="hud-help">WASD 이동 · Shift 달리기 · 드래그 시선</div>
     </div>

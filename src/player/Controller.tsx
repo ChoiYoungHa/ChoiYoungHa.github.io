@@ -3,6 +3,8 @@ import { useEffect, useMemo, useRef } from 'react'
 import type { Mesh } from 'three'
 import mainPath from '../data/main-path.json' with { type: 'json' }
 import { sampleGround } from '../scene/terrain/heightmap'
+import placement from '../data/placement.json' with { type: 'json' }
+import { heroTreeCollider, resolveCollision } from '../scene/colliders/heroTree'
 import { createKeyboardInput } from './input'
 import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
@@ -24,11 +26,13 @@ export function Player() {
   // 스폰은 길의 첫 waypoint = 마을 입구(main-path.json landmarks.spawn).
   const controller = useMemo(
     () =>
-      createRaycastController(sampleGround, {
-        x: mainPath.landmarks.spawn.x,
-        y: 0,
-        z: mainPath.landmarks.spawn.z,
-      }),
+      createRaycastController(
+        sampleGround,
+        { x: mainPath.landmarks.spawn.x, y: 0, z: mainPath.landmarks.spawn.z },
+        {},
+        // M2-10 — 거대 수목 줄기 충돌. 콜라이더가 늘면 이 배열에 더한다.
+        (pos) => resolveCollision(pos, [heroTreeCollider(placement.heroTree)]),
+      ),
     [],
   )
   const keys = useMemo(() => createKeyboardInput(), [])

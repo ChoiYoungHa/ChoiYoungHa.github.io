@@ -3,8 +3,8 @@
   "at": "2026-08-26",
   "method": "같은 vista·같은 조명으로 두 장을 찍고(?shot=vista-start, 하나는 ?hideHero=1) 차분해 나무 픽셀만 남겼다. HDR 하늘의 구름이 밝기 임계·지평선 검출을 모두 교란해서(2차례 실패) 휴리스틱 대신 차분을 썼다. 차분은 카메라·조명·하늘이 동일하므로 나무 유무만 남는다.",
   "files": {
-    "withTree": "Docs/m0a/m2-s1.png",
-    "withoutTree": "Docs/m0a/m2-s1-nohero.png",
+    "withTree": "Docs/lookdev/m2-herotree-S1-color.png",
+    "withoutTree": "Docs/lookdev/m2-herotree-S1-nohero.png",
     "grayscale": "Docs/lookdev/m2-herotree-S1-bw.png",
     "mask": "Docs/lookdev/m2-herotree-S1-mask.png"
   },

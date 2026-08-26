@@ -18,6 +18,8 @@ export interface RuntimeState {
   calls: number
   triangles: number
   programs: number
+  /** M2-09 — 거대 수목 active LOD. 1초 1회 집계로만 올린다. */
+  heroTreeLod: 0 | 1
   errors: string[]
   set: (patch: Partial<Omit<RuntimeState, 'set' | 'pushError'>>) => void
   pushError: (msg: string) => void
@@ -34,6 +36,7 @@ export const useRuntime = create<RuntimeState>((set) => ({
   calls: 0,
   triangles: 0,
   programs: 0,
+  heroTreeLod: 0,
   errors: [],
   set: (patch) => set(patch),
   pushError: (msg) => set((s) => ({ errors: [...s.errors, msg].slice(0, 20) })),

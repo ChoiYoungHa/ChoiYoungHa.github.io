@@ -17,10 +17,17 @@ import {
  * 의존성 0. three 도 React 도 쓰지 않는다.
  * M0-a 범위: 걷기 · 달리기 · 지면 접지. **점프·상호작용 없음**(§1-2).
  */
+/**
+ * M2-10 — 수평 충돌 해소 훅. `(x,z)` 를 받아 밀어낸 `(x,z)` 를 돌려준다.
+ * 컨트롤러는 무엇과 부딪히는지 모른다 — 거대 수목·집 어느 쪽이든 이 형태면 된다.
+ */
+export type CollisionResolver = (pos: { x: number; z: number }) => { x: number; z: number }
+
 export function createRaycastController(
   sampleGround: GroundSampler,
   start: Vec3 = { x: 0, y: 0, z: 0 },
   params: Partial<RaycastParams> = {},
+  resolveCollision?: CollisionResolver,
 ): KinematicController {
   const p: RaycastParams = { ...RAYCAST_DEFAULTS, ...params }
 
@@ -78,6 +85,18 @@ export function createRaycastController(
       if (slopeDeg <= p.maxSlopeDeg) {
         position.x = nextX
         position.z = nextZ
+        // M2-10 — 지형을 통과한 뒤 수평 충돌을 푼다.
+        // 이동을 취소하지 않고 밀어내므로 줄기를 따라 미끄러진다(벽에 붙어 멈추지 않는다).
+        if (resolveCollision) {
+          const pushed = resolveCollision({ x: position.x, z: position.z })
+          if (pushed.x !== position.x || pushed.z !== position.z) {
+            position.x = pushed.x
+            position.z = pushed.z
+            // 밀려난 방향의 속도 성분을 죽인다. 안 죽이면 다음 프레임에 같은 힘으로 다시 파고든다.
+            velX = 0
+            velZ = 0
+          }
+        }
       } else {
         velX = 0
         velZ = 0
