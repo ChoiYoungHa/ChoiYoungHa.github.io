@@ -1,11 +1,12 @@
 /* oxlint-disable react/only-export-components -- smoke probe reuses the component's loader contract. */
-import { useThree } from '@react-three/fiber'
-import { useEffect } from 'react'
-import { Color, EquirectangularReflectionMapping, type Scene, type Texture } from 'three'
+import { useFrame, useThree } from '@react-three/fiber'
+import { useEffect, useMemo } from 'react'
+import { Color, EquirectangularReflectionMapping, type Scene, type Texture, Vector3 } from 'three'
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js'
-import { equirectUV, float, luminance, mix, positionWorldDirection, texture, vec3, vec4 } from 'three/tsl'
+import { clamp, cos, equirectUV, float, luminance, max, min, mix, positionWorldDirection, texture, uniform, vec3, vec4 } from 'three/tsl'
 import lookdev from '../data/lookdev.json'
 import { FOG_COLOR } from './Atmosphere'
+import { yawDegFromXZ } from './sky/hazeDirection'
 
 export const SKY_HDR_URL = '/env/sky_1k.hdr'
 
@@ -30,6 +31,14 @@ export function readSkyMix(search: string = location.search): number {
   return Number.isFinite(q) && q >= 0 && q <= 1 ? q : lookdev.sky.hazeMix
 }
 
+/** Opt-in only: the frozen lookdev default remains off; `?hazeDir=1` enables capture tuning. */
+export function readHazeDirectionEnabled(search: string = location.search): boolean {
+  const query = new URLSearchParams(search).get('hazeDir')
+  if (query === '1') return true
+  if (query === '0') return false
+  return lookdev.sky.hazeDirection.enabled
+}
+
 type SceneWithBackgroundNode = Scene & { backgroundNode: unknown }
 
 /**
@@ -37,7 +46,12 @@ type SceneWithBackgroundNode = Scene & { backgroundNode: unknown }
  * (8~12%·205~215°)에 못 든다. three 의 배경은 어차피 NodeMaterial 구(Background.js)라 `scene.backgroundNode` 로
  * 같은 프로그램 안에서 안개색 쪽으로 섞는다(프로그램 수 불변). 휘도는 보존하고(안개색을 하늘 휘도에 맞춰 스케일) 색만 옮긴다.
  */
-export function applySkyTexture(scene: Scene, sky: Texture): void {
+export function applySkyTexture(
+  scene: Scene,
+  sky: Texture,
+  cameraYawRadians = uniform(0),
+  hazeDirectionEnabled = uniform(0),
+): void {
   scene.environment = sky
   const k = readSkyMix()
   if (k <= 0) {
@@ -48,8 +62,14 @@ export function applySkyTexture(scene: Scene, sky: Texture): void {
     const fog = new Color(FOG_COLOR)
     const haze = vec3(fog.r, fog.g, fog.b)
     const tinted = haze.mul(luminance(skyRgb).div(luminance(haze)))
+    const brightYawRadians = lookdev.sky.hazeDirection.brightYawDeg * Math.PI / 180
+    const directionLobe = max(0, cos(cameraYawRadians.sub(brightYawRadians))).mul(hazeDirectionEnabled)
+    const weightedGain = directionLobe.mul(lookdev.sky.hazeDirection.gain)
+    const weightedMix = clamp(float(k).mul(float(1).add(weightedGain)), 0, 1)
+    const attenuation = min(lookdev.sky.hazeDirection.maxAttenuation, weightedGain.mul(lookdev.sky.hazeDirection.maxAttenuation))
+    const luminanceScale = float(1).sub(attenuation)
     scene.background = null
-    ;(scene as SceneWithBackgroundNode).backgroundNode = vec4(mix(skyRgb, tinted, float(k)), 1.0)
+    ;(scene as SceneWithBackgroundNode).backgroundNode = vec4(mix(skyRgb, tinted, weightedMix).mul(luminanceScale), 1.0)
   }
   // M3 (R30-A) — 하늘 휘도(L3 far)와 IBL 강도(근경 휘도)를 분리해서 잡는다. 이전엔 둘 다 기본값 1.
   scene.backgroundIntensity = readSkyIntensity('background')
@@ -58,6 +78,17 @@ export function applySkyTexture(scene: Scene, sky: Texture): void {
 
 export function SkyDome() {
   const scene = useThree((state) => state.scene)
+  const cameraYawRadians = useMemo(() => uniform(0), [])
+  const cameraForward = useMemo(() => new Vector3(), [])
+  const hazeDirectionEnabled = readHazeDirectionEnabled()
+  const hazeDirectionEnabledNode = useMemo(() => uniform(hazeDirectionEnabled ? 1 : 0), [hazeDirectionEnabled])
+
+  useFrame(({ camera }) => {
+    if (!hazeDirectionEnabled) return
+    camera.getWorldDirection(cameraForward)
+    if (Math.hypot(cameraForward.x, cameraForward.z) < 1e-8) return
+    cameraYawRadians.value = yawDegFromXZ(cameraForward.x, cameraForward.z) * Math.PI / 180
+  })
 
   useEffect(() => {
     const previousBackground = scene.background
@@ -72,7 +103,7 @@ export function SkyDome() {
           return
         }
         sky = texture
-        applySkyTexture(scene, texture)
+        applySkyTexture(scene, texture, cameraYawRadians, hazeDirectionEnabledNode)
       })
       .catch((error: unknown) => console.error('HDR sky load failed', error))
 
@@ -83,7 +114,7 @@ export function SkyDome() {
       if (scene.environment === sky) scene.environment = previousEnvironment
       sky?.dispose()
     }
-  }, [scene])
+  }, [cameraYawRadians, hazeDirectionEnabledNode, scene])
 
   return null
 }
