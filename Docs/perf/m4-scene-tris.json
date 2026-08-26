@@ -1,0 +1,328 @@
+{
+  "schema": "scene-tris/1",
+  "buildHash": "d255223",
+  "preset": "low",
+  "budgetLimitTriangles": 600000,
+  "method": "source-derived conservative scene submission count; no renderer.info dependency",
+  "inputs": {
+    "terrain": {
+      "chunks": 4,
+      "segmentsPerChunk": 64,
+      "triangleCount": 131072
+    },
+    "mainPath": {
+      "samples": 240,
+      "triangleCount": 478
+    },
+    "heroTree": {
+      "lod0Triangles": 2416,
+      "lod1Triangles": 718
+    },
+    "village": {
+      "buildingCount": 8,
+      "houseCounts": {
+        "house-a": 3,
+        "house-b": 3,
+        "house-c": 2
+      },
+      "roofCounts": {
+        "roof-a": 3,
+        "roof-b": 3,
+        "roof-c": 2
+      },
+      "houseTrianglesByVariant": {
+        "house-a": 48,
+        "house-b": 48,
+        "house-c": 60
+      },
+      "roofTrianglesByVariant": {
+        "roof-a": 8,
+        "roof-b": 8,
+        "roof-c": 6
+      },
+      "triangleCount": 468
+    },
+    "foliage": {
+      "totalInstances": 6000,
+      "countsBySpecies": {
+        "grass": 4200,
+        "flower_yellowA": 1200,
+        "plant_bush": 600
+      },
+      "trianglesEach": {
+        "grass": 132,
+        "flower_yellowA": 76,
+        "plant_bush": 32
+      },
+      "trianglesBySpecies": {
+        "grass": 554400,
+        "flower_yellowA": 91200,
+        "plant_bush": 19200
+      },
+      "triangleCount": 664800,
+      "radius": 25,
+      "refs": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv",
+      "runtimeGlb": {
+        "ref": "public/models/vegetation_kit.glb",
+        "bytes": 16900,
+        "totalTriangles": 240,
+        "ledgerTriangles": 240,
+        "matchesLedger": true,
+        "meshNames": [
+          "Mesh grass",
+          "Mesh flower_yellowA",
+          "Mesh plant_bush"
+        ]
+      }
+    },
+    "rocks": {
+      "totalInstances": 300,
+      "countsBySpecies": {
+        "rock_smallA": 100,
+        "rock_smallFlatA": 100,
+        "rock_tallA": 100
+      },
+      "trianglesEach": {
+        "rock_smallA": 16,
+        "rock_smallFlatA": 20,
+        "rock_tallA": 136
+      },
+      "trianglesBySpecies": {
+        "rock_smallA": 1600,
+        "rock_smallFlatA": 2000,
+        "rock_tallA": 13600
+      },
+      "triangleCount": 17200,
+      "maxDistance": 80,
+      "refs": "src/data/quality-presets.json + src/scene/RockInstances.tsx + src/data/assets.csv",
+      "runtimeGlb": {
+        "ref": "public/models/props_rocks.glb",
+        "bytes": 12844,
+        "totalTriangles": 172,
+        "ledgerTriangles": 172,
+        "matchesLedger": true,
+        "meshNames": [
+          "Mesh rock_smallA",
+          "Mesh rock_smallFlatA",
+          "Mesh rock_tallA"
+        ]
+      }
+    }
+  },
+  "scenarios": {
+    "worstCase": {
+      "id": "worstCase",
+      "assumptions": [
+        "hero tree LOD0",
+        "all 6000 foliage and 300 rocks visible at their current GLB LOD0",
+        "all 16 terrain chunks, path, and 8 village buildings retained"
+      ],
+      "components": {
+        "terrain": {
+          "triangles": 131072,
+          "source": {
+            "method": "source-formula",
+            "ref": "src/scene/Terrain.tsx"
+          },
+          "ratioPct": 16.054206
+        },
+        "mainPath": {
+          "triangles": 478,
+          "source": {
+            "method": "source-formula",
+            "ref": "src/scene/MainPath.tsx"
+          },
+          "ratioPct": 0.058547
+        },
+        "village": {
+          "triangles": 468,
+          "source": {
+            "method": "qa-json+placement",
+            "ref": "Docs/qa/m2-house-a.json + src/data/placement.json"
+          },
+          "ratioPct": 0.057322
+        },
+        "foliageInstances": {
+          "triangles": 664800,
+          "source": {
+            "method": "assets-csv+glb-total+runtime-policy",
+            "ref": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv"
+          },
+          "ratioPct": 81.42728
+        },
+        "rockInstances": {
+          "triangles": 17200,
+          "source": {
+            "method": "assets-csv+glb-total+runtime-policy",
+            "ref": "src/data/quality-presets.json + src/scene/RockInstances.tsx + src/data/assets.csv"
+          },
+          "ratioPct": 2.106723
+        },
+        "heroTree": {
+          "triangles": 2416,
+          "source": {
+            "method": "direct-generator",
+            "ref": "src/scene/hero/heroTreeGeometry.ts"
+          },
+          "ratioPct": 0.295921
+        }
+      },
+      "totalTriangles": 816434,
+      "budget": {
+        "limit": 600000,
+        "status": "fail",
+        "headroom": -216434,
+        "overBy": 216434
+      }
+    },
+    "typical": {
+      "id": "typical",
+      "assumptions": [
+        "hero tree LOD1",
+        "6000 foliage within preset radius and all preset-capped rocks retained conservatively",
+        "all 16 terrain chunks, path, and 8 village buildings retained because no fixed camera-frustum contract was supplied"
+      ],
+      "components": {
+        "terrain": {
+          "triangles": 131072,
+          "source": {
+            "method": "source-formula",
+            "ref": "src/scene/Terrain.tsx"
+          },
+          "ratioPct": 16.087665
+        },
+        "mainPath": {
+          "triangles": 478,
+          "source": {
+            "method": "source-formula",
+            "ref": "src/scene/MainPath.tsx"
+          },
+          "ratioPct": 0.058669
+        },
+        "village": {
+          "triangles": 468,
+          "source": {
+            "method": "qa-json+placement",
+            "ref": "Docs/qa/m2-house-a.json + src/data/placement.json"
+          },
+          "ratioPct": 0.057442
+        },
+        "foliageInstances": {
+          "triangles": 664800,
+          "source": {
+            "method": "assets-csv+glb-total+runtime-policy",
+            "ref": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv"
+          },
+          "ratioPct": 81.596984
+        },
+        "rockInstances": {
+          "triangles": 17200,
+          "source": {
+            "method": "assets-csv+glb-total+runtime-policy",
+            "ref": "src/data/quality-presets.json + src/scene/RockInstances.tsx + src/data/assets.csv"
+          },
+          "ratioPct": 2.111113
+        },
+        "heroTree": {
+          "triangles": 718,
+          "source": {
+            "method": "direct-generator",
+            "ref": "src/scene/hero/heroTreeGeometry.ts"
+          },
+          "ratioPct": 0.088127
+        }
+      },
+      "totalTriangles": 814736,
+      "budget": {
+        "limit": 600000,
+        "status": "fail",
+        "headroom": -214736,
+        "overBy": 214736
+      }
+    }
+  },
+  "comparison": {
+    "low": {
+      "worstCaseTriangles": 816434,
+      "typicalTriangles": 814736,
+      "budgetStatus": "fail",
+      "worstCaseComponentRatiosPct": {
+        "terrain": 16.054206,
+        "mainPath": 0.058547,
+        "village": 0.057322,
+        "foliageInstances": 81.42728,
+        "rockInstances": 2.106723,
+        "heroTree": 0.295921
+      }
+    },
+    "base": {
+      "worstCaseTriangles": 2384834,
+      "typicalTriangles": 2383136,
+      "budgetStatus": "fail",
+      "worstCaseComponentRatiosPct": {
+        "terrain": 5.496064,
+        "mainPath": 0.020043,
+        "village": 0.019624,
+        "foliageInstances": 92.920514,
+        "rockInstances": 1.442448,
+        "heroTree": 0.101307
+      }
+    }
+  },
+  "sourceSummary": {
+    "directGenerator": [
+      {
+        "ref": "src/scene/hero/heroTreeGeometry.ts",
+        "values": {
+          "lod0": 2416,
+          "lod1": 718
+        }
+      }
+    ],
+    "sourceFormula": [
+      {
+        "ref": "src/scene/Terrain.tsx",
+        "formula": "chunks² × segments² × 2"
+      },
+      {
+        "ref": "src/scene/MainPath.tsx",
+        "formula": "(samples - 1) × 2"
+      }
+    ],
+    "qaJson": [
+      {
+        "ref": "Docs/qa/m2-herotree.json",
+        "role": "generator cross-check"
+      },
+      {
+        "ref": "Docs/qa/m2-house-a.json",
+        "role": "house/roof variant triangles"
+      }
+    ],
+    "assetsCsv": [
+      {
+        "ref": "src/data/assets.csv",
+        "role": "foliage per-species tris_lod0"
+      },
+      {
+        "ref": "src/data/assets.csv",
+        "role": "rock per-species tris_lod0"
+      }
+    ],
+    "glbBinary": [
+      {
+        "ref": "public/models/vegetation_kit.glb",
+        "role": "ledger triangle sum cross-check"
+      },
+      {
+        "ref": "public/models/props_rocks.glb",
+        "role": "ledger triangle sum cross-check"
+      }
+    ]
+  },
+  "limitations": [
+    "Worst case and typical both conservatively retain all 16 terrain chunks, path, village, foliage, and rocks; typical changes only the hero tree to LOD1.",
+    "No camera pose was supplied for a reproducible frustum/instance visibility reduction, so this report does not claim a lower on-screen count.",
+    "GLB per-species triangles come from the 19-column asset ledger; procedural hero triangles are executed directly from the pure generator."
+  ]
+}
