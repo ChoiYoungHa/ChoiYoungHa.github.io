@@ -42,6 +42,10 @@ export interface RaycastParams {
   groundSnap: number
   /** 캡슐 중심에서 발끝까지. 접지 시 position.y = groundY + eyeOffset */
   eyeOffset: number
+  /** M6 opt-in. false면 기존 접지 계산을 그대로 사용한다. */
+  jumpEnabled: boolean
+  jumpSpeed: number
+  gravity: number
 }
 
 export const RAYCAST_DEFAULTS: RaycastParams = {
@@ -52,4 +56,7 @@ export const RAYCAST_DEFAULTS: RaycastParams = {
   maxSlopeDeg: 40,
   groundSnap: 0.35,
   eyeOffset: 0.9,
+  jumpEnabled: false,
+  jumpSpeed: 5.2,
+  gravity: -18,
 }

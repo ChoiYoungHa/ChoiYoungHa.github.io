@@ -4,6 +4,8 @@ import { Vector3 } from 'three'
 import type { Vec3 } from './controllers/types'
 import { GAME_INPUT_ENABLED } from './input'
 import { readCameraDistanceMultiplier } from '../game/cameraDistance'
+import { cameraIntroAt } from '../game/cameraIntro'
+import { readCameraIntroElapsedMs } from '../game/runtimeSignals'
 
 /**
  * 계획서.md §3-4 팔로우 카메라.
@@ -38,9 +40,11 @@ export function FollowCamera({ targetRef, yawRef }: Props) {
     if (!t) return
     const yaw = yawRef.current ?? 0
     const distance = CAMERA.distance * (GAME_INPUT_ENABLED ? readCameraDistanceMultiplier() : 1)
+    const introElapsed = GAME_INPUT_ENABLED ? readCameraIntroElapsedMs() : null
+    const intro = introElapsed === null ? null : cameraIntroAt(introElapsed, { x: t.x, y: t.y + 0.6, z: t.z })
 
     // 카메라는 yaw 기준 뒤쪽으로 distance, 위로 height. pitch 만큼 더 올라간다.
-    const pitch = (-CAMERA.pitchDeg * Math.PI) / 180 // 음수 pitch = 내려다봄 = 카메라를 그만큼 위로 올림
+    const pitch = (-(intro?.pitchDeg ?? CAMERA.pitchDeg) * Math.PI) / 180 // 음수 pitch = 내려다봄 = 카메라를 그만큼 위로 올림
     const back = distance * Math.cos(pitch)
     const up = distance * Math.sin(pitch)
     desired.current.set(
@@ -48,11 +52,11 @@ export function FollowCamera({ targetRef, yawRef }: Props) {
       t.y + CAMERA.height + up,
       t.z + Math.cos(yaw) * back,
     )
-    lookAt.current.set(t.x, t.y + 0.6, t.z)
+    lookAt.current.set(intro?.target.x ?? t.x, intro?.target.y ?? t.y + 0.6, intro?.target.z ?? t.z)
 
     // 지수 감쇠를 프레임레이트 독립으로 (dt 보정)
-    const a = 1 - Math.pow(1 - CAMERA.posDamp, dt * 60)
-    const b = 1 - Math.pow(1 - CAMERA.lookDamp, dt * 60)
+    const a = intro === null ? 1 - Math.pow(1 - CAMERA.posDamp, dt * 60) : 1
+    const b = intro === null ? 1 - Math.pow(1 - CAMERA.lookDamp, dt * 60) : 1
 
     if (!inited.current) {
       camera.position.copy(desired.current)

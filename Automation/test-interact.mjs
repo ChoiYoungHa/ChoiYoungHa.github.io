@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { dirname, join } from 'node:path'
+import { readFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -68,4 +69,13 @@ test('뒤쪽 NPC만 있으면 기본 2.5m·90° 옵션에서도 null이다', asy
     0,
     [{ id: 'behind', position: { x: 0, z: 1 } }],
   ), null)
+})
+
+test('findInteractable 결과를 받는 F 대화 프롬프트 DOM은 오버레이에 한 번만 마운트된다', async () => {
+  const prompt = await readFile(join(ROOT, 'src/systems/ui/InteractPrompt.tsx'), 'utf8')
+  const overlay = await readFile(join(ROOT, 'src/systems/ui/GameOverlay.tsx'), 'utf8')
+  assert.match(prompt, /data-interact-prompt/)
+  assert.match(prompt, />F 대화</)
+  assert.equal([...overlay.matchAll(/<InteractPrompt\b/g)].length, 1)
+  assert.match(overlay, /findInteractable\(/)
 })

@@ -51,6 +51,8 @@ export interface InputState {
   forward: number // -1..1  (W:+1, S:-1)
   strafe: number // -1..1  (D:+1, A:-1)
   run: boolean
+  /** 게이트된 1프레임 takeoff edge. 기본 이동 경로에서는 undefined다. */
+  jump?: boolean
   /** 카메라 yaw(라디안). 이동 방향을 카메라 기준으로 돌린다. */
   yaw: number
 }

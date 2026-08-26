@@ -24,11 +24,12 @@ test('bootstrap gates game mode and production debug/IP overrides', async () => 
 
 test('frame bridge drains edges into enqueueInput and eases camera only once', async () => {
   const { createGameFrameBridge, readCameraDistanceMultiplier } = await load('src/game/bridge.ts')
+  const { consumePlayerJump } = await load('src/game/runtimeSignals.ts')
   const enqueued = []
   let nowMs = 0
   let first = true
   const session = {
-    getSnapshot: () => ({ activeDialogue: true }),
+    getSnapshot: () => ({ activeDialogue: true, game: { scene: 'forest' } }),
     enqueueInput: (input) => enqueued.push(input),
     tick: ({ dtMs }) => {
       nowMs += dtMs
@@ -42,12 +43,36 @@ test('frame bridge drains edges into enqueueInput and eases camera only once', a
   const bridge = createGameFrameBridge(session, input)
   bridge.tick({ dtMs: 16, playerPos: { x: 0, z: 0 }, playerYaw: 0, move: false, run: false })
   assert.deepEqual(enqueued, [{ confirm: true, attack: true }])
+  assert.equal(consumePlayerJump(), false, '대화 중 Space는 confirm이며 물리 점프가 아니다')
   for (let index = 0; index < 40; index += 1) {
     bridge.tick({ dtMs: 50, playerPos: { x: 0, z: 0 }, playerYaw: 0, move: false, run: false })
   }
   assert.equal(readCameraDistanceMultiplier(), 1.5)
   bridge.dispose()
   assert.equal(readCameraDistanceMultiplier(), 1)
+})
+
+test('frame bridge requests one physical jump only in a world scene', async () => {
+  const { createGameFrameBridge } = await load('src/game/bridge.ts')
+  const { consumePlayerJump } = await load('src/game/runtimeSignals.ts')
+  let edges = ['jump']
+  let scene = 'title'
+  const session = {
+    getSnapshot: () => ({ activeDialogue: null, game: { scene } }),
+    enqueueInput: () => undefined,
+    tick: ({ dtMs }) => ({ snapshot: { nowMs: dtMs, game: { scene } }, events: [] }),
+  }
+  const bridge = createGameFrameBridge(session, {
+    consumePressed: () => { const value = edges; edges = []; return value },
+  })
+  bridge.tick({ dtMs: 16, playerPos: { x: 0, z: 0 }, playerYaw: 0, move: false, run: false })
+  assert.equal(consumePlayerJump(), false)
+  scene = 'forest'
+  edges = ['jump']
+  bridge.tick({ dtMs: 16, playerPos: { x: 0, z: 0 }, playerYaw: 0, move: false, run: false })
+  assert.equal(consumePlayerJump(), true)
+  assert.equal(consumePlayerJump(), false)
+  bridge.dispose()
 })
 
 test('projector maps clip-space center to Canvas pixels', async () => {

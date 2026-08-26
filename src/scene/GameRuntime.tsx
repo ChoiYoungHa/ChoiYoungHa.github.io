@@ -20,6 +20,7 @@ import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js'
 import placement from '../data/placement.json' with { type: 'json' }
 import { gameBootstrap, type GameBootstrap } from '../game/bootstrap.ts'
 import { createGameFrameBridge } from '../game/bridge.ts'
+import { epilogueExposureAt } from '../game/epilogueGrade.ts'
 import monsterData from '../game/data/monsters.json' with { type: 'json' }
 import terraceData from '../game/data/park-terraces.json' with { type: 'json' }
 import spawnData from '../game/data/spawns.json' with { type: 'json' }
@@ -55,6 +56,10 @@ interface TerracePoint {
   z: number
   rotationY: number
   scale: number
+}
+
+function setToneMappingExposure(renderer: { toneMappingExposure: number }, exposure: number): void {
+  renderer.toneMappingExposure = exposure
 }
 
 function bakeAsset(scene: Object3D, rootName?: string): RuntimeAsset {
@@ -125,7 +130,7 @@ function makeTerracePoints(): TerracePoint[] {
 }
 
 export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
-  const { camera, size } = useThree()
+  const { camera, gl, size } = useThree()
   const stan = useGLTF('/models/npc_stan.glb')
   const maya = useGLTF('/models/npc_maya.glb')
   const pig = useGLTF('/models/mob_pig.glb')
@@ -140,6 +145,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     bridge: ReturnType<typeof createGameFrameBridge>
     keyboard: ReturnType<typeof createKeyboardInput>
   } | null>(null)
+  const epilogueGradeRef = useRef<{ baseExposure: number; startedAtMs: number } | null>(null)
   const transform = useMemo(() => new Transform(), [])
   const viewDirection = useMemo(() => new Vector3(), [])
   const stanObject = useMemo(() => prepareNpc(stan.scene), [stan.scene])
@@ -191,6 +197,10 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     }
   }, [bootstrap.session])
   useEffect(() => () => {
+    if (epilogueGradeRef.current !== null) {
+      setToneMappingExposure(gl, epilogueGradeRef.current.baseExposure)
+      epilogueGradeRef.current = null
+    }
     pigAsset.geometry.dispose()
     rockAsset.geometry.dispose()
     dropGeometry.dispose()
@@ -200,7 +210,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     fxAtlas.dispose()
     if (Array.isArray(pigMaterial)) pigMaterial.forEach((material) => material.dispose())
     else pigMaterial.dispose()
-  }, [dropGeometry, dropMaterial, fxAtlas, fxMaterial, pigAsset.geometry, pigMaterial, rockAsset.geometry, spriteTexture])
+  }, [dropGeometry, dropMaterial, fxAtlas, fxMaterial, gl, pigAsset.geometry, pigMaterial, rockAsset.geometry, spriteTexture])
   useEffect(() => {
     const mesh = terraceRef.current
     if (mesh === null) return
@@ -227,6 +237,18 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
       move: frame.speed > 0.05,
       run: frame.speed > 3.3,
     })
+    const grade = epilogueGradeRef.current
+    if (result.snapshot.game.scene === 'epilogue') {
+      const active = grade ?? {
+        baseExposure: gl.toneMappingExposure,
+        startedAtMs: result.snapshot.epilogueStartedAtMs ?? result.snapshot.nowMs,
+      }
+      if (grade === null) epilogueGradeRef.current = active
+      setToneMappingExposure(gl, epilogueExposureAt(result.snapshot.nowMs - active.startedAtMs, active.baseExposure))
+    } else if (grade !== null) {
+      setToneMappingExposure(gl, grade.baseExposure)
+      epilogueGradeRef.current = null
+    }
 
     const pigs = pigRef.current
     if (pigs !== null) {

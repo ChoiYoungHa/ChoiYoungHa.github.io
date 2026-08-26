@@ -4,6 +4,8 @@ import { gameBootstrap } from '../../game/bootstrap.ts'
 import { DEFAULT_PORTRAIT_SELECTION } from '../../game/portrait/compose.ts'
 import type { GameSession, SessionSnapshot } from '../../game/session.ts'
 import type { JobId } from '../../game/state.ts'
+import placement from '../../data/placement.json' with { type: 'json' }
+import { findInteractable } from '../../game/world/interact.ts'
 import { useGame, selectHudProps, selectScene } from '../../store/useGame.ts'
 import { useRuntime } from '../../store/useRuntime.ts'
 import type { LoadingState } from '../loading.ts'
@@ -15,6 +17,7 @@ import { DialoguePanel } from './DialoguePanel.tsx'
 import { Epilogue } from './Epilogue.tsx'
 import { GameHud } from './GameHud.tsx'
 import { InventoryPanel } from './InventoryPanel.tsx'
+import { InteractPrompt } from './InteractPrompt.tsx'
 import { MobHpBar } from './MobHpBar.tsx'
 import { RewardPopup } from './RewardPopup.tsx'
 import { ShopPanel } from './ShopPanel.tsx'
@@ -24,6 +27,10 @@ import { ZoneBanner } from './ZoneBanner.tsx'
 import { gameProjector, type GameProjector } from './projector.ts'
 
 const JOBS: readonly JobId[] = ['warrior', 'archer', 'mage', 'thief']
+const NPCS = placement.npcs.map((npc) => ({
+  id: npc.id,
+  position: { x: npc.position[0], z: npc.position[1] },
+}))
 
 export type { GameProjector, ProjectedPoint } from './projector.ts'
 
@@ -89,6 +96,9 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     const screen = projector({ ...mob.position, y: 1.4 })
     return screen.visible === false ? [] : [mobHpBarInput(mob, screen.x, screen.y)]
   })
+  const interactableId = snapshot.activeDialogue === null
+    ? findInteractable(snapshot.playerPos, snapshot.playerYaw, NPCS)
+    : null
 
   const overlay = scene === 'title' ? (
     <TitleScreen bgUrl={bgUrl} loading={loading} backend={backend} preset={preset} ipMode={game.ipMode} onStart={() => session.enqueueInput({ confirm: true })} />
@@ -114,6 +124,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
       {scene === 'forest' && <TutorialHints inputEvents={snapshot.tutorialEvents} narrationLineIndex={snapshot.nowMs < 2_400 ? 0 : snapshot.nowMs < 4_800 ? 1 : null} ipMode={game.ipMode} />}
       {scene !== 'title' && scene !== 'create' && scene !== 'epilogue' && <GameHud {...hud} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} />}
       <ZoneBanner banner={snapshot.banner} ipMode={game.ipMode} />
+      <InteractPrompt interactableId={interactableId} />
       {snapshot.activeDialogue !== null && <DialoguePanel state={snapshot.activeDialogue} ipMode={game.ipMode} onAdvance={() => session.enqueueInput({ confirm: true })} onChoose={(choice) => session.enqueueInput({ choice })} nowMs={snapshot.nowMs} />}
       {scene === 'shop' && game.jobId !== null && <ShopPanel state={{ jobId: game.jobId, meso: game.meso, inventory: game.inventory }} selectedItemId={snapshot.selectedShopItemId} ipMode={game.ipMode} onSelect={(selectedItemId) => session.enqueueInput({ selectedItemId })} onPurchase={(result) => { if (result.ok) session.enqueueInput({ confirm: true, selectedItemId: snapshot.selectedShopItemId ?? undefined }) }} onAfterPurchase={() => undefined} />}
       <InventoryPanel open={snapshot.inventoryOpen} inventory={game.inventory} hoveredSlotIndex={hoveredSlot} acquiredAtByItemId={snapshot.acquiredAtByItemId} nowMs={snapshot.nowMs} ipMode={game.ipMode} onHoverSlot={setHoveredSlot} onEquip={(equipItemId) => session.enqueueInput({ equipItemId })} />

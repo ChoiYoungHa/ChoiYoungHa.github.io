@@ -234,3 +234,23 @@ R107 대비 활성 재질은 총 **+1**, 예상 shader programs는 **+2**, 새 d
 - worker-claude는 main에서 `?game=1&scene=hunt`와 직업 4종 실제 선택으로 스킬 4장을 캡처한다: 전사 부채꼴+화염, 궁수 화살5+리본5, 마법사 고드름3+빙결, 도적 landing X참격+링. 카메라 회전 시 full/y billboard, 동시 4번째 교체, 화면 잔상 0을 본다.
 - 같은 경로에서 돼지 이동/정지/빙결의 하체만 흔들리는지, 10마리 위상이 같은 박자로 겹치지 않는지 확인한다. 레벨업 순간 발밑 금색 링 3개의 순차 상승과 1.2s 종료를 캡처한다.
 - GPU 증거에는 R107 같은 preset/해상도에서 material **+1**, programs **+2 이하**, calls **+2 이하**, console/shader error 0을 기록한다. 실측이 예상보다 크면 우선 SkillFx/LevelUp이 동일 material UUID인지와 pig 원재질이 씬에 중복 잔존하는지 확인한다.
+
+## R111 게이트 안 A 트랙 (2026-08-27)
+
+R111-B는 점프·오프닝 카메라·에필로그 그레이드·상호작용 프롬프트를 모두 `GAME_INPUT_ENABLED` 경계 안에 연결했다. `src/player/Controller.tsx:49,101-104`는 gate가 켜질 때만 raycast의 jump 축과 런타임 edge를 사용하고, 기본값은 `jumpEnabled: false`다. 승인 거부 시 게임 gate와 이번 런타임 연결을 함께 제거할 수 있으며 `/`, `?route=bench`, `?route=final`의 기존 controller 수치는 변하지 않는다.
+
+| 항목 | 구현·계약 | CPU 증거 |
+|---|---|---|
+| M6-03 점프 | `src/player/controllers/types.ts:46-48,59-61`의 5.2m/s·−18m/s², `src/player/controllers/raycast.ts:109-140`의 takeoff/air/land 축. 공중은 snap을 건너뛰고 하강 시 지면보다 낮아지기 전에 clamp하며 착지 뒤 snap으로 복귀한다. `src/game/bridge.ts:12,40-43`은 대화가 닫힌 월드 씬에서만 Space edge를 물리 신호로 보낸다. | `Automation/test-jump.mjs`: 정점 **0.708m**(0.75±0.05), 체공 **0.567s**(0.58±0.05), 공중 연타 재점프 0, 40° 경사 관통 0. `Automation/test-raycast.mjs` 기존 12/12와 gate-OFF 180프레임 deepEqual 통과. |
+| M6-22 오프닝 | `src/game/cameraIntro.ts:1-65`가 0초 하늘 `(38,80,-96)` → 1.5초 우듬지 `(38,50,-96)` → 3초 현재 플레이어를 smoothstep 보간하고 인계 플래그를 낸다. `src/game/bridge.ts:57-66`이 forest 진입 1회 경과를 발행하고 `src/player/FollowCamera.tsx:43-58`이 gate 안에서만 읽는다. | `Automation/test-camera-intro.mjs`: 0/1.5/3초 target·pitch, 3초 이후 인계 자세 고정 통과. |
+| M6-28 에필로그 | `src/data/lookdev.json:22`의 단일 키 `epilogueWarmExposureMultiplier=1.12`를 `src/game/epilogueGrade.ts:3-12`가 2초 smoothstep exposure로 계산한다. `src/scene/GameRuntime.tsx:240-250`이 epilogue에서만 renderer 값을 적용하고 이탈·unmount 시 원값을 복구한다. 재질·program 증가 0. | `Automation/test-epilogue-grade.mjs`: 0/1/2초 0.44→0.4664→0.4928, 2초 이후 clamp 통과. |
+| M6-18 프롬프트 | `src/systems/ui/GameOverlay.tsx:99-101,127`이 기존 `findInteractable` 결과를 1회 전달하고, `src/systems/ui/InteractPrompt.tsx:1-28`이 id가 있을 때만 `F 대화` DOM 하나를 표시한다. 대화가 열리면 null로 숨긴다. | `Automation/test-interact.mjs`: 기존 2.5m·90° 경계와 prompt DOM 단일 마운트 통과. |
+
+### R111 CPU 결과와 worker-claude 확인 절차
+
+- 전체 `Automation/test-*.mjs` **434/434**, `npx tsc -b`, `npm run lint`, `npm run build`가 모두 exit 0이다. build는 718 modules, `GameRuntime` 18.41kB, `GameOverlay` 57.81kB이며 R111 재질·program·draw call 증가는 0이다.
+- `node Automation/run-story.mjs`는 84.981초·10처치·3,785메소·Lv4·`fx-spawn` 5·이벤트 순서 위반 0으로 기존 헤드리스 결과를 유지했다. 이 worker는 지시대로 브라우저를 실행하지 않았다.
+- main에서 먼저 `/`, `?route=bench`, `?route=final`을 실행해 Space가 수직 위치를 바꾸지 않고 기존 final-route·collider 결과가 같은지 확인한다. 이어 `?game=1&scene=forest`에서 Space 1회 정점 약 0.75m·체공 약 0.58초, 공중 연타 0, 착지 후 접지 복귀를 측면 캡처한다.
+- 같은 forest 진입 직후 0초 하늘·1.5초 거대 수목 우듬지·3초 플레이어 인계 3장을 고정 시간으로 캡처하고, 3초 뒤 마우스 yaw와 FollowCamera 거리 이징이 정상인지 본다.
+- Stan/Maya의 2.5m·전방 90° 안팎을 왕복해 프롬프트 DOM이 각각 1/0개인지, F 직후 프롬프트가 사라지고 대화가 한 번 열리는지 확인한다. 대화 중 Space는 confirm만 하고 플레이어가 뜨지 않아야 한다.
+- `?game=1&scene=epilogue`에서 renderer exposure가 2초 동안 시작값×1.12로 올라가고 material/program/call이 늘지 않는지 기록한다. 다시 하기·자유 탐험 뒤에는 원 exposure가 복구되고 console/shader error가 0이어야 한다.
