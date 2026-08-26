@@ -1,0 +1,35 @@
+M4-15 asset ledger check — 2026-08-26
+
+$ node Automation/check-assets.mjs --json
+{
+  "pass": true,
+  "counts": {
+    "assets": 13,
+    "modelFiles": 2,
+    "registeredModelPaths": 2
+  },
+  "unregisteredFiles": [],
+  "missingRuntimeFiles": [],
+  "emptyLicenseFields": []
+}
+exit=0
+
+$ node Automation/check-assets.mjs --json
+# public/models/__m4_unregistered_test__.glb intentionally present
+{
+  "pass": false,
+  "counts": {
+    "assets": 13,
+    "modelFiles": 3,
+    "registeredModelPaths": 2
+  },
+  "unregisteredFiles": [
+    "public/models/__m4_unregistered_test__.glb"
+  ],
+  "missingRuntimeFiles": [],
+  "emptyLicenseFields": []
+}
+exit=1
+
+cleanup: public/models/__m4_unregistered_test__.glb deleted
+post-cleanup: exit=0, dummy_exists=false

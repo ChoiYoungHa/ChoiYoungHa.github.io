@@ -98,7 +98,7 @@ async function main() {
       bytes,
       (bytes / 1_000_000).toFixed(6),
       bytes > INTERNAL_LIMIT,
-      bytes > PLATFORM_LIMIT,
+      bytes >= PLATFORM_LIMIT,
     ].map(csv).join(','))
   }
 
@@ -107,7 +107,7 @@ async function main() {
   const buildHash = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd, encoding: 'utf8' }).trim()
   const output = [
     `# build_hash=${buildHash},dist_included=${distIncluded}`,
-    'path,bytes,MB,>20MB,>25MiB',
+    'path,bytes,MB,>20MB,>=25MiB',
     ...rows,
     '',
   ].join('\n')

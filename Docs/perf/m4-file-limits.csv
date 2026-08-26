@@ -1,0 +1,17 @@
+# build_hash=e2b3ac9,dist_included=true
+path,bytes,MB,>20MB,>=25MiB
+dist/assets/createRenderer-C5ncXYj_.js,941771,0.941771,false,false
+dist/assets/main-BbBB35An.css,673,0.000673,false,false
+dist/assets/main-wrfkKES9.js,826673,0.826673,false,false
+dist/assets/probe-CmF8PyXw.js,1449,0.001449,false,false
+dist/env/sky_1k.hdr,1428760,1.428760,false,false
+dist/favicon.svg,9522,0.009522,false,false
+dist/icons.svg,5031,0.005031,false,false
+dist/index.html,538,0.000538,false,false
+dist/models/.gitkeep,1,0.000001,false,false
+dist/models/props_rocks.glb,12844,0.012844,false,false
+dist/models/vegetation_kit.glb,16900,0.016900,false,false
+dist/probe.html,357,0.000357,false,false
+public/models/.gitkeep,1,0.000001,false,false
+public/models/props_rocks.glb,12844,0.012844,false,false
+public/models/vegetation_kit.glb,16900,0.016900,false,false
