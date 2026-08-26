@@ -1,6 +1,13 @@
 # M4 base tris 절감안
 
-> **R62 C안 채택(2026-08-26): 프리셋별 원계약을 복원했다.** `계획서.md §4-1` 원문은 삼각형 예산을 low `≤600K`, base `≤1.1M`으로 분리한다. 따라서 base grassLite+rockLite worst `675,234`는 **PASS**이고, low baseline `816,434`는 **FAIL**이라 grassLite 룩 검증·채택이 필요하다.
+> **결정(2026-08-26, master): C안 채택 + grassLite 기본 채택.** `계획서.md §4-1`의 프리셋별 원계약(low `≤600K`, base `≤1.1M`)을 복원했고, R64-A에서 자동 룩 PASS `8/12`를 유지한 grassLite를 기본 경로로 채택했다. rockLite는 grassLite만으로 base가 예산 안이라 불채택하며 기본 off를 유지한다.
+
+| 최종 경로 | worst tris | §4-1 한도 | 판정 | 근거 |
+|---|---:|---:|---|---|
+| low + grassLite | 312,434 | 600,000 | **PASS** | `Docs/perf/m4-scene-tris-grass-lite.json`, `Docs/lookdev/variants/variants-result.md` |
+| base + grassLite | 704,834 | 1,100,000 | **PASS** | `Docs/perf/m4-scene-tris-grass-lite.json` |
+
+rockLite·hazeDir·heroContrast·vistaPitch는 불채택이며 기본 off를 유지한다. 아래 민감도 표는 결정 전 분석 기록이고 최종 런타임 계약이 아니다.
 
 - 기준: `Docs/perf/m4-scene-tris.json`의 4변형 × 2프리셋 `variantSummary`
 - 예산: worst case low `<= 600,000`, base `<= 1,100,000 tris` (`계획서.md §4-1`)
@@ -46,4 +53,4 @@
 
 ## 판정과 다음 단계
 
-관문 low는 baseline `816,434 / 814,736` FAIL, grassLite `312,434 / 310,736` PASS, combo `297,634 / 295,936` PASS다. base는 baseline `2,384,834 / 2,383,136` FAIL이지만 grassLite `704,834 / 703,136`과 combo `675,234 / 673,536`은 1.1M 기준 PASS다. M4-14 완료 전에는 grassLite의 GPU 룩 검증과 실제 활성화 여부를 확정해야 한다.
+관문 low는 baseline `816,434 / 814,736` FAIL, grassLite `312,434 / 310,736` PASS다. base는 baseline `2,384,834 / 2,383,136` FAIL이지만 grassLite `704,834 / 703,136`은 1.1M 기준 PASS다. R64-A 룩 판정 후 grassLite 기본 채택이 확정됐고, M4-14 완료에는 main 기본값 반영과 최종 GPU 회귀 실측만 남는다.
