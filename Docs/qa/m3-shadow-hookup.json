@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "testedHead": "7bc7b9c",
+  "worktree": {
+    "branch": "wt/loading",
+    "path": "C:/Users/USER/Desktop/claude/해커톤/web3d-wt-codexB"
+  },
+  "shadowStrategy": {
+    "selected": "single-shadow-frustum-fallback",
+    "reason": "three r185 CSM.js is WebGLRenderer-only; the existing one-light WebGPU path now consumes preset map and orthographic-frustum values.",
+    "lightCount": 1,
+    "source": "Docs/qa/m3-shadow-config.json"
+  },
+  "resolvedValues": {
+    "low": {
+      "shadow": {
+        "cascades": 2,
+        "activeCascades": 1,
+        "mapSize": 1024,
+        "maxDistance": 80,
+        "frustumHalfExtent": 40,
+        "bias": 0,
+        "normalBias": 0,
+        "lightCount": 1
+      },
+      "foliage": {
+        "lodDistances": [25, 60, 90],
+        "instances": 6000,
+        "radius": 25,
+        "effectiveCullDistance": 25
+      },
+      "rocks": {
+        "lodDistances": [25, 60, 90],
+        "instances": 300,
+        "effectiveCullDistance": 90
+      },
+      "texture": {
+        "anisotropy": 1,
+        "textureTier": {
+          "default": "1K",
+          "hero": "2K"
+        }
+      }
+    },
+    "base": {
+      "shadow": {
+        "cascades": 3,
+        "activeCascades": 1,
+        "mapSize": 2048,
+        "maxDistance": 150,
+        "frustumHalfExtent": 75,
+        "bias": 0,
+        "normalBias": 0,
+        "lightCount": 1
+      },
+      "foliage": {
+        "lodDistances": [35, 80, 140],
+        "instances": 20000,
+        "radius": 40,
+        "effectiveCullDistance": 40
+      },
+      "rocks": {
+        "lodDistances": [35, 80, 140],
+        "instances": 600,
+        "effectiveCullDistance": 140
+      },
+      "texture": {
+        "anisotropy": 4,
+        "textureTier": {
+          "default": "2K",
+          "hero": "2K"
+        }
+      }
+    }
+  },
+  "runtimeReferences": {
+    "src/scene/Lighting.tsx": {
+      "presetResolver": 16,
+      "cascadesMetadata": 40,
+      "mapSize": 23,
+      "maxDistance": 25,
+      "bias": 30,
+      "normalBias": 31,
+      "lightCountGuard": 17
+    },
+    "src/scene/Foliage.tsx": {
+      "presetResolver": 139,
+      "instanceCount": 146,
+      "scatterRadius": 152,
+      "lodFarCap": 176,
+      "lodMetadata": 179
+    },
+    "src/scene/RockInstances.tsx": {
+      "presetResolver": 128,
+      "instanceCount": 129,
+      "lodMetadata": 156,
+      "lodFarCull": 164
+    },
+    "src/gl/createRenderer.ts": {
+      "presetResolver": 26,
+      "textureTierExposure": 32,
+      "anisotropyClamp": 104,
+      "anisotropyDefault": 106
+    }
+  },
+  "verification": {
+    "typecheck": {
+      "command": "npx tsc -b",
+      "exitCode": 0
+    },
+    "tests": {
+      "command": "node --test Automation/test-scatter.mjs Automation/test-preset-consumers.mjs Automation/test-presets.mjs",
+      "exitCode": 0,
+      "passed": 36,
+      "failed": 0
+    },
+    "lint": {
+      "command": "npm run lint",
+      "exitCode": 0,
+      "warnings": 7,
+      "hookupFileWarnings": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "exitCode": 0,
+      "modulesTransformed": 626,
+      "durationMs": 597
+    },
+    "sourceReferenceScan": {
+      "command": "rg -n preset consumer expressions in the four hookup files",
+      "allRequiredReferencesFound": true
+    }
+  },
+  "performancePrediction": {
+    "programsDelta": 0,
+    "basis": "No material, shader, define, or post-processing variant was added. Shadow map resolution and instance/cull counts change workload and memory, but not shader-program keys.",
+    "lowCoreValueRegression": 0,
+    "lowRegressionBasis": "The low shadow map remains 1024 square with 80 m distance, foliage remains 6000 instances in a 25 m radius, and rocks remain 300 instances.",
+    "lowRockCullDeltaMeters": 10,
+    "lowRockCullNote": "Applying the planned low LOD far threshold changes the rock cull limit from the legacy rockDrawDistance 80 m to 90 m; workload impact requires the post-merge GPU check.",
+    "requiresGpuMeasurementAfterMerge": true
+  },
+  "integrationNotes": {
+    "lightingMergeRisk": "src/scene/Lighting.tsx imports useRuntime/shadowConfig and changes createShadowLight plus Lighting; preserve wt/bench HemisphereLight additions while resolving.",
+    "toneMappingUntouched": true,
+    "appUntouched": true,
+    "textureTier": "Exposed by getActiveTexturePolicy(); asset URL selection remains a later loader concern.",
+    "lodFallback": "The current GLBs provide one merged geometry per species. Runtime therefore uses preset far-distance culling and exposes all three planned LOD thresholds as scene metadata; mesh swapping needs dedicated lower-detail geometries."
+  },
+  "buildWarnings": [
+    "vite configLoader native warns about __dirname in vite.config.ts.",
+    "main and createRenderer chunks exceed Vite's 500 kB warning threshold."
+  ]
+}
