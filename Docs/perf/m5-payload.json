@@ -1,0 +1,57 @@
+{
+  "buildHash": "12869c0",
+  "mode": "actual-build",
+  "manifestPath": "src/data/loading-manifest.json",
+  "manifestMeasuredFromHead": "a1e7272",
+  "note": "M4-16 actual-build mode resolves current hash-named dist chunks; manifest snapshot differences remain warnings.",
+  "phaseBytes": {
+    "boot": 3322174,
+    "core": 4801137,
+    "detail": 5230868
+  },
+  "cumulativeBytes": {
+    "boot": 3322174,
+    "core": 8123311,
+    "detail": 13354179
+  },
+  "totalBytes": 13354179,
+  "singleMax": {
+    "id": "detail.hero-tree-glb",
+    "url": "dist/models/hero_tree.glb",
+    "bytes": 3407832
+  },
+  "limitsBytes": {
+    "boot": 4000000,
+    "coreCumulative": 12000000,
+    "total": 60000000,
+    "single": 20000000
+  },
+  "checks": {
+    "bootWithinBudget": true,
+    "coreWithinBudget": true,
+    "totalWithinBudget": true,
+    "singleWithinBudget": true,
+    "manifestPhaseSummaryMatches": false,
+    "manifestCumulativeSummaryMatches": false,
+    "duplicateIdCount": 0,
+    "errors": 0
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "type": "byte_mismatch",
+      "id": "boot.js-main",
+      "url": "dist/assets/main-D2g1X1Qi.js",
+      "resolvedUrl": "dist/assets/main-DWUTYKpJ.js",
+      "declared": 876032,
+      "actual": 877617
+    },
+    {
+      "type": "manifest_phase_summary_differs_from_actual_build"
+    },
+    {
+      "type": "manifest_cumulative_summary_differs_from_actual_build"
+    }
+  ],
+  "pass": true
+}
