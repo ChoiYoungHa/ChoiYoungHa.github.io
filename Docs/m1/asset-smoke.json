@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "date": "2026-08-26",
+  "url": "http://[::1]:5190/asset-smoke.html?gl=webgl&q=low",
+  "loadedUrls": [
+    "/models/vegetation_kit.glb",
+    "/models/props_rocks.glb"
+  ],
+  "instancedMeshes": 6,
+  "names": [
+    "foliage-flower_yellowA",
+    "foliage-grass",
+    "foliage-plant_bush",
+    "rock-rock_smallA",
+    "rock-rock_smallFlatA",
+    "rock-rock_tallA"
+  ],
+  "instanceCounts": [4200, 1200, 600, 100, 100, 100],
+  "totalInstances": 6300,
+  "consoleErrors": [],
+  "elapsedMs": 106
+}

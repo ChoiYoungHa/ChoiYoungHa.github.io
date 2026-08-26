@@ -24,6 +24,7 @@ const readJson = (rel) => JSON.parse(readFileSync(join(ROOT, rel), 'utf8'))
 const bounds = await load('src/scene/bounds.ts')
 const rand = await load('src/scene/scatter/seededRandom.ts')
 const mask = await load('src/scene/scatter/exclusionMask.ts')
+const slope = await load('src/scene/scatter/slopeMask.ts')
 
 const mainPath = readJson('src/data/main-path.json')
 const vistas = readJson('src/data/vistas.json')
@@ -227,5 +228,38 @@ describe('M1-19 길 제외 마스크 — 길 위 겹침 0', () => {
     assert.equal(mask.distanceToSegment(5, 3, a, b), 3) // 선분 위 투영
     assert.equal(mask.distanceToSegment(-4, 0, a, b), 4) // a 쪽 바깥
     assert.equal(mask.distanceToSegment(14, 0, a, b), 4) // b 쪽 바깥
+  })
+})
+
+describe('M1-18 경사 마스크 — 25도 이상 배치 0', () => {
+  const plane = (degrees) => {
+    const gradient = Math.tan((degrees * Math.PI) / 180)
+    return (x) => x * gradient
+  }
+
+  test('평지와 24도 지형은 허용하고 25도부터 제외한다', () => {
+    assert.equal(slope.isExcludedBySlope(0, 0, plane(0)), false)
+    assert.equal(slope.isExcludedBySlope(0, 0, plane(24)), false)
+    assert.equal(slope.isExcludedBySlope(0, 0, plane(25)), true)
+    assert.equal(slope.isExcludedBySlope(0, 0, plane(26)), true)
+  })
+
+  test('가파른 평면의 서로 다른 10점 모두 배치 금지다', () => {
+    const reject = slope.createSlopeExclusion(plane(30))
+    const points = Array.from({ length: 10 }, (_, i) => ({ x: i - 5, z: i * 0.75 - 3 }))
+    assert.equal(points.filter((p) => !reject(p.x, p.z)).length, 0)
+    assert.equal(reject.length, 2)
+  })
+
+  test('scatter 결과에는 경사 25도 이상 지점이 없다', () => {
+    const height = (x) => (x < 0 ? x * Math.tan((30 * Math.PI) / 180) : 0)
+    const reject = slope.createSlopeExclusion(height)
+    const points = rand.scatter(20260826, { count: 100, halfExtent: 20, reject })
+    assert.equal(points.length, 100)
+    assert.equal(points.filter((p) => slope.slopeDegreesAt(p.x, p.z, height) >= 25).length, 0)
+  })
+
+  test('0 이하 표본 간격은 거부한다', () => {
+    assert.throws(() => slope.slopeDegreesAt(0, 0, plane(0), 0), RangeError)
   })
 })
