@@ -1,0 +1,49 @@
+# M1 선행(R16-A) 검증 — 2026-08-26 15:12 KST
+행: M1-01 / M1-05 / M1-08 / M1-17 / M1-19
+제약: codex-A 의 M0-b 성능 측정 중이라 build·dev·preview·Chrome·GPU 미사용. tsc -b 와 node --test 만.
+
+## 1) npx tsc -b
+exit=0
+
+## 2) node --test Automation/test-scatter.mjs (신규)
+▶ M1-01 월드 경계 — X/Z -125~125m
+  ✔ 폭·깊이 250m (2.1025ms)
+  ✔ 플레이어 이탈 방지 값이 존재하고 경계보다 안쪽이다 (0.4765ms)
+  ✔ clampToPlayerBounds 가 경계 밖을 되돌린다 (0.7929ms)
+▶ M1-05 길 중심선 — waypoint 8개, 총 길이 120~180m
+  ✔ waypoint 정확히 8개, index 0..7 연속 (0.7183ms)
+  ✔ 총 길이가 120~180m (0.3384ms)
+  ✔ 모든 waypoint 가 250m 경계 안 (0.1489ms)
+  ✔ 연속 waypoint 가 겹치지 않는다(구간 길이 > 0) (0.127ms)
+▶ M1-08 전망 지점 — marker 정확히 3개
+  ✔ marker 3개이고 각각 position·target 을 가진다 (0.3059ms)
+  ✔ 시작·중간·마을 3종이 모두 있고 좌표가 경계 안 (0.1853ms)
+  ✔ main-path 랜드마크와 모순이 없다 (0.245ms)
+▶ M1-17 seeded 산포 — 같은 seed 결과 hash 3회 동일
+  ✔ 같은 seed 로 3회 생성하면 hash 가 같다 (2.2919ms)
+  ✔ 다른 seed 는 다른 결과를 낸다 (1.4933ms)
+  ✔ mulberry32 수열 자체가 결정론이고 0..1 범위다 (6.9362ms)
+  ✔ 산포 결과가 요청 개수·경계를 지킨다 (0.5996ms)
+  ✔ hashSeed 는 문자열 seed 를 안정적으로 32비트로 만든다 (0.18ms)
+▶ M1-19 길 제외 마스크 — 길 위 겹침 0
+  ✔ 중심선 위 100점이 전부 제외된다 (1.1527ms)
+  ✔ 반경 경계 동작 — 안쪽은 제외, 바깥은 통과 (0.2845ms)
+  ✔ createPathExclusion 이 2인자 isExcluded(x, z) 를 만든다 (0.2703ms)
+  ✔ ★ 산포 200개를 마스크와 함께 돌리면 길 위 겹침이 0이다 (0.6328ms)
+  ✔ 마스크를 걸어도 결정론이 유지된다(3회 hash 동일) (1.6004ms)
+  ✔ distanceToSegment 가 선분 밖에서는 끝점 거리를 준다 (0.1241ms)
+ℹ tests 21
+ℹ pass 21
+ℹ fail 0
+
+## 3) node --test Automation/test-raycast.mjs (회귀)
+ℹ tests 12
+ℹ pass 12
+ℹ fail 0
+
+## 4) 길 중심선 실측 (순수 계산)
+  waypoints      : 8
+  총 길이        : 136.09 m  (요구 120~180m)
+  보행 3.2 m/s   : 42.5 초
+  달리기 5.6 m/s : 24.3 초
+  최대 |좌표|    : 96 m  (경계 125, 여유 29 m)

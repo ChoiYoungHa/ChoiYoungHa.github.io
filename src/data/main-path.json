@@ -1,0 +1,21 @@
+{
+  "id": "m1-main-path-v1",
+  "note": "M1-05 길 중심선. 계획서 §4-3 동선(마을 입구 -> 집 사이 관통 -> 길 -> 거대 수목 밑동)을 250m 슬라이스 좌표로 옮긴 것. y 는 지형 임포트(M1-04) 전까지 미정이라 담지 않는다 - 지면 샘플로 결정한다.",
+  "widthMeters": 3,
+  "exclusionRadiusMeters": 2,
+  "landmarks": {
+    "spawn": { "x": 0, "z": 24 },
+    "villageCenter": { "x": 0, "z": 8 },
+    "heroTree": { "x": 38, "z": -96 }
+  },
+  "waypoints": [
+    { "index": 0, "x": 0, "z": 24, "label": "마을 입구 (스폰)" },
+    { "index": 1, "x": -5, "z": 10, "label": "집 사이" },
+    { "index": 2, "x": -9, "z": -6, "label": "마을 북단" },
+    { "index": 3, "x": -6, "z": -28, "label": "초원 진입" },
+    { "index": 4, "x": 4, "z": -46, "label": "완만한 오르막" },
+    { "index": 5, "x": 18, "z": -60, "label": "중간 전망" },
+    { "index": 6, "x": 32, "z": -76, "label": "수목 접근" },
+    { "index": 7, "x": 38, "z": -96, "label": "거대 수목 밑동" }
+  ]
+}
