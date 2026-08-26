@@ -1,0 +1,13 @@
+{
+  "at": "2026-08-26T04:26:49.155Z",
+  "query": "?report=m0a04-webgpu",
+  "forceWebGL": false,
+  "init": "OK",
+  "hasNavigatorGpu": true,
+  "adapterOk": true,
+  "adapter": "intel / xe-lpg",
+  "deviceOk": true,
+  "webgl2": true,
+  "angle": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "backend": "WebGPU"
+}
