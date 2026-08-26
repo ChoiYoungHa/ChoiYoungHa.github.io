@@ -1,6 +1,7 @@
 /* oxlint-disable react/only-export-components -- smoke probe verifies the preset lookup directly. */
 import { useMemo } from 'react'
-import { MeshStandardNodeMaterial } from 'three/webgpu'
+import { FrontSide, type Side, type Texture } from 'three'
+import { MeshStandardNodeMaterial, type Node } from 'three/webgpu'
 import { useRuntime } from '../store/useRuntime'
 import presets from '../data/quality-presets.json'
 import { DEPTH_GRADE_DEFAULTS, depthGradeOutput, type DepthGradeParams } from './atmosphere/depthGradeNode'
@@ -80,6 +81,14 @@ export interface LookdevMaterialOptions {
   vertexColors?: boolean
   roughness: number
   metalness: number
+  /** R75-C — 텍스처 자산 경로. baseColor 텍스처(sRGB). 정점색과 함께 쓰면 곱해진다. */
+  map?: Texture
+  /** R75-C — 알파 컷아웃 문턱(계획서 §4-1 정정: alphaTest 허용·blend 금지). transparent 는 항상 false. */
+  alphaTest?: number
+  side?: Side
+  /** R75-C — 지형 PBR 블렌딩처럼 diffuse 를 TSL 로 직접 만들 때. map 대신 쓴다. */
+  colorNode?: Node<'vec3'>
+  normalNode?: Node<'vec3'>
 }
 
 /**
@@ -97,7 +106,13 @@ export function createLookdevMaterial(
     vertexColors: opts.vertexColors ?? false,
     roughness: opts.roughness,
     metalness: opts.metalness,
+    map: opts.map,
+    alphaTest: opts.alphaTest ?? 0,
+    side: opts.side ?? FrontSide,
+    transparent: false,
   })
+  if (opts.colorNode) material.colorNode = opts.colorNode
+  if (opts.normalNode) material.normalNode = opts.normalNode
   const params = depthGradeParamsFor(level)
   if (params) material.outputNode = depthGradeOutput({ ...params, ...readGradeOverrides() })
   return material
@@ -108,6 +123,6 @@ export function useLookdevMaterial(opts: LookdevMaterialOptions): MeshStandardNo
   return useMemo(
     () => createLookdevMaterial(opts),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 값 단위 비교
-    [opts.color, opts.vertexColors, opts.roughness, opts.metalness],
+    [opts.color, opts.vertexColors, opts.roughness, opts.metalness, opts.map, opts.alphaTest, opts.side, opts.colorNode, opts.normalNode],
   )
 }

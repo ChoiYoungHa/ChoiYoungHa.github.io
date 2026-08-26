@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "generatedFromHead": "42557e2",
+  "assets": {
+    "heroTreeGlb": {
+      "url": null,
+      "bytes": 0
+    },
+    "houseGlb": {
+      "house-a": {
+        "url": null,
+        "bytes": 0
+      },
+      "house-b": {
+        "url": null,
+        "bytes": 0
+      },
+      "house-c": {
+        "url": null,
+        "bytes": 0
+      }
+    },
+    "grassCard": {
+      "url": null,
+      "bytes": 0
+    },
+    "terrainGrassDiffuse": {
+      "url": null,
+      "bytes": 0
+    },
+    "terrainGrassNormal": {
+      "url": null,
+      "bytes": 0
+    },
+    "terrainDirtDiffuse": {
+      "url": null,
+      "bytes": 0
+    },
+    "terrainDirtNormal": {
+      "url": null,
+      "bytes": 0
+    }
+  }
+}

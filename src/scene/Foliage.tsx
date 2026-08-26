@@ -1,13 +1,14 @@
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-import type { InstancedMesh, Material, Mesh, Object3D } from 'three'
-import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
+import type { InstancedMesh, Material, Mesh, Object3D, Texture } from 'three'
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, SRGBColorSpace, Vector3 } from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import lookdev from '../data/lookdev.json'
 import mainPath from '../data/main-path.json'
 import vistas from '../data/vistas.json'
 import { useRuntime } from '../store/useRuntime'
+import { getLookAssets } from '../systems/lookAssets'
 import { WORLD_HALF_EXTENT, WORLD_SIZE } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { useLookdevMaterial } from './Atmosphere'
@@ -22,6 +23,7 @@ const CENTERLINE = mainPath.waypoints.map(({ x, z }) => ({ x, z }))
 /** M1-20 — vista 시선 통로에는 산포하지 않는다. */
 const VISTA_LINES = vistas.markers.map((m) => ({ position: m.position, target: m.target }))
 const MAX_WORLD_CANDIDATES = 200_000
+const LOOK = getLookAssets()
 
 interface PlacedPoint extends ScatterPoint {
   y: number
@@ -92,9 +94,17 @@ function grassLiteGeometry(): BufferGeometry {
   geometry.setAttribute('position', new BufferAttribute(data.positions, 3))
   geometry.setAttribute('normal', new BufferAttribute(data.normals, 3))
   geometry.setAttribute('color', new BufferAttribute(data.colors, 3))
+  // R75-C — 카드 텍스처 UV. 정점색 경로에선 재질이 읽지 않는다.
+  geometry.setAttribute('uv', new BufferAttribute(data.uvs, 2))
   geometry.setIndex(new BufferAttribute(data.index, 1))
   geometry.computeBoundingSphere()
   return geometry
+}
+
+/** R75-C — grassLite 크로스 쿼드에 알파 카드(alphaTest 0.5·blend 없음). 지오메트리가 이미 양면이라 side 는 그대로. */
+function GrassCardInstances({ url, ...rest }: { url: string } & Omit<Parameters<typeof SpeciesInstances>[0], 'map'>) {
+  const map = useTexture(url, (t) => { (t as Texture).colorSpace = SRGBColorSpace }) as Texture
+  return <SpeciesInstances {...rest} map={map} />
 }
 
 function SpeciesInstances({
@@ -103,6 +113,7 @@ function SpeciesInstances({
   points,
   maxDistance,
   maxVisible,
+  map,
 }: {
   name: string
   geometry: BufferGeometry
@@ -110,12 +121,14 @@ function SpeciesInstances({
   /** M1-24 종별 최대 표시 거리(m). 이보다 먼 instance 는 draw 하지 않는다. */
   maxDistance: number
   maxVisible: number
+  /** R75-C — 알파 카드 텍스처(정점색 × 텍스처). 없으면 현행 정점색. */
+  map?: Texture
 }) {
   const ref = useRef<InstancedMesh>(null)
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
   // M3-05 (R30-A) — 거리 그레이딩 재질(종별 1개)
-  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 })
+  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.95, metalness: 0, map, alphaTest: map ? 0.5 : undefined })
 
   useLayoutEffect(() => {
     if (ref.current) ref.current.count = 0
@@ -200,18 +213,15 @@ export function Foliage({ sampleHeight }: FoliageProps) {
 
   return (
     <group name="foliage-instances" userData={{ lodDistances: lod.coniferLodDistances }}>
-      {SPECIES.map((species, index) => (
-        <SpeciesInstances
-          key={species}
-          name={species}
-          geometry={geometries[index]}
-          points={pointSets[index]}
-          maxDistance={maxDistance}
-          maxVisible={visibleCounts[index]}
-        />
-      ))}
+      {SPECIES.map((species, index) => {
+        const props = { name: species, geometry: geometries[index], points: pointSets[index], maxDistance, maxVisible: visibleCounts[index] }
+        return species === 'grass' && grassLiteEnabled && LOOK.grass.mode === 'texture'
+          ? <GrassCardInstances key={species} url={LOOK.grass.url} {...props} />
+          : <SpeciesInstances key={species} {...props} />
+      })}
     </group>
   )
 }
 
 useGLTF.preload(MODEL_URL)
+if (LOOK.grass.mode === 'texture') useTexture.preload(LOOK.grass.url)

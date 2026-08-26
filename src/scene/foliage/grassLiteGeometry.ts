@@ -8,6 +8,8 @@ export interface GrassLiteGeometryData {
   positions: Float32Array
   normals: Float32Array
   colors: Float32Array
+  /** R75-C — 카드 텍스처용 UV(u 0→1 좌→우, v 0 뿌리→1 끝). 정점색 경로에선 무시된다. */
+  uvs: Float32Array
   index: Uint16Array
   triangleCount: number
   bounds: { minY: number; maxY: number; radiusXZ: number }
@@ -24,6 +26,7 @@ export function buildGrassLiteGeometry(seed = GRASS_LITE_SEED): GrassLiteGeometr
   const positions: number[] = []
   const normals: number[] = []
   const colors: number[] = []
+  const uvs: number[] = []
   const index: number[] = []
 
   for (let plane = 0; plane < 3; plane += 1) {
@@ -48,10 +51,12 @@ export function buildGrassLiteGeometry(seed = GRASS_LITE_SEED): GrassLiteGeometr
 
     const front = positions.length / 3
     for (const point of points) pushVertex(positions, normals, colors, point, [normalX, 0, normalZ], linear)
+    uvs.push(0, 0, 1, 0, 1, 1, 0, 1)
     index.push(front, front + 1, front + 2, front, front + 2, front + 3)
 
     const back = positions.length / 3
     for (const point of points) pushVertex(positions, normals, colors, point, [-normalX, 0, -normalZ], linear)
+    uvs.push(0, 0, 1, 0, 1, 1, 0, 1)
     index.push(back, back + 2, back + 1, back, back + 3, back + 2)
   }
 
@@ -69,6 +74,7 @@ export function buildGrassLiteGeometry(seed = GRASS_LITE_SEED): GrassLiteGeometr
     positions: new Float32Array(positions),
     normals: new Float32Array(normals),
     colors: new Float32Array(colors),
+    uvs: new Float32Array(uvs),
     index: new Uint16Array(index),
     triangleCount: index.length / 3,
     bounds: { minY, maxY, radiusXZ },
