@@ -1,0 +1,14 @@
+{
+  "id": "m5-gate-perf",
+  "round": "R108-A",
+  "source": "Docs/perf/m5-bench-r108-webgpu.csv median",
+  "perf": {
+    "maxCalls": 63,
+    "maxPrograms": 62,
+    "textureGpuMB": 71.87,
+    "jsHeapPeakMB": 229.51,
+    "avgFps": 125.37,
+    "onePercentLowFps": 30.74,
+    "oneSecondHitches": 0
+  }
+}

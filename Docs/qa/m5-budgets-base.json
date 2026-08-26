@@ -1,0 +1,41 @@
+{
+  "pass": false,
+  "preset": "base",
+  "source": "계획서 §4-1",
+  "checks": {
+    "calls": {
+      "value": 63,
+      "limit": 350,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "tris": {
+      "value": 704834,
+      "limit": 1100000,
+      "status": "pass",
+      "allowUnknown": true,
+      "method": "estimated(source)",
+      "scenario": "worstCase",
+      "source": "Docs/perf/m5-scene-tris-base.json"
+    },
+    "programs": {
+      "value": 62,
+      "limit": 56,
+      "status": "fail",
+      "allowUnknown": false
+    },
+    "textureGPU": {
+      "value": 71.87,
+      "limit": 550,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "JSheap": {
+      "value": 229.51,
+      "limit": 1200,
+      "status": "pass",
+      "allowUnknown": false
+    }
+  },
+  "warnings": []
+}

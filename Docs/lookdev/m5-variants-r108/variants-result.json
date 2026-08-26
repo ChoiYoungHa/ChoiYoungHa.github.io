@@ -1,0 +1,108 @@
+{
+  "schema": "lookdev-variants/1",
+  "at": "2026-08-26T18:14:53.416Z",
+  "variants": [
+    {
+      "name": "baseline",
+      "label": "HEAD 12869c0 baseline S1/S2/S3",
+      "query": "",
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "switches": [],
+      "targets": [],
+      "reuseBaselineFor": []
+    }
+  ],
+  "supported": {},
+  "scripts": {},
+  "failures": [],
+  "rows": [
+    {
+      "name": "baseline",
+      "verdict": "기준",
+      "passCount": 3,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#78818C",
+            "saturationPct": 12.5,
+            "hueDeg": 213.5,
+            "luma": 128.2
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#554B2C",
+            "saturationPct": 34,
+            "hueDeg": 44.8,
+            "luma": 74.6
+          },
+          "pass": 1,
+          "L5": 16.5
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#666264",
+            "saturationPct": 27.1,
+            "hueDeg": 330.1,
+            "luma": 99.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#3A2912",
+            "saturationPct": 52.7,
+            "hueDeg": 35.1,
+            "luma": 43
+          },
+          "pass": 0,
+          "L5": 22.5
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.7,
+            "luma": 166.6
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#54452D",
+            "saturationPct": 33.5,
+            "hueDeg": 37.4,
+            "luma": 70.2
+          },
+          "pass": 2,
+          "L5": 16.7
+        }
+      },
+      "reasons": []
+    }
+  ]
+}

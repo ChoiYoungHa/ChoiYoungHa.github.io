@@ -1,0 +1,13 @@
+{
+  "name": "lv-baseline-S3",
+  "url": "http://127.0.0.1:5189/?q=low&shot=vista-village&report=lv-baseline-S3",
+  "attempt": 1,
+  "at": "2026-08-26T18:14:53.073Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12874,
+    "shotMs": 12980,
+    "gotShot": true
+  },
+  "topBand": 142.5
+}
