@@ -1,0 +1,50 @@
+{
+  "id": "m4-settings",
+  "at": "2026-08-26",
+  "head": "8edb15e",
+  "method": "헤드리스 Chrome CDP: settings-toggle 클릭 → select 를 base 로(native setter+change) → HUD preset·canvas 수·scene uuid·mesh 수 비교 → 감도 1.0 에서 200px 드래그(Input.dispatchMouseEvent) 후 카메라 yaw 변화, 슬라이더 2.0 뒤 같은 드래그 → 비율 → 재시작 클릭 → Page.frameNavigated → 새로고침 후 HUD preset·localStorage 키 수.",
+  "checks": {
+    "패널 3요소(품질·감도·재시작)": {
+      "pass": true
+    },
+    "preset low→base 스토어 반영(HUD)": {
+      "before": "low",
+      "after": "base",
+      "pass": true
+    },
+    "씬 재생성 없음": {
+      "canvasCount": [
+        1,
+        1
+      ],
+      "sceneUuidSame": true,
+      "meshCount": [
+        31,
+        31
+      ],
+      "pass": true
+    },
+    "감도 배율 반영": {
+      "yawDeltaAt1": -0.9996,
+      "yawDeltaAt2": -1.9993,
+      "ratio": 2.0,
+      "expected": {
+        "deltaAt1": -1.0,
+        "ratio": 2
+      },
+      "pass": true
+    },
+    "재시작 호출(네비게이션 발생)": {
+      "navigations": 1,
+      "pass": true
+    },
+    "새로고침 후 low 복원·영속 0": {
+      "presetAfterReload": "low",
+      "localStorageKeys": 0,
+      "pass": true
+    }
+  },
+  "consoleErrorCount": 0,
+  "note": "감도 실측용으로 RuntimeProbe 가 window.__R3F_CAMERA__ 를 노출(R41-A, __R3F_SCENE__ 과 같은 검증 훅). 프리셋 변경 시 scene uuid·mesh 31 동일 → 재생성 없음.",
+  "result": "PASS"
+}

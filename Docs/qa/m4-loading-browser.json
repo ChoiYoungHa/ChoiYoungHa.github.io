@@ -1,0 +1,84 @@
+{
+  "id": "m4-loading-browser",
+  "at": "2026-08-26",
+  "head": "8edb15e",
+  "method": "dist 정적 서빙 + 헤드리스 Chrome CDP. 100ms 마다 [data-testid=loading-screen] 존재·data-phase·진행률·캔버스·HUD backend 를 읽고 콘솔 [loading] 로그·예외를 수집. 회귀는 run-bench --runs 1 --warmup 20 (WebGPU) / --gl webgl.",
+  "timeline": [
+    {
+      "tMs": 77,
+      "phase": null,
+      "overlay": false,
+      "progress": null,
+      "canvas": false,
+      "hud": null
+    },
+    {
+      "tMs": 367,
+      "phase": "boot",
+      "overlay": true,
+      "progress": "18%",
+      "canvas": true,
+      "hud": "unknown"
+    },
+    {
+      "tMs": 565,
+      "phase": null,
+      "overlay": false,
+      "progress": null,
+      "canvas": true,
+      "hud": "unknown"
+    }
+  ],
+  "loadingLogs": [
+    "[loading] phase boot",
+    "[loading] boot -> core",
+    "[loading] core -> detail",
+    "[loading] detail -> ready"
+  ],
+  "overlayShownMs": 367,
+  "overlayGoneMs": 565,
+  "phaseOrderObserved": [
+    "phase boot",
+    "boot -> core",
+    "core -> detail",
+    "detail -> ready"
+  ],
+  "readyReached": true,
+  "consoleErrorCount": 0,
+  "consoleWarnings": [
+    "RGBELoader has been deprecated. Please use HDRLoader instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Material: parameter 'color' has value of undefined."
+  ],
+  "regression": {
+    "webgpu": {
+      "build_hash": "8edb15e",
+      "backend": "WebGPU",
+      "avg_fps": "126.23",
+      "low1_fps": "25.22",
+      "hitch_1s": "0",
+      "calls": "57",
+      "programs": "40",
+      "errors": "0",
+      "crash": "0"
+    },
+    "webgl": {
+      "build_hash": "8edb15e",
+      "backend": "WebGL2",
+      "avg_fps": "139.68",
+      "low1_fps": "38.19",
+      "hitch_1s": "0",
+      "calls": "57",
+      "programs": "40",
+      "errors": "0",
+      "crash": "0"
+    },
+    "reference_R30A": {
+      "calls": 57,
+      "programs": 40,
+      "low1_fps": 19.9
+    },
+    "judgement": "회귀 없음 — calls 57/programs 40 동일, 1%low 25.2(WebGPU)·38.2(WebGL2), errors 0. 오버레이는 ready 뒤 DOM 에서 제거(565ms), 캔버스 위에 남지 않음."
+  },
+  "result": "PASS"
+}

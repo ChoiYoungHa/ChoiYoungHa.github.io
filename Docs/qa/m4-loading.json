@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "testedHead": "f8b4c63",
+  "testedHead": "322be8e",
   "manifestMeasuredFromHead": "d0692ef",
   "phaseOrder": [
     "boot",
@@ -43,7 +43,7 @@
       "detail": 1428760
     },
     "currentBuildStat": {
-      "boot": 3203568,
+      "boot": 3289947,
       "core": 16900,
       "detail": 1428760
     },
@@ -65,34 +65,34 @@
       "manifestUrl": "dist/index.html",
       "physicalPath": "dist/index.html",
       "exists": true,
-      "statBytes": 551,
+      "statBytes": 538,
       "declaredBytes": 538
     },
     {
       "phase": "boot",
       "id": "boot.js-main",
       "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "physicalPath": "dist/assets/main-CStXYTtw.js",
       "exists": true,
-      "statBytes": 832486,
+      "statBytes": 847769,
       "declaredBytes": 826673
     },
     {
       "phase": "boot",
       "id": "boot.js-renderer",
       "manifestUrl": "dist/assets/createRenderer-C5ncXYj_.js",
-      "physicalPath": "dist/assets/createRenderer-C5ncXYj_.js",
+      "physicalPath": "dist/assets/createRenderer-DXIrHnan.js",
       "exists": true,
-      "statBytes": 941771,
+      "statBytes": 1012880,
       "declaredBytes": 941771
     },
     {
       "phase": "boot",
       "id": "boot.heightmap-procedural",
       "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "physicalPath": "dist/assets/main-CStXYTtw.js",
       "exists": true,
-      "statBytes": 832486,
+      "statBytes": 847769,
       "declaredBytes": 0
     },
     {
@@ -108,9 +108,9 @@
       "phase": "core",
       "id": "core.terrain-procedural",
       "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "physicalPath": "dist/assets/main-CStXYTtw.js",
       "exists": true,
-      "statBytes": 832486,
+      "statBytes": 847769,
       "declaredBytes": 0
     },
     {
@@ -126,27 +126,27 @@
       "phase": "core",
       "id": "core.hero-lod1-procedural",
       "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "physicalPath": "dist/assets/main-CStXYTtw.js",
       "exists": true,
-      "statBytes": 832486,
+      "statBytes": 847769,
       "declaredBytes": 0
     },
     {
       "phase": "detail",
       "id": "detail.village-procedural",
       "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "physicalPath": "dist/assets/main-CStXYTtw.js",
       "exists": true,
-      "statBytes": 832486,
+      "statBytes": 847769,
       "declaredBytes": 0
     },
     {
       "phase": "detail",
       "id": "detail.hero-lod0-procedural",
       "manifestUrl": "dist/assets/main-wrfkKES9.js",
-      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "physicalPath": "dist/assets/main-CStXYTtw.js",
       "exists": true,
-      "statBytes": 832486,
+      "statBytes": 847769,
       "declaredBytes": 0
     },
     {

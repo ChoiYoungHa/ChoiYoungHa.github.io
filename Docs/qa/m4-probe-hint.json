@@ -1,0 +1,91 @@
+{
+  "scenario": "hint",
+  "url": "http://127.0.0.1:5183/?q=low",
+  "at": "2026-08-26T12:19:16.284Z",
+  "samples": [
+    {
+      "targetMs": 0,
+      "actualMs": 12,
+      "hidden": false,
+      "ariaHidden": "false",
+      "display": "block",
+      "text": "W A S D 이동 · Shift 달리기 · 마우스 드래그 시선"
+    },
+    {
+      "targetMs": 2500,
+      "actualMs": 3343,
+      "hidden": false,
+      "ariaHidden": "false",
+      "display": "block",
+      "text": "W A S D 이동 · Shift 달리기 · 마우스 드래그 시선"
+    },
+    {
+      "targetMs": 4900,
+      "actualMs": 5917,
+      "hidden": false,
+      "ariaHidden": "false",
+      "display": "block",
+      "text": "W A S D 이동 · Shift 달리기 · 마우스 드래그 시선"
+    },
+    {
+      "targetMs": 5100,
+      "actualMs": 5923,
+      "hidden": true,
+      "ariaHidden": "true",
+      "display": "none",
+      "text": "W A S D 이동 · Shift 달리기 · 마우스 드래그 시선"
+    },
+    {
+      "targetMs": 6000,
+      "actualMs": 6013,
+      "hidden": true,
+      "ariaHidden": "true",
+      "display": "none",
+      "text": "W A S D 이동 · Shift 달리기 · 마우스 드래그 시선"
+    }
+  ],
+  "consoleErrors": [],
+  "consoleErrorCount": 0,
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "RGBELoader has been deprecated. Please use HDRLoader instead."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "scenario": "settings",
+  "url": "http://127.0.0.1:5183/?q=low",
+  "at": "2026-08-26T12:22:23.614Z",
+  "before": {
+    "preset": "low",
+    "canvases": 1,
+    "sceneUuid": "3f925617-4cae-4fbe-a3dd-87c8f3a807f4",
+    "meshCount": 31,
+    "rendererSame": true
+  },
+  "panelOpen": true,
+  "afterBase": {
+    "preset": "base",
+    "canvases": 1,
+    "sceneUuid": "3f925617-4cae-4fbe-a3dd-87c8f3a807f4",
+    "meshCount": 31,
+    "rendererSame": true
+  },
+  "sensitivityLabel": "설정 ▴품질 low (낮음)base (기본)마우스 감도 2.00×재시작",
+  "sensitivity": {
+    "yawDeltaAt1": -0.9995860280035487,
+    "yawDeltaAt2": -1.9992992062714308,
+    "ratio": 2.0001272029227812,
+    "expectedRatio": 2,
+    "expectedDeltaAt1": -1
+  },
+  "restart": {
+    "navigationsTriggered": 1,
+    "presetAfterReload": "low",
+    "localStorageKeys": 0
+  },
+  "consoleErrors": [],
+  "consoleErrorCount": 0,
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "RGBELoader has been deprecated. Please use HDRLoader instead."
+    }
+  ]
+}

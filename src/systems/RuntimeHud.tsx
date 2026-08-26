@@ -21,10 +21,12 @@ export function RuntimeProbe() {
   const acc = useRef(0)
   const maxFrameCalls = useRef(0)
 
-  // 검증 하네스(systems/report.ts)가 씬 요소 수를 셀 수 있게 노출한다.
+  // 검증 하네스(systems/report.ts)가 씬 요소 수를 셀 수 있게 노출한다. 카메라는 M4-05 감도 실측용(R41-A).
+  const camera = useThree((s) => s.camera)
   useEffect(() => {
-    ;(globalThis as unknown as { __R3F_SCENE__?: unknown }).__R3F_SCENE__ = scene
-  }, [scene])
+    ;(globalThis as unknown as { __R3F_SCENE__?: unknown; __R3F_CAMERA__?: unknown }).__R3F_SCENE__ = scene
+    ;(globalThis as unknown as { __R3F_CAMERA__?: unknown }).__R3F_CAMERA__ = camera
+  }, [scene, camera])
 
   useEffect(() => {
     window.__R3F_RENDERER__ = gl as unknown as typeof window.__R3F_RENDERER__

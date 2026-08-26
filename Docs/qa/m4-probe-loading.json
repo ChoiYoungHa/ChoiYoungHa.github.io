@@ -1,0 +1,95 @@
+{
+  "scenario": "loading",
+  "url": "http://127.0.0.1:5183/?q=low",
+  "at": "2026-08-26T12:19:03.033Z",
+  "timeline": [
+    {
+      "tMs": 77,
+      "phase": null,
+      "overlay": false,
+      "progress": null,
+      "canvas": false,
+      "hud": null
+    },
+    {
+      "tMs": 367,
+      "phase": "boot",
+      "overlay": true,
+      "progress": "18%",
+      "canvas": true,
+      "hud": "unknown"
+    },
+    {
+      "tMs": 565,
+      "phase": null,
+      "overlay": false,
+      "progress": null,
+      "canvas": true,
+      "hud": "unknown"
+    }
+  ],
+  "loadingLogs": [
+    {
+      "type": "info",
+      "text": "[loading] phase boot"
+    },
+    {
+      "type": "info",
+      "text": "[loading] boot -> core"
+    },
+    {
+      "type": "info",
+      "text": "[loading] core -> detail"
+    },
+    {
+      "type": "info",
+      "text": "[loading] detail -> ready"
+    }
+  ],
+  "overlayGoneAtMs": 77,
+  "finalHud": "backend: WebGPUcanvas: 1280×720preset: lowmode: manualadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 1 · calls: 59 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -12° · near 0.1 / far 400heroTree LOD: 1 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선",
+  "consoleErrors": [],
+  "consoleErrorCount": 0,
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "RGBELoader has been deprecated. Please use HDRLoader instead."
+    }
+  ]
+}
