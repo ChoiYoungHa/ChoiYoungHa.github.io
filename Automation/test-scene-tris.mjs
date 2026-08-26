@@ -142,7 +142,7 @@ test('CLI writes JSON and check-budgets consumes worst-case tris as estimated(so
   }
 })
 
-test('check-budgets applies every base limit from 계획서 §4-1', () => {
+test('check-budgets applies every base limit from 계획서 §10 정정 #3', () => {
   const temporary = mkdtempSync(join(tmpdir(), 'scene-tris-base-'))
   const trisPath = join(temporary, 'tris.json')
   const perfPath = join(temporary, 'perf.json')
@@ -168,15 +168,21 @@ test('check-budgets applies every base limit from 계획서 §4-1', () => {
     assert.equal(budget.status, 0, budget.stderr)
     const result = JSON.parse(budget.stdout)
     assert.equal(result.preset, 'base')
-    assert.equal(result.source, '계획서 §4-1')
-    assert.deepEqual(Object.fromEntries(Object.entries(result.checks).map(([key, value]) => [key, value.limit])), {
+    assert.equal(result.source, '계획서 §10 정정 #3 (A 채택, 2026-08-27)')
+    assert.deepEqual(Object.fromEntries(
+      Object.entries(result.checks)
+        .filter(([, value]) => value.limit !== undefined)
+        .map(([key, value]) => [key, value.limit]),
+    ), {
       calls: 350,
       tris: 1100000,
-      programs: 56,
+      pipelines: 48,
       textureGPU: 550,
       JSheap: 1200,
     })
     assert.equal(result.checks.tris.value, 675234)
+    assert.equal(result.checks.pipelines.status, 'unknown')
+    assert.equal(result.checks.programs.status, 'reference')
     assert.equal(result.pass, true)
   } finally {
     rmSync(temporary, { recursive: true, force: true })

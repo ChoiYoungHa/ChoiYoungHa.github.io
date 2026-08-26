@@ -35,6 +35,8 @@ M3 룩 16개와 M3-GATE 9개 증거는 모두 존재한다. `m3-gate.md`의 mast
 
 룩 변형·grassLite 채택·M4-14·M4-16 신규 증거 8개도 모두 존재한다. M4-14는 preset별 tris 한도로 exit 0, M4-16은 정상 전체 체인 exit 0과 고의 미등록 GLB exit 1을 각각 증명한다.
 
+M5 렌더 예산 주 기준은 승인된 WebGPU render pipelines `≤48`이다. R108 bench peak `48`은 경계 PASS이고 programs `62`는 참고값이며, 근거는 `Docs/qa/m5-pipelines-bench.json`과 `Docs/qa/m5-check-budgets-pipelines.txt`에 있다.
+
 ## 부재 3건 해소 경로
 
 | 부재 경로 | 생성 로드맵 행 | 선행 조건 | 담당 |
