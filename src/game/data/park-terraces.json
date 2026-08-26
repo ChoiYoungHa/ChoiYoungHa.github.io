@@ -1,0 +1,20 @@
+{
+  "id": "m6-park-terraces-v1",
+  "parkCenter": { "x": -80, "z": 8 },
+  "parkRadiusMeters": 40,
+  "center": { "x": -104, "z": 8 },
+  "spawnClearanceMeters": 1.5,
+  "statueClearanceMeters": 2.5,
+  "levels": [
+    { "id": "lower", "heightMeters": 0.6, "radiusMeters": 6, "rockDensityPerSquareMeter": 0.22 },
+    { "id": "middle", "heightMeters": 1.2, "radiusMeters": 4, "rockDensityPerSquareMeter": 0.3 },
+    { "id": "upper", "heightMeters": 1.8, "radiusMeters": 2, "rockDensityPerSquareMeter": 0.42 }
+  ],
+  "runtime": {
+    "rockSource": "src/scene/RockInstances.tsx",
+    "scatterSource": "src/scene/scatter/seededRandom.ts",
+    "seed": "m6-park-terraces-v1",
+    "note": "Integration maps each nested level to the existing rock geometry and deterministic scatter; this data does not alter scene code."
+  },
+  "source": "src/game/data/zones.json zones.park; center selected by sampleHeight/slopeDegreesAt audit to clear all eight spawns"
+}

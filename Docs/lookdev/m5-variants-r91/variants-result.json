@@ -1,0 +1,205 @@
+{
+  "schema": "lookdev-variants/1",
+  "at": "2026-08-26T16:36:01.845Z",
+  "variants": [
+    {
+      "name": "baseline",
+      "label": "after: 자산 적용(R91-A D2·D3 수정)",
+      "query": "",
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "switches": [],
+      "targets": [],
+      "reuseBaselineFor": []
+    },
+    {
+      "name": "before",
+      "label": "before: ?lookAssets=0 절차 폴백",
+      "query": "lookAssets=0",
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "switches": [],
+      "targets": [],
+      "reuseBaselineFor": []
+    }
+  ],
+  "supported": {},
+  "scripts": {},
+  "failures": [],
+  "rows": [
+    {
+      "name": "baseline",
+      "verdict": "기준",
+      "passCount": 4,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7F8A97",
+            "saturationPct": 11.4,
+            "hueDeg": 212.3,
+            "luma": 136.3
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#564B2C",
+            "saturationPct": 34.6,
+            "hueDeg": 44.6,
+            "luma": 75.1
+          },
+          "pass": 2,
+          "L5": 13.5
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#606871",
+            "saturationPct": 16.7,
+            "hueDeg": 209.8,
+            "luma": 103
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#53472D",
+            "saturationPct": 37.7,
+            "hueDeg": 41.4,
+            "luma": 71.7
+          },
+          "pass": 1,
+          "L5": 15.5
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#564B2B",
+            "saturationPct": 36.3,
+            "hueDeg": 44.9,
+            "luma": 75.4
+          },
+          "pass": 1,
+          "L5": 16.9
+        }
+      },
+      "reasons": []
+    },
+    {
+      "name": "before",
+      "verdict": "ADOPT 후보",
+      "reasons": [],
+      "passCount": 8,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 134.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 3,
+          "L5": 15.2
+        }
+      }
+    }
+  ]
+}
