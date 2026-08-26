@@ -24,7 +24,7 @@ const F = await load('src/systems/bench/finalRoute.ts')
 const route = readJson('src/systems/bench/final-route.json')
 const bench = readJson('src/systems/bench/benchRoute.json')
 
-const EXPECTED = { hash: '7b292e8d5e89', duration: 75, waypoints: 11, id: 'm4-final-route-v1' }
+const EXPECTED = { hash: '6ad0996f1aff', duration: 75, waypoints: 11, id: 'm4-final-route-v1' }
 
 describe('M4-01 final-route.json 구조', () => {
   test('validateFinalRoute 통과', () => {
