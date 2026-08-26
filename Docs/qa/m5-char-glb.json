@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-26T15:21:20.476Z",
+  "generator": "Automation/check-glb.mjs R76-A",
+  "files": [
+    {
+      "file": "public/models/char_player.glb",
+      "bytes": 14998652,
+      "triangles": 35194,
+      "bones": 114,
+      "skins": 7,
+      "clips": 3,
+      "animations": [
+        {
+          "name": "idle",
+          "durationSeconds": 9.899999618530273,
+          "channels": 53
+        },
+        {
+          "name": "walk",
+          "durationSeconds": 4.599999904632568,
+          "channels": 53
+        },
+        {
+          "name": "run",
+          "durationSeconds": 0.699999988079071,
+          "channels": 53
+        }
+      ],
+      "textures": 5,
+      "images": [
+        {
+          "name": "Remy_Shoes_Diffuse",
+          "mimeType": "image/png",
+          "bytes": 1184808,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "Remy_Top_Diffuse",
+          "mimeType": "image/png",
+          "bytes": 976247,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "Remy_Body_Diffuse",
+          "mimeType": "image/png",
+          "bytes": 4502121,
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "Remy_Bottom_Diffuse",
+          "mimeType": "image/png",
+          "bytes": 1336582,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "Remy_Hair_Diffuse",
+          "mimeType": "image/png",
+          "bytes": 674487,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "constraints": {
+        "singleFileLe20MiB": true,
+        "playerTrianglesLe18K": false,
+        "playerBonesLe45": false,
+        "playerClipsEq3": true
+      }
+    },
+    {
+      "file": "public/models/npc_stan.glb",
+      "bytes": 4128292,
+      "triangles": 4624,
+      "bones": 43,
+      "skins": 1,
+      "clips": 1,
+      "animations": [
+        {
+          "name": "idle",
+          "durationSeconds": 9.933333396911621,
+          "channels": 35
+        }
+      ],
+      "textures": 3,
+      "images": [
+        {
+          "name": "file4",
+          "mimeType": "image/png",
+          "bytes": 1721564,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "file5",
+          "mimeType": "image/png",
+          "bytes": 1005922,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "file6",
+          "mimeType": "image/png",
+          "bytes": 466404,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "constraints": {
+        "singleFileLe20MiB": true
+      }
+    },
+    {
+      "file": "public/models/npc_maya.glb",
+      "bytes": 5489400,
+      "triangles": 5035,
+      "bones": 69,
+      "skins": 1,
+      "clips": 1,
+      "animations": [
+        {
+          "name": "idle",
+          "durationSeconds": 9.833333015441895,
+          "channels": 53
+        }
+      ],
+      "textures": 3,
+      "images": [
+        {
+          "name": "file4",
+          "mimeType": "image/png",
+          "bytes": 1878617,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "file8",
+          "mimeType": "image/png",
+          "bytes": 1526758,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "name": "file6",
+          "mimeType": "image/png",
+          "bytes": 990231,
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "validation": {
+        "valid": true,
+        "errors": []
+      },
+      "constraints": {
+        "singleFileLe20MiB": true
+      }
+    }
+  ]
+}
