@@ -26,3 +26,13 @@
 - 부재 증거: production 배포 로그, 공개 URL 검증, M0a 최종 GATE 문서
 
 파일 존재는 해당 완료 조건의 PASS와 같지 않다. 특히 `wrangler-help.txt`가 있어도 production 배포 로그가 없으므로 M0a-11·12 묶음은 미완비다.
+
+## 부재 3건 해소 경로
+
+| 부재 경로 | 생성 로드맵 행 | 선행 조건 | 담당 |
+|---|---|---|---|
+| `Docs/deploy/production.txt` | **M4-20** Wrangler production 배포 | M4-16 통합 빌드 게이트 완료, M4-17 명령 확인, M4-18 Pages 프로젝트 생성·로그인, M4-19 캐시 헤더 반영 | 워커: actual build·deploy·URL/HTTP 200 로그 저장; 영하님: Cloudflare 로그인·계정/프로젝트 권한 승인 |
+| `Docs/deploy/m0a-url.txt` | **M0a-13** 공개 URL 검증 | M0a-12 또는 현재 대체 행 M4-20의 production URL 확보 | 워커: 기본 URL과 `?gl=webgl` HTTP/HUD·걷기 결과 기록; 영하님: 실 브라우저 접근과 조작 확인 |
+| `Docs/decisions/m0a-gate.md` | **M0a-GATE** 제출 게이트 | M0a-03 버전·TS, M0a-07 두 backend 증거, M0a-13 또는 M0a-14 URL 증거 완비 | 워커: 근거 취합·게이트 초안 작성; 영하님: 공개 URL 실접근 확인; master: 최종 PASS/No-Go 판정 |
+
+현재 Dispatch는 배포·브라우저·빌드 권한이 없으므로 위 파일을 빈 증거로 만들지 않는다. 각 담당자가 완료 조건을 실제로 실행한 뒤 결과를 기록해야 한다.
