@@ -3,7 +3,8 @@ import { useMemo, useRef, useState } from 'react'
 import { BufferAttribute, BufferGeometry, type Mesh } from 'three'
 import { useLookdevMaterial } from './Atmosphere'
 import placement from '../data/placement.json' with { type: 'json' }
-import { buildHeroTree, type Lod } from './hero/heroTreeGeometry'
+import lookdev from '../data/lookdev.json' with { type: 'json' }
+import { buildHeroTree, heroContrastColors, type HeroContrastConfig, type HeroTreeColors, type Lod } from './hero/heroTreeGeometry'
 import { sampleHeight } from './terrain/heightmap'
 
 /**
@@ -27,8 +28,8 @@ export function readHeroTreeLod(): Lod {
   return activeLod
 }
 
-function toGeometry(lod: Lod): BufferGeometry {
-  const build = buildHeroTree(lod)
+function toGeometry(lod: Lod, colors: HeroTreeColors): BufferGeometry {
+  const build = buildHeroTree(lod, undefined, colors)
   const g = new BufferGeometry()
   g.setAttribute('position', new BufferAttribute(build.positions, 3))
   g.setAttribute('normal', new BufferAttribute(build.normals, 3))
@@ -37,12 +38,34 @@ function toGeometry(lod: Lod): BufferGeometry {
   return g
 }
 
+/**
+ * R54-A — L4 대비 파라미터. 기본은 `lookdev.json.heroContrast`(enabled=false → 현재 색과 비트 동일).
+ * `?heroContrast=1` 로 켜고 `?heroTrunk=0.85&heroCanopy=1.05` 로 배율을 덮어쓴다(부재는 lookdev 값, `Number(null)===0` 함정 회피).
+ */
+export function readHeroContrast(search: string): HeroContrastConfig {
+  const base = lookdev.heroContrast
+  const q = new URLSearchParams(search)
+  const num = (key: string, fallback: number) => {
+    const raw = q.get(key)
+    const v = raw === null ? NaN : Number(raw)
+    return Number.isFinite(v) && v > 0 ? v : fallback
+  }
+  return {
+    enabled: q.get('heroContrast') === '1' ? true : q.get('heroContrast') === '0' ? false : base.enabled,
+    trunkLumaScale: num('heroTrunk', base.trunkLumaScale),
+    canopyLumaScale: num('heroCanopy', base.canopyLumaScale),
+  }
+}
+
 export function HeroTree() {
   const camera = useThree((s) => s.camera)
   const ref = useRef<Mesh>(null)
   const [lod, setLod] = useState<Lod>(0)
 
-  const geometries = useMemo(() => [toGeometry(0), toGeometry(1)] as const, [])
+  const geometries = useMemo(() => {
+    const colors = heroContrastColors(readHeroContrast(location.search))
+    return [toGeometry(0, colors), toGeometry(1, colors)] as const
+  }, [])
   const groundY = useMemo(() => sampleHeight(SPEC.x, SPEC.z), [])
 
   // M2-09 — 거리로 LOD 를 고른다. 임계 근처에서 왕복하지 않게 10% 히스테리시스를 둔다.

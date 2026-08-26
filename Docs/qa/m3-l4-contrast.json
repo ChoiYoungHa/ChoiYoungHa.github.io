@@ -1,0 +1,107 @@
+{
+  "schema": "l4-contrast/1",
+  "label": "S2 = vista-start(0,26)->heroTree, m3-after-1-bw.png (Docs/qa/m3-l4-s3.json 과 같은 캡처·bbox)",
+  "files": {
+    "color": "Docs/lookdev/m3-after-1.png",
+    "nohero": "Docs/lookdev/m3-l4nohero2-1.png",
+    "bw": "Docs/lookdev/m3-after-1-bw.png"
+  },
+  "sha256": {
+    "color": "caa898f1091f90b60e0118b515225164c1c6a7e339d8878b41c1e16dfd1cb3a4",
+    "nohero": "d2bc2a32c72221b974344148dfdcf50e77ec5b28add952704498a2e374b784c7",
+    "bw": "7896a7480c433360d57ec297b5c630c22e27934a137cb4e77993f79dc1bf65bd"
+  },
+  "method": "color−nohero 차분(채널 최대 |Δ|≥24) 마스크 → 흑백 Rec.709 평균 휘도. 수관=bbox 상단 1/3 마스크, 줄기=하단 1/3 마스크, 하늘=bbox 좌우 40px 띠·상단 2/3 행·비마스크. Δ≥10 이면 pass(문턱은 추정값, 판정은 master).",
+  "image": {
+    "width": 1280,
+    "height": 720
+  },
+  "diff": {
+    "threshold": 24,
+    "maskPixels": 11935,
+    "fullMaskBbox": {
+      "left": 553,
+      "top": 89,
+      "right": 738,
+      "bottom": 301
+    },
+    "note": "전체 마스크에는 수목 그림자(마을 위)도 포함된다 — 실루엣은 bbox 안만 쓴다"
+  },
+  "bbox": {
+    "left": 553,
+    "top": 89,
+    "right": 739,
+    "bottom": 302
+  },
+  "bboxSource": "argument",
+  "regions": {
+    "canopy": {
+      "rows": [
+        89,
+        160
+      ],
+      "pixels": 6585,
+      "luma": 100.6
+    },
+    "trunk": {
+      "rows": [
+        231,
+        302
+      ],
+      "pixels": 1023,
+      "luma": 105.7
+    },
+    "sky": {
+      "columns": [
+        [
+          513,
+          552
+        ],
+        [
+          740,
+          779
+        ]
+      ],
+      "rows": [
+        89,
+        231
+      ],
+      "pixels": 11440,
+      "left": 151.7,
+      "right": 143.1,
+      "luma": 147.4
+    },
+    "treeAll": {
+      "pixels": 11935,
+      "luma": 103.6
+    }
+  },
+  "checks": {
+    "trunk vs sky": {
+      "trunk": 105.7,
+      "sky": 147.4,
+      "delta": 41.7,
+      "threshold": 10,
+      "pass": true
+    },
+    "canopy vs sky": {
+      "canopy": 100.6,
+      "sky": 147.4,
+      "delta": 46.8,
+      "threshold": 10,
+      "pass": true
+    },
+    "trunk vs canopy": {
+      "trunk": 105.7,
+      "canopy": 100.6,
+      "delta": 5.1,
+      "threshold": 10,
+      "pass": false
+    }
+  },
+  "summary": {
+    "passCount": 2,
+    "total": 3,
+    "formDistinguishable": "2/3 pairs ≥ threshold — master 판정 필요"
+  }
+}

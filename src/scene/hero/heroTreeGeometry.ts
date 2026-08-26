@@ -21,6 +21,66 @@ import { mulberry32 } from '../scatter/seededRandom.ts'
 export const TRUNK_COLOR = { r: 0x5a / 255, g: 0x46 / 255, b: 0x32 / 255 } // #5A4632 HSL(30,29%,27%)
 export const CANOPY_COLOR = { r: 0x3b / 255, g: 0x3e / 255, b: 0x26 / 255 } // #3B3E26 HSL(68,24%,20%)
 
+/** 정점색 세트. 기본은 위 두 상수 — R54-A `heroContrast`(lookdev.json, 기본 off) 가 on 일 때만 다른 값이 들어온다. */
+export interface HeroTreeColors {
+  trunk: Vec3Color
+  canopy: Vec3Color
+}
+export type Vec3Color = { r: number; g: number; b: number }
+export const DEFAULT_HERO_COLORS: HeroTreeColors = { trunk: TRUNK_COLOR, canopy: CANOPY_COLOR }
+
+// ───────── R54-A hero 대비 파라미터(순수 함수, Node 테스트 대상: Automation/test-hero-contrast.mjs) ─────────
+
+export interface HeroContrastConfig {
+  enabled: boolean
+  /** 줄기 HSL L 배율(<1 = 어둡게). hue·S 유지. */
+  trunkLumaScale: number
+  /** 수관 HSL L 배율(>1 = 밝게). hue·S 유지 — 팔레트 §6-2 L 20%±6pp 안에서만. */
+  canopyLumaScale: number
+}
+
+export function rgbToHsl(c: Vec3Color): { h: number; s: number; l: number } {
+  const { r, g, b } = c
+  const M = Math.max(r, g, b), m = Math.min(r, g, b), d = M - m, l = (M + m) / 2
+  let h = 0, s = 0
+  if (d > 0) {
+    s = d / (1 - Math.abs(2 * l - 1))
+    h = M === r ? 60 * (((g - b) / d) % 6) : M === g ? 60 * ((b - r) / d + 2) : 60 * ((r - g) / d + 4)
+    if (h < 0) h += 360
+  }
+  return { h, s, l }
+}
+
+export function hslToRgb(h: number, s: number, l: number): Vec3Color {
+  const C = (1 - Math.abs(2 * l - 1)) * s
+  const X = C * (1 - Math.abs(((h / 60) % 2) - 1))
+  const m = l - C / 2
+  const k = Math.floor(h / 60) % 6
+  const [r, g, b] = [[C, X, 0], [X, C, 0], [0, C, X], [0, X, C], [X, 0, C], [C, 0, X]][k]
+  return { r: r + m, g: g + m, b: b + m }
+}
+
+/** HSL L 만 배율(0~1 클램프). scale===1 이면 **입력 객체를 그대로** 돌려준다(비트 동일). */
+export function scaleLightness(c: Vec3Color, scale: number): Vec3Color {
+  if (scale === 1) return c
+  const { h, s, l } = rgbToHsl(c)
+  return hslToRgb(h, s, Math.min(1, Math.max(0, l * scale)))
+}
+
+/** Rec.709 상대 휘도(0~1 입력·출력, 감마 무시 — measure.mjs 의 luma709 와 같은 계수). */
+export function luma709(c: Vec3Color): number {
+  return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+}
+
+/** enabled=false 면 DEFAULT_HERO_COLORS **동일 객체** 반환 → buildHeroTree 출력이 현재와 비트 동일. */
+export function heroContrastColors(cfg: HeroContrastConfig | null | undefined): HeroTreeColors {
+  if (!cfg || !cfg.enabled) return DEFAULT_HERO_COLORS
+  return {
+    trunk: scaleLightness(TRUNK_COLOR, cfg.trunkLumaScale),
+    canopy: scaleLightness(CANOPY_COLOR, cfg.canopyLumaScale),
+  }
+}
+
 /** M2-01 실루엣 브리프에서 고정한 치수(m). Docs/style-bible/hero-tree.md 와 같은 값이어야 한다. */
 export const HERO_TREE = {
   height: 48,
@@ -225,7 +285,11 @@ function trunkCenterline(height: number, rings: number): { points: Vec3[]; radii
   return { points, radii }
 }
 
-export function buildHeroTree(lod: Lod = 0, seed: number = HERO_TREE.seed): HeroTreeBuild {
+export function buildHeroTree(
+  lod: Lod = 0,
+  seed: number = HERO_TREE.seed,
+  colors: HeroTreeColors = DEFAULT_HERO_COLORS,
+): HeroTreeBuild {
   const p = LOD_PARAMS[lod]
   const rng = mulberry32(seed)
   const w: Writer = { pos: [], nor: [], col: [], tris: 0 }
@@ -235,7 +299,7 @@ export function buildHeroTree(lod: Lod = 0, seed: number = HERO_TREE.seed): Hero
 
   // 1) 줄기
   const trunk = trunkCenterline(H, p.trunkRings)
-  const trunkTris = tube(w, trunk.points, trunk.radii, p.trunkRadial, TRUNK_COLOR)
+  const trunkTris = tube(w, trunk.points, trunk.radii, p.trunkRadial, colors.trunk)
   modules.push({ name: 'trunk', kind: 'trunk', count: 1, trianglesEach: trunkTris, trianglesTotal: trunkTris })
 
   /** 줄기 중심선 위 임의 높이의 위치 */
@@ -273,7 +337,7 @@ export function buildHeroTree(lod: Lod = 0, seed: number = HERO_TREE.seed): Hero
         })
         rad.push(spec.baseRadius * (1 - 0.75 * t))
       }
-      each = tube(w, pts, rad, p.branchRadial, TRUNK_COLOR)
+      each = tube(w, pts, rad, p.branchRadial, colors.trunk)
       branchTips.push(pts[pts.length - 1])
     }
     modules.push({
@@ -306,7 +370,7 @@ export function buildHeroTree(lod: Lod = 0, seed: number = HERO_TREE.seed): Hero
           z: crownCenter.z + Math.sin(a) * rr,
         }
       }
-      each = ellipsoid(w, c, r * 1.15, r * 0.82, r * 1.15, p.canopyLat, p.canopyLon, CANOPY_COLOR)
+      each = ellipsoid(w, c, r * 1.15, r * 0.82, r * 1.15, p.canopyLat, p.canopyLon, colors.canopy)
     }
     modules.push({
       name: spec.name,

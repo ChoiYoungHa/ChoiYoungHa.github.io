@@ -2,6 +2,7 @@
   "id": "m1-vistas-v1",
   "note": "M1-08 전망 지점 3개. 계획서 §6-4 의 고정 캡처 3지점(S1 전망 / S2 마을 / S3 수목)과 같은 의도이고, 좌표는 main-path.json v1 의 랜드마크를 그대로 참조한다. eyeHeight 는 지면 위 오프셋(m)이며 실제 y 는 M1-04 지형 임포트 후 지면 샘플로 확정한다.",
   "eyeHeightMeters": 1.6,
+  "pitchDegNote": "R52-A 선택 필드 marker.pitchDeg(도, + = 올려봄). VistaCamera 가 lookAt(target) 뒤 카메라 로컬 X 축으로 그만큼 더 회전한다. 부재 또는 0 = 기존 lookAt 시선 그대로(기본 동작 불변). 후보 계산은 Docs/lookdev/vista-pitch-candidates.md — 채택은 master.",
   "markers": [
     {
       "id": "vista-start",
