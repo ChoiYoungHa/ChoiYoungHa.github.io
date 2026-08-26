@@ -77,3 +77,22 @@ R60-C(codex-A, main GPU) 는 `lookdev-variants.mjs` 6 변형(baseline / hazeDir 
 ### 2-3. REJECT 인 변형의 처리
 - 값·스위치는 **그대로 둔다**(기본 off 이므로 화면 불변). 결과표의 수치를 `l4-contrast-plan.md` / `vista-pitch-candidates.md` / `m3-hazedir-design.md` 말미에 "실측 REJECT: <사유 수치>" 로 남기고, 다음 후보(heroContrast 는 K2 0.80/1.15, vistaPitch 는 A′ 21.7°)로 재실행 여부는 master 결정.
 - REJECT 사유가 "자동 PASS 합계 감소" 면 어느 샷·어느 L 이 깨졌는지 `variants-result.json` rows[].metrics 로 확인한 뒤 후보 재계산.
+
+## 3. 2026-08-27 추가 후보
+
+> R75~R101 이후 실측으로 추가한 **후보 5건**이다. 기존 14건과 마찬가지로 이 표 자체는 `계획서.md`를 바꾸지 않으며, 영하님 승인 후 master가 본문과 §10 정정 이력을 함께 갱신한다. 기준 HEAD `5e54142`.
+
+| # | 문서 | 절 | 현재 표기 | 정정 후보 | 근거 파일 · 실측 | 영향·상태 |
+|---:|---|---|---|---|---|---|
+| 15 | 계획서 | §4-1 programs 정의 | `programs.length ≤40`, “머티리얼 종류 상한” | **제안 A**: WebGPU render pipelines `≤48`을 주 게이트로 바꾸고 `programs≤72`·재질 객체≤16·그림자 캐스터 그룹≤8은 보조 경보로 기록 | `Docs/qa/m5-programs.json`: R91 programs 55 = vertex 36 + fragment 19, pipelines 36, 재질 12. `Docs/perf/m5-bench-r100.csv`: programs 62·avg 123.16·1%low 22.22. `Docs/decisions/programs-budget-proposal.md`: A/B/C 비교 | 설계(정의). **영하님 결정 대기** |
+| 16 | 계획서 | §3-6 HeroTree LOD | core/detail 전략과 §3-2는 HeroTree 2단 LOD를 전제하나 품질표에 실제 GLB 전환값 없음 | `hero_tree.glb`가 있으면 `HERO_GLTF_LOD_SWITCH_METERS=400`으로 고정해 월드 대각 353m 안에서는 **항상 GLB**; `?lookAssets=0` 절차 폴백만 기존 placement LOD를 사용한다고 명기 | `Docs/decisions/hero-tree-footprint-r100.md` #4; `src/scene/HeroTree.tsx`; R100 low 추정 tris 약 390K≤600K | 설계(LOD). R100 적용값을 본문으로 승격 |
+| 17 | 계획서 | §3-4 충돌·동선 | 캐릭터/카메라 충돌만 있고 거대 수목 발자국과 bench 접근 정지 거리 없음 | HeroTree 충돌 반경 **8.0m**, final route 접근 정지 목표 **9.5m**를 데이터 계약으로 추가 | `Docs/decisions/hero-tree-footprint-r100.md` #1~2: 브라우저 최종 편차 0.30m·밑동 9.21m·hero/village 관통 0, route hash `a9f1339c4187` | 설계(값). R100 적용값을 본문으로 승격 |
+| 18 | 계획서 | §6-4 자산 밀도 | §10 #6의 “수목 실루엣 경계 픽셀 비율”은 구현상 `boundaryPixels / maskPixels`; 큰 꽉 찬 수관일수록 분모가 커져 형태가 좋아져도 점수가 내려감 | **대안 1개**: `heroContourPerHeight = boundaryPixels / (maskBbox.bottom - maskBbox.top)`로 바꾸고 M3·M5 캡처를 같은 식으로 재산출해 목표를 다시 고정. 면적 대신 화면 높이로 정규화해 크기와 윤곽 복잡도를 분리 | `Docs/lookdev/m5-density-after-r100.json`: boundary 1,116px, bbox top 89/bottom 302 → 후보값 `1116/213 = 5.239`; 현 `heroSilhouetteRatio=0.03354`는 판정 보류 | 설계(측정 규약). **영하님 결정 대기**, 기존 임계값 이관 금지 |
+| 19 | 계획서 | §3-1 폴더 구조 | 본문 트리에 `public/ui/`, `src/game/`, `src/scene/fx/`가 없고 `src/shaders/`만 있음 | §10 #1에서 이미 적용한 네 경로를 본문 트리에 반영: `public/ui/`, `src/game/{data,rules,world,mobs}`, `src/scene/fx/`, `src/shaders/` | `계획서.md` §10 #1; 실제 `public/ui/`, `src/game/`, `src/scene/` 존재; `Docs/qa/roadmap-evidence-map-m5m6.md` M6-04~36 | 없음(문구·구조도 정합). §10 반영 완료, 본문 동기화만 남음 |
+
+### 3-1. 적용 순서
+
+1. 영하님이 #15와 #18의 측정 정의를 먼저 결정한다. 숫자 게이트가 정해져야 M5-14/M6-37을 같은 규약으로 잴 수 있다.
+2. #16·#17은 R100 적용값을 본문과 품질/동선 데이터 설명에 승격한다.
+3. #19는 §10 #1과 실제 폴더를 본문 트리에 복사하는 문서 정합 작업이다.
+4. 적용 뒤 `로드맵.md` M5-13·14, M6-01·37 완료 조건도 같은 용어(`pipelines`, `heroContourPerHeight`)로 맞춘다.
