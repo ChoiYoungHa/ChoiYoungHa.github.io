@@ -1,0 +1,12 @@
+M0b-05 Git LFS initialization
+Date: 2026-08-26
+Working directory: C:\Users\USER\Desktop\claude\해커톤\web3d
+
+$ git lfs version
+git-lfs/3.7.1 (GitHub; windows amd64; go 1.25.1; git b84b3384)
+Exit code: 0
+
+$ git lfs install
+Updated Git hooks.
+Git LFS initialized.
+Exit code: 0

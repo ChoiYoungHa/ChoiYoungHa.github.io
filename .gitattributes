@@ -1,0 +1,6 @@
+DCC/**/*.blend filter=lfs diff=lfs merge=lfs -text
+DCC/exports/**/*.glb filter=lfs diff=lfs merge=lfs -text
+public/models/**/*.glb filter=lfs diff=lfs merge=lfs -text
+public/textures/**/*.ktx2 filter=lfs diff=lfs merge=lfs -text
+public/env/**/*.hdr filter=lfs diff=lfs merge=lfs -text
+public/heightmaps/**/*.png filter=lfs diff=lfs merge=lfs -text
