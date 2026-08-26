@@ -33,6 +33,8 @@ npm ci && npm run build && npm run preview
 | M1 | 조건부 PASS | 141.51 / 44.83 | 141.55 / 45.08 | 911.59s, crash 0, TDR 0 | 확인 불가; 수동 측정 보류 | [`m1-gate.md`](../decisions/m1-gate.md), [`m1-runs.csv`](../perf/m1-runs.csv) |
 | M2 | 조건부 PASS | 125.22 / 33.31 | 140.37 / 35.91 | 915.4s, crash 0, TDR 0 | 확인 불가; 수동 측정 보류 | [`m2-gate.md`](../decisions/m2-gate.md), [`m2-runs.csv`](../perf/m2-runs.csv) |
 | M3 | **조건부 PASS** | 140.58 / 37.14 | 140.69 / 38.27 | 914.66s, crash 0, TDR 0, context-lost 0, errors 0 | 확인 불가; 수동 측정 보류 | [`m3-gate.md`](../decisions/m3-gate.md), [`m3-runs.csv`](../perf/m3-runs.csv), [`m3-webgl-runs.csv`](../perf/m3-webgl-runs.csv) |
+| M4-14 | **PASS** | — | — | — | — | preset별 tris 계약 low 312,434/600K PASS·base 704,834/1.1M PASS; [`m4-check-budgets-final.txt`](../qa/m4-check-budgets-final.txt), [`base-tris-decision.md`](../decisions/base-tris-decision.md) |
+| M4-16 | **PASS** | — | — | — | — | 통합 build gate exit 0·고의 미등록 GLB exit 1; [`m4-build-gate.txt`](../qa/m4-build-gate.txt), [`m4-build-gate-fail.txt`](../qa/m4-build-gate-fail.txt) |
 
 M2의 calls는 63/200, programs는 40/40, texture GPU는 36.88/300MB, JS heap 중앙값은 WebGPU 193.07MB·WebGL2 213.92MB로 기록됐다. M2 전체 판정은 프로세스 RAM 정밀 증거가 없어 조건부이며, 수동 측정 절차는 [`process-ram-howto.md`](../perf/process-ram-howto.md)에 있다.
 
@@ -54,6 +56,21 @@ M3는 평균·하위 1%·15분 안정성·1초 끊김과 룩 L1~L5 **5/5**를 �
 
 채택 파라미터는 **NeutralToneMapping**, exposure **0.44**, depth grade `hueStrength=0.97`, `lumaGain=0.34`, `satFar=0.25`, sky `hazeMix=0.4`다. 톤매퍼 비교와 채택 근거는 [`m3-tonemap.md`](../lookdev/m3-tonemap.md)에 기록했다.
 
+### 룩 변형 6종과 최종 채택
+
+같은 빌드에서 baseline·hazeDir·heroContrast·vistaPitch·grassLite·combo를 비교했다. grassLite는 자동 PASS **8/12**를 유지했고 baseline 대비 자동 지표 최대 변화는 **0.1**(S3 L5 15.1→15.2), low worst tris는 **312,434**여서 master가 유일한 채택 후보를 기본값으로 승격했다. 채택 후 새 baseline도 8/12였고 WebGPU 단발 확인은 **140.84 avg / 38.52 1% low fps**, hitch 0, programs 40이었다.
+
+| 변형 | 결정 | 핵심 수치·사유 |
+|---|---|---|
+| baseline | 비교 기준 | 자동 PASS 8/12, S3 far luma 166.4, L4 줄기/수관 Δ4.6 |
+| grassLite | **채택·기본 on** | 자동 PASS 8/12, 지표 Δ≤0.1, low worst 312,434≤600K |
+| hazeDir | REJECT·기본 off | 자동 PASS 7<8, S3 far luma 155.1>145, far 채도 14.7>12 |
+| heroContrast | REJECT·기본 off | L4 줄기/수관 Δ1.8<10, 최소 Δ1.8<10 |
+| vistaPitch | REJECT·기본 off | 자동 PASS 5<8, S1 수목 bbox top 0(목표 >0) |
+| combo | REJECT·기본 off | 자동 PASS 7<8, S3 far 155.1>145, L4 Δ1.8<10 |
+
+근거는 [`variants-result.md`](../lookdev/variants/variants-result.md), 채택 후 [`variants-result.md`](../lookdev/variants-adopted/variants-result.md), [`m4-grasslite-bench.csv`](../perf/m4-grasslite-bench.csv)다. rockLite는 grassLite만으로 base **704,834≤1.1M**이므로 불필요해 기본 off로 유지했다.
+
 ## 5. 자산과 라이선스
 
 [`assets.csv`](../../src/data/assets.csv)는 14개 자산을 19열로 기록한다.
@@ -73,7 +90,9 @@ CC0 자산은 attribution이 필요 없고 재배포가 허용된다. 절차적 
 - M4 actual build의 low 성능 3회·JS heap·프로세스 RAM 중앙값은 **TBD(M4-23A)**, **TBD(M4-23B)**, **TBD(M4-23C)** 이다.
 - 외부 테스터 3명의 실행·첫 입력·자력 도달 판정은 **TBD(M4-25A)** 이다.
 - M3-GATE는 자동 지표와 룩 5/5를 통과했으나 프로세스 RAM 수동 측정이 남아 **조건부 PASS**다.
-- tris 예산은 기본 low worst **816,434 > 600,000으로 FAIL**이며 식생이 **81.43%**를 차지한다. `grassLite` 옵션은 low worst를 **312,434**로 낮출 것으로 계산됐지만 기본값은 아직 off이고 룩 검증 전이므로 채택되지 않았다. M3-GATE fps는 이 tris 위반 상태의 기본 장면에서 측정된 값이다(통합 전 근거: `Docs/perf/m4-scene-tris.json`, `Docs/qa/m4-grass-lite.md`).
+- tris 예산 결함은 **해소**됐다. 검사기를 `계획서.md §4-1` 원표의 preset별 한도(low≤600K, base≤1.1M)로 정정하고 grassLite를 기본 채택해 low **312,434 PASS**, base **704,834 PASS**다([`base-tris-decision.md`](../decisions/base-tris-decision.md), [`m4-scene-tris-grass-lite.json`](../perf/m4-scene-tris-grass-lite.json)).
+- S3 원경/하늘 luma는 **166.4>145**이고, L4 세 번째 체크인 줄기/수관 Δ는 **5.1<10**이어서 휘도만으로 분리되지 않지만 수관/줄기 폭 비율 7.15의 형태 구분으로 수동 PASS했다.
+- programs는 M3-GATE와 grassLite 확인에서 **40/40**으로 상한 여유가 없다.
 - Draco·KTX2가 이 PC에서 주는 실제 압축률과 로딩 이득은 **TBD(M4-08/M4-09E)** 이다.
 - Intel Arc 드라이버와 브라우저 조합에서 특정 셰이더가 깨질 위험이 있어 WebGL2 강제 폴백을 유지한다.
 - 동적 GI·실내·오픈월드 스트리밍은 의도적으로 범위 밖이며, 현재 룩은 IBL·고정 조명·안개·팔레트·실루엣에 의존한다.
