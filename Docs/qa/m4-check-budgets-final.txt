@@ -1,0 +1,47 @@
+# M4-14 최종 실행 (master, 2026-08-26 23:0x, HEAD ab86c20)
+node Automation/check-budgets.mjs Docs/m2/village-integration-smoke.json --preset low --tris-json Docs/perf/m4-scene-tris-grass-lite.json
+{
+  "pass": true,
+  "preset": "low",
+  "source": "계획서 §4-1",
+  "checks": {
+    "calls": {
+      "value": 63,
+      "limit": 200,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "tris": {
+      "value": 312434,
+      "limit": 600000,
+      "status": "pass",
+      "allowUnknown": true,
+      "method": "estimated(source)",
+      "scenario": "worstCase",
+      "source": "Docs/perf/m4-scene-tris-grass-lite.json"
+    },
+    "programs": {
+      "value": 40,
+      "limit": 40,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "textureGPU": {
+      "value": 36.88,
+      "limit": 300,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "JSheap": {
+      "value": 77.27,
+      "limit": 900,
+      "status": "pass",
+      "allowUnknown": false
+    }
+  },
+  "warnings": [
+    "programs is exactly at limit (40/40)"
+  ]
+}
+WARNING: programs is exactly at limit (40/40)
+exit=0
