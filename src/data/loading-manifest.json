@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "measuredFromHead": "d0692ef",
+  "measurement": "Node node:fs statSync against current dist/ and public/ files; procedural entries are included in the boot JS and therefore add 0 separate bytes.",
+  "phases": {
+    "boot": [
+      { "id": "boot.index-html", "url": "dist/index.html", "bytes": 538, "kind": "html" },
+      { "id": "boot.js-main", "url": "dist/assets/main-wrfkKES9.js", "bytes": 826673, "kind": "javascript" },
+      { "id": "boot.js-renderer", "url": "dist/assets/createRenderer-C5ncXYj_.js", "bytes": 941771, "kind": "javascript" },
+      { "id": "boot.heightmap-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
+      { "id": "boot.sky-hdr", "url": "dist/env/sky_1k.hdr", "bytes": 1428760, "kind": "hdr" }
+    ],
+    "core": [
+      { "id": "core.terrain-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
+      { "id": "core.vegetation-glb", "url": "dist/models/vegetation_kit.glb", "bytes": 16900, "kind": "glb" },
+      { "id": "core.hero-lod1-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" }
+    ],
+    "detail": [
+      { "id": "detail.village-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
+      { "id": "detail.hero-lod0-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" }
+    ]
+  },
+  "summary": {
+    "phaseBytes": { "boot": 3197742, "core": 16900, "detail": 0 },
+    "cumulativeBytes": { "boot": 3197742, "core": 3214642, "detail": 3214642 },
+    "limitsBytes": { "boot": 4000000, "coreCumulative": 12000000, "total": 60000000 },
+    "checks": { "bootWithinBudget": true, "coreWithinBudget": true, "totalWithinBudget": true },
+    "itemCount": 10,
+    "duplicateIdCount": 0
+  }
+}

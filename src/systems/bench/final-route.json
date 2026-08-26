@@ -1,0 +1,108 @@
+{
+  "routeHash": "7b292e8d5e89",
+  "routeHashMethod": "SHA-256 of UTF-8 compact JSON.stringify for the full document after removing routeHash and routeHashMethod; first 12 lowercase hex characters.",
+  "id": "m4-final-route-v1",
+  "sourcePathId": "m1-main-path-v1",
+  "durationSeconds": 75,
+  "note": "Manual final experience route only; the existing ?route=bench 60-second route remains unchanged. Position y=0 follows the existing bench data convention and is ground-resolved by the runtime controller.",
+  "heroTreeSafety": {
+    "center": [38, -96],
+    "trunkRadiusMeters": 2.6,
+    "playerRadiusMeters": 0.4,
+    "minimumCenterDistanceMeters": 3.0,
+    "closestWaypointId": "hero-approach",
+    "closestWaypointCenterDistanceMeters": 3.599703,
+    "clearanceMarginMeters": 0.599703,
+    "pass": true
+  },
+  "waypoints": [
+    {
+      "id": "spawn",
+      "timeSeconds": 0,
+      "label": "마을 입구 스폰",
+      "sourceMainPathIndex": 0,
+      "pose": { "position": [0, 0, 24], "yaw": 0.343024 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "village-gap",
+      "timeSeconds": 5,
+      "label": "집 사이",
+      "sourceMainPathIndex": 1,
+      "pose": { "position": [-5, 0, 10], "yaw": 0.244979 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "village-north",
+      "timeSeconds": 10,
+      "label": "마을 북단",
+      "sourceMainPathIndex": 2,
+      "pose": { "position": [-9, 0, -6], "yaw": -0.135528 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "meadow-entry",
+      "timeSeconds": 17,
+      "label": "초원 진입",
+      "sourceMainPathIndex": 3,
+      "pose": { "position": [-6, 0, -28], "yaw": -0.507099 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "gentle-rise",
+      "timeSeconds": 24,
+      "label": "완만한 오르막",
+      "sourceMainPathIndex": 4,
+      "pose": { "position": [4, 0, -46], "yaw": -0.785398 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "mid-vista",
+      "timeSeconds": 30,
+      "label": "길 중간 전망",
+      "sourceMainPathIndex": 5,
+      "pose": { "position": [18, 0, -60], "yaw": -0.71883 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "tree-approach",
+      "timeSeconds": 37,
+      "label": "거대 수목 접근",
+      "sourceMainPathIndex": 6,
+      "pose": { "position": [32, 0, -76], "yaw": -0.291479 },
+      "input": { "forward": 1, "run": false }
+    },
+    {
+      "id": "hero-approach",
+      "timeSeconds": 43,
+      "label": "거대 수목 밑동 안전 정지",
+      "sourceMainPathIndex": 7,
+      "pose": { "position": [36.966, 0, -92.552], "yaw": -0.29135 },
+      "input": { "forward": 0, "run": false }
+    },
+    {
+      "id": "hero-look",
+      "timeSeconds": 50,
+      "label": "수관 올려보기",
+      "sourceMainPathIndex": 7,
+      "pose": { "position": [36.966, 0, -92.552], "yaw": -0.29135 },
+      "input": { "forward": 0, "run": false }
+    },
+    {
+      "id": "turn-back",
+      "timeSeconds": 65,
+      "label": "마을 방향 회전 중간",
+      "sourceMainPathIndex": 7,
+      "pose": { "position": [36.966, 0, -92.552], "yaw": 1.248974 },
+      "input": { "forward": 0, "run": false }
+    },
+    {
+      "id": "village-lookback",
+      "timeSeconds": 75,
+      "label": "마을 되돌아보기",
+      "sourceMainPathIndex": 7,
+      "pose": { "position": [36.966, 0, -92.552], "yaw": 2.789298 },
+      "input": { "forward": 0, "run": false }
+    }
+  ]
+}
