@@ -1,0 +1,163 @@
+{
+  "name": "m5-gl-before-S2",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-start&report=m5-gl-before-S2&gl=webgl&lookAssets=0",
+  "at": "2026-08-26T15:47:20.291Z",
+  "pngBytes": 212693,
+  "gotResult": true,
+  "settleMs": 21176,
+  "evidence": {
+    "heroTree": {
+      "type": "Mesh",
+      "source": "procedural",
+      "materialCount": null
+    },
+    "terrain": "flat",
+    "village": [
+      {
+        "name": "village-house-a",
+        "source": "procedural",
+        "type": "Mesh"
+      },
+      {
+        "name": "village-house-b",
+        "source": "procedural",
+        "type": "Mesh"
+      },
+      {
+        "name": "village-house-c",
+        "source": "procedural",
+        "type": "Mesh"
+      }
+    ],
+    "foliageGrassMap": false,
+    "texturedMeshes": 0,
+    "alphaTestMeshes": 0,
+    "meshes": 30,
+    "foliageGrassAlphaTest": 0,
+    "materialCount": 10,
+    "mapCount": 0,
+    "hud": "backend: WebGL2 (forceWebGL)canvas: 1280×720preset: lowmode: manualadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 2 · calls: 34 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -4° · near 0.1 / far 400heroTree LOD: 1 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선",
+    "canvas": {
+      "w": 1280,
+      "h": 720,
+      "cssW": 1280,
+      "cssH": 720
+    },
+    "stage": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 720,
+      "top": 0,
+      "right": 1280,
+      "bottom": 720,
+      "left": 0
+    },
+    "dpr": 1,
+    "inner": [
+      1258,
+      566
+    ]
+  },
+  "console": [
+    {
+      "type": "info",
+      "text": "[loading] phase boot"
+    },
+    {
+      "type": "info",
+      "text": "[loading] boot -> core"
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'map' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "RGBELoader has been deprecated. Please use HDRLoader instead."
+    },
+    {
+      "type": "info",
+      "text": "[loading] core -> detail"
+    }
+  ],
+  "exceptions": [],
+  "logEntries": [],
+  "hud": "backend: WebGL2 (forceWebGL)canvas: 1280×720preset: lowmode: manualadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 0 · calls: 55 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -4° · near 0.1 / far 400heroTree LOD: 1 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선",
+  "errors": [],
+  "backend": "WebGL2",
+  "fps": 0,
+  "calls": 55
+}

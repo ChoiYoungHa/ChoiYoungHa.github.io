@@ -1,0 +1,46 @@
+{
+  "warrior": {
+    "id": "warrior",
+    "name": "전사",
+    "primaryStat": "strength",
+    "startHp": 220,
+    "startMp": 60,
+    "baseAttack": 14,
+    "weaponId": "wooden-sword",
+    "basicAttack": { "name": "베기", "cooldownMs": 600 },
+    "skillId": "flame-slash"
+  },
+  "archer": {
+    "id": "archer",
+    "name": "궁수",
+    "primaryStat": "dexterity",
+    "startHp": 160,
+    "startMp": 80,
+    "baseAttack": 12,
+    "weaponId": "hunting-bow",
+    "basicAttack": { "name": "조준사격", "cooldownMs": 600 },
+    "skillId": "rainbow-shot"
+  },
+  "mage": {
+    "id": "mage",
+    "name": "마법사",
+    "primaryStat": "intelligence",
+    "startHp": 130,
+    "startMp": 140,
+    "baseAttack": 10,
+    "weaponId": "oak-staff",
+    "basicAttack": { "name": "매직클로", "cooldownMs": 700 },
+    "skillId": "ice-age"
+  },
+  "thief": {
+    "id": "thief",
+    "name": "도적",
+    "primaryStat": "luck",
+    "startHp": 175,
+    "startMp": 90,
+    "baseAttack": 13,
+    "weaponId": "iron-dagger",
+    "basicAttack": { "name": "찌르기", "cooldownMs": 500 },
+    "skillId": "leaping-slash"
+  }
+}

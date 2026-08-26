@@ -1,0 +1,107 @@
+{
+  "s02": {
+    "routes": { "default": "intro" },
+    "nodes": {
+      "intro": {
+        "lines": ["s02.narration.1", "s02.narration.2"],
+        "end": true
+      }
+    }
+  },
+  "stan": {
+    "routes": {
+      "none": "first",
+      "active": "revisit",
+      "ready": "ready",
+      "done": "completed"
+    },
+    "nodes": {
+      "first": {
+        "speakerKey": "s04.elder.name",
+        "lines": [
+          "s04.dialogue.1",
+          "s04.dialogue.2",
+          "s04.dialogue.3",
+          "s04.dialogue.4"
+        ],
+        "choices": [
+          {
+            "id": "accept",
+            "labelKey": "s04.accept",
+            "next": "accepted",
+            "effect": "quest-accept"
+          },
+          {
+            "id": "decline",
+            "labelKey": "s04.decline",
+            "next": "declined"
+          }
+        ]
+      },
+      "accepted": {
+        "speakerKey": "s04.elder.name",
+        "lines": ["s04.accepted.1", "s04.accepted.2"],
+        "end": true
+      },
+      "declined": {
+        "speakerKey": "s04.elder.name",
+        "lines": ["s04.decline"],
+        "end": true
+      },
+      "revisit": {
+        "speakerKey": "s04.elder.name",
+        "lines": ["s04.accepted.1", "s04.accepted.2"],
+        "end": true
+      },
+      "ready": {
+        "speakerKey": "s09.elder.name",
+        "lines": ["s09.dialogue.1", "s09.dialogue.2"],
+        "choices": [
+          {
+            "id": "complete",
+            "labelKey": "s09.reward.title",
+            "effect": "quest-complete"
+          }
+        ]
+      },
+      "completed": {
+        "speakerKey": "s09.elder.name",
+        "lines": ["s09.dialogue.2"],
+        "end": true
+      }
+    }
+  },
+  "maya": {
+    "routes": { "default": "greeting", "purchased": "afterPurchase" },
+    "nodes": {
+      "greeting": {
+        "speakerKey": "s05.maya.name",
+        "lines": ["s05.dialogue.1", "s05.dialogue.2", "s05.dialogue.3"],
+        "end": true
+      },
+      "afterPurchase": {
+        "speakerKey": "s05.maya.name",
+        "lines": ["s05.afterPurchase"],
+        "end": true
+      }
+    }
+  },
+  "firstKill": {
+    "routes": { "default": "narration" },
+    "nodes": {
+      "narration": {
+        "lines": ["s07.firstKill.1"],
+        "end": true
+      }
+    }
+  },
+  "s10": {
+    "routes": { "default": "narration" },
+    "nodes": {
+      "narration": {
+        "lines": ["s10.narration.1", "s10.narration.2", "s10.narration.3", "s10.teaser"],
+        "end": true
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "lookdev-variants/1",
+  "at": "2026-08-26T15:29:10.056Z",
+  "variants": [
+    {
+      "name": "baseline",
+      "label": "after: 자산 4경로 적용(기본)",
+      "query": "",
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "switches": [],
+      "targets": [],
+      "reuseBaselineFor": []
+    },
+    {
+      "name": "before",
+      "label": "before: ?lookAssets=0 절차 폴백",
+      "query": "lookAssets=0",
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "switches": [],
+      "targets": [],
+      "reuseBaselineFor": []
+    }
+  ],
+  "supported": {},
+  "scripts": {},
+  "failures": [
+    {
+      "name": "lv-baseline-S1",
+      "variant": "baseline",
+      "error": "검은 프레임(전 밴드 휘도 <3)"
+    },
+    {
+      "name": "lv-baseline-S2",
+      "variant": "baseline",
+      "error": "검은 프레임(전 밴드 휘도 <3)"
+    },
+    {
+      "name": "lv-baseline-S3",
+      "variant": "baseline",
+      "error": "검은 프레임(전 밴드 휘도 <3)"
+    },
+    {
+      "name": "lv-before-S1",
+      "variant": "before",
+      "error": "검은 프레임(전 밴드 휘도 <3)"
+    },
+    {
+      "name": "lv-before-S2",
+      "variant": "before",
+      "error": "검은 프레임(전 밴드 휘도 <3)"
+    },
+    {
+      "name": "lv-before-S3",
+      "variant": "before",
+      "error": "검은 프레임(전 밴드 휘도 <3)"
+    }
+  ],
+  "rows": [
+    {
+      "name": "baseline",
+      "verdict": "기준",
+      "passCount": 0,
+      "metrics": {},
+      "reasons": []
+    },
+    {
+      "name": "before",
+      "verdict": "ADOPT 후보",
+      "reasons": [],
+      "passCount": 0,
+      "metrics": {}
+    }
+  ]
+}

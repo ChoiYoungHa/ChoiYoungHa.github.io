@@ -1,18 +1,31 @@
-# build_hash=73fdaac,dist_included=true
+# build_hash=4ba174b,dist_included=true
 path,bytes,MB,>20MB,>=25MiB
 dist/_headers,252,0.000252,false,false
-dist/assets/createRenderer-C5ncXYj_.js,941771,0.941771,false,false
+dist/assets/createRenderer-CPda_t-U.js,1015045,1.015045,false,false
+dist/assets/main-BNB1zj4W.js,871410,0.871410,false,false
 dist/assets/main-BbBB35An.css,673,0.000673,false,false
-dist/assets/main-wrfkKES9.js,826673,0.826673,false,false
-dist/assets/probe-CmF8PyXw.js,1449,0.001449,false,false
+dist/assets/probe-CXVeJhpi.js,1449,0.001449,false,false
 dist/env/sky_1k.hdr,1428760,1.428760,false,false
 dist/favicon.svg,9522,0.009522,false,false
 dist/icons.svg,5031,0.005031,false,false
 dist/index.html,538,0.000538,false,false
 dist/models/.gitkeep,1,0.000001,false,false
+dist/models/hero_tree.glb,1389012,1.389012,false,false
+dist/models/house_a.glb,72524,0.072524,false,false
+dist/models/house_b.glb,99296,0.099296,false,false
+dist/models/house_c.glb,188028,0.188028,false,false
 dist/models/props_rocks.glb,12844,0.012844,false,false
 dist/models/vegetation_kit.glb,16900,0.016900,false,false
 dist/probe.html,357,0.000357,false,false
+dist/textures/grass_card.png,840009,0.840009,false,false
+dist/textures/ground_dirt_diffuse.jpg,716010,0.716010,false,false
+dist/textures/ground_dirt_normal.jpg,831959,0.831959,false,false
+dist/textures/ground_grass_diffuse.jpg,955945,0.955945,false,false
+dist/textures/ground_grass_normal.jpg,1440314,1.440314,false,false
 public/models/.gitkeep,1,0.000001,false,false
+public/models/hero_tree.glb,1389012,1.389012,false,false
+public/models/house_a.glb,72524,0.072524,false,false
+public/models/house_b.glb,99296,0.099296,false,false
+public/models/house_c.glb,188028,0.188028,false,false
 public/models/props_rocks.glb,12844,0.012844,false,false
 public/models/vegetation_kit.glb,16900,0.016900,false,false

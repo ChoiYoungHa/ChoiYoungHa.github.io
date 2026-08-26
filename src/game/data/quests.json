@@ -1,0 +1,12 @@
+{
+  "pig-cleanup": {
+    "id": "pig-cleanup",
+    "name": "돼지 소동",
+    "target": { "monsterId": "pig", "count": 10 },
+    "rewards": {
+      "meso": 3000,
+      "exp": 250,
+      "items": [{ "itemId": "head.pig-ribbon", "quantity": 1 }]
+    }
+  }
+}
