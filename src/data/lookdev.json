@@ -1,0 +1,44 @@
+{
+  "skyTexture": {
+    "runtimePath": "/env/sky_1k.hdr",
+    "sourcePath": "public/env/sky_1k.hdr",
+    "format": "Radiance HDR",
+    "width": 1024,
+    "height": 512,
+    "bytes": 1428760,
+    "maxDimension": 1024,
+    "tierLimit": 2048,
+    "atOrBelow2K": true
+  },
+  "exposure": {
+    "property": "toneMappingExposure",
+    "start": 1.0,
+    "tuningRange": [0.85, 1.25]
+  },
+  "toneMapping": {
+    "start": {
+      "name": "AgXToneMapping",
+      "constant": 6
+    },
+    "alternatives": [
+      {
+        "name": "ACESFilmicToneMapping",
+        "constant": 4
+      },
+      {
+        "name": "NeutralToneMapping",
+        "constant": 7
+      }
+    ]
+  },
+  "sun": {
+    "elevationDeg": 12,
+    "azimuthDeg": 135
+  },
+  "volumetricClouds": 0,
+  "integration": {
+    "connected": false,
+    "plannedRows": ["M3-05", "M3-09"],
+    "note": "Data only; do not change renderer or scene code in M3-04."
+  }
+}
