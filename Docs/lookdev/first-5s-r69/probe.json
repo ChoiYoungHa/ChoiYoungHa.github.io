@@ -1,0 +1,116 @@
+{
+  "scenario": "first5s",
+  "url": "http://127.0.0.1:5183/?q=low",
+  "at": "2026-08-26T13:58:59.636Z",
+  "frames": [
+    {
+      "t": 0,
+      "file": "Docs/lookdev/first-5s-r69/t0.0s.png",
+      "actualMs": 2117
+    },
+    {
+      "t": 0.5,
+      "file": "Docs/lookdev/first-5s-r69/t0.5s.png",
+      "actualMs": 2189
+    },
+    {
+      "t": 1,
+      "file": "Docs/lookdev/first-5s-r69/t1.0s.png",
+      "actualMs": 2264
+    },
+    {
+      "t": 1.5,
+      "file": "Docs/lookdev/first-5s-r69/t1.5s.png",
+      "actualMs": 2339
+    },
+    {
+      "t": 2,
+      "file": "Docs/lookdev/first-5s-r69/t2.0s.png",
+      "actualMs": 2411
+    },
+    {
+      "t": 2.5,
+      "file": "Docs/lookdev/first-5s-r69/t2.5s.png",
+      "actualMs": 2592
+    },
+    {
+      "t": 3,
+      "file": "Docs/lookdev/first-5s-r69/t3.0s.png",
+      "actualMs": 3084
+    },
+    {
+      "t": 3.5,
+      "file": "Docs/lookdev/first-5s-r69/t3.5s.png",
+      "actualMs": 3586
+    },
+    {
+      "t": 4,
+      "file": "Docs/lookdev/first-5s-r69/t4.0s.png",
+      "actualMs": 4086
+    },
+    {
+      "t": 4.5,
+      "file": "Docs/lookdev/first-5s-r69/t4.5s.png",
+      "actualMs": 4588
+    },
+    {
+      "t": 5,
+      "file": "Docs/lookdev/first-5s-r69/t5.0s.png",
+      "actualMs": 5082
+    },
+    {
+      "t": 5.5,
+      "file": "Docs/lookdev/first-5s-r69/t5.5s.png",
+      "actualMs": 5567
+    },
+    {
+      "t": 6,
+      "file": "Docs/lookdev/first-5s-r69/t6.0s.png",
+      "actualMs": 6081
+    }
+  ],
+  "consoleErrors": [],
+  "consoleErrorCount": 0,
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "THREE.Material: parameter 'color' has value of undefined."
+    },
+    {
+      "type": "warning",
+      "text": "RGBELoader has been deprecated. Please use HDRLoader instead."
+    }
+  ]
+}

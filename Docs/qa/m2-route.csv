@@ -11,3 +11,4 @@ run,routeHash,dt,steps,finalX,finalY,finalZ,goalErr,waypointsReached,of,unground
 # stuck 0: YES · 낙하 0(접지실패 0, y-지면 ≥ eyeOffset 0.9): YES · 관통 0(hero+village): YES
 # 마을 입구 도달(goalErr ≤ 2.0m): YES
 # 판정: PASS
+# R69-A 2026-08-26 브라우저 실주행 보완(?route=final 75초, Docs/qa/m4-final-route-run.json): waypoint 11점 기준 hero 관통 0·village 관통 0·stuck 0·접지 실패 프레임 0(minY -2.00 = 지형 최저) — 위 Node 시뮬 3회와 결론 동일. 단 final 동선은 수동 yaw 라 종료 위치가 마지막 waypoint 에서 9.46m 벗어남(bench 동선과 별개).
