@@ -41,6 +41,13 @@
     "azimuthDeg": 135
   },
   "volumetricClouds": 0,
+  "grassLite": {
+    "enabled": false,
+    "seed": 539363366,
+    "maxTrianglesPerInstance": 12,
+    "palette": "#3B3E26",
+    "query": "grassLite=1"
+  },
   "integration": {
     "connected": true,
     "connectedRows": [

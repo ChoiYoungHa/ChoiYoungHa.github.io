@@ -2,8 +2,9 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import type { InstancedMesh, Material, Mesh, Object3D } from 'three'
-import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
+import { BufferAttribute, BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
+import lookdev from '../data/lookdev.json'
 import mainPath from '../data/main-path.json'
 import vistas from '../data/vistas.json'
 import { useRuntime } from '../store/useRuntime'
@@ -11,6 +12,7 @@ import { WORLD_HALF_EXTENT, WORLD_SIZE } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { useLookdevMaterial } from './Atmosphere'
 import { lodConfigForPreset } from './foliage/lodConfig'
+import { buildGrassLiteGeometry } from './foliage/grassLiteGeometry'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
@@ -77,6 +79,24 @@ function geometryForSpecies(scene: Object3D, species: string): BufferGeometry {
   return merged
 }
 
+export function readGrassLiteEnabled(search: string = location.search): boolean {
+  const query = new URLSearchParams(search).get('grassLite')
+  if (query === '1') return true
+  if (query === '0') return false
+  return lookdev.grassLite.enabled
+}
+
+function grassLiteGeometry(): BufferGeometry {
+  const data = buildGrassLiteGeometry(lookdev.grassLite.seed)
+  const geometry = new BufferGeometry()
+  geometry.setAttribute('position', new BufferAttribute(data.positions, 3))
+  geometry.setAttribute('normal', new BufferAttribute(data.normals, 3))
+  geometry.setAttribute('color', new BufferAttribute(data.colors, 3))
+  geometry.setIndex(new BufferAttribute(data.index, 1))
+  geometry.computeBoundingSphere()
+  return geometry
+}
+
 function SpeciesInstances({
   name,
   geometry,
@@ -137,10 +157,13 @@ export function Foliage({ sampleHeight }: FoliageProps) {
   const { scene } = useGLTF(MODEL_URL) as unknown as LoadedModel
   const preset = useRuntime((state) => state.preset)
   const lod = lodConfigForPreset(preset)
+  const grassLiteEnabled = readGrassLiteEnabled()
 
   const geometries = useMemo(
-    () => SPECIES.map((species) => geometryForSpecies(scene, species)),
-    [scene],
+    () => SPECIES.map((species) => species === 'grass' && grassLiteEnabled
+      ? grassLiteGeometry()
+      : geometryForSpecies(scene, species)),
+    [grassLiteEnabled, scene],
   )
   const visibleCounts = useMemo(() => {
     const total = lod.grassInstances.count
