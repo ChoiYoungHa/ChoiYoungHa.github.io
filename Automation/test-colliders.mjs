@@ -21,6 +21,7 @@ const load = (rel) => import(pathToFileURL(join(ROOT, rel)).href)
 const readJson = (rel) => JSON.parse(readFileSync(join(ROOT, rel), 'utf8'))
 
 const col = await load('src/scene/colliders/heroTree.ts')
+const vil = await load('src/scene/colliders/village.ts')
 const hero = await load('src/scene/hero/heroTreeGeometry.ts')
 const hm = await load('src/scene/terrain/heightmap.ts')
 const { createRaycastController } = await load('src/player/controllers/raycast.ts')
@@ -160,11 +161,13 @@ describe('M2-02~06 지오메트리 예산 계약', () => {
 })
 
 describe('M2-08 배치 정합', () => {
-  test('placement · main-path · vistas 의 heroTree 좌표가 같다', () => {
+  test('placement · main-path 의 heroTree 좌표가 같고 vista-village 는 줄기 밖 밑동 6m 안', () => {
     const mp = mainPath.landmarks.heroTree
     const vv = vistas.markers.find((m) => m.id === 'vista-village').position
     assert.deepEqual({ x: TREE.x, z: TREE.z }, { x: mp.x, z: mp.z })
-    assert.deepEqual({ x: TREE.x, z: TREE.z }, { x: vv.x, z: vv.z })
+    // R22-A(M2-30): vista-village 는 줄기 중심이 아니라 밑동 근처다(test-scatter.mjs 와 같은 규칙, master 판정 B).
+    const dv = Math.hypot(vv.x - TREE.x, vv.z - TREE.z)
+    assert.ok(dv > col.HERO_TRUNK_RADIUS && dv <= 6, `vista-village 거리 ${dv.toFixed(2)}m`)
   })
 
   test('heroTree 가 250m 경계 안이고 지면 높이가 유한하다', () => {
@@ -181,5 +184,105 @@ describe('M2-08 배치 정합', () => {
       TREE.lodSwitchDistanceMeters < d,
       `전환 ${TREE.lodSwitchDistanceMeters}m 가 vista-start 거리 ${d.toFixed(1)}m 보다 멀다 — 먼 전망에서 LOD0 를 쓰게 된다`,
     )
+  })
+})
+
+describe('R22-A 통합 — Controller 가 쓰는 합성 resolver(수목→마을)', () => {
+  /**
+   * Controller.tsx 가 컨트롤러에 넘기는 것과 **같은 함수**를 여기서 만든다.
+   * 두 곳이 갈라지면 이 테스트가 통과해도 게임은 관통한다 — 형태를 1:1 로 맞춘다.
+   */
+  const resolve = (pos) =>
+    vil.resolveVillageCollision(
+      col.resolveCollision(pos, [col.heroTreeCollider(TREE)]),
+      col.PLAYER_RADIUS,
+    )
+
+  const COLLIDERS = vil.VILLAGE_COLLIDERS
+  /** 콜라이더 로컬 좌표에서 반경까지 남은 침투 깊이. 양수면 관통이다. */
+  const penetration = (p) => {
+    let worst = -Infinity
+    for (const c of COLLIDERS) {
+      const dx = p.x - c.x
+      const dz = p.z - c.z
+      const cos = Math.cos(c.rotationY)
+      const sin = Math.sin(c.rotationY)
+      const lx = Math.abs(dx * cos + dz * sin)
+      const lz = Math.abs(-dx * sin + dz * cos)
+      const d = Math.min(c.halfX + col.PLAYER_RADIUS - lx, c.halfZ + col.PLAYER_RADIUS - lz)
+      worst = Math.max(worst, d)
+    }
+    return worst
+  }
+
+  test('합성이 수목·마을 두 곳 모두에서 밀어낸다', () => {
+    const inTree = resolve({ x: TREE.x + 0.5, z: TREE.z })
+    assert.ok(Math.hypot(inTree.x - TREE.x, inTree.z - TREE.z) >= col.HERO_TRUNK_RADIUS)
+    const house = COLLIDERS[0]
+    const inHouse = resolve({ x: house.x, z: house.z })
+    assert.ok(penetration(inHouse) <= 1e-6, `침투 ${penetration(inHouse)}`)
+  })
+
+  /**
+   * 집 8채 × 8방향에서 20m 밖에서 달려 들어간다. 컨트롤러를 실제로 돌리므로
+   * 접지·경사·합성 충돌이 전부 걸린 상태의 결과다(M2-10 수목 테스트와 같은 방식).
+   */
+  const village = placement.village
+  const DIRECTIONS = 8
+  const runs = []
+  for (const building of village) {
+    const [bx, bz] = building.position
+    for (let i = 0; i < DIRECTIONS; i++) {
+      const a = (i / DIRECTIONS) * Math.PI * 2
+      const startX = bx + Math.cos(a) * 20
+      const startZ = bz + Math.sin(a) * 20
+      const yaw = Math.atan2(-(bx - startX), -(bz - startZ))
+      const c = createRaycastController(hm.sampleGround, { x: startX, y: 0, z: startZ }, {}, resolve)
+      let worst = -Infinity
+      let minDist = Infinity
+      let last = null
+      for (let n = 0; n < Math.round(8 / (1 / 60)); n++) {
+        last = c.step({ forward: 1, strafe: 0, run: true, yaw }, 1 / 60)
+        worst = Math.max(worst, penetration(last.position))
+        minDist = Math.min(minDist, Math.hypot(last.position.x - bx, last.position.z - bz))
+      }
+      runs.push({
+        id: building.id,
+        angleDeg: Math.round((a * 180) / Math.PI),
+        worst,
+        minDist,
+        final: last.position,
+        finalPenetration: penetration(last.position),
+      })
+    }
+  }
+
+  test('8채 × 8방향 = 64회 접근에서 외벽 관통 0', () => {
+    const EPS = 1e-6
+    const breaches = runs.filter((r) => r.worst > EPS)
+    assert.equal(
+      breaches.length,
+      0,
+      `관통 ${breaches.length}회: ` +
+        breaches.slice(0, 5).map((b) => `${b.id}@${b.angleDeg}deg d=${b.worst.toFixed(4)}`).join(', '),
+    )
+  })
+
+  /**
+   * 마을은 밀집해 있어서 20m 링 위의 출발점이 **옆집 안**에 놓이는 방향이 있다(실측 12/64).
+   * 그 회차는 목표 집이 아니라 옆집 벽에 막혀 멈춘다 — 이것도 콜라이더가 일한 증거다.
+   * 그래서 "전부 도달"이 아니라 "도달했거나 벽에 닿아 멈췄다"로 검사한다.
+   */
+  test('64회 모두 도달했거나 벽에 막혔다(테스트가 헛돌지 않았다)', () => {
+    const reached = runs.filter((r) => r.minDist <= 8)
+    const blocked = runs.filter((r) => r.minDist > 8 && r.finalPenetration > -0.05)
+    assert.equal(reached.length + blocked.length, runs.length, `도달 ${reached.length} + 벽접촉 ${blocked.length}`)
+    assert.ok(reached.length >= runs.length * 0.75, `도달 ${reached.length}/${runs.length}`)
+  })
+
+  test('밀려난 뒤에도 좌표가 유한하다', () => {
+    for (const r of runs) {
+      assert.ok(Number.isFinite(r.final.x) && Number.isFinite(r.final.y) && Number.isFinite(r.final.z))
+    }
   })
 })

@@ -1,0 +1,13 @@
+run,routeHash,dt,steps,finalX,finalY,finalZ,goalErr,waypointsReached,of,ungrounded,minYAboveGround,penetration,maxPathDev,stuckSegments,trace
+1,m2-route-v1-8a4ca5fd,0.00694,4320,-0.44,-1.48,22.97,1.12,5,5,0,0.9,0,0.49,0,5:6.9,-48.9;10:-1.7,-35.5;15:-6.7,-20.5;20:-8.2,-4.8;25:-4.5,10.8;30:-0.4,23.0
+2,m2-route-v1-8a4ca5fd,0.01667,1800,-0.45,-1.48,22.96,1.13,5,5,0,0.9,0,0.49,0,5:6.9,-48.9;10:-1.7,-35.5;15:-6.7,-20.5;20:-8.2,-4.8;25:-4.5,10.8;30:-0.4,23.0
+3,m2-route-v1-8a4ca5fd,0.03333,900,-0.44,-1.48,22.96,1.13,5,5,0,0.9,0,0.49,0,5:6.9,-48.9;10:-1.7,-35.4;15:-6.7,-20.5;20:-8.2,-4.7;25:-4.5,10.8;30:-0.4,23.0
+
+# M2-31 30초 이동 검증 (길 중간 waypoint5 (18,-60) → 마을 입구 waypoint0 (0,24), 역방향 5구간 94.0m)
+# 측정: Node 결정론 시뮬레이션 — 실제 raycast 컨트롤러(step) + 실제 heightmap + Controller.tsx 와 동일한 충돌 합성(heroTree 원→village 박스, r=0.4). dt 1/144·1/60·1/30 3회.
+# 브라우저 bench 러너 미사용 이유: validateBenchRoute 가 60초·0/15/30/45/60 키프레임·spawn→heroTree 로 고정돼 역방향 30초 구간을 실을 수 없다(worker-codex 파일이라 변경 금지).
+# 조향: 매 스텝 다음 waypoint 방향으로 yaw(반경 1.5m 도달 시 다음 waypoint). 관통 판정: 매 스텝 heroTree 원(2.6+0.4m)·village 박스(r 0.4) 내부 여부.
+# route hash 동일: YES (m2-route-v1-8a4ca5fd)
+# stuck 0: YES · 낙하 0(접지실패 0, y-지면 ≥ eyeOffset 0.9): YES · 관통 0(hero+village): YES
+# 마을 입구 도달(goalErr ≤ 2.0m): YES
+# 판정: PASS

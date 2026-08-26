@@ -1,0 +1,285 @@
+{
+  "id": "m2-vista3-houses",
+  "at": "2026-08-26",
+  "roadmap": "M2-30",
+  "method": "placement.json 8채의 월드 bbox(houseGeometry/roofGeometry 실측 치수 × scale·rotationYDeg·position, y=sampleHeight)를 App.tsx VistaCamera 와 동일한 카메라(pos=(x, sampleHeight+1.6, z), lookAt=(target, sampleHeight+1.6), fov 55 수직, aspect 16:9, near 0.1, far 400)의 프러스텀으로 투영해 코너 8개 중 화면 안 개수를 셌다. three 비의존 Node 스크립트. 캡처는 ?shot=vista-village&q=low 720p.",
+  "correction": "vista-village.position 을 (38,-96)=heroTree 중심 → (36.3,-91.3)(마을 방향 5m, 줄기 반경 3.0m 밖)으로 정정했다(master 판정 B). 이전 좌표에서는 카메라가 줄기 안에 있어 첫 캡처가 줄기 내벽만 찍혔다(cameraDistanceToTrunkCenter 0).",
+  "capture": {
+    "file": "Docs/lookdev/m2-vista3.png",
+    "resolution": [
+      1280,
+      720
+    ],
+    "preset": "low",
+    "backend": "WebGPU",
+    "errorCount": 0,
+    "meshCount": 30
+  },
+  "camera": {
+    "cameraPosition": {
+      "x": 36.3,
+      "y": 1.62,
+      "z": -91.3
+    },
+    "lookAt": {
+      "x": 0,
+      "y": -0.79,
+      "z": 8
+    },
+    "camera": {
+      "fov": 55,
+      "aspect": 1.7778,
+      "near": 0.1,
+      "far": 400,
+      "resolution": [
+        1280,
+        720
+      ]
+    },
+    "cameraDistanceToTrunkCenter": 5,
+    "cameraInsideTrunkCollider": false
+  },
+  "houses": [
+    {
+      "id": "village-01",
+      "house": "house-a",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 532,
+          "right": 583,
+          "top": 341,
+          "bottom": 351
+        }
+      },
+      "distanceMeters": 114.37,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 535,
+          "right": 581,
+          "top": 350,
+          "bottom": 369
+        }
+      }
+    },
+    {
+      "id": "village-02",
+      "house": "house-b",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 664,
+          "right": 698,
+          "top": 331,
+          "bottom": 347
+        }
+      },
+      "distanceMeters": 121.33,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 666,
+          "right": 697,
+          "top": 346,
+          "bottom": 368
+        }
+      }
+    },
+    {
+      "id": "village-03",
+      "house": "house-c",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 540,
+          "right": 580,
+          "top": 322,
+          "bottom": 340
+        }
+      },
+      "distanceMeters": 104.17,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 527,
+          "right": 589,
+          "top": 340,
+          "bottom": 372
+        }
+      }
+    },
+    {
+      "id": "village-04",
+      "house": "house-a",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 711,
+          "right": 758,
+          "top": 344,
+          "bottom": 353
+        }
+      },
+      "distanceMeters": 110,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 713,
+          "right": 755,
+          "top": 352,
+          "bottom": 370
+        }
+      }
+    },
+    {
+      "id": "village-05",
+      "house": "house-b",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 563,
+          "right": 604,
+          "top": 330,
+          "bottom": 349
+        }
+      },
+      "distanceMeters": 94.74,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 566,
+          "right": 602,
+          "top": 348,
+          "bottom": 375
+        }
+      }
+    },
+    {
+      "id": "village-06",
+      "house": "house-c",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 770,
+          "right": 810,
+          "top": 325,
+          "bottom": 343
+        }
+      },
+      "distanceMeters": 99.74,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 757,
+          "right": 818,
+          "top": 343,
+          "bottom": 374
+        }
+      }
+    },
+    {
+      "id": "village-07",
+      "house": "house-a",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 569,
+          "right": 618,
+          "top": 346,
+          "bottom": 357
+        }
+      },
+      "distanceMeters": 83.61,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 571,
+          "right": 616,
+          "top": 356,
+          "bottom": 378
+        }
+      }
+    },
+    {
+      "id": "village-08",
+      "house": "house-b",
+      "roof": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 799,
+          "right": 867,
+          "top": 330,
+          "bottom": 351
+        }
+      },
+      "distanceMeters": 91.44,
+      "wall": {
+        "cornersInFrustum": 8,
+        "of": 8,
+        "screenBboxPx": {
+          "left": 802,
+          "right": 864,
+          "top": 350,
+          "bottom": 378
+        }
+      }
+    }
+  ],
+  "byType": {
+    "house-a": {
+      "countInFrustum": 3,
+      "ids": [
+        "village-01",
+        "village-04",
+        "village-07"
+      ]
+    },
+    "house-b": {
+      "countInFrustum": 3,
+      "ids": [
+        "village-02",
+        "village-05",
+        "village-08"
+      ]
+    },
+    "house-c": {
+      "countInFrustum": 2,
+      "ids": [
+        "village-03",
+        "village-06"
+      ]
+    }
+  },
+  "checks": {
+    "집 A/B/C 가 각 1채 이상 프러스텀 안(지붕 bbox 코너 ≥1)": {
+      "value": {
+        "house-a": 3,
+        "house-b": 3,
+        "house-c": 2
+      },
+      "pass": true
+    },
+    "카메라가 줄기 충돌원 밖": {
+      "value": 5,
+      "pass": true
+    }
+  },
+  "caveat": "프러스텀 포함은 기하 판정이며 가림(지형 기복·앞집)은 계산하지 않았다. 육안 확인은 m2-vista3.png. 집까지 84~121m 라 화면에서 지붕 폭 35~70px 로 작다.",
+  "result": "PASS"
+}

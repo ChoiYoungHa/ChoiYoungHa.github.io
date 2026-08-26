@@ -1,6 +1,6 @@
 {
   "id": "m2-placement-v1",
-  "note": "M2-08 배치 좌표. heroTree 는 main-path.json 의 landmarks.heroTree, vistas.json 의 vista-village.position 과 같은 값이어야 한다(세 파일이 서로를 검증한다). y 는 담지 않는다 — 런타임에 terrain/heightmap.ts 로 지면에 앉힌다.",
+  "note": "M2-08 배치 좌표. heroTree 는 main-path.json 의 landmarks.heroTree, vistas.json 의 vista-village.position 과 6m 이내여야 한다(세 파일이 서로를 검증한다. 정정 R22-A: vista 는 줄기 반경 밖·마을 방향 5m 지점이라 등식이 아니라 허용 거리다). y 는 담지 않는다 — 런타임에 terrain/heightmap.ts 로 지면에 앉힌다.",
   "heroTree": {
     "id": "hero-tree-A",
     "x": 38,

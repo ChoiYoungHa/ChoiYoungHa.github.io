@@ -124,8 +124,11 @@ describe('M1-08 전망 지점 — marker 정확히 3개', () => {
     // 시작·중간은 거대 수목을 본다
     assert.deepEqual(byId['vista-start'].target, heroTree)
     assert.deepEqual(byId['vista-mid'].target, heroTree)
-    // 마을 전망은 수목 밑동에서 마을을 되돌아본다(계획서 §4-3 45~60초 구간)
-    assert.deepEqual(byId['vista-village'].position, heroTree)
+    // 마을 전망은 수목 밑동에서 마을을 되돌아본다(계획서 §4-3 45~60초 구간).
+    // R22-A(M2-30): 줄기 중심과 '같은 점'이 아니라 '밑동 근처(≤6m)'다 — 줄기 중심(반경 2.6m)에 카메라를 두면
+    // 줄기 안에서 찍히고 플레이어도 충돌로 설 수 없다. 6m = 줄기 충돌 반경 3.0m + 여유. master 판정 B.
+    const dv = Math.hypot(byId['vista-village'].position.x - heroTree.x, byId['vista-village'].position.z - heroTree.z)
+    assert.ok(dv > 3.0 && dv <= 6, `vista-village 는 줄기 밖·밑동 6m 안이어야 한다(거리 ${dv.toFixed(2)}m)`)
     assert.deepEqual(byId['vista-village'].target, villageCenter)
     // 수목 밑동은 길의 마지막 waypoint 와 같은 지점이어야 한다
     const last = mainPath.waypoints[mainPath.waypoints.length - 1]

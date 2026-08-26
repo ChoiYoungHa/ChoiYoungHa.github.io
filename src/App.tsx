@@ -8,6 +8,7 @@ import { Prototype } from './scene/Prototype'
 import { Terrain } from './scene/Terrain'
 import { MainPath } from './scene/MainPath'
 import { HeroTree } from './scene/HeroTree'
+import { Village } from './scene/Village'
 import { Foliage } from './scene/Foliage'
 import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
@@ -87,6 +88,9 @@ export default function App() {
         <Terrain />
         <MainPath />
         {hideHero ? null : <HeroTree />}
+        {/* M2-24 마을 8채. 지오메트리를 코드로 만들고 InstancedMesh 로 그린다 — suspend 하지 않으므로
+            Foliage/RockInstances 의 Suspense 경계 밖에 둔다(로딩 중에도 마을은 보인다). */}
+        <Village />
         {/* useGLTF 는 suspend 하므로 경계가 필요하다. 로딩 중에는 지형만 보인다. */}
         <Suspense fallback={null}>
           <Foliage sampleHeight={sampleHeight} />

@@ -4,7 +4,8 @@ import type { Mesh } from 'three'
 import mainPath from '../data/main-path.json' with { type: 'json' }
 import { sampleGround } from '../scene/terrain/heightmap'
 import placement from '../data/placement.json' with { type: 'json' }
-import { heroTreeCollider, resolveCollision } from '../scene/colliders/heroTree'
+import { heroTreeCollider, PLAYER_RADIUS, resolveCollision } from '../scene/colliders/heroTree'
+import { resolveVillageCollision } from '../scene/colliders/village'
 import { createKeyboardInput } from './input'
 import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
@@ -30,8 +31,15 @@ export function Player() {
         sampleGround,
         { x: mainPath.landmarks.spawn.x, y: 0, z: mainPath.landmarks.spawn.z },
         {},
-        // M2-10 — 거대 수목 줄기 충돌. 콜라이더가 늘면 이 배열에 더한다.
-        (pos) => resolveCollision(pos, [heroTreeCollider(placement.heroTree)]),
+        // M2-10 거대 수목 줄기(원) → M2-27 마을 집 외벽(박스) 순으로 민다.
+        // 수목과 마을은 130m 떨어져 있어 한 지점에서 둘 다 걸리는 일이 없다 — 순서가 결과를 바꾸지 않는다.
+        // 반경은 heroTree 와 같은 PLAYER_RADIUS(0.4 = 캐릭터 큐브 0.8m 의 반폭)를 쓴다.
+        // village.ts 의 기본값 0.35 를 그대로 두면 벽 모서리에 0.05m 파고든다.
+        (pos) =>
+          resolveVillageCollision(
+            resolveCollision(pos, [heroTreeCollider(placement.heroTree)]),
+            PLAYER_RADIUS,
+          ),
       ),
     [],
   )

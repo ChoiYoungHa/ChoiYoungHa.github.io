@@ -1,0 +1,58 @@
+{
+  "id": "m2-vista2-center",
+  "at": "2026-08-26",
+  "roadmap": "M2-29",
+  "method": "vista-mid(18,-60 → target heroTree 38,-96)에서 ?shot=vista-mid 로 나무 있음/없음(?hideHero=1) 두 장을 같은 카메라·조명으로 찍고 차분(RGB 차 ≥24)해 나무 픽셀 bbox 를 구했다(R21 S1 방식). 첫 시도는 hideHero 샷이 HDR 하늘 로드 전(12초)에 찍혀 전면 차분(921,204px)이 났고 재캡처했다.",
+  "capture": {
+    "resolution": [
+      1280,
+      720
+    ],
+    "preset": "low",
+    "backend": "WebGPU",
+    "distanceToTrunkMeters": 41.18,
+    "activeLod": 0,
+    "files": {
+      "withTree": "Docs/lookdev/m2-vista2.png",
+      "withoutTree": "(scratch) m2-vista2-nohero.png",
+      "mask": "(scratch) m2-vista2-mask.png"
+    }
+  },
+  "tree": {
+    "pixelCount": 20191,
+    "boundingBoxPx": {
+      "left": 605,
+      "right": 699,
+      "top": 0,
+      "bottom": 387
+    },
+    "centerPx": {
+      "x": 652.0,
+      "y": 193.5
+    },
+    "centerNormalized": {
+      "x": 0.5094,
+      "y": 0.2687
+    },
+    "verticalOccupancy": 53.75,
+    "horizontalOccupancy": 7.34,
+    "touchesTopEdge": true
+  },
+  "central60Box": {
+    "left": 256.0,
+    "right": 1024.0,
+    "top": 144.0,
+    "bottom": 576.0
+  },
+  "checks": {
+    "수목 픽셀 bbox 중심이 화면 중앙 60% 안": {
+      "value": {
+        "x": 652.0,
+        "y": 193.5
+      },
+      "pass": true
+    }
+  },
+  "caveat": "bbox 가 상단 가장자리(top=0)에 닿는다 — 41m 거리에서 47m 높이 수목의 수관이 프레임 위로 잘려 줄기만 보인다(수직 fov 55°, lookAt 이 눈높이 1.6m 고정). 중심값은 '보이는 픽셀'의 중심이다. 수관까지 담으려면 vista-mid 를 약 90m 이상 뒤로 물리거나 VistaCamera 에 pitch 를 줘야 하며 이는 M1-08 좌표·main-path 계약 변경이라 손대지 않았다.",
+  "result": "PASS"
+}
