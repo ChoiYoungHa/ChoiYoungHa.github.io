@@ -1,0 +1,10 @@
+Asset: Kloofendal 48d Partly Cloudy (Pure Sky), 2K HDR
+Source: Poly Haven
+Authors: Greg Zaal; Jarod Guest
+Asset page: https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky
+Files API: https://api.polyhaven.com/files/kloofendal_48d_partly_cloudy_puresky
+License: CC0 1.0 Universal (Public Domain Dedication)
+License URL: https://polyhaven.com/license
+Attribution required: no
+Redistribution allowed: yes
+Acquired: 2026-08-27
