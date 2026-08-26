@@ -1,11 +1,10 @@
 {
   "schema": "ip-check/1",
-  "mode": "dist",
-  "root": "dist",
+  "mode": "src",
+  "root": "src",
   "dist": {
-    "status": "scanned",
-    "root": "dist",
-    "files": 13
+    "status": "not-run",
+    "reason": "explicit --src mode"
   },
   "denylist": {
     "file": "src/game/data/ip-denylist.json",
@@ -22,85 +21,463 @@
     ]
   },
   "ipPolicy": {
-    "i18nFile": null,
-    "stringsFile": null,
-    "defaultMode": "unavailable",
+    "i18nFile": "src/game/i18n.ts",
+    "stringsFile": "src/game/data/strings.ko.json",
+    "defaultMode": "conti",
     "forcedOwn": false,
-    "contiTerms": []
+    "contiTerms": [
+      "헤네시스",
+      "스탄",
+      "메소",
+      "돼지리본"
+    ]
   },
   "contiTreeShaking": {
-    "status": "not-assessable",
-    "reason": "src/game/data/strings.ko.json is not present at this HEAD"
+    "status": "fail",
+    "reason": "deployment ipMode is not forced to own (detected conti)"
   },
   "checks": {
     "forbiddenNames": {
-      "status": "pass",
-      "count": 0,
-      "failCount": 0,
+      "status": "fail",
+      "count": 71,
+      "failCount": 71,
       "warnCount": 0,
-      "matches": []
+      "matches": [
+        {
+          "file": "src/data/assets.csv",
+          "term": "스탄",
+          "offset": 11801,
+          "severity": "fail"
+        },
+        {
+          "file": "src/data/assets.csv",
+          "term": "Stan",
+          "offset": 11444,
+          "severity": "fail"
+        },
+        {
+          "file": "src/data/assets.csv",
+          "term": "Stan",
+          "offset": 11691,
+          "severity": "fail"
+        },
+        {
+          "file": "src/data/assets.csv",
+          "term": "Stan",
+          "offset": 11750,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/dialogues.json",
+          "term": "Stan",
+          "offset": 192,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/icons.json",
+          "term": "Meso",
+          "offset": 4066,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/icons.json",
+          "term": "Meso",
+          "offset": 4092,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/icons.json",
+          "term": "Meso",
+          "offset": 4118,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/icons.json",
+          "term": "Meso",
+          "offset": 4158,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/icons.json",
+          "term": "Meso",
+          "offset": 12612,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/icons.json",
+          "term": "Meso",
+          "offset": 12655,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/items.json",
+          "term": "메소",
+          "offset": 945,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/items.json",
+          "term": "돼지리본",
+          "offset": 1093,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/items.json",
+          "term": "Meso",
+          "offset": 924,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/monsters.json",
+          "term": "Meso",
+          "offset": 213,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/quests.json",
+          "term": "Meso",
+          "offset": 148,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "헤네시스",
+          "offset": 298,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "스탄",
+          "offset": 340,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "스탄",
+          "offset": 780,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "스탄",
+          "offset": 1510,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "메소",
+          "offset": 1046,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "메소",
+          "offset": 1676,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/data/strings.ko.json",
+          "term": "돼지리본",
+          "offset": 1749,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/dialogue.ts",
+          "term": "Stan",
+          "offset": 293,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/dialogue.ts",
+          "term": "Stan",
+          "offset": 1511,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 903,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2374,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2407,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2431,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2595,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2607,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2734,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 2753,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 3813,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 3825,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/reducers.ts",
+          "term": "Meso",
+          "offset": 3851,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 71,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 215,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 378,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 395,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 417,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 430,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/drops.ts",
+          "term": "Meso",
+          "offset": 613,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/pickup.ts",
+          "term": "Meso",
+          "offset": 567,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/pickup.ts",
+          "term": "Meso",
+          "offset": 1719,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/pickup.ts",
+          "term": "Meso",
+          "offset": 1739,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/pickup.ts",
+          "term": "Meso",
+          "offset": 3355,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/pickup.ts",
+          "term": "Meso",
+          "offset": 3398,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/quest.ts",
+          "term": "Meso",
+          "offset": 101,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/respawn.ts",
+          "term": "Meso",
+          "offset": 354,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/shop.ts",
+          "term": "메소",
+          "offset": 263,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/shop.ts",
+          "term": "메소",
+          "offset": 693,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/shop.ts",
+          "term": "Meso",
+          "offset": 173,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/shop.ts",
+          "term": "Meso",
+          "offset": 638,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/shop.ts",
+          "term": "Meso",
+          "offset": 1056,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/rules/shop.ts",
+          "term": "Meso",
+          "offset": 1068,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/state.ts",
+          "term": "Henesys",
+          "offset": 341,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/state.ts",
+          "term": "Stan",
+          "offset": 355,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/state.ts",
+          "term": "Meso",
+          "offset": 798,
+          "severity": "fail"
+        },
+        {
+          "file": "src/game/state.ts",
+          "term": "Meso",
+          "offset": 1466,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/GameHud.tsx",
+          "term": "Meso",
+          "offset": 820,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/GameHud.tsx",
+          "term": "Meso",
+          "offset": 1878,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/GameHud.tsx",
+          "term": "Meso",
+          "offset": 5282,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/GameHud.tsx",
+          "term": "Meso",
+          "offset": 5356,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/GameHud.tsx",
+          "term": "Meso",
+          "offset": 5505,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/hudTokens.ts",
+          "term": "Meso",
+          "offset": 305,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/rewardPopupLogic.ts",
+          "term": "Meso",
+          "offset": 622,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/ShopPanel.tsx",
+          "term": "Meso",
+          "offset": 3954,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/shopPanelLogic.ts",
+          "term": "Meso",
+          "offset": 1222,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/shopPanelLogic.ts",
+          "term": "Meso",
+          "offset": 2671,
+          "severity": "fail"
+        },
+        {
+          "file": "src/systems/ui/shopPanelLogic.ts",
+          "term": "Meso",
+          "offset": 2683,
+          "severity": "fail"
+        }
+      ]
     },
     "referenceImageHashes": {
-      "status": "pass",
-      "expectedCount": 4,
-      "references": [
-        {
-          "file": "../asset/돼지의공원.png",
-          "sha256": "be17040d08b8a22c0fb4e08c975fe70f2b2f0df35c36d39ccd8a53a8e0432570"
-        },
-        {
-          "file": "../asset/상점 npc.png",
-          "sha256": "ed8f98e2e48e5def6063105b04f179758f41ba9232468f555b44c6b40da49e3e"
-        },
-        {
-          "file": "../asset/장로스탄.png",
-          "sha256": "a157864bda2fc1a5f8d67aaa8c312e653934898cb5b96aad97f156df18e0746f"
-        },
-        {
-          "file": "../asset/헤네시스.png",
-          "sha256": "88848112fa4816a4222d921f4563d353a712c85e56c0b144e70332e9d81ce9ca"
-        }
-      ],
-      "matches": [],
-      "reason": null
+      "status": "not-run",
+      "reason": "dist check skipped in --src mode"
     },
     "registeredAssets": {
-      "status": "fail",
-      "ledger": "src/data/assets.csv",
-      "assetFiles": [
-        "env/sky_1k.hdr",
-        "favicon.svg",
-        "icons.svg",
-        "models/props_rocks.glb",
-        "models/vegetation_kit.glb"
-      ],
-      "registeredPaths": [
-        "env/sky_1k.hdr",
-        "models/char_player.glb",
-        "models/hero_tree.glb",
-        "models/house_a.glb",
-        "models/house_b.glb",
-        "models/house_c.glb",
-        "models/npc_maya.glb",
-        "models/npc_stan.glb",
-        "models/prop_arch.glb",
-        "models/prop_banner.glb",
-        "models/prop_fence.glb",
-        "models/prop_stonewall.glb",
-        "models/props_rocks.glb",
-        "models/vegetation_kit.glb",
-        "textures/grass_card.png",
-        "textures/ground_dirt_diffuse.jpg",
-        "textures/ground_grass_diffuse.jpg",
-        "ui/items/wpn-sword-wooden.png"
-      ],
-      "setPrefixes": [
-        "ui/items/"
-      ],
-      "unregisteredFiles": [
-        "favicon.svg",
-        "icons.svg"
-      ]
+      "status": "not-run",
+      "reason": "dist check skipped in --src mode"
     }
   },
   "result": "FAIL"
