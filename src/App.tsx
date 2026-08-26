@@ -7,6 +7,7 @@ import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
 import { CAMERA } from './player/FollowCamera'
 import { useRuntime } from './store/useRuntime'
 import { reportIfRequested } from './systems/report'
+import qualityPresets from './data/quality-presets.json'
 import './App.css'
 
 /**
@@ -16,6 +17,10 @@ import './App.css'
  */
 export default function App() {
   const pushError = useRuntime((s) => s.pushError)
+  const preset = useRuntime((s) => s.preset)
+  const quality = qualityPresets[preset]
+  const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
+  const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
 
   useEffect(() => {
     const onErr = (e: ErrorEvent) => pushError(String(e.message))
@@ -31,17 +36,18 @@ export default function App() {
   }, [pushError])
 
   return (
-    <div className="stage">
+    <div className="stage" style={{ width, height }}>
       <Canvas
         gl={createRenderer}
-        dpr={1}
+        dpr={quality.dprCap}
+        shadows
         camera={{ fov: CAMERA.fov, near: CAMERA.near, far: CAMERA.far, position: [0, 3, 8] }}
-        style={{ width: 1280, height: 720 }}
+        style={{ width, height }}
       >
         <color attach="background" args={['#8fa0b0']} />
-        <fogExp2 attach="fog" args={['#8fa0b0', 0.008]} />
+        <fogExp2 attach="fog" args={['#8fa0b0', quality.fogDensity]} />
         <RuntimeProbe />
-        <Prototype />
+        <Prototype shadowMapResolution={quality.shadowCascades.resolution} />
         <Player />
       </Canvas>
       <RuntimeHud />

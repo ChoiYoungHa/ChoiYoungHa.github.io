@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import type { Backend } from '../gl/createRenderer'
 
+export type QualityPreset = 'low' | 'base'
+
 /**
  * 계획서.md §3-3 — 매 프레임 바뀌는 값은 스토어에 넣지 않는다.
  * 플레이어 위치·카메라 행렬은 useRef 로만 다루고, 여기에는 **1초 1회 집계**만 올린다.
@@ -10,7 +12,7 @@ export interface RuntimeState {
   forceWebGL: boolean
   adapter: string
   angle: string
-  preset: 'low' | 'base'
+  preset: QualityPreset
   canvas: { w: number; h: number }
   fps: number
   calls: number
@@ -36,3 +38,7 @@ export const useRuntime = create<RuntimeState>((set) => ({
   set: (patch) => set(patch),
   pushError: (msg) => set((s) => ({ errors: [...s.errors, msg].slice(0, 20) })),
 }))
+
+export function parseQualityPreset(value: string | null): QualityPreset {
+  return value === 'base' ? 'base' : 'low'
+}

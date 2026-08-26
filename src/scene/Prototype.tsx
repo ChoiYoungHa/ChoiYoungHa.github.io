@@ -20,15 +20,21 @@ const MARKERS: [number, number, number][] = [
   [6, 1, 8],
 ]
 
-export function Prototype() {
+export function Prototype({ shadowMapResolution }: { shadowMapResolution: number }) {
   return (
     <>
       {/* 광원 1개 + 최소 환경광 */}
-      <directionalLight position={[18, 24, 12]} intensity={2.2} castShadow={false} />
+      <directionalLight
+        position={[18, 24, 12]}
+        intensity={2.2}
+        castShadow
+        shadow-mapSize-width={shadowMapResolution}
+        shadow-mapSize-height={shadowMapResolution}
+      />
       <ambientLight intensity={0.35} />
 
       {/* 바닥 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND_Y, 0]}>
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, GROUND_Y, 0]}>
         <planeGeometry args={[GROUND_HALF * 2, GROUND_HALF * 2, 1, 1]} />
         <meshStandardMaterial color="#4b4a33" roughness={0.95} metalness={0} />
       </mesh>
@@ -38,7 +44,7 @@ export function Prototype() {
 
       {/* 기준 큐브 */}
       {MARKERS.map((p, i) => (
-        <mesh key={i} position={p}>
+        <mesh key={i} position={p} castShadow>
           <boxGeometry args={[2, 2, 2]} />
           <meshStandardMaterial color="#7a4a32" roughness={0.8} metalness={0} />
         </mesh>

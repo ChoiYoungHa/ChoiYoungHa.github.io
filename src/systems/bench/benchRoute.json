@@ -1,29 +1,30 @@
 {
-  "routeHash": "m0b-bench-v1-p0-village-path-tree-turn",
+  "routeHash": "m0b-bench-v2-m0-out-back-turn",
+  "m1UpgradeNote": "M1 지형이 들어오면 마을→길→거대 수목 동선 v3로 교체한다.",
   "keyframes": [
     {
       "time": 0,
-      "pose": { "position": [0, 0, 0], "yaw": -0.927295 },
+      "pose": { "position": [0, 0, 0], "yaw": -0.785398 },
       "input": { "forward": 1, "strafe": 0, "run": false }
     },
     {
       "time": 15,
-      "pose": { "position": [40, 0, -30], "yaw": 0.358771 },
-      "input": { "forward": 1, "strafe": 0, "run": false }
+      "pose": { "position": [33.5, 0, -33.5], "yaw": -0.785398 },
+      "input": { "forward": -1, "strafe": 0, "run": false }
     },
     {
       "time": 30,
-      "pose": { "position": [25, 0, -70], "yaw": 0.558599 },
+      "pose": { "position": [0, 0, 0], "yaw": -0.785398 },
       "input": { "forward": 1, "strafe": 0, "run": false }
     },
     {
       "time": 45,
-      "pose": { "position": [0, 0, -110], "yaw": 0.558599 },
+      "pose": { "position": [33.5, 0, -33.5], "yaw": -0.785398 },
       "input": { "forward": 0, "strafe": 0, "run": false }
     },
     {
       "time": 60,
-      "pose": { "position": [0, 0, -110], "yaw": 3.700192 },
+      "pose": { "position": [33.5, 0, -33.5], "yaw": 2.356194 },
       "input": { "forward": 0, "strafe": 0, "run": false }
     }
   ]

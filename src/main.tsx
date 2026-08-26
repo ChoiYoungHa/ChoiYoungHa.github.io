@@ -5,6 +5,7 @@ import App from './App.tsx'
 import { runBenchRoute } from './systems/bench/benchRoute'
 import { startErrorCollector, triggerIntentionalRejection } from './systems/errors'
 import { collectPerf } from './systems/perf'
+import { parseQualityPreset, useRuntime } from './store/useRuntime'
 
 type RendererForPerf = Parameters<typeof collectPerf>[0]
 
@@ -17,6 +18,7 @@ declare global {
 const params = new URLSearchParams(location.search)
 const mode = params.get('route') === 'bench' ? 'bench' : 'manual'
 window.__benchMode = mode
+useRuntime.getState().set({ preset: parseQualityPreset(params.get('q')) })
 
 if (mode === 'bench') blockHumanInput()
 

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { isForcedWebGL, readBackend, type Backend } from '../gl/createRenderer'
 import { useRuntime } from '../store/useRuntime'
 import { CAMERA } from '../player/FollowCamera'
+import { sampleRendererFrame, type RendererForPerf } from './perf'
 
 /**
  * M0a-07 — backend·adapter·ANGLE·preset 을 화면(HUD)과 JSON 으로 동시에 남긴다.
@@ -17,7 +18,6 @@ export function RuntimeProbe() {
   const set = useRuntime((s) => s.set)
   const frames = useRef(0)
   const acc = useRef(0)
-  const previousRawCalls = useRef(0)
   const maxFrameCalls = useRef(0)
 
   // 검증 하네스(systems/report.ts)가 씬 요소 수를 셀 수 있게 노출한다.
@@ -60,18 +60,8 @@ export function RuntimeProbe() {
   useFrame((_, dt) => {
     frames.current += 1
     acc.current += dt
-    const info = (
-      gl as unknown as {
-        info?: { render?: { calls: number; frameCalls?: number; drawCalls?: number } }
-      }
-    ).info
-    const rawCalls = info?.render?.calls ?? 0
-    const frameCalls =
-      info?.render?.drawCalls ??
-      info?.render?.frameCalls ??
-      (rawCalls >= previousRawCalls.current ? rawCalls - previousRawCalls.current : rawCalls)
-    previousRawCalls.current = rawCalls
-    maxFrameCalls.current = Math.max(maxFrameCalls.current, frameCalls)
+    const perf = sampleRendererFrame(gl as unknown as RendererForPerf)
+    maxFrameCalls.current = Math.max(maxFrameCalls.current, perf.calls)
     if (acc.current >= 1) {
       set({
         fps: Math.round(frames.current / acc.current),
@@ -115,7 +105,7 @@ export function RuntimeHud() {
         ANGLE: <span data-testid="hud-angle">{s.angle}</span>
       </div>
       <div>
-        fps: <b>{s.fps}</b> · calls: {s.calls} · tris:{' '}
+        fps: <b>{s.fps}</b> · calls: <span data-testid="hud-calls">{s.calls}</span> · tris:{' '}
         {s.triangles === 0 ? '확인 불가' : s.triangles}
       </div>
       <div>

@@ -7,11 +7,22 @@ interface RendererInfoLike {
     calls?: number
     frameCalls?: number
     drawCalls?: number
-    triangles?: number
-    frame?: number
   }
   memory?: { textures?: number; texturesSize?: number; programs?: number }
   programs?: unknown[] | { size?: number }
+}
+
+export interface RendererForPerf {
+  info?: RendererInfoLike
+}
+
+export interface PerfFrame {
+  at: number
+  calls: number
+  programs: number
+  textures: number
+  textureGpuMB: MeasuredNumber
+  jsHeapMB: MeasuredNumber
 }
 
 export interface PerfSecond {
@@ -38,17 +49,51 @@ export interface PerfResult {
   seconds: PerfSecond[]
 }
 
-export async function collectPerf(renderer: { info?: RendererInfoLike }): Promise<PerfResult> {
+type PerfFrameListener = (frame: PerfFrame) => void
+
+const listeners = new Set<PerfFrameListener>()
+let owner: RendererForPerf | null = null
+let previousRawCalls = 0
+
+/** renderer.info를 읽고 reset하는 유일한 소유자. RuntimeProbe가 프레임 경계에서 1회 호출한다. */
+export function sampleRendererFrame(renderer: RendererForPerf): PerfFrame {
   const info = renderer.info
   if (!info) throw new Error('renderer.info unavailable')
 
-  const previousAutoReset = info.autoReset
-  info.autoReset = false
+  if (owner !== renderer) {
+    owner = renderer
+    previousRawCalls = info.render?.calls ?? 0
+    info.autoReset = false
+  }
+
+  const rawCalls = info.render?.calls ?? 0
+  const calls =
+    info.render?.drawCalls ??
+    info.render?.frameCalls ??
+    (rawCalls >= previousRawCalls ? rawCalls - previousRawCalls : rawCalls)
+  previousRawCalls = rawCalls
+
+  const frame: PerfFrame = {
+    at: performance.now(),
+    calls,
+    programs: info.memory?.programs ?? readPrograms(info.programs),
+    textures: info.memory?.textures ?? 0,
+    textureGpuMB: readTextureGpuMB(info),
+    jsHeapMB: readJsHeapMB(),
+  }
+
+  for (const listener of listeners) listener(frame)
+  info.reset?.()
+  return frame
+}
+
+/** RuntimeProbe가 발행한 동일 프레임 스트림으로 60초 성능 JSON을 만든다. */
+export async function collectPerf(renderer: RendererForPerf): Promise<PerfResult> {
+  if (!renderer.info) throw new Error('renderer.info unavailable')
+
   const startedAt = performance.now()
   let previousAt = startedAt
   let bucketStartedAt = startedAt
-  let previousFrame = info.render?.frame ?? -1
-  let previousRawCalls = info.render?.calls ?? 0
   let bucketFrames = 0
   let bucketCalls = 0
   let bucketPrograms = 0
@@ -56,36 +101,12 @@ export async function collectPerf(renderer: { info?: RendererInfoLike }): Promis
   let maxCalls = 0
   let maxPrograms = 0
   let maxTextures = 0
-  let textureGpuMB: MeasuredNumber = readTextureGpuMB(info)
-  let jsHeapPeakMB = readJsHeapMB()
+  let textureGpuMB: MeasuredNumber = '확인 불가'
+  let jsHeapPeakMB: MeasuredNumber = '확인 불가'
   const frameTimes: number[] = []
   const seconds: PerfSecond[] = []
 
   return new Promise((resolve) => {
-    const finish = (now: number) => {
-      if (bucketFrames > 0) pushSecond(now)
-      info.autoReset = previousAutoReset
-      const elapsedSeconds = (now - startedAt) / 1000
-      const slowCount = Math.max(1, Math.ceil(frameTimes.length * 0.01))
-      const slowFrames = [...frameTimes].sort((a, b) => b - a).slice(0, slowCount)
-      const slowMean = slowFrames.reduce((sum, value) => sum + value, 0) / slowFrames.length
-      const result: PerfResult = {
-        duration: 60,
-        sampleCount: frameTimes.length,
-        avgFps: round(frameTimes.length / elapsedSeconds),
-        onePercentLowFps: round(slowMean > 0 ? 1000 / slowMean : 0),
-        oneSecondHitches: frameTimes.filter((value) => value >= 1000).length,
-        maxCalls,
-        maxTriangles: '확인 불가',
-        maxPrograms: maxPrograms,
-        maxTextures,
-        textureGpuMB,
-        jsHeapPeakMB,
-        seconds,
-      }
-      resolve(result)
-    }
-
     const pushSecond = (now: number) => {
       seconds.push({
         second: seconds.length + 1,
@@ -102,48 +123,46 @@ export async function collectPerf(renderer: { info?: RendererInfoLike }): Promis
       bucketTextures = 0
     }
 
-    const tick = (now: number) => {
-      const frame = info.render?.frame ?? previousFrame + 1
-      if (frame !== previousFrame) {
-        const frameTime = now - previousAt
-        previousAt = now
-        previousFrame = frame
-        frameTimes.push(frameTime)
-        bucketFrames += 1
-        const rawCalls = info.render?.calls ?? 0
-        const calls =
-          info.render?.drawCalls ??
-          info.render?.frameCalls ??
-          (rawCalls >= previousRawCalls ? rawCalls - previousRawCalls : rawCalls)
-        // three r185 `Info.reset()` 은 drawCalls·frameCalls·triangles 만 0 으로 만들고
-        // `render.calls` 는 건드리지 않는다(누적, dispose() 에서만 초기화 — Info.js L187).
-        // 따라서 reset 뒤에도 이번 값을 기준으로 두는 것이 맞다.
-        // 참고: 이 렌더러에는 `render.drawCalls` 가 있어 위 차분은 실제로는 쓰이지 않는다.
-        previousRawCalls = rawCalls
-        const programs = info.memory?.programs ?? readPrograms(info.programs)
-        const textures = info.memory?.textures ?? 0
-        bucketCalls = Math.max(bucketCalls, calls)
-        bucketPrograms = Math.max(bucketPrograms, programs)
-        bucketTextures = Math.max(bucketTextures, textures)
-        maxCalls = Math.max(maxCalls, calls)
-        maxPrograms = Math.max(maxPrograms, programs)
-        maxTextures = Math.max(maxTextures, textures)
-        const textureMB = readTextureGpuMB(info)
-        if (textureMB !== '확인 불가') {
-          textureGpuMB = textureGpuMB === '확인 불가' ? textureMB : Math.max(textureGpuMB, textureMB)
-        }
-        const heap = readJsHeapMB()
-        if (heap !== '확인 불가') {
-          jsHeapPeakMB = jsHeapPeakMB === '확인 불가' ? heap : Math.max(jsHeapPeakMB, heap)
-        }
-        info.reset?.()
-      }
+    const onFrame = (frame: PerfFrame) => {
+      const frameTime = frame.at - previousAt
+      previousAt = frame.at
+      frameTimes.push(frameTime)
+      bucketFrames += 1
+      bucketCalls = Math.max(bucketCalls, frame.calls)
+      bucketPrograms = Math.max(bucketPrograms, frame.programs)
+      bucketTextures = Math.max(bucketTextures, frame.textures)
+      maxCalls = Math.max(maxCalls, frame.calls)
+      maxPrograms = Math.max(maxPrograms, frame.programs)
+      maxTextures = Math.max(maxTextures, frame.textures)
+      textureGpuMB = maxMeasured(textureGpuMB, frame.textureGpuMB)
+      jsHeapPeakMB = maxMeasured(jsHeapPeakMB, frame.jsHeapMB)
 
-      if (now - bucketStartedAt >= 1000) pushSecond(now)
-      if (now - startedAt >= 60_000) finish(now)
-      else requestAnimationFrame(tick)
+      if (frame.at - bucketStartedAt >= 1000) pushSecond(frame.at)
+      if (frame.at - startedAt < 60_000) return
+
+      listeners.delete(onFrame)
+      if (bucketFrames > 0) pushSecond(frame.at)
+      const elapsedSeconds = (frame.at - startedAt) / 1000
+      const slowCount = Math.max(1, Math.ceil(frameTimes.length * 0.01))
+      const slowFrames = [...frameTimes].sort((a, b) => b - a).slice(0, slowCount)
+      const slowMean = slowFrames.reduce((sum, value) => sum + value, 0) / slowFrames.length
+      resolve({
+        duration: 60,
+        sampleCount: frameTimes.length,
+        avgFps: round(frameTimes.length / elapsedSeconds),
+        onePercentLowFps: round(slowMean > 0 ? 1000 / slowMean : 0),
+        oneSecondHitches: frameTimes.filter((value) => value >= 1000).length,
+        maxCalls,
+        maxTriangles: '확인 불가',
+        maxPrograms,
+        maxTextures,
+        textureGpuMB,
+        jsHeapPeakMB,
+        seconds,
+      })
     }
-    requestAnimationFrame(tick)
+
+    listeners.add(onFrame)
   })
 }
 
@@ -162,6 +181,11 @@ function readJsHeapMB(): MeasuredNumber {
   const memory = performance as Performance & { memory?: { usedJSHeapSize?: number } }
   const bytes = memory.memory?.usedJSHeapSize
   return typeof bytes === 'number' ? round(bytes / 1024 / 1024) : '확인 불가'
+}
+
+function maxMeasured(current: MeasuredNumber, next: MeasuredNumber): MeasuredNumber {
+  if (next === '확인 불가') return current
+  return current === '확인 불가' ? next : Math.max(current, next)
 }
 
 function round(value: number): number {
