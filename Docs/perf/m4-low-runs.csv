@@ -1,0 +1,2 @@
+run,date,build_hash,backend,angle,preset,routeHash,avg_fps,low1_fps,hitch_1s,calls,programs,textureGpuMB,jsHeapPeakMB,processRAMGB,crash,errors,js_heap_mb
+# measurement_conditions=q=low;route=bench;1280x720;warmup=30s;runs=3;walk=60s;same_final_build_hash;js_heap_mb_equals_jsHeapPeakMB
