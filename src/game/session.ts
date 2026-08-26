@@ -75,6 +75,7 @@ export type SessionEventType =
   | 'respawn'
   | 'clear-monster-aggro'
   | 'skill-rejected'
+  | 'fx-spawn'
   | 'reward'
   | 'tutorial'
 
@@ -95,6 +96,11 @@ export interface SessionEvent {
   previousLevel?: number
   currentLevel?: number
   reason?: string
+  skillId?: SkillId
+  playerYaw?: number
+  targetPosition?: SessionPosition
+  impactPosition?: SessionPosition
+  landingPosition?: SessionPosition
   tutorialInput?: TutorialInputEvent
 }
 
@@ -591,6 +597,25 @@ export function createSession(options: CreateSessionOptions): GameSession {
               targetId: targets[0]?.id,
               impactPosition: targets[0]?.position,
               rng: combatRng,
+            })
+            const primaryTarget = targets.find(({ id }) => id === skillAttack.hits[0]?.targetId) ?? targets[0]
+            const forwardPoint = {
+              x: playerPos.x + Math.sin(playerYaw) * 2.5,
+              z: playerPos.z - Math.cos(playerYaw) * 2.5,
+            }
+            const impactPosition = primaryTarget?.position ?? forwardPoint
+            const landingPosition = skillAttack.effect.type === 'leap'
+              ? leapDestination(playerPos, impactPosition, skillAttack.effect.radiusMeters ?? 2.5)
+              : impactPosition
+            emit(events, {
+              type: 'fx-spawn',
+              skillId: job.skillId,
+              mobId: primaryTarget?.id,
+              position: { ...playerPos },
+              playerYaw,
+              targetPosition: primaryTarget === undefined ? undefined : { ...primaryTarget.position },
+              impactPosition: { ...impactPosition },
+              landingPosition: { ...landingPosition },
             })
             applyCombatHits(skillAttack.hits, events)
             const affectedIds = [...new Set(skillAttack.hits.map(({ targetId }) => targetId))]

@@ -19,6 +19,7 @@
     ],
     "note": "R30-A 실측: Neutral 톤매퍼에서 0.44 → 근경 휘도 66~67(목표 60~75). 이전 값 1.0 은 R3F 기본 ACES 에서 141."
   },
+  "epilogueWarmExposureMultiplier": 1.12,
   "toneMapping": {
     "start": {
       "name": "NeutralToneMapping",

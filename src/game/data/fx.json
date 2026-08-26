@@ -19,6 +19,7 @@
     "flame-slash": {
       "skillId": "flame-slash",
       "attachment": "player-front",
+      "billboard": "full",
       "lifetimeMs": 600,
       "instanceColors": ["#E34A2B", "#FF8A25"],
       "arcDegrees": 120,
@@ -47,6 +48,7 @@
     "rainbow-shot": {
       "skillId": "rainbow-shot",
       "attachment": "player-front",
+      "billboard": "y",
       "lifetimeMs": 540,
       "instanceColors": ["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#00C7BE", "#3486FF", "#AF52DE"],
       "projectileCount": 5,
@@ -75,6 +77,7 @@
     "ice-age": {
       "skillId": "ice-age",
       "attachment": "target-above",
+      "billboard": "full",
       "lifetimeMs": 1100,
       "instanceColors": ["#BCEEFF", "#84D8FF"],
       "freezeDurationMs": 800,
@@ -116,6 +119,7 @@
     "leaping-slash": {
       "skillId": "leaping-slash",
       "attachment": "landing-point",
+      "billboard": "full",
       "lifetimeMs": 900,
       "instanceColors": ["#B469FF", "#E2AEFF"],
       "leapHeightMeters": 3,

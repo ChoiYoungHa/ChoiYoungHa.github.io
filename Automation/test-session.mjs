@@ -88,6 +88,10 @@ test('I-01/I-03/I-11 스킬은 화상·동결을 세션에 적용하고 MP를 Ga
   const warrior = start('warrior', 45)
   const warriorPos = { x: warrior.target.position.x, z: warrior.target.position.z + 1 }
   const cast = warrior.tick(warriorPos, { skill: true })
+  const fx = cast.events.find(({ type }) => type === 'fx-spawn')
+  assert.equal(fx?.skillId, 'flame-slash')
+  assert.deepEqual(fx?.position, warriorPos)
+  assert.equal(fx?.mobId, warrior.target.id)
   assert.equal(cast.snapshot.game.mp, 48)
   assert.equal(useGame.getState().mp, 48)
   let burnFloaters = cast.events.filter(({ type }) => type === 'floater').length

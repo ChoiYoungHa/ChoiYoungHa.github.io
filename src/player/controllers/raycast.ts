@@ -33,12 +33,14 @@ export function createRaycastController(
 
   const position: Vec3 = { ...start }
   let velX = 0
+  let velY = 0
   let velZ = 0
   let heading = 0
 
   // 시작 위치를 지면에 붙인다
   const g0 = sampleGround(position.x, position.z)
   if (g0 !== null) position.y = g0 + p.eyeOffset
+  let jumpGrounded = g0 !== null
 
   function step(input: InputState, dt: number): StepResult {
     // 1) 입력을 카메라 yaw 기준 월드 방향으로
@@ -82,7 +84,9 @@ export function createRaycastController(
       const horiz = Math.hypot(nextX - position.x, nextZ - position.z)
       const rise = here === null ? 0 : there - here
       const slopeDeg = horiz > 1e-6 ? (Math.atan2(Math.abs(rise), horiz) * 180) / Math.PI : 0
-      if (slopeDeg <= p.maxSlopeDeg) {
+      const withinSlope = slopeDeg <= p.maxSlopeDeg
+        || (p.jumpEnabled && slopeDeg <= p.maxSlopeDeg + 1e-9)
+      if (withinSlope) {
         position.x = nextX
         position.z = nextZ
         // M2-10 — 지형을 통과한 뒤 수평 충돌을 푼다.
@@ -102,13 +106,35 @@ export function createRaycastController(
         velZ = 0
       }
       const groundY = sampleGround(position.x, position.z)
-      if (groundY !== null) {
+      if (!p.jumpEnabled && groundY !== null) {
         const desiredY = groundY + p.eyeOffset
         const dy = desiredY - position.y
         // 접지 스냅: 한 스텝에 groundSnap 이상 수직 보정하지 않는다(절벽 순간이동 방지).
         position.y += Math.abs(dy) <= p.groundSnap ? dy : Math.sign(dy) * p.groundSnap
         grounded = true
       }
+    }
+
+    if (p.jumpEnabled) {
+      const groundY = sampleGround(position.x, position.z)
+      const desiredY = groundY === null ? null : groundY + p.eyeOffset
+      if (jumpGrounded && input.jump) {
+        jumpGrounded = false
+        velY = p.jumpSpeed
+      }
+      if (!jumpGrounded) {
+        velY += p.gravity * dt
+        position.y += velY * dt
+        if (desiredY !== null && velY <= 0 && position.y <= desiredY) {
+          position.y = desiredY
+          velY = 0
+          jumpGrounded = true
+        }
+      } else if (desiredY !== null) {
+        const dy = desiredY - position.y
+        position.y += Math.abs(dy) <= p.groundSnap ? dy : Math.sign(dy) * p.groundSnap
+      }
+      grounded = jumpGrounded
     }
 
     // 5) 이동 중일 때만 바라보는 방향 보간

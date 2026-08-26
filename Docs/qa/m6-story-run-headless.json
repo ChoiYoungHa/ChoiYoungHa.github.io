@@ -26,6 +26,7 @@
     "dialogue-open": 4,
     "dialogue-close": 4,
     "purchase": 1,
+    "fx-spawn": 5,
     "floater": 36,
     "level-up": 2,
     "drop-spawn": 11,

@@ -6,12 +6,13 @@ import { sampleGround } from '../scene/terrain/heightmap'
 import placement from '../data/placement.json' with { type: 'json' }
 import { heroTreeCollider, PLAYER_RADIUS, resolveCollision } from '../scene/colliders/heroTree'
 import { resolveVillageCollision } from '../scene/colliders/village'
-import { createKeyboardInput } from './input'
+import { createKeyboardInput, GAME_INPUT_ENABLED } from './input'
 import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
 import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
 import { useLookdevMaterial } from '../scene/Atmosphere'
+import { consumePlayerJump } from '../game/runtimeSignals'
 
 /**
  * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
@@ -45,7 +46,7 @@ export function Player() {
       createRaycastController(
         sampleGround,
         { x: mainPath.landmarks.spawn.x, y: 0, z: mainPath.landmarks.spawn.z },
-        {},
+        { jumpEnabled: GAME_INPUT_ENABLED },
         // M2-10 거대 수목 줄기(원) → M2-27 마을 집 외벽(박스) 순으로 민다.
         // 수목과 마을은 130m 떨어져 있어 한 지점에서 둘 다 걸리는 일이 없다 — 순서가 결과를 바꾸지 않는다.
         // 반경은 heroTree 와 같은 PLAYER_RADIUS(0.4 = 캐릭터 큐브 0.8m 의 반폭)를 쓴다.
@@ -58,7 +59,7 @@ export function Player() {
       ),
     [],
   )
-  const keys = useMemo(() => createKeyboardInput(), [])
+  const keys = useMemo(() => createKeyboardInput(window, { gameInputEnabled: false }), [])
 
   // 드래그로 시선 회전 (lookX). 포인터락은 M0-a 범위 밖.
   useEffect(() => {
@@ -97,7 +98,10 @@ export function Player() {
     const input = source ? source() : keys.read(yawRef.current)
     if (source) yawRef.current = input.yaw
 
-    const r = controller.step(input, dt)
+    const jumpInput = GAME_INPUT_ENABLED
+      ? { ...input, jump: consumePlayerJump() }
+      : input
+    const r = controller.step(jumpInput, dt)
     posRef.current = r.position
     const body = bodyRef.current
     if (body) {
