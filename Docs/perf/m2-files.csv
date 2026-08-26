@@ -1,0 +1,5 @@
+# build_hash=e373c58,dist_included=false
+path,bytes,MB,>20MB,>25MiB
+public/models/.gitkeep,1,0.000001,false,false
+public/models/props_rocks.glb,12844,0.012844,false,false
+public/models/vegetation_kit.glb,16900,0.016900,false,false
