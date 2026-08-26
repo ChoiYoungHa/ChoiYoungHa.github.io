@@ -222,7 +222,7 @@ describe('M0b-12 카메라 계약 — 계획서 §3-4 5개 수치', () => {
     assert.equal(num('fov'), 55)
     assert.equal(num('distance'), 6.0)
     assert.equal(num('height'), 2.2)
-    assert.equal(num('pitchDeg'), -12)
+    assert.equal(num('pitchDeg'), -4) // R48-A master 결정: 첫 5초 수목 노출(M3-16) — 계획서 §3-4 정정 2026-08-26 (구 -12)
     assert.equal(num('near'), 0.1)
     assert.equal(num('far'), 400)
   })
