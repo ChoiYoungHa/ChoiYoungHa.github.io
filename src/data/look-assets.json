@@ -1,23 +1,23 @@
 {
   "schemaVersion": 1,
-  "generatedFromHead": "4ba174b",
+  "generatedFromHead": "a1e7272",
   "assets": {
     "heroTreeGlb": {
       "url": "/models/hero_tree.glb",
-      "bytes": 1389012
+      "bytes": 3407832
     },
     "houseGlb": {
       "house-a": {
         "url": "/models/house_a.glb",
-        "bytes": 72524
+        "bytes": 79272
       },
       "house-b": {
         "url": "/models/house_b.glb",
-        "bytes": 99296
+        "bytes": 108340
       },
       "house-c": {
         "url": "/models/house_c.glb",
-        "bytes": 188028
+        "bytes": 206664
       }
     },
     "grassCard": {
