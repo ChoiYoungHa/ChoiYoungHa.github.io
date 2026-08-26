@@ -16,8 +16,9 @@ import placement from '../src/data/placement.json' with { type: 'json' }
 
 const DT = 1 / 60
 const MAX_WAYPOINT_DEVIATION = 2
-const MIN_HERO_DISTANCE = 3
-const MAX_HERO_DISTANCE = 6
+// R100-A: GLB 수목 발자국 반경 8.0m(colliders/heroTree.ts) + 1.5m 정지 여유 = 9.5m 목표(허용 9~10).
+const MIN_HERO_DISTANCE = 9
+const MAX_HERO_DISTANCE = 10
 const FIT_WAYPOINT_LAST_INDEX = 8
 const FIT_VARIABLES = [0, 2, 3, 4, 5, 6, 7]
 const FIT_STEPS = [0.6, 0.3, 0.15, 0.075, 0.03, 0.012, 0.005, 0.002, 0.001, 0.0004]

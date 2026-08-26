@@ -162,6 +162,14 @@ export function fitHeroTransform(
   return { scale, offsetY: -bbox.minY * scale }
 }
 
+/** 정렬 후 p(0~1) 분위값(선형 보간 없이 하위 index). 빈 배열은 NaN. R100-A 뿌리 기준 y 에 쓴다. */
+export function percentileValue(values: readonly number[], p: number): number {
+  if (values.length === 0) return Number.NaN
+  const sorted = [...values].sort((a, b) => a - b)
+  const index = Math.min(sorted.length - 1, Math.max(0, Math.floor(p * (sorted.length - 1))))
+  return sorted[index]
+}
+
 /** 지형 길 마스크: 중심선 거리 d 에서 0(풀)~1(흙). 길 폭 안은 1, 폭+feather 밖은 0, 사이는 smoothstep. */
 export function pathBlendMask(distanceToCenterline: number, pathWidth: number, feather: number): number {
   const inner = pathWidth / 2
