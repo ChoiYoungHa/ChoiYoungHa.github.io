@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "seed": 45,
+  "simulatedSeconds": 103.8,
+  "sceneTrace": [
+    "title",
+    "create",
+    "forest",
+    "henesys",
+    "stan",
+    "shop",
+    "park",
+    "hunt",
+    "complete",
+    "epilogue"
+  ],
+  "kills": 10,
+  "dropMeso": 185,
+  "ribbonDrops": 1,
+  "pickups": 11,
+  "combatHits": 32,
+  "aiSteps": 40,
+  "deathCount": 0,
+  "respawnChecks": 10,
+  "skillCastTimesSeconds": [
+    69.05,
+    74.77,
+    80.49,
+    85.01,
+    90.73
+  ],
+  "skillCooldownRejections": 4,
+  "skillMpRejections": 1,
+  "finalSkillMp": 5,
+  "playerHp": 80,
+  "finalMeso": 3785,
+  "level": 4,
+  "exp": 220,
+  "questStatus": "done",
+  "questKillCount": 10,
+  "inventoryRibbon": 2,
+  "spawner": {
+    "totalSpawned": 14,
+    "totalDeaths": 10,
+    "maxConcurrent": 8
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "flame-slash": {
+    "id": "flame-slash",
+    "jobId": "warrior",
+    "name": "불꽃베기",
+    "multiplier": 1.8,
+    "mpCost": 12,
+    "cooldownMs": 3000,
+    "targetCount": 3,
+    "effect": {
+      "type": "burn",
+      "durationMs": 3000,
+      "ticks": 5,
+      "damagePerTick": 3,
+      "totalDamage": 15
+    }
+  },
+  "rainbow-shot": {
+    "id": "rainbow-shot",
+    "jobId": "archer",
+    "name": "레인보우 활쏘기",
+    "multiplier": 0.7,
+    "mpCost": 15,
+    "cooldownMs": 3500,
+    "targetCount": 5,
+    "effect": { "type": "multi-hit", "hits": 5 }
+  },
+  "ice-age": {
+    "id": "ice-age",
+    "jobId": "mage",
+    "name": "아이스에이지",
+    "multiplier": 1.5,
+    "mpCost": 20,
+    "cooldownMs": 5000,
+    "targetCount": 1,
+    "effect": { "type": "freeze", "durationMs": 800, "hits": 3 }
+  },
+  "leaping-slash": {
+    "id": "leaping-slash",
+    "jobId": "thief",
+    "name": "도약베기",
+    "multiplier": 2.4,
+    "mpCost": 14,
+    "cooldownMs": 4000,
+    "targetCount": 2,
+    "effect": { "type": "leap", "radiusMeters": 2.5 }
+  }
+}
