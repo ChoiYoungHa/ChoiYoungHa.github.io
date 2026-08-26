@@ -72,3 +72,11 @@ WebGL2 run 1의 하위 1%는 23.33, hitch는 1로 가장 큰 편차였지만 두
 - 자동 5지표 PASS(평균 140.58/140.69 · 하위1% 37.14/38.27 · soak 914.66s crash/TDR 0 · hitch 0) + 룩 조건 L1~L5 **5/5**(최종 빌드 재캡처 값 차이 0) + M2 대비 프레임타임 **개선**(WebGPU −10.93%, WebGL2 −0.23%). 프로세스 RAM은 M0b·M1·M2와 같은 사유(헤드리스 측정 불가)로 보류 → **조건부 PASS**. 후퇴 불필요. 태그 `v0.3.0-m3`.
 - 감시 유지: programs 40/40(여유 0), WebGL2 하위1% 3회 범위 23.33~40.26(편차 큼). M3-15는 low 프리셋 포스트 체인 미구현(GTAO·bloom·LUT 0)이라 측정 대상 없음 — 미체크 유지, 근거 `Docs/perf/m3-effects.csv`.
 - 별건(관문 외): 씬 tris 합산 증빙(`wt/loading`, R53-B)에서 §4-1 예산 600K 대비 low worst **816K FAIL**이 드러남(식생 GLB 132 tris×6000). 대응 옵션 grassLite(312K)·rockLite 준비 중 → 룩 검증 후 기본값 채택 여부 결정. M3-GATE 성능 수치는 이 위반 상태에서 측정된 값이다.
+
+## 부록 — 룩 변형 채택 (R64-A 판정 / R67-A 적용, 2026-08-26)
+
+- 러너 `Automation/lookdev-variants.mjs` 로 6 변형(baseline·hazeDir·heroContrast·vistaPitch·grassLite·combo)을 같은 빌드에서 캡처·측정·판정했다(`Docs/lookdev/variants/variants-result.md`). 규칙: baseline 자동 PASS 합계(8/12)를 줄이지 않고 목표 지표를 만족해야 ADOPT.
+- **grassLite 채택**(master): 합계 8/12 유지 + low worst tris 816,434→**312,434**(≤600K, `Docs/perf/m4-scene-tris-grass-lite.json`). `src/data/lookdev.json` `grassLite.enabled=true`, `?grassLite=0` 강제 off.
+- 불채택(한계로 기록, 코드는 기본 off 유지): hazeDir(S3 far 155.1 >145, S3 L1 far 채도 14.7 >12), heroContrast K1(L4 Δ 1.8 — 126m 거리 대기 그레이딩), vistaPitch 22.1°(수관 잘림·S1 L1~L3 깨짐), combo.
+- 채택 후 재검증(R67-A): `Docs/lookdev/variants-adopted/variants-result.md`(새 baseline = grassLite on) · `Docs/perf/m4-grasslite-bench.csv`(WebGPU 1회, programs ≤40 확인).
+- 이 채택은 M3-GATE 판정(위)을 바꾸지 않는다 — 룩 5/5 유지, tris 예산 별건(M4-14)을 해소한다.

@@ -42,7 +42,8 @@
   },
   "volumetricClouds": 0,
   "grassLite": {
-    "enabled": false,
+    "enabled": true,
+    "adopted": "R67-A 2026-08-26 master 결정 — R64-A 변형 판정 ADOPT(baseline 8/12 유지, low worst tris 816,434→312,434 ≤600K; Docs/lookdev/variants/variants-result.md). ?grassLite=0 으로 강제 off.",
     "seed": 539363366,
     "maxTrianglesPerInstance": 12,
     "palette": "#3B3E26",

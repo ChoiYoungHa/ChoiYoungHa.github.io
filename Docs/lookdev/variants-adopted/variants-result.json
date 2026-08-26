@@ -1,0 +1,148 @@
+{
+  "schema": "lookdev-variants/1",
+  "at": "2026-08-26T13:49:51.855Z",
+  "variants": [
+    {
+      "name": "baseline",
+      "label": "grassLite 채택 후 baseline(= grassLite on)",
+      "query": "",
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [
+        "S2"
+      ],
+      "targets": [],
+      "switches": [],
+      "reuseBaselineFor": []
+    }
+  ],
+  "supported": {},
+  "scripts": {},
+  "failures": [],
+  "rows": [
+    {
+      "name": "baseline",
+      "verdict": "기준",
+      "passCount": 8,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 134.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5,
+          "treeBboxTop": 89,
+          "treeBbox": {
+            "left": 553,
+            "top": 89,
+            "right": 738,
+            "bottom": 301
+          },
+          "maskPixels": 11935
+        },
+        "l4": {
+          "trunk": 105.9,
+          "canopy": 101.3,
+          "sky": 147.6,
+          "trunkCanopyDelta": 4.6,
+          "minDelta": 4.6,
+          "checks": {
+            "trunk vs sky": {
+              "trunk": 105.9,
+              "sky": 147.6,
+              "delta": 41.7,
+              "threshold": 10,
+              "pass": true
+            },
+            "canopy vs sky": {
+              "canopy": 101.3,
+              "sky": 147.6,
+              "delta": 46.3,
+              "threshold": 10,
+              "pass": true
+            },
+            "trunk vs canopy": {
+              "trunk": 105.9,
+              "canopy": 101.3,
+              "delta": 4.6,
+              "threshold": 10,
+              "pass": false
+            }
+          }
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 3,
+          "L5": 15.2
+        }
+      },
+      "reasons": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "lv-baseline-S2",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-start&report=lv-baseline-S2",
+  "attempt": 1,
+  "at": "2026-08-26T13:49:21.113Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 13004,
+    "shotMs": 13113,
+    "gotShot": true
+  },
+  "topBand": 158.6
+}

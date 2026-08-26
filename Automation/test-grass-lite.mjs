@@ -9,6 +9,7 @@ import test from 'node:test'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const GENERATOR = resolve(ROOT, 'src', 'scene', 'foliage', 'grassLiteGeometry.ts')
 const SCENE_TRIS = resolve(ROOT, 'Automation', 'scene-tris.mjs')
+const LOOKDEV = JSON.parse(readFileSync(resolve(ROOT, 'src', 'data', 'lookdev.json'), 'utf8'))
 const { buildGrassLiteGeometry } = await import(pathToFileURL(GENERATOR).href)
 const { buildSceneTrisReport, parseSceneTrisArgs } = await import(pathToFileURL(SCENE_TRIS).href)
 
@@ -110,3 +111,11 @@ function rgbToHsl(r, g, b) {
   const s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
   return { h, s: s * 100, l: l * 100 }
 }
+
+// R67-A 채택: master 결정(R64-A 판정 ADOPT — baseline 8/12 유지, low worst tris 312,434 ≤600K)으로 기본값이 on 이다.
+test('lookdev.grassLite is enabled by default after R67-A adoption (query ?grassLite=0 still forces off)', () => {
+  assert.equal(LOOKDEV.grassLite.enabled, true) // R67-A 채택
+  assert.equal(LOOKDEV.grassLite.seed, 539363366)
+  assert.equal(LOOKDEV.grassLite.maxTrianglesPerInstance, 12)
+  assert.match(LOOKDEV.grassLite.adopted, /R67-A/)
+})

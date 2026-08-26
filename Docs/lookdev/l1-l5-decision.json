@@ -166,5 +166,27 @@
     "L4",
     "L5"
   ],
-  "result": "PASS"
+  "result": "PASS",
+  "adopted": {
+    "grassLite": {
+      "at": "2026-08-26",
+      "round": "R67-A",
+      "decidedBy": "master 84cc031b",
+      "why": "R64-A 룩 변형 판정에서 유일한 ADOPT 후보 — baseline 자동 PASS 8/12(S1 4·S2 1·S3 3) 유지, low worst tris 816,434→312,434(≤600K, §4-1)",
+      "evidence": [
+        "Docs/lookdev/variants/variants-result.md",
+        "Docs/lookdev/variants/variants-result.json",
+        "Docs/lookdev/variants/tris-grassLite.json",
+        "Docs/lookdev/variants-adopted/variants-result.md",
+        "Docs/perf/m4-grasslite-bench.csv"
+      ],
+      "default": "src/data/lookdev.json grassLite.enabled=true (?grassLite=0 강제 off)"
+    },
+    "rejected": {
+      "hazeDir": "S3 far 166.4→155.1(>145) + S3 L1 far 채도 14.7>12 → 합계 7 (한계로 기록)",
+      "heroContrast": "L4 줄기/수관 Δ 1.8(126m 거리 대기 그레이딩이 정점색 차이를 지움)",
+      "vistaPitch": "22.1° 에서도 수관 상단 잘림 + S1 L1~L3 깨짐(합계 5)",
+      "combo": "hazeDir·heroContrast 사유 합산"
+    }
+  }
 }
