@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "atlas": {
+    "assetId": "asset.fx.atlas.a",
+    "url": "/textures/fx_atlas.png",
+    "width": 1024,
+    "height": 1024,
+    "columns": 4,
+    "rows": 4,
+    "cellSize": 256,
+    "cellRectFormat": "[u, v, width, height], top-left origin",
+    "alphaTest": 0.5,
+    "transparent": false,
+    "multiplyInstanceColor": true,
+    "sharedMaterialCount": 1
+  },
+  "maxConcurrent": 3,
+  "skills": {
+    "flame-slash": {
+      "skillId": "flame-slash",
+      "attachment": "player-front",
+      "lifetimeMs": 600,
+      "instanceColors": ["#E34A2B", "#FF8A25"],
+      "arcDegrees": 120,
+      "layers": [
+        {
+          "id": "slash-trail",
+          "cellRects": [[0, 0, 0.25, 0.25], [0.25, 0, 0.25, 0.25], [0.5, 0, 0.25, 0.25]],
+          "frameCount": 3,
+          "frameIntervalMs": 80,
+          "startMs": 0,
+          "lifetimeMs": 250,
+          "scale": [3.2, 3.2]
+        },
+        {
+          "id": "impact-fire",
+          "cellRects": [[0.75, 0, 0.25, 0.25]],
+          "frameCount": 1,
+          "frameIntervalMs": 600,
+          "startMs": 0,
+          "lifetimeMs": 600,
+          "attachment": "impact-point",
+          "scale": [1.4, 1.8]
+        }
+      ]
+    },
+    "rainbow-shot": {
+      "skillId": "rainbow-shot",
+      "attachment": "player-front",
+      "lifetimeMs": 540,
+      "instanceColors": ["#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#00C7BE", "#3486FF", "#AF52DE"],
+      "projectileCount": 5,
+      "penetrates": false,
+      "layers": [
+        {
+          "id": "arrow",
+          "cellRects": [[0, 0.25, 0.25, 0.25]],
+          "frameCount": 1,
+          "frameIntervalMs": 540,
+          "startMs": 0,
+          "lifetimeMs": 540,
+          "scale": [0.9, 0.35]
+        },
+        {
+          "id": "white-ribbon-mask",
+          "cellRects": [[0.25, 0.25, 0.25, 0.25], [0.5, 0.25, 0.25, 0.25], [0.75, 0.25, 0.25, 0.25]],
+          "frameCount": 3,
+          "frameIntervalMs": 90,
+          "startMs": 0,
+          "lifetimeMs": 270,
+          "scale": [1.8, 0.45]
+        }
+      ]
+    },
+    "ice-age": {
+      "skillId": "ice-age",
+      "attachment": "target-above",
+      "lifetimeMs": 1100,
+      "instanceColors": ["#BCEEFF", "#84D8FF"],
+      "freezeDurationMs": 800,
+      "layers": [
+        {
+          "id": "icicle",
+          "cellRects": [[0, 0.5, 0.25, 0.25]],
+          "frameCount": 1,
+          "frameIntervalMs": 300,
+          "startMs": 0,
+          "lifetimeMs": 500,
+          "instanceCount": 3,
+          "instanceStaggerMs": 100,
+          "instanceLifetimeMs": 300,
+          "scale": [0.8, 2.2]
+        },
+        {
+          "id": "frost-shards",
+          "cellRects": [[0.5, 0.5, 0.25, 0.25], [0.75, 0.5, 0.25, 0.25]],
+          "frameCount": 2,
+          "frameIntervalMs": 100,
+          "startMs": 300,
+          "lifetimeMs": 200,
+          "attachment": "target-body",
+          "scale": [1.7, 1.7]
+        },
+        {
+          "id": "freeze-tint-mask",
+          "cellRects": [[0.25, 0.5, 0.25, 0.25]],
+          "frameCount": 1,
+          "frameIntervalMs": 800,
+          "startMs": 300,
+          "lifetimeMs": 800,
+          "attachment": "target-body",
+          "scale": [1.2, 1.2]
+        }
+      ]
+    },
+    "leaping-slash": {
+      "skillId": "leaping-slash",
+      "attachment": "landing-point",
+      "lifetimeMs": 900,
+      "instanceColors": ["#B469FF", "#E2AEFF"],
+      "leapHeightMeters": 3,
+      "impactRadiusMeters": 2.5,
+      "layers": [
+        {
+          "id": "x-slash",
+          "cellRects": [[0, 0.75, 0.25, 0.25], [0.25, 0.75, 0.25, 0.25], [0.5, 0.75, 0.25, 0.25]],
+          "frameCount": 3,
+          "frameIntervalMs": 100,
+          "startMs": 300,
+          "lifetimeMs": 300,
+          "scale": [2.8, 2.8]
+        },
+        {
+          "id": "shockwave-ring",
+          "cellRects": [[0.75, 0.75, 0.25, 0.25]],
+          "frameCount": 1,
+          "frameIntervalMs": 600,
+          "startMs": 300,
+          "lifetimeMs": 600,
+          "scale": [5, 5]
+        }
+      ]
+    }
+  }
+}
