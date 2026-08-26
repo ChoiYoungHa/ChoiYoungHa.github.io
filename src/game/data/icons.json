@@ -1,0 +1,648 @@
+{
+  "schema": "item-icons/1",
+  "generatedAt": "2026-08-26T15:41:54.481Z",
+  "source": {
+    "selectedSet": "items",
+    "selected": "게임콘티/assets/items",
+    "selectedBytes": 3085045,
+    "itemsFitBytes": 4036173,
+    "itemsBytes": 3085045,
+    "maxBytes": 4000000,
+    "reason": "items-fit 4036173 bytes exceeds 4000000; selected items 3085045 bytes",
+    "attribution": "codex image_gen project-owned output"
+  },
+  "icons": {
+    "arm.body.chain": {
+      "id": "arm.body.chain",
+      "file": "arm-body-chain.png",
+      "icon": "/ui/items/arm-body-chain.png",
+      "category": "arm",
+      "bytes": 79456
+    },
+    "arm.body.cloth": {
+      "id": "arm.body.cloth",
+      "file": "arm-body-cloth.png",
+      "icon": "/ui/items/arm-body-cloth.png",
+      "category": "arm",
+      "bytes": 79155
+    },
+    "arm.body.leather": {
+      "id": "arm.body.leather",
+      "file": "arm-body-leather.png",
+      "icon": "/ui/items/arm-body-leather.png",
+      "category": "arm",
+      "bytes": 75134
+    },
+    "arm.body.plate": {
+      "id": "arm.body.plate",
+      "file": "arm-body-plate.png",
+      "icon": "/ui/items/arm-body-plate.png",
+      "category": "arm",
+      "bytes": 100594
+    },
+    "arm.glove.cloth": {
+      "id": "arm.glove.cloth",
+      "file": "arm-glove-cloth.png",
+      "icon": "/ui/items/arm-glove-cloth.png",
+      "category": "arm",
+      "bytes": 57811
+    },
+    "arm.glove.leather": {
+      "id": "arm.glove.leather",
+      "file": "arm-glove-leather.png",
+      "icon": "/ui/items/arm-glove-leather.png",
+      "category": "arm",
+      "bytes": 61230
+    },
+    "arm.glove.steel": {
+      "id": "arm.glove.steel",
+      "file": "arm-glove-steel.png",
+      "icon": "/ui/items/arm-glove-steel.png",
+      "category": "arm",
+      "bytes": 64393
+    },
+    "arm.hat.helm": {
+      "id": "arm.hat.helm",
+      "file": "arm-hat-helm.png",
+      "icon": "/ui/items/arm-hat-helm.png",
+      "category": "arm",
+      "bytes": 67242
+    },
+    "arm.hat.leather": {
+      "id": "arm.hat.leather",
+      "file": "arm-hat-leather.png",
+      "icon": "/ui/items/arm-hat-leather.png",
+      "category": "arm",
+      "bytes": 63091
+    },
+    "arm.hat.ribbon": {
+      "id": "arm.hat.ribbon",
+      "file": "arm-hat-ribbon.png",
+      "icon": "/ui/items/arm-hat-ribbon.png",
+      "category": "arm",
+      "bytes": 49720
+    },
+    "arm.hat.straw": {
+      "id": "arm.hat.straw",
+      "file": "arm-hat-straw.png",
+      "icon": "/ui/items/arm-hat-straw.png",
+      "category": "arm",
+      "bytes": 62968
+    },
+    "arm.shoe.cloth": {
+      "id": "arm.shoe.cloth",
+      "file": "arm-shoe-cloth.png",
+      "icon": "/ui/items/arm-shoe-cloth.png",
+      "category": "arm",
+      "bytes": 46452
+    },
+    "arm.shoe.leather": {
+      "id": "arm.shoe.leather",
+      "file": "arm-shoe-leather.png",
+      "icon": "/ui/items/arm-shoe-leather.png",
+      "category": "arm",
+      "bytes": 55527
+    },
+    "arm.shoe.steel": {
+      "id": "arm.shoe.steel",
+      "file": "arm-shoe-steel.png",
+      "icon": "/ui/items/arm-shoe-steel.png",
+      "category": "arm",
+      "bytes": 59005
+    },
+    "itm.box.closed": {
+      "id": "itm.box.closed",
+      "file": "itm-box-closed.png",
+      "icon": "/ui/items/itm-box-closed.png",
+      "category": "itm",
+      "bytes": 73599
+    },
+    "itm.box.open": {
+      "id": "itm.box.open",
+      "file": "itm-box-open.png",
+      "icon": "/ui/items/itm-box-open.png",
+      "category": "itm",
+      "bytes": 72707
+    },
+    "itm.food.chicken": {
+      "id": "itm.food.chicken",
+      "file": "itm-food-chicken.png",
+      "icon": "/ui/items/itm-food-chicken.png",
+      "category": "itm",
+      "bytes": 77644
+    },
+    "itm.food.mackerel": {
+      "id": "itm.food.mackerel",
+      "file": "itm-food-mackerel.png",
+      "icon": "/ui/items/itm-food-mackerel.png",
+      "category": "itm",
+      "bytes": 65760
+    },
+    "itm.food.pork": {
+      "id": "itm.food.pork",
+      "file": "itm-food-pork.png",
+      "icon": "/ui/items/itm-food-pork.png",
+      "category": "itm",
+      "bytes": 80093
+    },
+    "itm.meso": {
+      "id": "itm.meso",
+      "file": "itm-meso.png",
+      "icon": "/ui/items/itm-meso.png",
+      "category": "itm",
+      "bytes": 65198
+    },
+    "itm.pigribbon": {
+      "id": "itm.pigribbon",
+      "file": "itm-pigribbon.png",
+      "icon": "/ui/items/itm-pigribbon.png",
+      "category": "itm",
+      "bytes": 62117
+    },
+    "itm.potion.hp.l": {
+      "id": "itm.potion.hp.l",
+      "file": "itm-potion-hp-l.png",
+      "icon": "/ui/items/itm-potion-hp-l.png",
+      "category": "itm",
+      "bytes": 81999
+    },
+    "itm.potion.hp.m": {
+      "id": "itm.potion.hp.m",
+      "file": "itm-potion-hp-m.png",
+      "icon": "/ui/items/itm-potion-hp-m.png",
+      "category": "itm",
+      "bytes": 54672
+    },
+    "itm.potion.hp.s": {
+      "id": "itm.potion.hp.s",
+      "file": "itm-potion-hp-s.png",
+      "icon": "/ui/items/itm-potion-hp-s.png",
+      "category": "itm",
+      "bytes": 35365
+    },
+    "itm.potion.mp.l": {
+      "id": "itm.potion.mp.l",
+      "file": "itm-potion-mp-l.png",
+      "icon": "/ui/items/itm-potion-mp-l.png",
+      "category": "itm",
+      "bytes": 83854
+    },
+    "itm.potion.mp.m": {
+      "id": "itm.potion.mp.m",
+      "file": "itm-potion-mp-m.png",
+      "icon": "/ui/items/itm-potion-mp-m.png",
+      "category": "itm",
+      "bytes": 58206
+    },
+    "itm.potion.mp.s": {
+      "id": "itm.potion.mp.s",
+      "file": "itm-potion-mp-s.png",
+      "icon": "/ui/items/itm-potion-mp-s.png",
+      "category": "itm",
+      "bytes": 36832
+    },
+    "skl.flameslash": {
+      "id": "skl.flameslash",
+      "file": "skl-flameslash.png",
+      "icon": "/ui/items/skl-flameslash.png",
+      "category": "skl",
+      "bytes": 111468
+    },
+    "skl.iceage": {
+      "id": "skl.iceage",
+      "file": "skl-iceage.png",
+      "icon": "/ui/items/skl-iceage.png",
+      "category": "skl",
+      "bytes": 119303
+    },
+    "skl.leapslash": {
+      "id": "skl.leapslash",
+      "file": "skl-leapslash.png",
+      "icon": "/ui/items/skl-leapslash.png",
+      "category": "skl",
+      "bytes": 116775
+    },
+    "skl.rainbowshot": {
+      "id": "skl.rainbowshot",
+      "file": "skl-rainbowshot.png",
+      "icon": "/ui/items/skl-rainbowshot.png",
+      "category": "skl",
+      "bytes": 119579
+    },
+    "ui.arrow": {
+      "id": "ui.arrow",
+      "file": "ui-arrow.png",
+      "icon": "/ui/items/ui-arrow.png",
+      "category": "ui",
+      "bytes": 51788
+    },
+    "ui.bag": {
+      "id": "ui.bag",
+      "file": "ui-bag.png",
+      "icon": "/ui/items/ui-bag.png",
+      "category": "ui",
+      "bytes": 106970
+    },
+    "ui.coin": {
+      "id": "ui.coin",
+      "file": "ui-coin.png",
+      "icon": "/ui/items/ui-coin.png",
+      "category": "ui",
+      "bytes": 90157
+    },
+    "ui.gear": {
+      "id": "ui.gear",
+      "file": "ui-gear.png",
+      "icon": "/ui/items/ui-gear.png",
+      "category": "ui",
+      "bytes": 90548
+    },
+    "ui.heart": {
+      "id": "ui.heart",
+      "file": "ui-heart.png",
+      "icon": "/ui/items/ui-heart.png",
+      "category": "ui",
+      "bytes": 70093
+    },
+    "ui.lock": {
+      "id": "ui.lock",
+      "file": "ui-lock.png",
+      "icon": "/ui/items/ui-lock.png",
+      "category": "ui",
+      "bytes": 78013
+    },
+    "ui.map": {
+      "id": "ui.map",
+      "file": "ui-map.png",
+      "icon": "/ui/items/ui-map.png",
+      "category": "ui",
+      "bytes": 95768
+    },
+    "ui.star": {
+      "id": "ui.star",
+      "file": "ui-star.png",
+      "icon": "/ui/items/ui-star.png",
+      "category": "ui",
+      "bytes": 60845
+    },
+    "wpn.bow.hunting": {
+      "id": "wpn.bow.hunting",
+      "file": "wpn-bow-hunting.png",
+      "icon": "/ui/items/wpn-bow-hunting.png",
+      "category": "wpn",
+      "bytes": 18092
+    },
+    "wpn.bow.long": {
+      "id": "wpn.bow.long",
+      "file": "wpn-bow-long.png",
+      "icon": "/ui/items/wpn-bow-long.png",
+      "category": "wpn",
+      "bytes": 23832
+    },
+    "wpn.dagger.iron": {
+      "id": "wpn.dagger.iron",
+      "file": "wpn-dagger-iron.png",
+      "icon": "/ui/items/wpn-dagger-iron.png",
+      "category": "wpn",
+      "bytes": 18691
+    },
+    "wpn.dagger.twin": {
+      "id": "wpn.dagger.twin",
+      "file": "wpn-dagger-twin.png",
+      "icon": "/ui/items/wpn-dagger-twin.png",
+      "category": "wpn",
+      "bytes": 44799
+    },
+    "wpn.staff.arcane": {
+      "id": "wpn.staff.arcane",
+      "file": "wpn-staff-arcane.png",
+      "icon": "/ui/items/wpn-staff-arcane.png",
+      "category": "wpn",
+      "bytes": 29558
+    },
+    "wpn.staff.oak": {
+      "id": "wpn.staff.oak",
+      "file": "wpn-staff-oak.png",
+      "icon": "/ui/items/wpn-staff-oak.png",
+      "category": "wpn",
+      "bytes": 17532
+    },
+    "wpn.sword.steel": {
+      "id": "wpn.sword.steel",
+      "file": "wpn-sword-steel.png",
+      "icon": "/ui/items/wpn-sword-steel.png",
+      "category": "wpn",
+      "bytes": 28339
+    },
+    "wpn.sword.wooden": {
+      "id": "wpn.sword.wooden",
+      "file": "wpn-sword-wooden.png",
+      "icon": "/ui/items/wpn-sword-wooden.png",
+      "category": "wpn",
+      "bytes": 23071
+    }
+  },
+  "summary": {
+    "count": 47,
+    "totalBytes": 3085045,
+    "categories": {
+      "wpn": 8,
+      "arm": 14,
+      "itm": 13,
+      "skl": 4,
+      "ui": 8
+    }
+  },
+  "manifestSuggestion": {
+    "phase": "core",
+    "itemCount": 47,
+    "totalBytes": 3085045,
+    "currentCoreCumulativeBytes": 3214642,
+    "projectedCoreCumulativeBytes": 6299687,
+    "items": [
+      {
+        "id": "core.ui-item.arm.body.chain",
+        "url": "public/ui/items/arm-body-chain.png",
+        "bytes": 79456,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.body.cloth",
+        "url": "public/ui/items/arm-body-cloth.png",
+        "bytes": 79155,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.body.leather",
+        "url": "public/ui/items/arm-body-leather.png",
+        "bytes": 75134,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.body.plate",
+        "url": "public/ui/items/arm-body-plate.png",
+        "bytes": 100594,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.glove.cloth",
+        "url": "public/ui/items/arm-glove-cloth.png",
+        "bytes": 57811,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.glove.leather",
+        "url": "public/ui/items/arm-glove-leather.png",
+        "bytes": 61230,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.glove.steel",
+        "url": "public/ui/items/arm-glove-steel.png",
+        "bytes": 64393,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.hat.helm",
+        "url": "public/ui/items/arm-hat-helm.png",
+        "bytes": 67242,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.hat.leather",
+        "url": "public/ui/items/arm-hat-leather.png",
+        "bytes": 63091,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.hat.ribbon",
+        "url": "public/ui/items/arm-hat-ribbon.png",
+        "bytes": 49720,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.hat.straw",
+        "url": "public/ui/items/arm-hat-straw.png",
+        "bytes": 62968,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.shoe.cloth",
+        "url": "public/ui/items/arm-shoe-cloth.png",
+        "bytes": 46452,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.shoe.leather",
+        "url": "public/ui/items/arm-shoe-leather.png",
+        "bytes": 55527,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.arm.shoe.steel",
+        "url": "public/ui/items/arm-shoe-steel.png",
+        "bytes": 59005,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.box.closed",
+        "url": "public/ui/items/itm-box-closed.png",
+        "bytes": 73599,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.box.open",
+        "url": "public/ui/items/itm-box-open.png",
+        "bytes": 72707,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.food.chicken",
+        "url": "public/ui/items/itm-food-chicken.png",
+        "bytes": 77644,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.food.mackerel",
+        "url": "public/ui/items/itm-food-mackerel.png",
+        "bytes": 65760,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.food.pork",
+        "url": "public/ui/items/itm-food-pork.png",
+        "bytes": 80093,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.meso",
+        "url": "public/ui/items/itm-meso.png",
+        "bytes": 65198,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.pigribbon",
+        "url": "public/ui/items/itm-pigribbon.png",
+        "bytes": 62117,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.potion.hp.l",
+        "url": "public/ui/items/itm-potion-hp-l.png",
+        "bytes": 81999,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.potion.hp.m",
+        "url": "public/ui/items/itm-potion-hp-m.png",
+        "bytes": 54672,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.potion.hp.s",
+        "url": "public/ui/items/itm-potion-hp-s.png",
+        "bytes": 35365,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.potion.mp.l",
+        "url": "public/ui/items/itm-potion-mp-l.png",
+        "bytes": 83854,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.potion.mp.m",
+        "url": "public/ui/items/itm-potion-mp-m.png",
+        "bytes": 58206,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.itm.potion.mp.s",
+        "url": "public/ui/items/itm-potion-mp-s.png",
+        "bytes": 36832,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.skl.flameslash",
+        "url": "public/ui/items/skl-flameslash.png",
+        "bytes": 111468,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.skl.iceage",
+        "url": "public/ui/items/skl-iceage.png",
+        "bytes": 119303,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.skl.leapslash",
+        "url": "public/ui/items/skl-leapslash.png",
+        "bytes": 116775,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.skl.rainbowshot",
+        "url": "public/ui/items/skl-rainbowshot.png",
+        "bytes": 119579,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.arrow",
+        "url": "public/ui/items/ui-arrow.png",
+        "bytes": 51788,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.bag",
+        "url": "public/ui/items/ui-bag.png",
+        "bytes": 106970,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.coin",
+        "url": "public/ui/items/ui-coin.png",
+        "bytes": 90157,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.gear",
+        "url": "public/ui/items/ui-gear.png",
+        "bytes": 90548,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.heart",
+        "url": "public/ui/items/ui-heart.png",
+        "bytes": 70093,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.lock",
+        "url": "public/ui/items/ui-lock.png",
+        "bytes": 78013,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.map",
+        "url": "public/ui/items/ui-map.png",
+        "bytes": 95768,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.ui.star",
+        "url": "public/ui/items/ui-star.png",
+        "bytes": 60845,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.bow.hunting",
+        "url": "public/ui/items/wpn-bow-hunting.png",
+        "bytes": 18092,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.bow.long",
+        "url": "public/ui/items/wpn-bow-long.png",
+        "bytes": 23832,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.dagger.iron",
+        "url": "public/ui/items/wpn-dagger-iron.png",
+        "bytes": 18691,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.dagger.twin",
+        "url": "public/ui/items/wpn-dagger-twin.png",
+        "bytes": 44799,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.staff.arcane",
+        "url": "public/ui/items/wpn-staff-arcane.png",
+        "bytes": 29558,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.staff.oak",
+        "url": "public/ui/items/wpn-staff-oak.png",
+        "bytes": 17532,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.sword.steel",
+        "url": "public/ui/items/wpn-sword-steel.png",
+        "bytes": 28339,
+        "kind": "png"
+      },
+      {
+        "id": "core.ui-item.wpn.sword.wooden",
+        "url": "public/ui/items/wpn-sword-wooden.png",
+        "bytes": 23071,
+        "kind": "png"
+      }
+    ],
+    "note": "proposal only; loading-manifest.json is not modified by M6-06"
+  }
+}
