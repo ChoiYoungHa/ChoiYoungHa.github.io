@@ -27,6 +27,7 @@ export interface BasicAttackInput {
   weaponAttack: number
   targets: CombatTarget[]
   rng: Rng
+  rangeMeters?: number
 }
 
 export interface AttackResult {
@@ -101,7 +102,7 @@ function nearestInCone(
 export function resolveBasicAttack(input: BasicAttackInput): AttackResult {
   const [target] = nearestInCone(
     input,
-    BASIC_ATTACK_RANGE_METERS,
+    input.rangeMeters ?? BASIC_ATTACK_RANGE_METERS,
     BASIC_ATTACK_FOV_DEG,
     1,
   )
@@ -188,14 +189,13 @@ export function resolveSkillAttack(input: SkillAttackInput): SkillAttackResult {
     )
   }
 
-  if (input.skillId === 'ice-age' && selected[0] !== undefined) {
+  if ((input.skillId === 'ice-age' || input.skillId === 'rainbow-shot') && selected[0] !== undefined) {
     const hitCount = skill.effect.hits ?? 3
     return {
       effect: { ...skill.effect },
-      hits: Array.from(
-        { length: hitCount },
-        (_, hitIndex) => damageHit(selected[0], input, skill, hitIndex),
-      ),
+      hits: selected.flatMap((target) => Array.from(
+        { length: hitCount }, (_, hitIndex) => damageHit(target, input, skill, hitIndex),
+      )),
     }
   }
 
@@ -203,6 +203,39 @@ export function resolveSkillAttack(input: SkillAttackInput): SkillAttackResult {
     effect: { ...skill.effect },
     hits: selected.map((target) => damageHit(target, input, skill, 0)),
   }
+}
+
+export interface EquipmentCombatModifiers {
+  rangeMeters: number
+  cooldownMs: number
+}
+
+export function resolveEquipmentCombatModifiers(
+  bonuses: Readonly<Record<string, number>>,
+  baseRangeMeters: number,
+  baseCooldownMs: number,
+): EquipmentCombatModifiers {
+  const rangeMeters = Math.max(baseRangeMeters, bonuses.range ?? baseRangeMeters)
+  const speedMultiplier = 1 + Math.max(0, bonuses.attackSpeedPercent ?? 0) / 100
+  return { rangeMeters, cooldownMs: Math.round(baseCooldownMs / speedMultiplier) }
+}
+
+export function leapDestination(origin: CombatPosition, target: CombatPosition, distanceMeters: number): CombatPosition {
+  const dx = target.x - origin.x
+  const dz = target.z - origin.z
+  const distanceMetersToTarget = Math.hypot(dx, dz)
+  if (distanceMetersToTarget === 0 || distanceMeters <= 0) return { ...origin }
+  const scale = Math.min(1, distanceMeters / distanceMetersToTarget)
+  return { x: origin.x + dx * scale, z: origin.z + dz * scale }
+}
+
+export function applyTimedMobEffect<T extends { frozenUntilSeconds: number }>(
+  mob: T,
+  effect: Pick<SkillEffect, 'type' | 'durationMs'>,
+  nowSeconds: number,
+): T {
+  if (effect.type !== 'freeze' || effect.durationMs === undefined) return mob
+  return { ...mob, frozenUntilSeconds: Math.max(mob.frozenUntilSeconds, nowSeconds + effect.durationMs / 1000) }
 }
 
 export interface PlayerCombatState {

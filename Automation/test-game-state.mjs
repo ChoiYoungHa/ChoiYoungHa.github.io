@@ -22,11 +22,17 @@ test('궁수 초기 상태가 직업 스탯·24칸 인벤·게임 메타를 한 
   assert.deepEqual(state.equipment, { weapon: null, head: null })
   assert.deepEqual(state.quest, { questId: 'pig-cleanup', status: 'none', killCount: 0 })
   assert.equal(state.scene, 'title')
-  assert.equal(state.ipMode, 'conti')
+  assert.equal(state.ipMode, 'own')
   assert.deepEqual(state.faceParts, {
-    faceId: 'face.default',
-    hairId: 'hair.default',
-    skinId: 'skin.default',
+    faceId: 'round',
+    eyeId: 'basic',
+    noseId: 'dot',
+    mouthId: 'smile',
+    hairId: 'short',
+    skinId: 'skin-warm',
+    hairColorId: 'hair-espresso',
+    eyeColorId: 'eye-brown',
+    outfitId: 'archer',
   })
 })
 
@@ -40,6 +46,7 @@ test('직업 선택·피해·회복은 최대/최소 경계를 지키고 원본�
 
   assert.deepEqual([selected.hp, selected.maxHp, selected.mp, selected.maxMp], [220, 220, 60, 60])
   assert.equal(selected.name, '여행자')
+  assert.equal(selected.faceParts.outfitId, 'warrior')
   assert.equal(damaged.hp, 0)
   assert.deepEqual([healed.hp, healed.mp], [220, 60])
   assert.equal(initial.jobId, null)

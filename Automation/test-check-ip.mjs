@@ -136,17 +136,30 @@ test('ASCII denylist terms use token boundaries instead of matching instance', (
   }
 })
 
-test('own mode with a residual conti-only term is WARN and still exits 0', () => {
+test('B-01 own-forced source scan excludes the unreachable conti catalog and reports zero residuals', () => {
   const root = fixture()
   try {
     writeFileSync(resolve(root, 'src/game/i18n.ts'), "export const deploymentIpMode = 'own'\n")
     writeFileSync(resolve(root, 'src/game/data/strings.ko.json'), JSON.stringify({ conti: { town: 'Henesys' }, own: { town: 'Mushroom Village' } }))
-    writeFileSync(resolve(root, 'dist/app.js'), 'const legacy = "Henesys"\n')
-    const { proc, report } = run(root)
+    writeFileSync(resolve(root, 'src/story.ts'), 'export const ownTown = "Mushroom Village"\n')
+    const { proc, report } = run(root, ['--src'])
     assert.equal(proc.status, 0)
-    assert.equal(report.result, 'WARN')
-    assert.equal(report.checks.forbiddenNames.status, 'warn')
-    assert.equal(report.contiTreeShaking.status, 'residual-warn')
+    assert.equal(report.result, 'PASS')
+    assert.equal(report.checks.forbiddenNames.count, 0)
+    assert.equal(report.contiTreeShaking.status, 'excluded')
+  } finally {
+    removeFixture(root)
+  }
+})
+
+test('B-01 own-forced scan still fails when the own table contains a denylisted name', () => {
+  const root = fixture()
+  try {
+    writeFileSync(resolve(root, 'src/game/i18n.ts'), "export const IP_MODE_DEFAULT = 'own'\n")
+    writeFileSync(resolve(root, 'src/game/data/strings.ko.json'), JSON.stringify({ conti: { town: 'Henesys' }, own: { town: 'Henesys' } }))
+    const { proc, report } = run(root, ['--src'])
+    assert.equal(proc.status, 1)
+    assert.equal(report.checks.ownVisibleStrings.status, 'fail')
   } finally {
     removeFixture(root)
   }

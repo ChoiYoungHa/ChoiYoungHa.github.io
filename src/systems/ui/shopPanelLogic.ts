@@ -44,16 +44,19 @@ function iconFor(itemId: string): string {
 
 function localizedFailure(result: PurchaseResult, ipMode: IpMode): string | null {
   if (result.ok) return null
-  if (result.reason === t('s05.shop.unavailable', 'conti')) return t('s05.shop.unavailable', ipMode)
-  if (result.reason === t('s05.shop.insufficient', 'conti')) return t('s05.shop.insufficient', ipMode)
-  return result.reason
+  const key = result.reason === 'unavailable'
+    ? 's05.shop.unavailable'
+    : result.reason === 'insufficient'
+      ? 's05.shop.insufficient'
+      : 's05.shop.inventoryFull'
+  return t(key, ipMode)
 }
 
 function presentItem(state: ShopState, item: ItemDefinition, ipMode: IpMode): ShopItemPresentation {
   const result = buyItem(state, item)
   return {
     id: item.id,
-    name: item.name,
+    name: t(item.nameKey, ipMode),
     price: item.price,
     iconUrl: iconFor(item.id),
     disabled: !result.ok,
@@ -76,7 +79,7 @@ export function shopPanelPresentation(
     items,
     detail: selected === null || selectedView === null ? null : {
       ...selectedView,
-      bonusLines: tooltipForItem(selected).split('\n').slice(1),
+      bonusLines: tooltipForItem(selected, t(selected.nameKey, ipMode)).split('\n').slice(1),
     },
   }
 }

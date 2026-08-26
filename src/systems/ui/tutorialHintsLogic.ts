@@ -1,6 +1,7 @@
 import { t, type IpMode } from '../../game/i18n.ts'
+import type { TutorialInputEvent } from '../../game/tutorial.ts'
 
-export type TutorialInputEvent = 'move' | 'run' | 'jump'
+export type { TutorialInputEvent } from '../../game/tutorial.ts'
 const ORDER: readonly TutorialInputEvent[] = ['move', 'run', 'jump']
 const LABEL_KEYS: Readonly<Record<TutorialInputEvent, string>> = {
   move: 's02.hint.move',

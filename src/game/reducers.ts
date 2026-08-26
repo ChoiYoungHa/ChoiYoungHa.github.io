@@ -27,6 +27,7 @@ export type GameAction =
   | { type: 'select-job', jobId: JobId, name?: string, faceParts?: Partial<FaceParts> }
   | { type: 'damage', amount: number }
   | { type: 'heal', hp?: number, mp?: number }
+  | { type: 'spend-mp', amount: number }
   | { type: 'gain-exp', amount: number }
   | { type: 'adjust-meso', amount: number }
   | { type: 'purchase', item: ItemDefinition }
@@ -52,7 +53,7 @@ export function reduce(state: GameState, action: GameAction): GameState {
         maxHp: stats.hp,
         mp: stats.mp,
         maxMp: stats.mp,
-        faceParts: { ...state.faceParts, ...action.faceParts },
+        faceParts: { ...state.faceParts, outfitId: action.jobId, ...action.faceParts },
       }
     }
     case 'damage':
@@ -63,6 +64,8 @@ export function reduce(state: GameState, action: GameAction): GameState {
         hp: Math.min(state.maxHp, state.hp + Math.max(0, action.hp ?? 0)),
         mp: Math.min(state.maxMp, state.mp + Math.max(0, action.mp ?? 0)),
       }
+    case 'spend-mp':
+      return { ...state, mp: Math.max(0, state.mp - Math.max(0, action.amount)) }
     case 'gain-exp': {
       const result = applyExperience(state, action.amount)
       return { ...state, level: result.level, exp: result.exp }

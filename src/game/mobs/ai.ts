@@ -17,6 +17,7 @@ export interface Mob {
   hp: number
   attackReadyAtSeconds: number
   dyingUntilSeconds: number | null
+  frozenUntilSeconds: number
 }
 
 export interface MobStepInput {
@@ -79,6 +80,7 @@ export function createMob(id: string, spawnPosition: Vec2, rng: Rng): Mob {
     hp: pig.hp,
     attackReadyAtSeconds: 0,
     dyingUntilSeconds: null,
+    frozenUntilSeconds: 0,
   }
 }
 
@@ -105,6 +107,7 @@ export function stepMob(mob: Mob, input: MobStepInput, rng: Rng): MobStepResult 
     if (input.nowSeconds < (mob.dyingUntilSeconds ?? Infinity)) return { mob, events: [] }
     return changeState(mob, 'dead')
   }
+  if (input.nowSeconds < mob.frozenUntilSeconds) return { mob, events: [] }
 
   const playerDistance = distance(mob.position, input.playerPosition)
   if (mob.state === 'wander') {

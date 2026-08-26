@@ -1,7 +1,7 @@
 [
   {
     "id": "weapon.wooden-sword",
-    "name": "나무 검",
+    "nameKey": "item.weapon.wooden-sword",
     "kind": "weapon",
     "equipSlot": "weapon",
     "jobId": "warrior",
@@ -11,7 +11,7 @@
   },
   {
     "id": "weapon.hunting-bow",
-    "name": "사냥용 활",
+    "nameKey": "item.weapon.hunting-bow",
     "kind": "weapon",
     "equipSlot": "weapon",
     "jobId": "archer",
@@ -21,7 +21,7 @@
   },
   {
     "id": "weapon.oak-staff",
-    "name": "참나무 지팡이",
+    "nameKey": "item.weapon.oak-staff",
     "kind": "weapon",
     "equipSlot": "weapon",
     "jobId": "mage",
@@ -31,7 +31,7 @@
   },
   {
     "id": "weapon.iron-dagger",
-    "name": "철 단검",
+    "nameKey": "item.weapon.iron-dagger",
     "kind": "weapon",
     "equipSlot": "weapon",
     "jobId": "thief",
@@ -41,7 +41,7 @@
   },
   {
     "id": "currency.meso",
-    "name": "메소",
+    "nameKey": "item.currency.meso",
     "kind": "currency",
     "price": 0,
     "stackLimit": 999999,
@@ -49,7 +49,7 @@
   },
   {
     "id": "head.pig-ribbon",
-    "name": "돼지리본",
+    "nameKey": "item.head.pig-ribbon",
     "kind": "head",
     "equipSlot": "head",
     "price": 0,

@@ -73,7 +73,11 @@ test('4스킬은 기하 규칙과 대상 수 상한 3/5/1/2를 지키고 stats �
       position: { x, z: -8 },
     })),
   })
+  assert.equal(archer.hits.length, 25)
   assert.equal(new Set(archer.hits.map((hit) => hit.targetId)).size, 5)
+  for (const targetId of new Set(archer.hits.map(({ targetId }) => targetId))) {
+    assert.deepEqual(archer.hits.filter((hit) => hit.targetId === targetId).map(({ hitIndex }) => hitIndex), [0, 1, 2, 3, 4])
+  }
   assert.ok(archer.hits.every((hit) => hit.damage === 14))
 
   const mage = resolveSkillAttack({
@@ -103,6 +107,24 @@ test('4스킬은 기하 규칙과 대상 수 상한 3/5/1/2를 지키고 stats �
   })
   assert.equal(new Set(thief.hits.map((hit) => hit.targetId)).size, 2)
   assert.ok(thief.hits.every((hit) => hit.damage === 48))
+})
+
+test('I-02 궁수 스킬은 단일 대상에도 70% 피해를 정확히 5회 준다', async () => {
+  const { resolveSkillAttack } = await load('src/game/rules/combat.ts')
+  const result = resolveSkillAttack({
+    skillId: 'rainbow-shot', origin: { x: 0, z: 0 }, yaw: 0,
+    baseAttack: 10, weaponAttack: 10,
+    targets: [{ id: 'only', position: { x: 0, z: -8 } }], rng: () => 0.5,
+  })
+  assert.deepEqual(result.hits.map(({ targetId, damage, hitIndex }) => ({ targetId, damage, hitIndex })), [0, 1, 2, 3, 4].map((hitIndex) => ({ targetId: 'only', damage: 14, hitIndex })))
+})
+
+test('I-03/I-04 동결·도약과 장비 사거리·공속 보정은 공개 전투 규칙으로 계산된다', async () => {
+  const { applyTimedMobEffect, leapDestination, resolveEquipmentCombatModifiers } = await load('src/game/rules/combat.ts')
+  const mob = { id: 'pig', state: 'chase', position: { x: 0, z: 0 }, spawnPosition: { x: 0, z: 0 }, wanderTarget: { x: 1, z: 0 }, hp: 65, attackReadyAtSeconds: 0, dyingUntilSeconds: null, frozenUntilSeconds: 0 }
+  assert.equal(applyTimedMobEffect(mob, { type: 'freeze', durationMs: 800 }, 10).frozenUntilSeconds, 10.8)
+  assert.deepEqual(leapDestination({ x: 0, z: 0 }, { x: 10, z: 0 }, 2.5), { x: 2.5, z: 0 })
+  assert.deepEqual(resolveEquipmentCombatModifiers({ range: 12, attackSpeedPercent: 15 }, 1.8, 500), { rangeMeters: 12, cooldownMs: 435 })
 })
 
 test('몬스터 공8 피격 뒤 0.5초 무적이며 경계 시각부터 다시 피해를 받는다', async () => {

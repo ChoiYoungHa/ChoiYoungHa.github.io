@@ -67,6 +67,28 @@ export function damageSpawnerMob(
   }
 }
 
+export function clearSpawnerAggro(state: SpawnerState, rng: Rng): SpawnerState {
+  return {
+    ...state,
+    slots: state.slots.map((slot) => {
+      const mob = slot.mob
+      if (mob === null || (mob.state !== 'chase' && mob.state !== 'attack')) return slot
+      return {
+        ...slot,
+        mob: {
+          ...mob,
+          state: 'wander',
+          wanderTarget: {
+            x: mob.spawnPosition.x + (rng() * 2 - 1) * 5,
+            z: mob.spawnPosition.z + (rng() * 2 - 1) * 5,
+          },
+          attackReadyAtSeconds: 0,
+        },
+      }
+    }),
+  }
+}
+
 export function stepSpawner(
   state: SpawnerState,
   input: MobStepInput,

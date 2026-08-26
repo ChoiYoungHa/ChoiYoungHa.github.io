@@ -8,7 +8,7 @@ import type { LoadingState } from '../loading.ts'
 import { CharacterCreate } from './CharacterCreate.tsx'
 import { cyclePortraitPart, randomCharacterSelection, type PortraitPartKey } from './characterCreateLogic.ts'
 import { DamageFloater } from './DamageFloater.tsx'
-import { createDamageFloaterState, stepDamageFloaters } from './damageFloaterLogic.ts'
+import { createDamageFloaterState, mobHpBarInput, stepDamageFloaters } from './damageFloaterLogic.ts'
 import { DialoguePanel } from './DialoguePanel.tsx'
 import { Epilogue } from './Epilogue.tsx'
 import { GameHud } from './GameHud.tsx'
@@ -54,8 +54,8 @@ function nextJob(jobId: JobId, direction: -1 | 1): JobId {
 export function GameOverlay({ session, loading, backend, preset, projector, bgUrl }: GameOverlayProps) {
   const snapshot = useSessionSnapshot(session)
   const game = useGame()
-  const scene = useGame(selectScene)
-  const hud = useGame(selectHudProps)
+  const scene = selectScene(game)
+  const hud = selectHudProps(game)
   const [name, setName] = useState('영하')
   const [jobId, setJobId] = useState<JobId>('archer')
   const [portrait, setPortrait] = useState<PortraitSelection>({
@@ -87,9 +87,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     const mob = slot.mob
     if (mob === null || mob.state === 'dead') return []
     const screen = projector({ ...mob.position, y: 1.4 })
-    return screen.visible === false ? [] : [{
-      id: mob.id, hp: mob.hp, maxHp: 55, screenX: screen.x, screenY: screen.y,
-    }]
+    return screen.visible === false ? [] : [mobHpBarInput(mob, screen.x, screen.y)]
   })
 
   const overlay = scene === 'title' ? (
@@ -106,7 +104,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
       onNext={() => setJobId((value) => nextJob(value, 1))}
       onCyclePart={(key: PortraitPartKey, direction) => setPortrait((value) => cyclePortraitPart(value, key, direction))}
       onRandom={() => { randomSeed.current += 1; setPortrait(randomCharacterSelection(randomSeed.current, jobId)) }}
-      onConfirm={(selection) => session.enqueueInput({ confirm: true, character: { jobId: selection.jobId, name: selection.name } })}
+      onConfirm={(selection) => session.enqueueInput({ confirm: true, character: { jobId: selection.jobId, name: selection.name, faceParts: selection.portrait } })}
     />
   ) : null
 
@@ -114,7 +112,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     <div data-game-overlay="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {overlay}
       {scene === 'forest' && <TutorialHints inputEvents={snapshot.tutorialEvents} narrationLineIndex={snapshot.nowMs < 2_400 ? 0 : snapshot.nowMs < 4_800 ? 1 : null} ipMode={game.ipMode} />}
-      {scene !== 'title' && scene !== 'create' && scene !== 'epilogue' && <GameHud {...hud} stats={{ ...hud.stats, mp: snapshot.skillState.mp }} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} />}
+      {scene !== 'title' && scene !== 'create' && scene !== 'epilogue' && <GameHud {...hud} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} />}
       <ZoneBanner banner={snapshot.banner} ipMode={game.ipMode} />
       {snapshot.activeDialogue !== null && <DialoguePanel state={snapshot.activeDialogue} ipMode={game.ipMode} onAdvance={() => session.enqueueInput({ confirm: true })} onChoose={(choice) => session.enqueueInput({ choice })} nowMs={snapshot.nowMs} />}
       {scene === 'shop' && game.jobId !== null && <ShopPanel state={{ jobId: game.jobId, meso: game.meso, inventory: game.inventory }} selectedItemId={snapshot.selectedShopItemId} ipMode={game.ipMode} onSelect={(selectedItemId) => session.enqueueInput({ selectedItemId })} onPurchase={(result) => { if (result.ok) session.enqueueInput({ confirm: true, selectedItemId: snapshot.selectedShopItemId ?? undefined }) }} onAfterPurchase={() => undefined} />}

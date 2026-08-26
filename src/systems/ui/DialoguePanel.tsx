@@ -1,6 +1,6 @@
 import type { DialogueState } from '../../game/dialogue.ts'
 import type { IpMode } from '../../game/i18n.ts'
-import { Portrait } from '../../game/portrait/Portrait.tsx'
+import { Portrait } from './Portrait.tsx'
 import type { PortraitSelection } from '../../game/portrait/compose.ts'
 import { acceptFlashVisible, dialoguePanelPresentation } from './dialoguePanelLogic.ts'
 import { HUD_TOKENS } from './hudTokens.ts'

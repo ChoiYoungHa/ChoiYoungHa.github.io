@@ -5,6 +5,7 @@ import { rollDrops, type DropTable } from './drops.ts'
 import type { ItemDefinition } from './inventory.ts'
 import type { QuestDefinition } from './quest.ts'
 import type { Rng } from './rng.ts'
+import { acquire, activeValues, createDropPool, release, type PoolHandle, type PoolState } from '../util/pool.ts'
 
 export const DROP_ARC_SECONDS = 0.4
 export const PICKUP_RANGE_METERS = 1.5
@@ -38,6 +39,36 @@ export interface CollectDropResult {
   collected: boolean
   state: GameState
   actions: GameAction[]
+}
+
+export interface DropCollection {
+  pool: PoolState<DropEntity>
+  handles: Readonly<Record<string, PoolHandle>>
+}
+
+export function createDropCollection(): DropCollection {
+  return { pool: createDropPool<DropEntity>(), handles: {} }
+}
+
+export function addDropToCollection(collection: DropCollection, drop: DropEntity, acquiredAt: number): { collection: DropCollection, replaced: DropEntity | null } {
+  const result = acquire(collection.pool, drop, acquiredAt)
+  const handles = { ...collection.handles, [drop.id]: result.handle }
+  if (result.replaced !== null) delete handles[result.replaced.id]
+  return { collection: { pool: result.pool, handles }, replaced: result.replaced }
+}
+
+export function removeDropFromCollection(collection: DropCollection, dropId: string): DropCollection {
+  const handle = collection.handles[dropId]
+  if (handle === undefined) return collection
+  const result = release(collection.pool, handle)
+  if (!result.released) return collection
+  const handles = { ...collection.handles }
+  delete handles[dropId]
+  return { pool: result.pool, handles }
+}
+
+export function dropCollectionValues(collection: DropCollection): DropEntity[] {
+  return activeValues(collection.pool)
 }
 
 const itemById = Object.fromEntries(
@@ -111,7 +142,7 @@ export function canPickup(
   ) <= PICKUP_RANGE_METERS
 }
 
-function actionsFor(entity: DropEntity, quest: QuestDefinition): GameAction[] {
+function actionsFor(entity: DropEntity): GameAction[] {
   const actions: GameAction[] = []
   if (entity.payload.kind === 'meso') {
     actions.push({ type: 'adjust-meso', amount: entity.payload.amount })
@@ -120,20 +151,13 @@ function actionsFor(entity: DropEntity, quest: QuestDefinition): GameAction[] {
     if (item === undefined) throw new Error(`unknown drop item: ${entity.payload.itemId}`)
     actions.push({ type: 'gain-item', item, quantity: entity.payload.quantity })
   }
-  if (entity.grantsKillCredit) {
-    actions.push({
-      type: 'quest-kill',
-      quest,
-      monsterId: entity.sourceMonsterId,
-    })
-  }
   return actions
 }
 
 export function collectDrop(
   state: GameState,
   entity: DropEntity,
-  quest: QuestDefinition,
+  _quest: QuestDefinition,
   playerPosition: PickupPosition,
   nowSeconds: number,
 ): CollectDropResult {
@@ -141,7 +165,7 @@ export function collectDrop(
     return { collected: false, state, actions: [] }
   }
 
-  const actions = actionsFor(entity, quest)
+  const actions = actionsFor(entity)
   return {
     collected: true,
     state: actions.reduce(reduce, state),

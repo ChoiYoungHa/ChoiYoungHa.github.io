@@ -2,7 +2,7 @@
   "flame-slash": {
     "id": "flame-slash",
     "jobId": "warrior",
-    "name": "불꽃베기",
+    "nameKey": "skill.flame-slash",
     "multiplier": 1.8,
     "mpCost": 12,
     "cooldownMs": 3000,
@@ -11,14 +11,14 @@
       "type": "burn",
       "durationMs": 3000,
       "ticks": 5,
-      "damagePerTick": 3,
-      "totalDamage": 15
+      "damagePerTick": 5,
+      "totalDamage": 25
     }
   },
   "rainbow-shot": {
     "id": "rainbow-shot",
     "jobId": "archer",
-    "name": "레인보우 활쏘기",
+    "nameKey": "skill.rainbow-shot",
     "multiplier": 0.7,
     "mpCost": 15,
     "cooldownMs": 3500,
@@ -28,7 +28,7 @@
   "ice-age": {
     "id": "ice-age",
     "jobId": "mage",
-    "name": "아이스에이지",
+    "nameKey": "skill.ice-age",
     "multiplier": 1.5,
     "mpCost": 20,
     "cooldownMs": 5000,
@@ -38,7 +38,7 @@
   "leaping-slash": {
     "id": "leaping-slash",
     "jobId": "thief",
-    "name": "도약베기",
+    "nameKey": "skill.leaping-slash",
     "multiplier": 2.4,
     "mpCost": 14,
     "cooldownMs": 4000,

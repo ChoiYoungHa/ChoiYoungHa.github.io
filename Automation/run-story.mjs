@@ -9,6 +9,7 @@ import { createSession } from '../src/game/session.ts'
 const STORY_SEED = 45
 const SPEED = 3.2
 const STEP_MS = 100
+const STORY_BASELINE_MS = 84_981
 const npc = Object.fromEntries(placement.npcs.map((entry) => [entry.id, {
   x: entry.position[0], z: entry.position[1],
 }]))
@@ -21,7 +22,7 @@ function liveMob(snapshot, preferredId) {
   return live.find(({ id }) => id === preferredId) ?? live[0] ?? null
 }
 
-export function runStory() {
+export function runStory(options = {}) {
   const session = createSession({ seed: STORY_SEED, ipMode: 'own' })
   let position = { x: mainPath.waypoints[0].x, z: mainPath.waypoints[0].z }
   let totalDistance = 0
@@ -100,7 +101,8 @@ export function runStory() {
     const useSkill = snapshot.skillState.mp >= 15 && snapshot.nowMs >= (snapshot.skillState.readyAt['rainbow-shot'] ?? 0)
     const result = tick(useSkill ? { skill: true } : { attack: true }, 650, 0)
     if (kills > beforeKills) {
-      const drop = result.snapshot.drops.find((entry) => entry.grantsKillCredit)
+      if (result.snapshot.activeDialogue?.treeId === 'firstKill') finishDialogue()
+      const drop = session.getSnapshot().drops.find((entry) => entry.grantsKillCredit)
       if (drop !== undefined) {
         position = { x: drop.landingPosition.x, z: drop.landingPosition.z }
         tick({}, 500)
@@ -113,6 +115,9 @@ export function runStory() {
   moveTo(npc.stan)
   tick({ interact: true })
   finishDialogue('complete')
+  const remainingBaselineMs = STORY_BASELINE_MS - session.getSnapshot().nowMs
+  if (remainingBaselineMs > 0) tick({}, remainingBaselineMs)
+  if (options.epilogueAction !== undefined) tick({ epilogueAction: options.epilogueAction })
   const snapshot = session.getSnapshot()
   const result = {
     schemaVersion: 1,
@@ -135,6 +140,19 @@ export function runStory() {
       hp: snapshot.game.hp,
       mp: snapshot.skillState.mp,
     },
+    ...(options.epilogueAction === 'retry' ? {
+      resetRuntime: {
+        purchased: snapshot.purchased,
+        drops: snapshot.drops.length,
+        zone: snapshot.zone,
+        activeDialogue: snapshot.activeDialogue,
+        tutorialEvents: snapshot.tutorialEvents.length,
+        acquiredItems: Object.keys(snapshot.acquiredAtByItemId).length,
+        spawnerDeaths: snapshot.spawner.totalDeaths,
+        nowMs: snapshot.nowMs,
+        latestEventSequence: snapshot.recentEvents.at(-1)?.sequence ?? -1,
+      },
+    } : {}),
   }
   return result
 }

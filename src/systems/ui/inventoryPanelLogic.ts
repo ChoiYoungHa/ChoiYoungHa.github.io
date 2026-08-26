@@ -78,7 +78,7 @@ function equipmentPresentation(inventory: Inventory, slot: EquipmentSlot, ipMode
     slot,
     label: t(`s08.slot.${slot}`, ipMode),
     itemId,
-    name: item.name,
+    name: t(item.nameKey, ipMode),
     iconUrl: iconFor(itemId),
   }
 }
@@ -96,7 +96,7 @@ export function inventoryPanelPresentation(
     return {
       index,
       itemId: stack.itemId,
-      name: item?.name ?? stack.itemId,
+      name: item === undefined ? stack.itemId : t(item.nameKey, ipMode),
       iconUrl: iconFor(stack.itemId),
       quantity: stack.quantity,
       equipped: Object.values(inventory.equipment).includes(stack.itemId),
@@ -116,7 +116,7 @@ export function inventoryPanelPresentation(
     stats: effectiveBonuses(inventory, ITEM_BY_ID),
     tooltip: hoveredItem === null || hoveredItem === undefined ? null : {
       itemId: hoveredItem.id,
-      lines: tooltipForItem(hoveredItem).split('\n'),
+      lines: tooltipForItem(hoveredItem, t(hoveredItem.nameKey, ipMode)).split('\n'),
       actionLabel: Object.values(inventory.equipment).includes(hoveredItem.id)
         ? t('s08.tooltip.unequip', ipMode)
         : t('s08.tooltip.equip', ipMode),
