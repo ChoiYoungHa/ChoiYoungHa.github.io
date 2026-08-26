@@ -1,132 +1,56 @@
 {
   "id": "m4-controls-hint",
   "at": "2026-08-26",
-  "head": "8edb15e",
-  "logicTest": "Automation/test-ui-logic.mjs hintVisibleAt [0,5000] 표시 / 5001 부터 숨김 (Node 12/12)",
-  "method": "헤드리스 Chrome CDP: 요소 마운트 시각을 0 으로 잡고 목표 0/2500/4900/5100/6000ms 에 el.hidden 을 읽음. actualMs 가 목표보다 늦은 구간은 페이지 메인 스레드가 GLB 파싱·셰이더 컴파일로 멈춘 구간(Runtime.evaluate 도 그동안 대기).",
-  "runs": [
+  "head": "c35137a",
+  "change": "R48-A master 결정: ControlsHint 를 loading ready 뒤에 마운트(App.tsx 조건 1줄). 판정 기준 = ready(마운트) 시각.",
+  "method": "헤드리스 Chrome CDP: 요소 마운트(=ready 뒤) 시각을 0 으로 잡고 목표 0/2500/4900/5100/6000ms 에 el.hidden 을 읽음.",
+  "samples": [
     {
-      "run": "cold-1",
-      "samples": [
-        {
-          "targetMs": 0,
-          "actualMs": 12,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 2500,
-          "actualMs": 3343,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 4900,
-          "actualMs": 5917,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 5100,
-          "actualMs": 5923,
-          "hidden": true,
-          "display": "none"
-        },
-        {
-          "targetMs": 6000,
-          "actualMs": 6013,
-          "hidden": true,
-          "display": "none"
-        }
-      ],
-      "lastVisibleMs": 5917,
-      "firstHiddenMs": 5923
+      "targetMs": 0,
+      "actualMs": 2,
+      "hidden": false,
+      "display": "block"
     },
     {
-      "run": "cold-2",
-      "samples": [
-        {
-          "targetMs": 0,
-          "actualMs": 58,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 2500,
-          "actualMs": 3189,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 4900,
-          "actualMs": 5535,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 5100,
-          "actualMs": 5540,
-          "hidden": true,
-          "display": "none"
-        },
-        {
-          "targetMs": 6000,
-          "actualMs": 6008,
-          "hidden": true,
-          "display": "none"
-        }
-      ],
-      "lastVisibleMs": 5535,
-      "firstHiddenMs": 5540
+      "targetMs": 2500,
+      "actualMs": 2833,
+      "hidden": false,
+      "display": "block"
     },
     {
-      "run": "warm-reload",
-      "samples": [
-        {
-          "targetMs": 0,
-          "actualMs": 2,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 2500,
-          "actualMs": 4489,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 4900,
-          "actualMs": 5262,
-          "hidden": false,
-          "display": "block"
-        },
-        {
-          "targetMs": 5100,
-          "actualMs": 5268,
-          "hidden": true,
-          "display": "none"
-        },
-        {
-          "targetMs": 6000,
-          "actualMs": 6002,
-          "hidden": true,
-          "display": "none"
-        }
-      ],
-      "lastVisibleMs": 5262,
-      "firstHiddenMs": 5268
+      "targetMs": 4900,
+      "actualMs": 5039,
+      "hidden": false,
+      "display": "block"
+    },
+    {
+      "targetMs": 5100,
+      "actualMs": 5111,
+      "hidden": true,
+      "display": "none"
+    },
+    {
+      "targetMs": 6000,
+      "actualMs": 6018,
+      "hidden": true,
+      "display": "none"
     }
   ],
-  "roadmapCondition": "0~5.0초 표시 · 5.1초 이후 DOM hidden",
+  "lastVisibleMs": 5039,
+  "firstHiddenMs": 5111,
   "judgement": {
     "shownAtStart": true,
-    "hiddenBy5100ms": false,
+    "visibleAt4900": true,
+    "hiddenAt5100": true,
+    "note": "ready 기준 표시 0~5039ms, hidden 5111ms. 로드 중 정지 구간이 카운트 앞으로 빠져 5.1초 안에 hidden."
+  },
+  "previous_R41A": {
     "firstHiddenMsPerRun": [
       5923,
       5540,
       5268
     ],
-    "note": "논리는 5001ms 타이머로 맞지만 브라우저 실측은 5.27~5.92초에 hidden — 콜드 로드 중 메인 스레드 정지(0.3~0.9초)로 setTimeout 이 밀린다. 정지 중엔 어떤 JS/스타일 갱신도 불가하므로 \"5.1초 정각\" 은 로드 중엔 보장 불가. 완화안: ControlsHint 를 loading ready(또는 첫 프레임) 뒤에 마운트해 카운트 시작을 정지 구간 뒤로(미적용, master 판단)."
+    "basis": "mount at page load"
   },
-  "result": "PARTIAL — 표시 구간 PASS, 5.1초 hidden 미충족(5.27/5.54/5.92초)"
+  "result": "PASS"
 }

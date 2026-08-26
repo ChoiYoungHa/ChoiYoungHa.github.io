@@ -170,5 +170,85 @@
     "HTML/JavaScript are bootstrap-resident when this store starts, so they count declared bytes without duplicate fetch.",
     "The current <=2K background tier uses the measured 1K HDR fallback because no 2K HDR exists in public/env.",
     "Preview, browser UI, and GPU behavior must be verified by master after merge."
-  ]
+  ],
+  "browser": {
+    "at": "2026-08-26",
+    "head": "c35137a",
+    "method": "헤드리스 Chrome CDP + Fetch 도메인. /models/vegetation_kit.glb 의 2번째 요청(로딩 스토어 core fetch; 1번째는 drei preload)만 404 로 응답 또는 네트워크 실패(Fetch.failRequest)로 만들고, 오류 UI·재시도 버튼을 확인한 뒤 버튼 클릭 → 3번째 요청 통과 → ready.",
+    "normal": {
+      "phaseOrder": [
+        "phase boot",
+        "boot -> core",
+        "core -> detail",
+        "detail -> ready"
+      ],
+      "overlayShownMs": 367,
+      "overlayGoneMs": 565,
+      "consoleErrorCount": 0
+    },
+    "http404": {
+      "errorMessage": "불러오기에 실패했습니다: HTTP 404 Not Found: core.vegetation-glb (/models/vegetation_kit.glb)",
+      "retryButton": true,
+      "phaseAtError": "core",
+      "errorShownAtMs": 514,
+      "retryClickedAtMs": 522,
+      "phaseLogs": [
+        "[loading] phase boot",
+        "[loading] boot -> core",
+        "[loading] core -> boot",
+        "[loading] boot -> core",
+        "[loading] core -> detail",
+        "[loading] detail -> ready"
+      ],
+      "readyAfterRetry": true,
+      "interceptedRequests": [
+        {
+          "n": 2,
+          "url": "http://127.0.0.1:5183/models/vegetation_kit.glb",
+          "action": "load404"
+        }
+      ],
+      "requestCount": 3,
+      "consoleErrorCount": 1,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    "offline": {
+      "errorMessage": "네트워크에 연결되어 있지 않습니다. 연결을 확인한 뒤 다시 시도하세요.",
+      "retryButton": true,
+      "phaseAtError": "core",
+      "errorShownAtMs": 421,
+      "retryClickedAtMs": 427,
+      "phaseLogs": [
+        "[loading] phase boot",
+        "[loading] boot -> core",
+        "[loading] core -> boot",
+        "[loading] boot -> core",
+        "[loading] core -> detail",
+        "[loading] detail -> ready"
+      ],
+      "readyAfterRetry": true,
+      "interceptedRequests": [
+        {
+          "n": 2,
+          "url": "http://127.0.0.1:5183/models/vegetation_kit.glb",
+          "action": "loadoffline"
+        }
+      ],
+      "requestCount": 3,
+      "consoleErrorCount": 1,
+      "consoleErrors": [
+        "Failed to load resource: net::ERR_FAILED"
+      ]
+    },
+    "judgement": {
+      "orderBootCoreDetailReady": true,
+      "errorShown404": true,
+      "errorShownOffline": true,
+      "retrySucceeded": true,
+      "note": "consoleErrorCount 1 은 차단된 요청 자체의 네트워크 오류 로그(의도된 실패). 재시도 후 ready 도달, 오버레이 제거."
+    },
+    "result": "PASS"
+  }
 }

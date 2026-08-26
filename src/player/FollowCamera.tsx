@@ -11,7 +11,7 @@ export const CAMERA = {
   fov: 55,
   distance: 6.0,
   height: 2.2,
-  pitchDeg: -12,
+  pitchDeg: -4, // R48-A master 결정: −12 → −4. 시작 화면에서 거대 수목 수관(127m, 지평 위 20°)이 프레임 안에 들게(M3-16)
   posDamp: 0.12,
   lookDamp: 0.2,
   near: 0.1,
@@ -37,7 +37,7 @@ export function FollowCamera({ targetRef, yawRef }: Props) {
     const yaw = yawRef.current ?? 0
 
     // 카메라는 yaw 기준 뒤쪽으로 distance, 위로 height. pitch 만큼 더 올라간다.
-    const pitch = (-CAMERA.pitchDeg * Math.PI) / 180 // -12° 내려다봄 = 12° 위로 올림
+    const pitch = (-CAMERA.pitchDeg * Math.PI) / 180 // 음수 pitch = 내려다봄 = 카메라를 그만큼 위로 올림
     const back = CAMERA.distance * Math.cos(pitch)
     const up = CAMERA.distance * Math.sin(pitch)
     desired.current.set(

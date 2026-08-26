@@ -106,7 +106,8 @@ export default function App() {
       </Canvas>
       <RuntimeHud />
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
-      {shot ? null : <ControlsHint />}
+      {/* R48-A: 로딩 ready 뒤에 마운트 — 5초 타이머 시작점 = ready(로드 중 메인 스레드 정지 구간을 피한다) */}
+      {shot || loading.phase !== 'ready' ? null : <ControlsHint />}
       {shot ? null : <Settings onSensitivityChange={setMouseSensitivity} />}
       <LoadingScreen phase={loading.phase} progress={loading.progress} error={loading.error} onRetry={loading.retry} />
     </div>

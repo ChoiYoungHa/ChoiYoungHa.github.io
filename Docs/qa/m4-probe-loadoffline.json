@@ -1,0 +1,89 @@
+{
+  "scenario": "loadoffline",
+  "url": "http://127.0.0.1:5183/?q=low",
+  "at": "2026-08-26T12:39:40.170Z",
+  "fetchEnable": "ok",
+  "errorShown": {
+    "tMs": 421,
+    "overlay": true,
+    "phase": "core",
+    "error": "네트워크에 연결되어 있지 않습니다. 연결을 확인한 뒤 다시 시도하세요.",
+    "retry": true,
+    "progress": null
+  },
+  "logsBeforeRetry": [
+    "[loading] phase boot",
+    "[loading] boot -> core"
+  ],
+  "retryClickedAtMs": 427,
+  "timeline": [
+    {
+      "tMs": 120,
+      "overlay": false,
+      "phase": null,
+      "error": null,
+      "retry": false,
+      "progress": null
+    },
+    {
+      "tMs": 305,
+      "overlay": true,
+      "phase": "boot",
+      "error": null,
+      "retry": false,
+      "progress": "0%"
+    },
+    {
+      "tMs": 421,
+      "overlay": true,
+      "phase": "core",
+      "error": "네트워크에 연결되어 있지 않습니다. 연결을 확인한 뒤 다시 시도하세요.",
+      "retry": true,
+      "progress": null
+    },
+    {
+      "tMs": 429,
+      "overlay": true,
+      "phase": "boot",
+      "error": null,
+      "retry": false,
+      "progress": "18%"
+    },
+    {
+      "tMs": 543,
+      "overlay": false,
+      "phase": null,
+      "error": null,
+      "retry": false,
+      "progress": null
+    }
+  ],
+  "failedRequests": [
+    {
+      "n": 2,
+      "url": "http://127.0.0.1:5183/models/vegetation_kit.glb",
+      "action": "loadoffline"
+    }
+  ],
+  "requestCount": 3,
+  "logs": [
+    "[loading] phase boot",
+    "[loading] boot -> core",
+    "[loading] core -> boot",
+    "[loading] boot -> core",
+    "[loading] core -> detail",
+    "[loading] detail -> ready"
+  ],
+  "readyAfterRetry": true,
+  "finalHud": "unknown",
+  "consoleErrors": [
+    "Failed to load resource: net::ERR_FAILED"
+  ],
+  "consoleErrorCount": 1,
+  "consoleWarnings": [
+    {
+      "type": "warning",
+      "text": "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+    }
+  ]
+}
