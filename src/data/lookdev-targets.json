@@ -1,0 +1,61 @@
+{
+  "id": "m3-lookdev-targets-v1",
+  "note": "M3-03 — 계획서 §1-1 의 L1~L5 범위를 그대로 동결한다. 수치 정의는 §6-1 실측(목표 이미지 1766×990, 2026-08-26)을 재현하는 정의다. 판정은 Automation/measure.mjs 가 한다.",
+  "bands": {
+    "count": 8,
+    "axis": "vertical",
+    "boundary": "band i = [floor(i*H/8), floor((i+1)*H/8)) — §6-1 표의 y 구간(0–123, 123–247, …, 866–990)과 같다"
+  },
+  "definitions": {
+    "saturationPct": "밴드 안 모든 픽셀의 HSL 채도(0~100)를 평균한 값. 평균색의 채도가 아니다(평균색은 서로 상쇄돼 탈색된다 — §6-1 밴드 3 평균색 S 2% vs 픽셀 평균 8.1%)",
+    "hueDeg": "밴드 평균 RGB 의 HSL 색상(0~360). 픽셀별 hue 는 원형이라 평균할 수 없다",
+    "luma": "밴드 평균 RGB 의 Rec.709 상대휘도 0.2126R+0.7152G+0.0722B (0~255). 선형이라 픽셀별 평균과 같다",
+    "globalSaturationMedianPct": "전 화면 픽셀별 HSL 채도의 중앙값(0~100)"
+  },
+  "regions": {
+    "near": {
+      "bands": [6, 7],
+      "note": "근경 = 하단 두 밴드의 픽셀 가중 통합(채도는 픽셀 평균, hue·luma 는 통합 평균색). §6-1: 35.2/35.8%, 51°/45°, 69.9/62.1"
+    },
+    "far": {
+      "bands": [2],
+      "note": "원경 = 밴드 2 단독. §6-1 밴드 3(지평 헤이즈)은 채도 8.1%로 L1 에는 맞지만 hue 105°·휘도 82.1 로 L2·L3 범위 밖이다. 밴드 2(9.9%·207°·132.3)만 세 명제를 동시에 만족하므로 원경은 밴드 2 다"
+    }
+  },
+  "L1": {
+    "title": "깊이에 따라 채도가 4배 이상 벌어진다",
+    "metric": "saturationPct",
+    "near": [30, 36],
+    "far": [8, 12],
+    "reference": { "far": 9.9, "near": 35.5 }
+  },
+  "L2": {
+    "title": "깊이에 따라 색상이 온난→한랭으로 이동한다",
+    "metric": "hueDeg",
+    "near": [45, 55],
+    "far": [205, 215],
+    "reference": { "far": 207, "near": 48 }
+  },
+  "L3": {
+    "title": "원경이 근경보다 밝다",
+    "metric": "luma",
+    "far": [130, 145],
+    "near": [60, 75],
+    "reference": { "far": 132.3, "near": 66 }
+  },
+  "L4": {
+    "title": "랜드마크 실루엣이 역광 대비만으로 읽힌다",
+    "manual": true,
+    "method": "흑백 변환 후 거대 수목·지붕군 구분을 육안 확인(계획서 §1-1). 자동 판정 대상 아님 — measure.mjs 는 'manual' 로 표기한다"
+  },
+  "L5": {
+    "title": "전 화면 채도 중앙값이 22% 이하다",
+    "metric": "globalSaturationMedianPct",
+    "max": 22,
+    "reference": 18.3
+  },
+  "acceptance": {
+    "rule": "자동 판정 L1·L2·L3·L5 중 PASS 개수 + L4(수동) 로 계획서 §1-3 '4개 이상' 을 판정한다",
+    "autoJudged": ["L1", "L2", "L3", "L5"]
+  }
+}
