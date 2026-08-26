@@ -1,0 +1,14 @@
+asset_id: asset.char.player.a
+source: Adobe Mixamo (https://www.mixamo.com) — account "영하", downloaded by master (Claude) via Playwright, 2026-08-27 00:00~00:06 KST
+files:
+  char_remy_tpose.fbx      — Character "Remy", FBX Binary, T-pose, with skin (28,338,736 bytes)
+  anim_idle.fbx            — Animation "Breathing Idle", FBX Binary, Without Skin, 30fps, keyframe reduction uniform (918,464 bytes)
+  anim_walk_inplace.fbx    — Animation "Walking" (Careful Walk), In Place ON, Without Skin, 30fps, uniform (617,536 bytes)
+  anim_run_inplace.fbx     — Animation "Running" (Running With Intention), In Place ON, Without Skin, 30fps, uniform
+license: Adobe Mixamo terms (Adobe General Terms of Use + Mixamo FAQ): royalty-free use in personal/commercial projects incl. games; embedding in a compiled/packaged game is permitted; redistribution of the raw character/animation files (FBX) on their own is NOT permitted.
+policy for this project:
+  - Raw FBX stay in DCC/incoming/ (Git-ignored recommended, NOT included in deploy bundle).
+  - Runtime uses converted GLB (public/models/char_player.glb) embedded in the web build.
+  - attribution_required: no (Adobe does not require credit; we still note "Character/animations: Adobe Mixamo" in Docs/licenses).
+  - ai_training_allowed: unknown — treat as no.
+notes: Walk/Run exported with "In Place" so the controller drives root motion. Clips share Remy's skeleton (mixamorig:*) — retarget-free in three.js AnimationMixer.

@@ -1,0 +1,11 @@
+Asset: asset.village.house.c (building_tavern_red.glb)
+Pack: KayKit - Medieval Hexagon Pack 1.0 FREE
+Original file: Assets/gltf/buildings/red/building_tavern_red.gltf
+Source: https://kaylousberg.itch.io/kaykit-medieval-hexagon
+Author: Kay Lousberg
+License: Creative Commons Zero v1.0 Universal (CC0)
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+Attribution required: no
+Commercial use and redistribution: allowed
+Acquired: 2026-08-27 by worker leaf 729f5ac5
+Processing: Original glTF geometry, one material, and its 1024x1024 atlas were packed without geometry changes into this self-contained GLB.

@@ -1,44 +1,44 @@
 {
   "schemaVersion": 1,
-  "generatedFromHead": "42557e2",
+  "generatedFromHead": "978b5dd",
   "assets": {
     "heroTreeGlb": {
-      "url": null,
-      "bytes": 0
+      "url": "/models/hero_tree.glb",
+      "bytes": 1389012
     },
     "houseGlb": {
       "house-a": {
-        "url": null,
-        "bytes": 0
+        "url": "/models/house_a.glb",
+        "bytes": 72524
       },
       "house-b": {
-        "url": null,
-        "bytes": 0
+        "url": "/models/house_b.glb",
+        "bytes": 99296
       },
       "house-c": {
-        "url": null,
-        "bytes": 0
+        "url": "/models/house_c.glb",
+        "bytes": 188028
       }
     },
     "grassCard": {
-      "url": null,
-      "bytes": 0
+      "url": "/textures/grass_card.png",
+      "bytes": 840009
     },
     "terrainGrassDiffuse": {
-      "url": null,
-      "bytes": 0
+      "url": "/textures/ground_grass_diffuse.jpg",
+      "bytes": 955945
     },
     "terrainGrassNormal": {
-      "url": null,
-      "bytes": 0
+      "url": "/textures/ground_grass_normal.jpg",
+      "bytes": 1440314
     },
     "terrainDirtDiffuse": {
-      "url": null,
-      "bytes": 0
+      "url": "/textures/ground_dirt_diffuse.jpg",
+      "bytes": 716010
     },
     "terrainDirtNormal": {
-      "url": null,
-      "bytes": 0
+      "url": "/textures/ground_dirt_normal.jpg",
+      "bytes": 831959
     }
   }
 }
