@@ -141,6 +141,10 @@ describe('GLB 메시 분류·정규화', () => {
     assert.equal(look.classifyHeroMesh('mesh_3', 'foliage_alpha'), 'leaf')
     assert.equal(look.classifyHeroMesh('Trunk', 'bark'), 'bark')
     assert.equal(look.classifyHeroMesh('', ''), 'bark')
+    // R96-A: 이름이 무의미한 자산(BigTree mat9/mat10)은 baseColor 녹색 우세로 잎, 갈색은 줄기. 이름 규칙이 우선.
+    assert.equal(look.classifyHeroMesh('mesh1406566609', 'mat10', { r: 0.07, g: 0.44, b: 0.08 }), 'leaf')
+    assert.equal(look.classifyHeroMesh('mesh1406566609', 'mat20', { r: 0.19, g: 0.09, b: 0.06 }), 'bark')
+    assert.equal(look.classifyHeroMesh('Trunk_01', 'green', { r: 0, g: 1, b: 0 }), 'bark', '이름 규칙(trunk)이 색보다 우선')
   })
   test('갓/지붕 분류는 메시 이름의 cap|roof', () => {
     assert.equal(look.classifyHouseMesh('Roof'), 'cap')
