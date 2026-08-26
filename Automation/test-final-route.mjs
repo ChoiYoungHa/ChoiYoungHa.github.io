@@ -24,7 +24,8 @@ const F = await load('src/systems/bench/finalRoute.ts')
 const route = readJson('src/systems/bench/final-route.json')
 const bench = readJson('src/systems/bench/benchRoute.json')
 
-const EXPECTED = { hash: '6ad0996f1aff', duration: 75, waypoints: 11, id: 'm4-final-route-v1' }
+// R100-A: 밑동 정지점 3.02m → 9.5m(발자국 반경 8 + 1.5), hero-approach 43 → 40.2s(이동 거리 −9m), fit-final-route 재적합
+const EXPECTED = { hash: 'a9f1339c4187', duration: 75, waypoints: 11, id: 'm4-final-route-v1' }
 
 describe('M4-01 final-route.json 구조', () => {
   test('validateFinalRoute 통과', () => {
@@ -42,7 +43,7 @@ describe('M4-01 final-route.json 구조', () => {
     assert.equal(times[0], 0)
     assert.equal(times.at(-1), route.durationSeconds)
     for (let i = 1; i < times.length; i++) assert.ok(times[i] > times[i - 1], `t[${i}]`)
-    assert.deepEqual(times, [0, 5, 10, 17, 24, 30, 37, 43, 50, 65, 75])
+    assert.deepEqual(times, [0, 5, 10, 17, 24, 30, 37, 40.2, 50, 65, 75])
   })
   test('waypoint id 순서 고정', () => {
     assert.deepEqual(
@@ -87,12 +88,13 @@ describe('finalInputAt 결정론', () => {
       assert.ok(Math.abs(s.yaw - w.pose.yaw) < 1e-12, `${w.id} yaw`)
     }
   })
-  test('구간 중간은 yaw 선형 보간, 43초 이후 forward 0(정지 후 회전)', () => {
-    const mid = F.finalInputAt(route, 2.5) // spawn(0.343024) → village-gap(0.244979)
-    assert.ok(Math.abs(mid.yaw - (0.343024 + 0.244979) / 2) < 1e-9)
+  test('구간 중간은 yaw 선형 보간, 40.2초 이후 forward 0(정지 후 회전)', () => {
+    const mid = F.finalInputAt(route, 2.5) // spawn → village-gap 중간(yaw 는 재적합마다 바뀌므로 파일값으로 계산)
+    const [w0, w1] = route.waypoints
+    assert.ok(Math.abs(mid.yaw - (w0.pose.yaw + w1.pose.yaw) / 2) < 1e-9)
     assert.equal(mid.forward, 1)
-    for (const t of [43, 47, 55, 70, 74.9]) assert.equal(F.finalInputAt(route, t).forward, 0, `t=${t}`)
-    for (const t of [0, 10, 30, 42.9]) assert.equal(F.finalInputAt(route, t).forward, 1, `t=${t}`)
+    for (const t of [40.2, 47, 55, 70, 74.9]) assert.equal(F.finalInputAt(route, t).forward, 0, `t=${t}`)
+    for (const t of [0, 10, 30, 40.1]) assert.equal(F.finalInputAt(route, t).forward, 1, `t=${t}`)
   })
   test('범위 밖은 clamp — 음수는 t=0, duration 초과는 마지막 waypoint', () => {
     assert.deepEqual(F.finalInputAt(route, -3), F.finalInputAt(route, 0))

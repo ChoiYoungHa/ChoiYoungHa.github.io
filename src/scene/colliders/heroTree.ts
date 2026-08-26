@@ -1,4 +1,3 @@
-import { HERO_TREE } from '../hero/heroTreeGeometry.ts'
 
 /**
  * M2-10 — 거대 수목 줄기 충돌 proxy.
@@ -27,7 +26,12 @@ export interface Vec2 {
  * 캐릭터 큐브가 0.8m 폭이므로(Controller.tsx) 반폭 0.4m 다.
  */
 export const PLAYER_RADIUS = 0.4
-export const HERO_TRUNK_RADIUS = HERO_TREE.trunkBaseDiameter / 2 + PLAYER_RADIUS
+/**
+ * R100-A(master 결정) — GLB 수목(BigTree_3Donimus, 줄기 ≈3~4m + 안쪽 뿌리) 발자국 반경(m). 뿌리 바깥(≤17m)은 통과 허용.
+ * 절차 수목의 밑동 지름 5.2m(반경 2.6m)는 heroTreeGeometry 에 그대로 두고, 충돌만 이 값을 쓴다. 충돌 반경 = 7.6 + 플레이어 0.4 = 8.0.
+ */
+export const HERO_FOOTPRINT_RADIUS = 7.6
+export const HERO_TRUNK_RADIUS = HERO_FOOTPRINT_RADIUS + PLAYER_RADIUS
 
 /** 밀어낼 때 표면에 딱 붙지 않게 두는 여유(m). 0 이면 매 프레임 경계에서 떨린다. */
 const SKIN = 0.02
