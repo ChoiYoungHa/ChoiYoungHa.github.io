@@ -1,0 +1,30 @@
+# M1 지형·길·접지 (R17-A) 검증 — 2026-08-26 16:00 KST
+행: M1-02·03(절차적 대체) / M1-04 / M1-06 / M1-07 / bench v3
+
+## 1) npx tsc -b
+exit=0
+
+## 2) npm run build
+dist/assets/main-BbBB35An.css             0.67 kB │ gzip:   0.43 kB
+dist/assets/main-BVz2tqRI.js            726.45 kB │ gzip: 206.50 kB
+[32m✓ built in 1.07s[39m
+
+## 3) node --test
+  test-raycast   ℹ tests 12 ℹ pass 12 ℹ fail 0 
+  test-scatter   ℹ tests 25 ℹ pass 25 ℹ fail 0 
+  test-terrain   ℹ tests 12 ℹ pass 12 ℹ fail 0 
+
+## 4) 지형 실측 (test-terrain 출력)
+[terrain] 기복 7.464m (min -3.678 / max 3.786) · 최대 경사 11.074° · 샘플 66049
+  컨트롤러 샘플 간격(0.0224m) 최대 경사: 11.10도 (수정 전 82.35도)
+
+## 5) 헤드리스 ?route=bench&q=low 60초 1회 → Docs/m1/terrain-smoke.json
+  routeHash      : m0b-bench-v3-mainpath
+  finalPosition  : (38.00, 1.09, -96.02)  heroTree(38,-96) 오차 0.02 m
+  trace          : [{"t": 15, "x": -16.2, "z": -17.76}, {"t": 30, "x": 7.96, "z": -58.44}, {"t": 45, "x": 37.9, "z": -95.73}, {"t": 60, "x": 38, "z": -96.02}]
+  낙하·관통      : 접지실패 0 프레임, minY -2.150
+  integratedSec  : 60.007 / 벽시계 60
+  calls          : max 23 (계획서 §4-1 예산 ≤200)
+  fps            : avg 143.37 / 1%low 77.78 / hitch 0
+  programs/tex   : 10 / 5
+  errorCount     : 0 (의도적 rejection 1건 별도)

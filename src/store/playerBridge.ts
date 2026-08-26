@@ -25,6 +25,11 @@ export interface PlayerFrame {
   grounded: boolean
 }
 
+/** Player 가 실제로 적분한 시간(초). 벽시계 60초와 이 값이 벌어지면 동선이 짧아진다. */
+let integratedSeconds = 0
+let ungroundedFrames = 0
+let minY = Number.POSITIVE_INFINITY
+
 export type InputSource = () => InputState
 
 let inputSource: InputSource | null = null
@@ -41,9 +46,22 @@ export function readInputSource(): InputSource | null {
 }
 
 /** Player 가 매 프레임 호출한다. */
-export function publishPlayerFrame(frame: PlayerFrame): void {
+export function publishPlayerFrame(frame: PlayerFrame, dt = 0): void {
   latestFrame = frame
   frameCount += 1
+  integratedSeconds += dt
+  if (!frame.grounded) ungroundedFrames += 1
+  if (frame.position.y < minY) minY = frame.position.y
+}
+
+/** 접지 실패 프레임 수와 최저 y. 낙하·관통 판정의 근거다(로드맵 M1-07). */
+export function readGroundingStats(): { ungroundedFrames: number; minY: number } {
+  return { ungroundedFrames, minY }
+}
+
+/** 적분된 시간 합. 러너가 벽시계 경과와 대조한다. */
+export function readIntegratedSeconds(): number {
+  return integratedSeconds
 }
 
 export function readPlayerFrame(): PlayerFrame | null {

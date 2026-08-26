@@ -1,31 +1,99 @@
 {
-  "routeHash": "m0b-bench-v2-m0-out-back-turn",
-  "m1UpgradeNote": "M1 지형이 들어오면 마을→길→거대 수목 동선 v3로 교체한다.",
+  "routeHash": "m0b-bench-v3-mainpath",
+  "note": "M1 bench v3 — main-path.json 8 waypoint 를 따라 0~45초 이동, 45~60초 vista-village(=heroTree 밑동)에서 마을 방향으로 회전한다. yaw 는 실제 raycast 컨트롤러 + 실제 heightmap 을 Node 에서 시뮬레이션해 맞춘 값이다. 지형(heightmap)이 바뀌면 이 yaw 도 다시 맞춰야 한다.",
   "keyframes": [
     {
       "time": 0,
-      "pose": { "position": [0, 0, 0], "yaw": -0.785398 },
-      "input": { "forward": 1, "strafe": 0, "run": false }
+      "pose": {
+        "position": [
+          0,
+          0,
+          24
+        ],
+        "yaw": 0.99486
+      },
+      "input": {
+        "forward": 1,
+        "strafe": 0,
+        "run": false
+      }
     },
     {
       "time": 15,
-      "pose": { "position": [33.5, 0, -33.5], "yaw": -0.785398 },
-      "input": { "forward": -1, "strafe": 0, "run": false }
+      "pose": {
+        "position": [
+          -7.105,
+          0,
+          -19.9
+        ],
+        "yaw": -0.244052
+      },
+      "input": {
+        "forward": 1,
+        "strafe": 0,
+        "run": false
+      }
     },
     {
       "time": 30,
-      "pose": { "position": [0, 0, 0], "yaw": -0.785398 },
-      "input": { "forward": 1, "strafe": 0, "run": false }
+      "pose": {
+        "position": [
+          15.705,
+          0,
+          -57.705
+        ],
+        "yaw": -0.827225
+      },
+      "input": {
+        "forward": 1,
+        "strafe": 0,
+        "run": false
+      }
     },
     {
       "time": 45,
-      "pose": { "position": [33.5, 0, -33.5], "yaw": -0.785398 },
-      "input": { "forward": 0, "strafe": 0, "run": false }
+      "pose": {
+        "position": [
+          38,
+          0,
+          -96
+        ],
+        "yaw": -0.526362
+      },
+      "input": {
+        "forward": 0,
+        "strafe": 0,
+        "run": false
+      }
     },
     {
       "time": 60,
-      "pose": { "position": [33.5, 0, -33.5], "yaw": 2.356194 },
-      "input": { "forward": 0, "strafe": 0, "run": false }
+      "pose": {
+        "position": [
+          38,
+          0,
+          -96
+        ],
+        "yaw": 2.791278
+      },
+      "input": {
+        "forward": 0,
+        "strafe": 0,
+        "run": false
+      }
     }
-  ]
+  ],
+  "measured": {
+    "method": "node 시뮬레이션 (실제 컨트롤러·heightmap·inputAt). dt=1/144 과 1/60 양쪽 확인.",
+    "finalPositionErrorMeters": {
+      "dt144": 0.0,
+      "dt60": 0.031
+    },
+    "ungroundedSteps": 0,
+    "pathDeviationMeters": {
+      "mean": 5.98,
+      "max": 8.94
+    },
+    "limitation": "키프레임이 0/15/30/45/60 다섯 개로 고정돼(validateBenchRoute) yaw 가 15초 구간마다 선형 보간된다. S자 136m 길을 3구간 곡선으로 근사하는 셈이라 평균 6m 이탈이 남는다. 완전 추종하려면 키프레임 수를 늘려야 하고 그건 validateBenchRoute 변경이 필요하다."
+  }
 }

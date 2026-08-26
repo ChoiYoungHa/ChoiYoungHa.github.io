@@ -2,6 +2,8 @@ import { Canvas } from '@react-three/fiber'
 import { useEffect } from 'react'
 import { createRenderer } from './gl/createRenderer'
 import { Prototype } from './scene/Prototype'
+import { Terrain } from './scene/Terrain'
+import { MainPath } from './scene/MainPath'
 import { Player } from './player/Controller'
 import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
 import { CAMERA } from './player/FollowCamera'
@@ -48,6 +50,8 @@ export default function App() {
         <fogExp2 attach="fog" args={['#8fa0b0', quality.fogDensity]} />
         <RuntimeProbe />
         <Prototype shadowMapResolution={quality.shadowCascades.resolution} />
+        <Terrain />
+        <MainPath />
         <Player />
       </Canvas>
       <RuntimeHud />

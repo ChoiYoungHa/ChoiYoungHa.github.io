@@ -1,7 +1,8 @@
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import type { Mesh } from 'three'
-import { sampleGround } from '../scene/Prototype'
+import mainPath from '../data/main-path.json' with { type: 'json' }
+import { sampleGround } from '../scene/terrain/heightmap'
 import { createKeyboardInput } from './input'
 import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
@@ -19,8 +20,15 @@ export function Player() {
   const posRef = useRef<Vec3>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0 })
   const yawRef = useRef(0)
 
+  // M1-07 — 접지 샘플러가 절차적 지형이다(M0-a 의 40m 평면 아님).
+  // 스폰은 길의 첫 waypoint = 마을 입구(main-path.json landmarks.spawn).
   const controller = useMemo(
-    () => createRaycastController(sampleGround, { x: 0, y: 0, z: 0 }),
+    () =>
+      createRaycastController(sampleGround, {
+        x: mainPath.landmarks.spawn.x,
+        y: 0,
+        z: mainPath.landmarks.spawn.z,
+      }),
     [],
   )
   const keys = useMemo(() => createKeyboardInput(), [])
@@ -69,7 +77,7 @@ export function Player() {
       body.position.set(r.position.x, r.position.y, r.position.z)
       body.rotation.y = r.heading
     }
-    publishPlayerFrame(r)
+    publishPlayerFrame(r, dt)
   })
 
   return (

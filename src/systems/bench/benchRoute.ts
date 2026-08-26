@@ -1,10 +1,12 @@
 import type { InputState } from '../../player/input'
 import type { Vec3 } from '../../player/controllers/types'
 import {
+  readGroundingStats,
+  readIntegratedSeconds,
   readPlayerFrame,
   readPlayerFrameCount,
   setInputSource,
-} from '../../store/playerBridge'
+} from '../../store/playerBridge.ts'
 
 export interface BenchKeyframe {
   time: number
@@ -22,6 +24,12 @@ export interface BenchResult {
   duration: 60
   sampleCount: number
   finalPosition: Vec3
+  /** 15초 간격 위치 추적. 동선이 어디로 갔는지 종료 위치만으로는 알 수 없다. */
+  trace: { t: number; x: number; z: number }[]
+  /** Player 가 실제로 적분한 시간(초). 벽시계 60초와 벌어지면 동선이 짧아진다. */
+  integratedSeconds: number
+  /** 낙하·관통 판정(M1-07): 접지 실패 프레임 수와 최저 y. */
+  grounding: { ungroundedFrames: number; minY: number }
 }
 
 declare global {
@@ -72,12 +80,25 @@ export async function runBenchRoute(): Promise<BenchResult> {
   const route = await loadBenchRoute()
   const startedAt = performance.now()
   const framesAtStart = readPlayerFrameCount()
+  const secondsAtStart = readIntegratedSeconds()
+  const trace: { t: number; x: number; z: number }[] = []
+  let nextTraceAt = 15
 
   setInputSource(() => inputAt(route, (performance.now() - startedAt) / 1000))
 
   return new Promise((resolve) => {
     const tick = (now: number) => {
-      if ((now - startedAt) / 1000 < 60) {
+      const elapsed = (now - startedAt) / 1000
+      if (elapsed >= nextTraceAt && nextTraceAt <= 60) {
+        const f = readPlayerFrame()
+        trace.push({
+          t: nextTraceAt,
+          x: f ? Math.round(f.position.x * 100) / 100 : NaN,
+          z: f ? Math.round(f.position.z * 100) / 100 : NaN,
+        })
+        nextTraceAt += 15
+      }
+      if (elapsed < 60) {
         requestAnimationFrame(tick)
         return
       }
@@ -90,6 +111,9 @@ export async function runBenchRoute(): Promise<BenchResult> {
         // Player 가 실제로 그린 프레임 수. 러너 rAF 틱 수가 아니다.
         sampleCount: readPlayerFrameCount() - framesAtStart,
         finalPosition: frame ? { ...frame.position } : { x: NaN, y: NaN, z: NaN },
+        trace,
+        integratedSeconds: Math.round((readIntegratedSeconds() - secondsAtStart) * 1000) / 1000,
+        grounding: readGroundingStats(),
       }
       window.__bench = result
       console.info(`BENCH_ROUTE ${JSON.stringify(result)}`)
