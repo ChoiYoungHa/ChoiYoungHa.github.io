@@ -33,3 +33,10 @@ WebGL2 ANGLE: `ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 v
 - 측정 중 HEAD가 `d487dca` → `39ef575` → `6b45b5d`로 변경됐다. M1 커밋 2개는 아직 런타임에 import되지 않는 데이터·테스트·에셋이며 세 빌드 모두 번들 `main-1kAsa1yr.js`가 동일했고, coordinator 확인상 해당 워커들은 build·GPU를 사용하지 않았다. CSV의 build hash는 `d487dca`, soak 보고서의 build hash는 `39ef575` 그대로 보존한다.
 
 근거 파일: `Docs/perf/m0b-runs.csv`, `Docs/perf/m0b-webgl-runs.csv`, `Docs/qa/m0b-15min.md`.
+
+## master 판정 (2026-08-26, master `84cc031b`)
+
+- **M0b-19 프로세스 RAM**: 영하님이 실 Chrome으로 M0a-10 예비 측정 시 작업관리자 Chrome 합계 **≈2GB**(다른 탭 포함, 육안)를 보고하셨다. 정밀 캡처(PNG·CSV)는 미확보이나 기준 24GB 대비 12배 여유라 **조건부 PASS**로 인정한다. M1-GATE부터는 스크립트가 아닌 수동 캡처를 1회 확보한다.
+- **M0b-GATE: PASS(조건부)** — 5지표 중 4개 실측 PASS + RAM 근사 실측. 헤드리스 fps 과대 가능성은 M1에서 영하님 실 화면 1회 대조로 보정.
+- M0b-24 태그 `v0.0.0-bootstrap` = `f4f6149`.
+- 미완 잔여: M0b-07 Blender 설치(영하님 수동, M1 지형은 절차적 생성으로 대체 결정 — 아래), M0b-23 20초 영상(영하님 수동, 선택).
