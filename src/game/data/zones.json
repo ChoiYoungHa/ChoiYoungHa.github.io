@@ -2,6 +2,16 @@
   "hysteresisMeters": 2,
   "priority": ["forest", "village", "park"],
   "sourceNote": "P0 forest circle and the aggregate village AABB overlap geometrically. The effective village volume subtracts forest so P0 remains forest and effective overlap is zero.",
+  "triggers": {
+    "villageGate": {
+      "shape": "aabb",
+      "center": { "x": -1.5, "z": 19.8 },
+      "halfExtents": { "x": 2.5, "z": 2 },
+      "yawRadians": 0.343,
+      "cameraDistanceMeters": { "from": 6, "to": 9, "durationSeconds": 2 },
+      "source": "src/data/placement.json props[kind=arch]; kept outside zones so it does not participate in region classification"
+    }
+  },
   "zones": {
     "forest": {
       "shape": "circle",

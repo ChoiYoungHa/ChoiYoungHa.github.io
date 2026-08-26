@@ -11,9 +11,12 @@ const mainPath = JSON.parse(readFileSync(join(ROOT, 'src/data/main-path.json'), 
 const layout = await load('src/scene/village/propsLayout.ts')
 const village = await load('src/scene/colliders/village.ts')
 const centerline = mainPath.waypoints.map(({ x, z }) => ({ x, z }))
+// M6-16 adds park-only statue placeholders to placement.props. The M5-09
+// audit intentionally owns only the four village prop kinds rendered by Props.tsx.
+const villageProps = placement.props.filter((prop) => layout.PROP_KINDS.includes(prop.kind))
 
 describe('M5-09 village prop placement', () => {
-  const audit = layout.auditPropsLayout(placement.props, centerline, village.VILLAGE_COLLIDERS)
+  const audit = layout.auditPropsLayout(villageProps, centerline, village.VILLAGE_COLLIDERS)
 
   test('has the approved count for every prop kind', () => {
     assert.deepEqual(audit.counts, layout.REQUIRED_PROP_COUNTS)
@@ -37,23 +40,23 @@ describe('M5-09 village prop placement', () => {
   })
 
   test('rejects representative path, boundary, house, and count regressions', () => {
-    const pathRegression = structuredClone(placement.props)
+    const pathRegression = structuredClone(villageProps)
     pathRegression.find((prop) => prop.kind === 'fence').position = [0, 24]
     assert.equal(layout.auditPropsLayout(pathRegression, centerline, village.VILLAGE_COLLIDERS).pathIntrusions.length, 1)
 
-    const archRegression = structuredClone(placement.props)
+    const archRegression = structuredClone(villageProps)
     archRegression.find((prop) => prop.kind === 'arch').yaw = 0
     assert.equal(layout.auditPropsLayout(archRegression, centerline, village.VILLAGE_COLLIDERS).archMisalignments.length, 1)
 
-    const boundaryRegression = structuredClone(placement.props)
+    const boundaryRegression = structuredClone(villageProps)
     boundaryRegression.find((prop) => prop.kind === 'banner').position = [125, 0]
     assert.equal(layout.auditPropsLayout(boundaryRegression, centerline, village.VILLAGE_COLLIDERS).boundaryViolations.length, 1)
 
-    const houseRegression = structuredClone(placement.props)
+    const houseRegression = structuredClone(villageProps)
     houseRegression.find((prop) => prop.kind === 'stonewall').position = [10, 20]
     assert.ok(layout.auditPropsLayout(houseRegression, centerline, village.VILLAGE_COLLIDERS).houseOverlaps.length > 0)
 
-    const countRegression = placement.props.slice(1)
+    const countRegression = villageProps.slice(1)
     assert.equal(layout.auditPropsLayout(countRegression, centerline, village.VILLAGE_COLLIDERS).countMismatches.length, 1)
   })
 
