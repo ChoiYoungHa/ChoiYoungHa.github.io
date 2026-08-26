@@ -1,8 +1,15 @@
-# base tris 계약 결정 브리프
+# base tris 계약 결정 기록
 
-> 영하님 결정 1개: **A 품질 축소 / B 지형 축소 / C 원래 base 예산 복원** 중 하나를 선택합니다. master 권고는 **C**입니다.
+> **결정(2026-08-26, master): C안 채택 + grassLite 기본 채택.** 검사기는 원계약 low `≤600K` / base `≤1.1M`을 적용한다. R64-A 룩 자동 PASS `8/12`를 유지한 grassLite를 기본 경로로 채택하고, rockLite는 base `704,834 ≤ 1,100,000`이라 불필요하므로 불채택·기본 off를 유지한다.
 
-## 1. 지금 확정된 사실
+| 최종 경로 | worst tris | 예산 판정 | 결정 근거 |
+|---|---:|---|---|
+| low + grassLite | 312,434 | **PASS** (`≤600,000`) | `Docs/perf/m4-scene-tris-grass-lite.json`, `Docs/lookdev/variants/variants-result.md` |
+| base + grassLite | 704,834 | **PASS** (`≤1,100,000`) | `Docs/perf/m4-scene-tris-grass-lite.json` |
+
+rockLite·hazeDir·heroContrast·vistaPitch는 불채택이며 기본 off를 유지한다. 아래 §1~4는 C안 확정 전에 작성한 선택지 비교 기록이다.
+
+## 1. 결정 전 확인 사실 (역사 기록)
 
 - `grassLite`만 켠 low worst는 **312,434 tris로 PASS**지만 근경 밀도·색감 GPU 룩 검증 중이다.
 - `grassLite+rockLite`를 켠 base worst는 **675,234 tris**로 현재 자동검사의 600K 상한을 **75,234 초과**한다.
@@ -25,13 +32,13 @@
 
 `계획서.md §4-1`은 30fps 관문(33.3ms)에 25% 마진을 둔 low 설계 목표 25ms와 함께, 지형 131K·수목 120K·마을 32K·인스턴스를 합산해 **low 600K**를 계획값으로 잡았다. 같은 표의 base 열은 **1.1M**이다. low 단발 실측 `140.35 avg / 36.07 1% low fps`(`Docs/qa/m4-regress-hookup.csv`, 약 140/37 수준)는 low에 성능 여유가 있다는 신호지만, **900p·DPR 1.5·base 효과를 측정한 값이 아니므로 base 여유의 증명은 아니다**.
 
-## 3. master 권고 — C, 원래 base 1.1M 계약 복원
+## 3. 당시 master 권고 — C, 원래 base 1.1M 계약 복원 (채택 완료)
 
 1. 단일 원본 `계획서.md §4-1`이 이미 low와 base를 600K/1.1M으로 분리하므로 새 기준을 발명하지 않는다.
 2. 제출 관문은 720p low이고 low grassLite가 312,434로 통과하므로, 잘못 확장된 low 상한 때문에 선택형 base 룩을 먼저 훼손하지 않는다.
 3. 카파시식으로 **검사기의 base 한도 한 값만** 바로잡고 재측정한다. base 실제 성능이 목표를 못 넘을 때만 §8-1의 1→2→3 순서로 값 하나씩 후퇴한다.
 
-## 4. 결정 후 실행 절차
+## 4. 결정 후 실행 절차 (R65-B 완료, GPU 재검증 진행 중)
 
 1. **master** — C 승인 시 `Automation/check-budgets.mjs`와 `로드맵.md M4-14`에서 preset별 low 600K/base 1.1M 계약을 명시하고, 변경 계약이 한 종류인지 diff로 확인한다(A/B 선택 시 각각 `quality-presets.json` 또는 `Terrain.tsx` 한 값만 변경).
 2. **worker-codex** — `Automation/scene-tris.mjs`로 low/base worst·typical을 재생성하고 `Docs/perf/m4-scene-tris.json`의 합계·예산 판정·source를 검증한다.

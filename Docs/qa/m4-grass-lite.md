@@ -1,5 +1,18 @@
 # M4 grassLite 절차적 저폴리 풀 옵션 (R56-B)
 
+> **결정(2026-08-26, master): grassLite 기본 채택.** R64-A 자동 룩 판정 `8/12`를 baseline과 동일하게 유지하면서 low worst tris를 `816,434 → 312,434`로 낮췄다. 이 문서의 기본 off 설명은 채택 전 R56-B 구현 기록이며, 기본값 전환과 GPU 재검증은 worker-claude가 main에서 진행한다.
+
+## R64-A 룩 판정
+
+`Docs/lookdev/variants/variants-result.md`의 동일 HEAD 변형 비교를 인용했다. 자동 판정은 3장 × L1·L2·L3·L5, 총 12개 기준이다.
+
+| 변형 | 자동 PASS | S3 원경 휘도 | low worst tris | R64-A 판정 | master 최종 결정 |
+|---|---:|---:|---:|---|---|
+| baseline | 8/12 | 166.4 | 미측정 | 기준 | 대체 대상 |
+| grassLite | **8/12** | 166.4 | **312,434** | ADOPT 후보 | **채택** |
+
+grassLite는 자동 PASS 수와 S3 원경 휘도를 악화시키지 않았다. rockLite·hazeDir·heroContrast·vistaPitch는 불채택이며 기본 off를 유지한다.
+
 ## 목적과 스위치
 
 - R53-B 기준 low worst는 816,434 tris로 §4-1 예산 600,000을 216,434 초과했다.
@@ -35,7 +48,7 @@ Kenney grass의 원본 accessor 범위(높이 0.254m, XZ 반경 약 0.24m)에 �
 | base | worst | 2,384,834 | 704,834 | 1,680,000 | 1.1M PASS(395,166 여유) |
 | base | typical(hero LOD1) | 2,383,136 | 703,136 | 1,680,000 | 1.1M PASS(396,864 여유) |
 
-low의 식생 합계는 664,800→160,800 tris다. base는 2,216,000→536,000 tris로 줄어 §4-1 원계약 1.1M을 통과한다. 다만 기본값은 off이므로 low 예산 완료에는 GPU 룩 검증 후 grassLite 활성화 결정이 필요하다.
+low의 식생 합계는 664,800→160,800 tris다. base는 2,216,000→536,000 tris로 줄어 §4-1 원계약 1.1M을 통과한다. R64-A 룩 검증과 master 채택 결정은 완료됐으며, low 예산 완료에는 main 기본값 반영과 최종 GPU 회귀 실측만 남는다.
 
 ## 기본 off 불변 근거
 
