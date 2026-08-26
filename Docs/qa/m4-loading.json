@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "testedHead": "f8b4c63",
+  "manifestMeasuredFromHead": "d0692ef",
+  "phaseOrder": [
+    "boot",
+    "core",
+    "detail",
+    "ready"
+  ],
+  "retry": {
+    "passed": true,
+    "retryCount": 1,
+    "totalFetchCount": 4,
+    "finalPhase": "ready"
+  },
+  "failures": {
+    "offline": {
+      "passed": true,
+      "errorName": "TypeError",
+      "message": "Failed to fetch"
+    },
+    "notFound": {
+      "passed": true,
+      "status": 404,
+      "message": "HTTP 404 Not Found: boot.sky (/env/sky.hdr)"
+    }
+  },
+  "bytes": {
+    "mockPhaseBytes": {
+      "boot": 9,
+      "core": 3,
+      "detail": 5
+    },
+    "manifestDeclared": {
+      "boot": 3197742,
+      "core": 16900,
+      "detail": 1428760
+    },
+    "mockObserved": {
+      "boot": 3197742,
+      "core": 16900,
+      "detail": 1428760
+    },
+    "currentBuildStat": {
+      "boot": 3203568,
+      "core": 16900,
+      "detail": 1428760
+    },
+    "currentBuildStatComplete": {
+      "boot": true,
+      "core": true,
+      "detail": true
+    },
+    "declaredMatchesCurrentBuild": {
+      "boot": false,
+      "core": true,
+      "detail": true
+    }
+  },
+  "manifestFileStats": [
+    {
+      "phase": "boot",
+      "id": "boot.index-html",
+      "manifestUrl": "dist/index.html",
+      "physicalPath": "dist/index.html",
+      "exists": true,
+      "statBytes": 551,
+      "declaredBytes": 538
+    },
+    {
+      "phase": "boot",
+      "id": "boot.js-main",
+      "manifestUrl": "dist/assets/main-wrfkKES9.js",
+      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "exists": true,
+      "statBytes": 832486,
+      "declaredBytes": 826673
+    },
+    {
+      "phase": "boot",
+      "id": "boot.js-renderer",
+      "manifestUrl": "dist/assets/createRenderer-C5ncXYj_.js",
+      "physicalPath": "dist/assets/createRenderer-C5ncXYj_.js",
+      "exists": true,
+      "statBytes": 941771,
+      "declaredBytes": 941771
+    },
+    {
+      "phase": "boot",
+      "id": "boot.heightmap-procedural",
+      "manifestUrl": "dist/assets/main-wrfkKES9.js",
+      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "exists": true,
+      "statBytes": 832486,
+      "declaredBytes": 0
+    },
+    {
+      "phase": "boot",
+      "id": "boot.sky-hdr",
+      "manifestUrl": "dist/env/sky_1k.hdr",
+      "physicalPath": "dist/env/sky_1k.hdr",
+      "exists": true,
+      "statBytes": 1428760,
+      "declaredBytes": 1428760
+    },
+    {
+      "phase": "core",
+      "id": "core.terrain-procedural",
+      "manifestUrl": "dist/assets/main-wrfkKES9.js",
+      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "exists": true,
+      "statBytes": 832486,
+      "declaredBytes": 0
+    },
+    {
+      "phase": "core",
+      "id": "core.vegetation-glb",
+      "manifestUrl": "dist/models/vegetation_kit.glb",
+      "physicalPath": "dist/models/vegetation_kit.glb",
+      "exists": true,
+      "statBytes": 16900,
+      "declaredBytes": 16900
+    },
+    {
+      "phase": "core",
+      "id": "core.hero-lod1-procedural",
+      "manifestUrl": "dist/assets/main-wrfkKES9.js",
+      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "exists": true,
+      "statBytes": 832486,
+      "declaredBytes": 0
+    },
+    {
+      "phase": "detail",
+      "id": "detail.village-procedural",
+      "manifestUrl": "dist/assets/main-wrfkKES9.js",
+      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "exists": true,
+      "statBytes": 832486,
+      "declaredBytes": 0
+    },
+    {
+      "phase": "detail",
+      "id": "detail.hero-lod0-procedural",
+      "manifestUrl": "dist/assets/main-wrfkKES9.js",
+      "physicalPath": "dist/assets/main-DNEexCaN.js",
+      "exists": true,
+      "statBytes": 832486,
+      "declaredBytes": 0
+    },
+    {
+      "phase": "detail",
+      "id": "detail.background-2k-tier",
+      "manifestUrl": "dist/env/sky_1k.hdr",
+      "physicalPath": "dist/env/sky_1k.hdr",
+      "exists": true,
+      "statBytes": 1428760,
+      "declaredBytes": 1428760
+    }
+  ],
+  "browserVerification": "pending-after-merge",
+  "phaseLogs": [
+    "[loading] phase boot",
+    "[loading] boot -> core",
+    "[loading] core -> detail",
+    "[loading] detail -> ready"
+  ],
+  "notes": [
+    "HTML/JavaScript are bootstrap-resident when this store starts, so they count declared bytes without duplicate fetch.",
+    "The current <=2K background tier uses the measured 1K HDR fallback because no 2K HDR exists in public/env.",
+    "Preview, browser UI, and GPU behavior must be verified by master after merge."
+  ]
+}

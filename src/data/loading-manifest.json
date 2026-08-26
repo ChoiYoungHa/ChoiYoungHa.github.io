@@ -17,15 +17,17 @@
     ],
     "detail": [
       { "id": "detail.village-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
-      { "id": "detail.hero-lod0-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" }
+      { "id": "detail.hero-lod0-procedural", "url": "dist/assets/main-wrfkKES9.js", "bytes": 0, "kind": "procedural-in-boot-js" },
+      { "id": "detail.background-2k-tier", "url": "dist/env/sky_1k.hdr", "bytes": 1428760, "kind": "hdr-2k-tier-fallback-1k" }
     ]
   },
   "summary": {
-    "phaseBytes": { "boot": 3197742, "core": 16900, "detail": 0 },
-    "cumulativeBytes": { "boot": 3197742, "core": 3214642, "detail": 3214642 },
+    "phaseBytes": { "boot": 3197742, "core": 16900, "detail": 1428760 },
+    "cumulativeBytes": { "boot": 3197742, "core": 3214642, "detail": 4643402 },
     "limitsBytes": { "boot": 4000000, "coreCumulative": 12000000, "total": 60000000 },
     "checks": { "bootWithinBudget": true, "coreWithinBudget": true, "totalWithinBudget": true },
-    "itemCount": 10,
-    "duplicateIdCount": 0
+    "itemCount": 11,
+    "duplicateIdCount": 0,
+    "detailTierNote": "No 2K HDR is present in public/env; the current <=2K tier preloads the measured sky_1k.hdr fallback."
   }
 }

@@ -14,6 +14,7 @@ import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
 import { Player } from './player/Controller'
 import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
+import { LoadingScreen, useLoadingState } from './systems/ui/LoadingScreen'
 import { CAMERA } from './player/FollowCamera'
 import { useRuntime } from './store/useRuntime'
 import { reportIfRequested } from './systems/report'
@@ -51,6 +52,7 @@ export default function App() {
   const pushError = useRuntime((s) => s.pushError)
   const preset = useRuntime((s) => s.preset)
   const quality = qualityPresets[preset]
+  const loading = useLoadingState()
   const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
   const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
 
@@ -99,6 +101,7 @@ export default function App() {
         {shot ? <VistaCamera id={shot} /> : <Player />}
       </Canvas>
       <RuntimeHud />
+      <LoadingScreen phase={loading.phase} progress={loading.progress} error={loading.error} onRetry={loading.retry} />
     </div>
   )
 }
