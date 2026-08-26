@@ -1,0 +1,19 @@
+{
+  "pig": {
+    "id": "pig",
+    "name": "돼지",
+    "level": 3,
+    "hp": 65,
+    "attack": 8,
+    "speed": 1.8,
+    "detectionRadius": 6,
+    "respawnSeconds": 8,
+    "exp": 18,
+    "drops": {
+      "meso": { "min": 10, "max": 30 },
+      "items": [
+        { "itemId": "head.pig-ribbon", "chance": 0.15, "quantity": 1 }
+      ]
+    }
+  }
+}

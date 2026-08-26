@@ -1,0 +1,60 @@
+[
+  {
+    "id": "weapon.wooden-sword",
+    "name": "나무 검",
+    "kind": "weapon",
+    "equipSlot": "weapon",
+    "jobId": "warrior",
+    "price": 800,
+    "stackLimit": 1,
+    "bonuses": { "attack": 12 }
+  },
+  {
+    "id": "weapon.hunting-bow",
+    "name": "사냥용 활",
+    "kind": "weapon",
+    "equipSlot": "weapon",
+    "jobId": "archer",
+    "price": 900,
+    "stackLimit": 1,
+    "bonuses": { "attack": 10, "range": 12 }
+  },
+  {
+    "id": "weapon.oak-staff",
+    "name": "참나무 지팡이",
+    "kind": "weapon",
+    "equipSlot": "weapon",
+    "jobId": "mage",
+    "price": 1000,
+    "stackLimit": 1,
+    "bonuses": { "magic": 14 }
+  },
+  {
+    "id": "weapon.iron-dagger",
+    "name": "철 단검",
+    "kind": "weapon",
+    "equipSlot": "weapon",
+    "jobId": "thief",
+    "price": 850,
+    "stackLimit": 1,
+    "bonuses": { "attack": 11, "attackSpeedPercent": 15 }
+  },
+  {
+    "id": "currency.meso",
+    "name": "메소",
+    "kind": "currency",
+    "price": 0,
+    "stackLimit": 999999,
+    "bonuses": {}
+  },
+  {
+    "id": "head.pig-ribbon",
+    "name": "돼지리본",
+    "kind": "head",
+    "equipSlot": "head",
+    "price": 0,
+    "sellPrice": 120,
+    "stackLimit": 20,
+    "bonuses": { "luck": 1 }
+  }
+]
