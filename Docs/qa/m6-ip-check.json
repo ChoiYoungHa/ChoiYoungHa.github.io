@@ -1,0 +1,107 @@
+{
+  "schema": "ip-check/1",
+  "mode": "dist",
+  "root": "dist",
+  "dist": {
+    "status": "scanned",
+    "root": "dist",
+    "files": 13
+  },
+  "denylist": {
+    "file": "src/game/data/ip-denylist.json",
+    "terms": [
+      "헤네시스",
+      "스탄",
+      "메소",
+      "돼지리본",
+      "메이플",
+      "Henesys",
+      "Stan",
+      "Meso",
+      "MapleStory"
+    ]
+  },
+  "ipPolicy": {
+    "i18nFile": null,
+    "stringsFile": null,
+    "defaultMode": "unavailable",
+    "forcedOwn": false,
+    "contiTerms": []
+  },
+  "contiTreeShaking": {
+    "status": "not-assessable",
+    "reason": "src/game/data/strings.ko.json is not present at this HEAD"
+  },
+  "checks": {
+    "forbiddenNames": {
+      "status": "pass",
+      "count": 0,
+      "failCount": 0,
+      "warnCount": 0,
+      "matches": []
+    },
+    "referenceImageHashes": {
+      "status": "pass",
+      "expectedCount": 4,
+      "references": [
+        {
+          "file": "../asset/돼지의공원.png",
+          "sha256": "be17040d08b8a22c0fb4e08c975fe70f2b2f0df35c36d39ccd8a53a8e0432570"
+        },
+        {
+          "file": "../asset/상점 npc.png",
+          "sha256": "ed8f98e2e48e5def6063105b04f179758f41ba9232468f555b44c6b40da49e3e"
+        },
+        {
+          "file": "../asset/장로스탄.png",
+          "sha256": "a157864bda2fc1a5f8d67aaa8c312e653934898cb5b96aad97f156df18e0746f"
+        },
+        {
+          "file": "../asset/헤네시스.png",
+          "sha256": "88848112fa4816a4222d921f4563d353a712c85e56c0b144e70332e9d81ce9ca"
+        }
+      ],
+      "matches": [],
+      "reason": null
+    },
+    "registeredAssets": {
+      "status": "fail",
+      "ledger": "src/data/assets.csv",
+      "assetFiles": [
+        "env/sky_1k.hdr",
+        "favicon.svg",
+        "icons.svg",
+        "models/props_rocks.glb",
+        "models/vegetation_kit.glb"
+      ],
+      "registeredPaths": [
+        "env/sky_1k.hdr",
+        "models/char_player.glb",
+        "models/hero_tree.glb",
+        "models/house_a.glb",
+        "models/house_b.glb",
+        "models/house_c.glb",
+        "models/npc_maya.glb",
+        "models/npc_stan.glb",
+        "models/prop_arch.glb",
+        "models/prop_banner.glb",
+        "models/prop_fence.glb",
+        "models/prop_stonewall.glb",
+        "models/props_rocks.glb",
+        "models/vegetation_kit.glb",
+        "textures/grass_card.png",
+        "textures/ground_dirt_diffuse.jpg",
+        "textures/ground_grass_diffuse.jpg",
+        "ui/items/wpn-sword-wooden.png"
+      ],
+      "setPrefixes": [
+        "ui/items/"
+      ],
+      "unregisteredFiles": [
+        "favicon.svg",
+        "icons.svg"
+      ]
+    }
+  },
+  "result": "FAIL"
+}
