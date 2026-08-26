@@ -41,6 +41,13 @@ import { SkillFx } from './fx/SkillFx.tsx'
 
 const NPC_SCALE = 0.01
 const PIG_SCALE = 0.005
+/**
+ * R114-A (D5): mob_pig.glb 는 텍스처 0·baseColor 없음에 COLOR_0 평균이 sRGB(132,121,131) 회보라라
+ * 노출 0.44 아래서 근접 시 검게 보였다(그림자·법선·wobble 무관 — Docs/qa/m6-r114/d5). 정점색 디테일(눈·발굽)은
+ * 유지하고 재질 color 로 분홍 틴트 × 게인을 곱해 휘도를 올린다(A/B: gain 2 는 어둡고 3 이 판독 가능).
+ */
+const PIG_TINT = '#f2a7bd'
+const PIG_TINT_GAIN = 3.0
 const MAX_PIGS = 10
 const MAX_DROPS = 24
 const DROP_COLORS = { meso: new Color('#ffd35a'), item: new Color('#ff7eb6') } as const
@@ -155,7 +162,11 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     [stonewall.scene],
   )
   const pigAsset = useMemo(() => bakeAsset(pig.scene), [pig.scene])
-  const pigMaterial = useMemo(() => createMobWobbleMaterial(pigAsset.material), [pigAsset.material])
+  const pigMaterial = useMemo(() => {
+    const material = createMobWobbleMaterial(pigAsset.material)
+    for (const entry of Array.isArray(material) ? material : [material]) entry.color.set(PIG_TINT).multiplyScalar(PIG_TINT_GAIN)
+    return material
+  }, [pigAsset.material])
   const pigSpeed = useMemo(() => {
     const attribute = new InstancedBufferAttribute(new Float32Array(MAX_PIGS), 1).setUsage(DynamicDrawUsage)
     pigAsset.geometry.setAttribute('speed', attribute)
@@ -307,7 +318,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
         </group>
       ))}
       <instancedMesh ref={pigRef} args={[pigAsset.geometry, pigMaterial, MAX_PIGS]} frustumCulled={false} castShadow receiveShadow />
-      <instancedMesh ref={terraceRef} args={[rockAsset.geometry, rockAsset.material, terracePoints.length]} castShadow receiveShadow />
+      <instancedMesh ref={terraceRef} args={[rockAsset.geometry, rockAsset.material, terracePoints.length]} receiveShadow />
       {placement.props.filter(({ kind }) => kind === 'statue').map((statue, index) => (
         <primitive
           key={`statue-${index}`}

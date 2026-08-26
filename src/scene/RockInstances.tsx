@@ -134,7 +134,7 @@ function RockSpecies({
       ref={ref}
       name={`rock-${name}`}
       args={[geometry, material, points.length]}
-      castShadow
+      // R114-A: 산재 바위 castShadow off — 사냥 중 WebGPU pipelines 절감(제안 A ≤48). 룩 손실은 바위 접지 그림자뿐.
       receiveShadow
     />
   )

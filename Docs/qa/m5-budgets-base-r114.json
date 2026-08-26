@@ -1,0 +1,49 @@
+{
+  "pass": true,
+  "preset": "base",
+  "source": "계획서 §10 정정 #3 (A 채택, 2026-08-27)",
+  "checks": {
+    "calls": {
+      "value": 63,
+      "limit": 350,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "tris": {
+      "value": 704834,
+      "limit": 1100000,
+      "status": "pass",
+      "allowUnknown": true,
+      "method": "estimated(source)",
+      "scenario": "worstCase",
+      "source": "Docs/perf/m5-scene-tris-base.json"
+    },
+    "pipelines": {
+      "value": 45,
+      "limit": 48,
+      "status": "pass",
+      "allowUnknown": true,
+      "method": "measured(probe)",
+      "source": "Docs/qa/m6-r114/pipelines-bench-base-after.json"
+    },
+    "textureGPU": {
+      "value": 101.8,
+      "limit": 550,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "JSheap": {
+      "value": 241.87,
+      "limit": 1200,
+      "status": "pass",
+      "allowUnknown": false
+    },
+    "programs": {
+      "value": 62,
+      "status": "reference",
+      "evaluated": false,
+      "reason": "참고값(예산 판정 제외)"
+    }
+  },
+  "warnings": []
+}

@@ -1,0 +1,14 @@
+{
+  "id": "m5-gate-perf-base",
+  "round": "R114-A",
+  "source": "Docs/perf/m5-bench-base-r114.csv median",
+  "perf": {
+    "maxCalls": 63,
+    "maxPrograms": 62,
+    "textureGpuMB": 101.8,
+    "jsHeapPeakMB": 241.87,
+    "avgFps": 130.17,
+    "onePercentLowFps": 22.31,
+    "oneSecondHitches": 0
+  }
+}
