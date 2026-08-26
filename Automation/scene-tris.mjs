@@ -5,8 +5,9 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, relative, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-const BUDGET_LIMIT = 600_000
 const PRESETS = new Set(['low', 'base'])
+const TRIS_BUDGETS = Object.freeze({ low: 600_000, base: 1_100_000 })
+const BUDGET_SOURCE = '계획서 §4-1'
 const SCRIPT_PATH = fileURLToPath(import.meta.url)
 
 export function parseSceneTrisArgs(args) {
@@ -54,71 +55,76 @@ export async function buildSceneTrisReport(preset, root = resolve(dirname(SCRIPT
     low: buildPresetScenarios('low', shared, presetInputs.low),
     base: buildPresetScenarios('base', shared, presetInputs.base),
   }
-  let activeInputs = presetInputs
-  let reports = baselineReports
-  let grassLiteReports
-  const features = []
-  const directGenerators = []
-  if (options.grassLite) {
-    const generatorRef = 'src/scene/foliage/grassLiteGeometry.ts'
-    const module = await import(pathToFileURL(resolve(root, generatorRef)).href)
-    const geometry = module.buildGrassLiteGeometry()
-    activeInputs = {
-      low: applyGrassLite(activeInputs.low, geometry, generatorRef),
-      base: applyGrassLite(activeInputs.base, geometry, generatorRef),
-    }
-    reports = {
-      low: buildPresetScenarios('low', shared, activeInputs.low),
-      base: buildPresetScenarios('base', shared, activeInputs.base),
-    }
-    grassLiteReports = reports
-    const metadata = {
-      id: 'grassLite',
-      source: generatorRef,
-      seed: geometry.seed,
-      trianglesPerGrass: geometry.triangleCount,
-      bounds: geometry.bounds,
-    }
-    features.push(metadata)
-    directGenerators.push({ ref: generatorRef, values: { trianglesPerGrass: geometry.triangleCount, seed: geometry.seed } })
+  const grassRef = 'src/scene/foliage/grassLiteGeometry.ts'
+  const rockRef = 'src/scene/foliage/rockLiteGeometry.ts'
+  const [grassModule, rockModule] = await Promise.all([
+    import(pathToFileURL(resolve(root, grassRef)).href),
+    import(pathToFileURL(resolve(root, rockRef)).href),
+  ])
+  const grassGeometry = grassModule.buildGrassLiteGeometry()
+  const rockGeometry = rockModule.buildRockLiteGeometry()
+  const grassInputs = mapPresetInputs(presetInputs, (input) => applyGrassLite(input, grassGeometry, grassRef))
+  const rockInputs = mapPresetInputs(presetInputs, (input) => applyRockLite(input, rockGeometry, rockRef))
+  const comboInputs = mapPresetInputs(grassInputs, (input) => applyRockLite(input, rockGeometry, rockRef))
+  const reportSets = {
+    baseline: baselineReports,
+    'grass-lite': buildReports(shared, grassInputs),
+    'rock-lite': buildReports(shared, rockInputs),
+    combo: buildReports(shared, comboInputs),
   }
-  if (options.rockLite) {
-    const generatorRef = 'src/scene/foliage/rockLiteGeometry.ts'
-    const module = await import(pathToFileURL(resolve(root, generatorRef)).href)
-    const geometry = module.buildRockLiteGeometry()
-    activeInputs = {
-      low: applyRockLite(activeInputs.low, geometry, generatorRef),
-      base: applyRockLite(activeInputs.base, geometry, generatorRef),
-    }
-    reports = {
-      low: buildPresetScenarios('low', shared, activeInputs.low),
-      base: buildPresetScenarios('base', shared, activeInputs.base),
-    }
-    const metadata = {
-      id: 'rockLite',
-      source: generatorRef,
-      seed: geometry.seed,
-      trianglesPerRock: geometry.triangleCount,
-      bounds: geometry.bounds,
-    }
-    features.push(metadata)
-    directGenerators.push({ ref: generatorRef, values: { trianglesPerRock: geometry.triangleCount, seed: geometry.seed } })
+  const activeVariant = variantName(options)
+  const reports = reportSets[activeVariant]
+  const grassMetadata = {
+    id: 'grassLite',
+    source: grassRef,
+    seed: grassGeometry.seed,
+    trianglesPerGrass: grassGeometry.triangleCount,
+    bounds: grassGeometry.bounds,
   }
-  const variant = features.length > 0 ? {
-    id: features.map(({ id }) => id).join('+'),
+  const rockMetadata = {
+    id: 'rockLite',
+    source: rockRef,
+    seed: rockGeometry.seed,
+    trianglesPerRock: rockGeometry.triangleCount,
+    bounds: rockGeometry.bounds,
+  }
+  const activeMetadata = activeVariant === 'grass-lite'
+    ? [grassMetadata]
+    : activeVariant === 'rock-lite'
+      ? [rockMetadata]
+      : activeVariant === 'combo'
+        ? [grassMetadata, rockMetadata]
+        : []
+  const variant = activeMetadata.length > 0 ? {
+    id: activeMetadata.map(({ id }) => id).join('+'),
     enabled: true,
-    ...(features.length === 1 ? features[0] : { features: Object.fromEntries(features.map(({ id, ...metadata }) => [id, metadata])) }),
-    baselineComparison: buildComparison(baselineReports),
-    ...(features.length > 1 && grassLiteReports ? { grassLiteComparison: buildComparison(grassLiteReports) } : {}),
+    ...(activeMetadata.length === 1
+      ? activeMetadata[0]
+      : { features: Object.fromEntries(activeMetadata.map(({ id, ...metadata }) => [id, metadata])) }),
+    baselineComparison: buildComparison(reportSets.baseline),
+    ...(activeVariant === 'combo' ? { grassLiteComparison: buildComparison(reportSets['grass-lite']) } : {}),
   } : undefined
+  const directGenerators = activeMetadata.map((metadata) => ({
+    ref: metadata.source,
+    values: metadata.id === 'grassLite'
+      ? { trianglesPerGrass: metadata.trianglesPerGrass, seed: metadata.seed }
+      : { trianglesPerRock: metadata.trianglesPerRock, seed: metadata.seed },
+  }))
   const selected = reports[preset]
 
   return {
     schema: 'scene-tris/1',
     buildHash: execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
     preset,
-    budgetLimitTriangles: BUDGET_LIMIT,
+    budgetLimitTriangles: budgetLimitForPreset(preset),
+    source: BUDGET_SOURCE,
     method: 'source-derived conservative scene submission count; no renderer.info dependency',
+    outputContract: {
+      pattern: 'Docs/perf/m4-scene-tris-<variant>.json',
+      variant: activeVariant,
+      recommendedFile: `Docs/perf/m4-scene-tris-${activeVariant}.json`,
+    },
+    variantSummary: buildVariantSummary(reportSets),
     ...(variant ? { variant } : {}),
     inputs: selected.inputs,
     scenarios: selected.scenarios,
@@ -134,7 +140,7 @@ export async function buildSceneTrisReport(preset, root = resolve(dirname(SCRIPT
       'Worst case and typical both conservatively retain all 16 terrain chunks, path, village, foliage, and rocks; typical changes only the hero tree to LOD1.',
       'No camera pose was supplied for a reproducible frustum/instance visibility reduction, so this report does not claim a lower on-screen count.',
       variant
-        ? `${options.grassLite ? 'grass uses grassLite; ' : ''}${options.rockLite ? 'rocks use rockLite; ' : ''}remaining GLB species use ledger values cross-checked against their binaries.`
+        ? `${activeVariant === 'grass-lite' || activeVariant === 'combo' ? 'grass uses grassLite; ' : ''}${activeVariant === 'rock-lite' || activeVariant === 'combo' ? 'rocks use rockLite; ' : ''}remaining GLB species use ledger values cross-checked against their binaries.`
         : 'GLB per-species triangles come from the 19-column asset ledger; procedural hero triangles are executed directly from the pure generator.',
     ],
   }
@@ -265,6 +271,33 @@ async function loadPresetInputs(root, preset, assets) {
   return { foliage, rocks }
 }
 
+function mapPresetInputs(inputs, transform) {
+  return {
+    low: transform(inputs.low),
+    base: transform(inputs.base),
+  }
+}
+
+function buildReports(shared, inputs) {
+  return {
+    low: buildPresetScenarios('low', shared, inputs.low),
+    base: buildPresetScenarios('base', shared, inputs.base),
+  }
+}
+
+function variantName(options) {
+  if (options.grassLite && options.rockLite) return 'combo'
+  if (options.grassLite) return 'grass-lite'
+  if (options.rockLite) return 'rock-lite'
+  return 'baseline'
+}
+
+function budgetLimitForPreset(preset) {
+  const limit = TRIS_BUDGETS[preset]
+  if (!Number.isInteger(limit)) throw new Error(`missing tris budget for preset: ${preset}`)
+  return limit
+}
+
 function buildPresetScenarios(preset, shared, presetInputs) {
   const staticInputs = {
     terrain: shared.terrain,
@@ -288,7 +321,7 @@ function buildPresetScenarios(preset, shared, presetInputs) {
       presetInputs.rocks.refs,
     ),
   }
-  const worst = scenario('worstCase', {
+  const worst = scenario(preset, 'worstCase', {
     ...common,
     heroTree: component(shared.heroTree.lod0Triangles, 'direct-generator', shared.refs.hero),
   }, [
@@ -296,7 +329,7 @@ function buildPresetScenarios(preset, shared, presetInputs) {
     `all ${presetInputs.foliage.totalInstances} foliage and ${presetInputs.rocks.totalInstances} rocks visible; grass=${presetInputs.foliage.grassLite ? 'procedural grassLite' : 'current GLB LOD0'}; rocks=${presetInputs.rocks.rockLite ? 'procedural rockLite' : 'current GLB LOD0'}`,
     'all 16 terrain chunks, path, and 8 village buildings retained',
   ])
-  const typical = scenario('typical', {
+  const typical = scenario(preset, 'typical', {
     ...common,
     heroTree: component(shared.heroTree.lod1Triangles, 'direct-generator', shared.refs.hero),
   }, [
@@ -370,8 +403,26 @@ function buildComparison(reports) {
   )
 }
 
-function scenario(id, rawComponents, assumptions) {
+function buildVariantSummary(reportSets) {
+  return Object.entries(reportSets).map(([variant, reports]) => ({
+    variant,
+    low: summaryRow(reports.low),
+    base: summaryRow(reports.base),
+  }))
+}
+
+function summaryRow(report) {
+  return {
+    worstCaseTriangles: report.scenarios.worstCase.totalTriangles,
+    typicalTriangles: report.scenarios.typical.totalTriangles,
+    limit: report.scenarios.worstCase.budget.limit,
+    status: report.scenarios.worstCase.budget.status,
+  }
+}
+
+function scenario(preset, id, rawComponents, assumptions) {
   const totalTriangles = Object.values(rawComponents).reduce((total, item) => total + item.triangles, 0)
+  const limit = budgetLimitForPreset(preset)
   const components = Object.fromEntries(
     Object.entries(rawComponents).map(([name, item]) => [name, {
       ...item,
@@ -384,10 +435,11 @@ function scenario(id, rawComponents, assumptions) {
     components,
     totalTriangles,
     budget: {
-      limit: BUDGET_LIMIT,
-      status: totalTriangles <= BUDGET_LIMIT ? 'pass' : 'fail',
-      headroom: BUDGET_LIMIT - totalTriangles,
-      overBy: Math.max(0, totalTriangles - BUDGET_LIMIT),
+      limit,
+      source: BUDGET_SOURCE,
+      status: totalTriangles <= limit ? 'pass' : 'fail',
+      headroom: limit - totalTriangles,
+      overBy: Math.max(0, totalTriangles - limit),
     },
   }
 }

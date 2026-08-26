@@ -7,8 +7,8 @@
   "method": "source-derived conservative scene submission count; no renderer.info dependency",
   "outputContract": {
     "pattern": "Docs/perf/m4-scene-tris-<variant>.json",
-    "variant": "combo",
-    "recommendedFile": "Docs/perf/m4-scene-tris-combo.json"
+    "variant": "rock-lite",
+    "recommendedFile": "Docs/perf/m4-scene-tris-rock-lite.json"
   },
   "variantSummary": [
     {
@@ -73,29 +73,15 @@
     }
   ],
   "variant": {
-    "id": "grassLite+rockLite",
+    "id": "rockLite",
     "enabled": true,
-    "features": {
-      "grassLite": {
-        "source": "src/scene/foliage/grassLiteGeometry.ts",
-        "seed": 539363366,
-        "trianglesPerGrass": 12,
-        "bounds": {
-          "minY": 0,
-          "maxY": 0.268513481579721,
-          "radiusXZ": 0.19205688967369502
-        }
-      },
-      "rockLite": {
-        "source": "src/scene/foliage/rockLiteGeometry.ts",
-        "seed": 539363366,
-        "trianglesPerRock": 8,
-        "bounds": {
-          "minY": 0,
-          "maxY": 0.4616732865944505,
-          "radiusXZ": 0.3655197428773254
-        }
-      }
+    "source": "src/scene/foliage/rockLiteGeometry.ts",
+    "seed": 539363366,
+    "trianglesPerRock": 8,
+    "bounds": {
+      "minY": 0,
+      "maxY": 0.4616732865944505,
+      "radiusXZ": 0.3655197428773254
     },
     "baselineComparison": {
       "low": {
@@ -122,34 +108,6 @@
           "foliageInstances": 92.920514,
           "rockInstances": 1.442448,
           "heroTree": 0.101307
-        }
-      }
-    },
-    "grassLiteComparison": {
-      "low": {
-        "worstCaseTriangles": 312434,
-        "typicalTriangles": 310736,
-        "budgetStatus": "pass",
-        "worstCaseComponentRatiosPct": {
-          "terrain": 41.9519,
-          "mainPath": 0.152992,
-          "village": 0.149792,
-          "foliageInstances": 51.46687,
-          "rockInstances": 5.505163,
-          "heroTree": 0.773283
-        }
-      },
-      "base": {
-        "worstCaseTriangles": 704834,
-        "typicalTriangles": 703136,
-        "budgetStatus": "pass",
-        "worstCaseComponentRatiosPct": {
-          "terrain": 18.596152,
-          "mainPath": 0.067817,
-          "village": 0.066399,
-          "foliageInstances": 76.046275,
-          "rockInstances": 4.880582,
-          "heroTree": 0.342776
         }
       }
     }
@@ -200,18 +158,18 @@
         "plant_bush": 600
       },
       "trianglesEach": {
-        "grass": 12,
+        "grass": 132,
         "flower_yellowA": 76,
         "plant_bush": 32
       },
       "trianglesBySpecies": {
-        "grass": 50400,
+        "grass": 554400,
         "flower_yellowA": 91200,
         "plant_bush": 19200
       },
-      "triangleCount": 160800,
+      "triangleCount": 664800,
       "radius": 25,
-      "refs": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv + src/scene/foliage/grassLiteGeometry.ts",
+      "refs": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv",
       "runtimeGlb": {
         "ref": "public/models/vegetation_kit.glb",
         "bytes": 16900,
@@ -223,16 +181,6 @@
           "Mesh flower_yellowA",
           "Mesh plant_bush"
         ]
-      },
-      "grassLite": {
-        "enabled": true,
-        "seed": 539363366,
-        "trianglesPerGrass": 12,
-        "bounds": {
-          "minY": 0,
-          "maxY": 0.268513481579721,
-          "radiusXZ": 0.19205688967369502
-        }
       }
     },
     "rocks": {
@@ -284,7 +232,7 @@
       "id": "worstCase",
       "assumptions": [
         "hero tree LOD0",
-        "all 6000 foliage and 300 rocks visible; grass=procedural grassLite; rocks=procedural rockLite",
+        "all 6000 foliage and 300 rocks visible; grass=current GLB LOD0; rocks=procedural rockLite",
         "all 16 terrain chunks, path, and 8 village buildings retained"
       ],
       "components": {
@@ -294,7 +242,7 @@
             "method": "source-formula",
             "ref": "src/scene/Terrain.tsx"
           },
-          "ratioPct": 44.03798
+          "ratioPct": 16.350604
         },
         "mainPath": {
           "triangles": 478,
@@ -302,7 +250,7 @@
             "method": "source-formula",
             "ref": "src/scene/MainPath.tsx"
           },
-          "ratioPct": 0.1606
+          "ratioPct": 0.059628
         },
         "village": {
           "triangles": 468,
@@ -310,15 +258,15 @@
             "method": "qa-json+placement",
             "ref": "Docs/qa/m2-house-a.json + src/data/placement.json"
           },
-          "ratioPct": 0.15724
+          "ratioPct": 0.058381
         },
         "foliageInstances": {
-          "triangles": 160800,
+          "triangles": 664800,
           "source": {
-            "method": "direct-generator+assets-csv+runtime-policy",
-            "ref": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv + src/scene/foliage/grassLiteGeometry.ts"
+            "method": "assets-csv+glb-total+runtime-policy",
+            "ref": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv"
           },
-          "ratioPct": 54.026086
+          "ratioPct": 82.930614
         },
         "rockInstances": {
           "triangles": 2400,
@@ -326,7 +274,7 @@
             "method": "direct-generator+runtime-policy",
             "ref": "src/data/quality-presets.json + src/scene/RockInstances.tsx + src/data/assets.csv + src/scene/foliage/rockLiteGeometry.ts"
           },
-          "ratioPct": 0.806359
+          "ratioPct": 0.299388
         },
         "heroTree": {
           "triangles": 2416,
@@ -334,16 +282,16 @@
             "method": "direct-generator",
             "ref": "src/scene/hero/heroTreeGeometry.ts"
           },
-          "ratioPct": 0.811735
+          "ratioPct": 0.301384
         }
       },
-      "totalTriangles": 297634,
+      "totalTriangles": 801634,
       "budget": {
         "limit": 600000,
         "source": "계획서 §4-1",
-        "status": "pass",
-        "headroom": 302366,
-        "overBy": 0
+        "status": "fail",
+        "headroom": -201634,
+        "overBy": 201634
       }
     },
     "typical": {
@@ -360,7 +308,7 @@
             "method": "source-formula",
             "ref": "src/scene/Terrain.tsx"
           },
-          "ratioPct": 44.290657
+          "ratioPct": 16.385311
         },
         "mainPath": {
           "triangles": 478,
@@ -368,7 +316,7 @@
             "method": "source-formula",
             "ref": "src/scene/MainPath.tsx"
           },
-          "ratioPct": 0.161521
+          "ratioPct": 0.059755
         },
         "village": {
           "triangles": 468,
@@ -376,15 +324,15 @@
             "method": "qa-json+placement",
             "ref": "Docs/qa/m2-house-a.json + src/data/placement.json"
           },
-          "ratioPct": 0.158142
+          "ratioPct": 0.058505
         },
         "foliageInstances": {
-          "triangles": 160800,
+          "triangles": 664800,
           "source": {
-            "method": "direct-generator+assets-csv+runtime-policy",
-            "ref": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv + src/scene/foliage/grassLiteGeometry.ts"
+            "method": "assets-csv+glb-total+runtime-policy",
+            "ref": "src/data/quality-presets.json + src/scene/Foliage.tsx + src/data/assets.csv"
           },
-          "ratioPct": 54.336073
+          "ratioPct": 83.106649
         },
         "rockInstances": {
           "triangles": 2400,
@@ -392,7 +340,7 @@
             "method": "direct-generator+runtime-policy",
             "ref": "src/data/quality-presets.json + src/scene/RockInstances.tsx + src/data/assets.csv + src/scene/foliage/rockLiteGeometry.ts"
           },
-          "ratioPct": 0.810986
+          "ratioPct": 0.300024
         },
         "heroTree": {
           "triangles": 718,
@@ -400,44 +348,44 @@
             "method": "direct-generator",
             "ref": "src/scene/hero/heroTreeGeometry.ts"
           },
-          "ratioPct": 0.24262
+          "ratioPct": 0.089757
         }
       },
-      "totalTriangles": 295936,
+      "totalTriangles": 799936,
       "budget": {
         "limit": 600000,
         "source": "계획서 §4-1",
-        "status": "pass",
-        "headroom": 304064,
-        "overBy": 0
+        "status": "fail",
+        "headroom": -199936,
+        "overBy": 199936
       }
     }
   },
   "comparison": {
     "low": {
-      "worstCaseTriangles": 297634,
-      "typicalTriangles": 295936,
-      "budgetStatus": "pass",
+      "worstCaseTriangles": 801634,
+      "typicalTriangles": 799936,
+      "budgetStatus": "fail",
       "worstCaseComponentRatiosPct": {
-        "terrain": 44.03798,
-        "mainPath": 0.1606,
-        "village": 0.15724,
-        "foliageInstances": 54.026086,
-        "rockInstances": 0.806359,
-        "heroTree": 0.811735
+        "terrain": 16.350604,
+        "mainPath": 0.059628,
+        "village": 0.058381,
+        "foliageInstances": 82.930614,
+        "rockInstances": 0.299388,
+        "heroTree": 0.301384
       }
     },
     "base": {
-      "worstCaseTriangles": 675234,
-      "typicalTriangles": 673536,
-      "budgetStatus": "pass",
+      "worstCaseTriangles": 2355234,
+      "typicalTriangles": 2353536,
+      "budgetStatus": "fail",
       "worstCaseComponentRatiosPct": {
-        "terrain": 19.411345,
-        "mainPath": 0.07079,
-        "village": 0.069309,
-        "foliageInstances": 79.379889,
-        "rockInstances": 0.710865,
-        "heroTree": 0.357802
+        "terrain": 5.565137,
+        "mainPath": 0.020295,
+        "village": 0.019871,
+        "foliageInstances": 94.088316,
+        "rockInstances": 0.203801,
+        "heroTree": 0.10258
       }
     }
   },
@@ -448,13 +396,6 @@
         "values": {
           "lod0": 2416,
           "lod1": 718
-        }
-      },
-      {
-        "ref": "src/scene/foliage/grassLiteGeometry.ts",
-        "values": {
-          "trianglesPerGrass": 12,
-          "seed": 539363366
         }
       },
       {
@@ -509,6 +450,6 @@
   "limitations": [
     "Worst case and typical both conservatively retain all 16 terrain chunks, path, village, foliage, and rocks; typical changes only the hero tree to LOD1.",
     "No camera pose was supplied for a reproducible frustum/instance visibility reduction, so this report does not claim a lower on-screen count.",
-    "grass uses grassLite; rocks use rockLite; remaining GLB species use ledger values cross-checked against their binaries."
+    "rocks use rockLite; remaining GLB species use ledger values cross-checked against their binaries."
   ]
 }

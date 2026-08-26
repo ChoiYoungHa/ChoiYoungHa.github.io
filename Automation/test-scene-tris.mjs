@@ -69,8 +69,10 @@ test('low sums every component and exposes auditable sources', async () => {
   assert.ok(report.sourceSummary.sourceFormula.length >= 2)
 })
 
-test('base comparison uses preset instance counts and remains over budget', async () => {
+test('base comparison uses the original 1.1M contract', async () => {
   const report = await buildSceneTrisReport('base', ROOT)
+  assert.equal(report.budgetLimitTriangles, 1100000)
+  assert.equal(report.source, '계획서 §4-1')
   assert.equal(report.scenarios.worstCase.totalTriangles, 2384834)
   assert.equal(report.scenarios.typical.totalTriangles, 2383136)
   assert.equal(report.comparison.low.worstCaseTriangles, 816434)
@@ -79,6 +81,26 @@ test('base comparison uses preset instance counts and remains over budget', asyn
   assert.equal(report.comparison.base.worstCaseComponentRatiosPct.foliageInstances, 92.920514)
   assert.equal(report.comparison.low.budgetStatus, 'fail')
   assert.equal(report.comparison.base.budgetStatus, 'fail')
+})
+
+test('default report summarizes all four variants for low and base contracts', async () => {
+  const report = await buildSceneTrisReport('low', ROOT)
+  assert.equal(report.budgetLimitTriangles, 600000)
+  assert.equal(report.source, '계획서 §4-1')
+  assert.deepEqual(report.outputContract, {
+    pattern: 'Docs/perf/m4-scene-tris-<variant>.json',
+    variant: 'baseline',
+    recommendedFile: 'Docs/perf/m4-scene-tris-baseline.json',
+  })
+  assert.deepEqual(
+    report.variantSummary.map(({ variant, low, base }) => ({ variant, low, base })),
+    [
+      { variant: 'baseline', low: { worstCaseTriangles: 816434, typicalTriangles: 814736, limit: 600000, status: 'fail' }, base: { worstCaseTriangles: 2384834, typicalTriangles: 2383136, limit: 1100000, status: 'fail' } },
+      { variant: 'grass-lite', low: { worstCaseTriangles: 312434, typicalTriangles: 310736, limit: 600000, status: 'pass' }, base: { worstCaseTriangles: 704834, typicalTriangles: 703136, limit: 1100000, status: 'pass' } },
+      { variant: 'rock-lite', low: { worstCaseTriangles: 801634, typicalTriangles: 799936, limit: 600000, status: 'fail' }, base: { worstCaseTriangles: 2355234, typicalTriangles: 2353536, limit: 1100000, status: 'fail' } },
+      { variant: 'combo', low: { worstCaseTriangles: 297634, typicalTriangles: 295936, limit: 600000, status: 'pass' }, base: { worstCaseTriangles: 675234, typicalTriangles: 673536, limit: 1100000, status: 'pass' } },
+    ],
+  )
 })
 
 test('CLI writes JSON and check-budgets consumes worst-case tris as estimated(source)', () => {
@@ -118,4 +140,65 @@ test('CLI writes JSON and check-budgets consumes worst-case tris as estimated(so
   } finally {
     rmSync(temporary, { recursive: true, force: true })
   }
+})
+
+test('check-budgets applies every base limit from 계획서 §4-1', () => {
+  const temporary = mkdtempSync(join(tmpdir(), 'scene-tris-base-'))
+  const trisPath = join(temporary, 'tris.json')
+  const perfPath = join(temporary, 'perf.json')
+  try {
+    const cli = spawnSync(
+      process.execPath,
+      [SCRIPT, '--preset', 'base', '--grass-lite', '--rock-lite', '--out', trisPath],
+      { cwd: ROOT, encoding: 'utf8' },
+    )
+    assert.equal(cli.status, 0, cli.stderr)
+    writeFileSync(perfPath, JSON.stringify({
+      maxCalls: 300,
+      maxTriangles: 0,
+      maxPrograms: 50,
+      textureGpuMB: 500,
+      jsHeapPeakMB: 1100,
+    }))
+    const budget = spawnSync(
+      process.execPath,
+      [BUDGET_CHECKER, perfPath, '--preset', 'base', '--tris-json', trisPath],
+      { cwd: ROOT, encoding: 'utf8' },
+    )
+    assert.equal(budget.status, 0, budget.stderr)
+    const result = JSON.parse(budget.stdout)
+    assert.equal(result.preset, 'base')
+    assert.equal(result.source, '계획서 §4-1')
+    assert.deepEqual(Object.fromEntries(Object.entries(result.checks).map(([key, value]) => [key, value.limit])), {
+      calls: 350,
+      tris: 1100000,
+      programs: 56,
+      textureGPU: 550,
+      JSheap: 1200,
+    })
+    assert.equal(result.checks.tris.value, 675234)
+    assert.equal(result.pass, true)
+  } finally {
+    rmSync(temporary, { recursive: true, force: true })
+  }
+})
+
+test('repository evidence keeps baseline, grassLite, rockLite, and combo in separate files', () => {
+  const files = [
+    ['m4-scene-tris-baseline.json', 'baseline'],
+    ['m4-scene-tris-grass-lite.json', 'grass-lite'],
+    ['m4-scene-tris-rock-lite.json', 'rock-lite'],
+    ['m4-scene-tris-combo.json', 'combo'],
+  ]
+  for (const [file, variant] of files) {
+    const report = JSON.parse(readFileSync(resolve(ROOT, 'Docs', 'perf', file), 'utf8'))
+    assert.equal(report.outputContract.variant, variant)
+    assert.equal(report.outputContract.recommendedFile, `Docs/perf/${file}`)
+    assert.equal(report.variantSummary.length, 4)
+    assert.equal(report.source, '계획서 §4-1')
+  }
+  const overview = JSON.parse(readFileSync(resolve(ROOT, 'Docs', 'perf', 'm4-scene-tris.json'), 'utf8'))
+  assert.equal(overview.variantSummary.length, 4)
+  assert.equal(overview.comparison.base.worstCaseTriangles, 675234)
+  assert.equal(overview.comparison.base.budgetStatus, 'pass')
 })
