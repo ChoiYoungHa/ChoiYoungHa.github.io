@@ -32,22 +32,25 @@ npm ci && npm run build && npm run preview
 | M0b | 조건부 PASS | 143.28 / 72.04 | 143.69 / 93.75 | 905.75s, crash 0, TDR 0 | 영하님 육안 약 2GB; 정밀 CSV·캡처 보류 | [`m0b-gate.md`](../decisions/m0b-gate.md), [`m0b-runs.csv`](../perf/m0b-runs.csv) |
 | M1 | 조건부 PASS | 141.51 / 44.83 | 141.55 / 45.08 | 911.59s, crash 0, TDR 0 | 확인 불가; 수동 측정 보류 | [`m1-gate.md`](../decisions/m1-gate.md), [`m1-runs.csv`](../perf/m1-runs.csv) |
 | M2 | 조건부 PASS | 125.22 / 33.31 | 140.37 / 35.91 | 915.4s, crash 0, TDR 0 | 확인 불가; 수동 측정 보류 | [`m2-gate.md`](../decisions/m2-gate.md), [`m2-runs.csv`](../perf/m2-runs.csv) |
+| M3 | **TBD(R45-C)** | **TBD(R45-C)** | **TBD(R45-C)** | **TBD(R45-C)** | 수동 측정 보류 | 룩 5/5는 [`l1-l5-decision.json`](../lookdev/l1-l5-decision.json), 성능 GATE는 R45-C 대기 |
 
 M2의 calls는 63/200, programs는 40/40, texture GPU는 36.88/300MB, JS heap 중앙값은 WebGPU 193.07MB·WebGL2 213.92MB로 기록됐다. M2 전체 판정은 프로세스 RAM 정밀 증거가 없어 조건부이며, 수동 측정 절차는 [`process-ram-howto.md`](../perf/process-ram-howto.md)에 있다.
 
 ## 4. 룩 판정
 
-목표 기준은 [`reference-metrics.json`](../lookdev/reference-metrics.json), 현재 값은 R24-A가 측정한 `m2-vista1~3-metrics.json` 순서다. M3 최종 채택 결과는 진행 중인 튜닝과 분리해 모두 **TBD(R30-A)** 로 남긴다.
+목표 기준은 [`reference-metrics.json`](../lookdev/reference-metrics.json), 최종 판정은 [`l1-l5-decision.json`](../lookdev/l1-l5-decision.json)이다. M3는 S1=`vista-mid`(`m3-after-2`), S2=`vista-start`(`m3-after-1`), S3=`vista-village`(`m3-after-3`)로 고정했으며 **L1~L5 5/5 PASS**다.
 
-| 명제 | 목표 기준 | R24-A 현재값(vista1 / 2 / 3) | 현재 판정 | M3 최종 |
-|---|---|---|---|---|
-| L1 깊이별 채도 | near 30~36%, far 8~12% | near 11.8 / 12.2 / 12.2%; far 13.8 / 8.8 / 2.9% | 0/3 PASS | **TBD(R30-A)** |
-| L2 온난→한랭 hue | near 45~55°, far 205~215° | near 52.1 / 52.6 / 52.9°; far 234.1 / 214.8 / 218.7° | 1/3 PASS | **TBD(R30-A)** |
-| L3 원경이 밝음 | near 60~75, far 130~145 | near 141.3 / 139.7 / 138.2; far 147.0 / 176.6 / 201.7 | 0/3 PASS | **TBD(R30-A)** |
-| L4 랜드마크 실루엣 | 흑백에서 수목·지붕군 구분 | 자동 수치 없음; `m2-herotree-S1-bw.png` 존재 | **TBD(M3-19C)** | **TBD(R30-A)** |
-| L5 전역 채도 | 중앙값 ≤22% | 9.5 / 8.4 / 8.7% | 3/3 PASS | **TBD(R30-A)** |
+| 명제 | 목표 기준 | M3 채택값 | 판정·근거 |
+|---|---|---|---|
+| L1 깊이별 채도 | near 30~36%, far 8~12% | S1 near **32.4%**, far **11.4%** | PASS · [`m3-after-2-metrics.json`](../lookdev/m3-after-2-metrics.json) |
+| L2 온난→한랭 hue | near 45~55°, far 205~215° | S1 near **49.7°**, far **212.2°** | PASS · [`m3-after-2-metrics.json`](../lookdev/m3-after-2-metrics.json) |
+| L3 원경이 밝음 | near 60~75, far 130~145 | S1 near **67.3**, far **134.1** | PASS · [`m3-after-2-metrics.json`](../lookdev/m3-after-2-metrics.json) |
+| L4 랜드마크 실루엣 | 흑백에서 수목·지붕군 구분 | 수동 판정; 줄기/하늘 Δ37.2, 수관/하늘 Δ42.4, 줄기/수관은 형태로 구분 | PASS · [`m3-l4-s3.json`](../qa/m3-l4-s3.json), [`m3-after-1-bw.png`](../lookdev/m3-after-1-bw.png) |
+| L5 전역 채도 | 중앙값 ≤22% | S2 **20.5%** | PASS · [`m3-after-1-metrics.json`](../lookdev/m3-after-1-metrics.json) |
 
-현재 자동 판정은 vista별 1/4, 2/4, 1/4 PASS다. M3 합격선은 수동 L4를 포함한 L1~L5 중 4개 이상 PASS다.
+파일 순서 1·2·3의 자동 판정은 before **1/4·2/4·1/4**에서 after **1/4·4/4·3/4**로 개선됐다. 최종 조합은 각 명제의 지정 샷을 사용하고 수동 L4를 더해 5/5이며, before/after 원본 수치는 [`m3-before-1-metrics.json`](../lookdev/m3-before-1-metrics.json)~[`m3-before-3-metrics.json`](../lookdev/m3-before-3-metrics.json)과 [`m3-after-1-metrics.json`](../lookdev/m3-after-1-metrics.json)~[`m3-after-3-metrics.json`](../lookdev/m3-after-3-metrics.json)에 있다.
+
+채택 파라미터는 **NeutralToneMapping**, exposure **0.44**, depth grade `hueStrength=0.97`, `lumaGain=0.34`, `satFar=0.25`, sky `hazeMix=0.4`다. 톤매퍼 비교와 채택 근거는 [`m3-tonemap.md`](../lookdev/m3-tonemap.md)에 기록했다.
 
 ## 5. 자산과 라이선스
 
@@ -67,7 +70,7 @@ CC0 자산은 attribution이 필요 없고 재배포가 허용된다. 절차적 
 - production URL의 WebGPU·WebGL2 실제 걷기 smoke는 각각 **TBD(M4-21)**, **TBD(M4-22)** 이다.
 - M4 actual build의 low 성능 3회·JS heap·프로세스 RAM 중앙값은 **TBD(M4-23A)**, **TBD(M4-23B)**, **TBD(M4-23C)** 이다.
 - 외부 테스터 3명의 실행·첫 입력·자력 도달 판정은 **TBD(M4-25A)** 이다.
-- M3의 L1~L5 최종 판정은 **TBD(R30-A)** 이다.
+- M3 룩은 L1~L5 5/5 PASS지만 성능·soak를 포함한 M3-GATE는 **TBD(R45-C)** 이다.
 - Draco·KTX2가 이 PC에서 주는 실제 압축률과 로딩 이득은 **TBD(M4-08/M4-09E)** 이다.
 - Intel Arc 드라이버와 브라우저 조합에서 특정 셰이더가 깨질 위험이 있어 WebGL2 강제 폴백을 유지한다.
 - 동적 GI·실내·오픈월드 스트리밍은 의도적으로 범위 밖이며, 현재 룩은 IBL·고정 조명·안개·팔레트·실루엣에 의존한다.
@@ -80,6 +83,7 @@ CC0 자산은 attribution이 필요 없고 재배포가 허용된다. 절차적 
 | M2 길 중간 | [`m2-vista2.png`](../lookdev/m2-vista2.png) | 존재 |
 | M2 마을 전망 | [`m2-vista3.png`](../lookdev/m2-vista3.png) | 존재 |
 | M3 before 1~3 | [`m3-before-1.png`](../lookdev/m3-before-1.png), [`m3-before-2.png`](../lookdev/m3-before-2.png), [`m3-before-3.png`](../lookdev/m3-before-3.png) | 존재 |
-| M3 after 1~3 | **TBD(R30-A)** | 최종 채택본 대기 |
+| M3 after 1~3 | [`m3-after-1.png`](../lookdev/m3-after-1.png), [`m3-after-2.png`](../lookdev/m3-after-2.png), [`m3-after-3.png`](../lookdev/m3-after-3.png) | 존재 |
+| M3 흑백 실루엣 | [`m3-after-1-bw.png`](../lookdev/m3-after-1-bw.png) | 존재 · L4 수동 판정 |
 
 제출 증거의 파일별 존재 여부는 [`evidence-index.md`](evidence-index.md)에 고정했다.
