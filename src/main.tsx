@@ -2,7 +2,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { createRaycastController } from './player/controllers/raycast'
 import { runBenchRoute } from './systems/bench/benchRoute'
 import { startErrorCollector, triggerIntentionalRejection } from './systems/errors'
 import { collectPerf } from './systems/perf'
@@ -34,9 +33,8 @@ async function runBench() {
   try {
     const renderer = await waitForRenderer()
     triggerIntentionalRejection()
-    const controller = createRaycastController(() => 0)
-    const [route, perf] = await Promise.all([runBenchRoute(controller), collectPerf(renderer)])
-    const result = { ...route, perf, errors: errors.snapshot(), mode }
+    const [route, perf] = await Promise.all([runBenchRoute(), collectPerf(renderer)])
+    const result = { ...route, perf, errors: errors.snapshot(), mode, hud: readHudText() }
     window.__bench = result
     console.info(`BENCH_RESULT ${JSON.stringify(result)}`)
     await postBenchResult(result)
@@ -62,6 +60,11 @@ async function waitForRenderer(timeoutMs = 15_000): Promise<RendererForPerf> {
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
   }
   return window.__R3F_RENDERER__
+}
+
+/** 화면에 실제로 그려진 HUD 문자열. bench 결과가 어느 모드·백엔드였는지의 증거가 된다. */
+function readHudText(): string | null {
+  return document.querySelector('[data-testid="runtime-hud"]')?.textContent ?? null
 }
 
 function blockHumanInput(): void {

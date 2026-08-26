@@ -1,0 +1,522 @@
+{
+  "routeHash": "m0b-bench-v1-p0-village-path-tree-turn",
+  "duration": 60,
+  "sampleCount": 8289,
+  "finalPosition": {
+    "x": 12.431103309128481,
+    "y": 0.9,
+    "z": -39.99999489824949
+  },
+  "perf": {
+    "duration": 60,
+    "sampleCount": 8289,
+    "avgFps": 138.14,
+    "onePercentLowFps": 40.05,
+    "oneSecondHitches": 0,
+    "maxCalls": 12,
+    "maxTriangles": "확인 불가",
+    "maxPrograms": 6,
+    "maxTextures": 3,
+    "textureGpuMB": 10.55,
+    "jsHeapPeakMB": 12.75,
+    "seconds": [
+      {
+        "second": 1,
+        "fps": 92.51,
+        "calls": 12,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 2,
+        "fps": 122.19,
+        "calls": 6,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 3,
+        "fps": 137,
+        "calls": 6,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 4,
+        "fps": 139.96,
+        "calls": 6,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 5,
+        "fps": 133.11,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 6,
+        "fps": 133.08,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 7,
+        "fps": 137.99,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 8,
+        "fps": 137.07,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 9,
+        "fps": 140.94,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 10,
+        "fps": 138.09,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 11,
+        "fps": 130,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 12,
+        "fps": 138.96,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 13,
+        "fps": 137.1,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 14,
+        "fps": 137.89,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 15,
+        "fps": 138.16,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 16,
+        "fps": 139.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 17,
+        "fps": 136.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 18,
+        "fps": 140.05,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 19,
+        "fps": 138.02,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 20,
+        "fps": 140.05,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 21,
+        "fps": 140,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 22,
+        "fps": 141,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 23,
+        "fps": 137.97,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 24,
+        "fps": 143.03,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 25,
+        "fps": 142.02,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 26,
+        "fps": 143.97,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 27,
+        "fps": 138.07,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 28,
+        "fps": 140.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 29,
+        "fps": 139,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 30,
+        "fps": 142.01,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 31,
+        "fps": 143.03,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 32,
+        "fps": 138.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 33,
+        "fps": 139.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 34,
+        "fps": 144.02,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 35,
+        "fps": 143,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 36,
+        "fps": 136.03,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 37,
+        "fps": 135,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 38,
+        "fps": 138.02,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 39,
+        "fps": 138.09,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 40,
+        "fps": 138.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 41,
+        "fps": 132,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 42,
+        "fps": 138.05,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 43,
+        "fps": 127.12,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 44,
+        "fps": 135,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 45,
+        "fps": 140.94,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 46,
+        "fps": 142.06,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 47,
+        "fps": 141,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 48,
+        "fps": 141.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 49,
+        "fps": 142.03,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 50,
+        "fps": 141.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 51,
+        "fps": 140,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 52,
+        "fps": 139.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 53,
+        "fps": 143.99,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 54,
+        "fps": 142.05,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 55,
+        "fps": 143,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 56,
+        "fps": 143.96,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 57,
+        "fps": 141.07,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 58,
+        "fps": 144,
+        "calls": 4,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 59,
+        "fps": 137.01,
+        "calls": 5,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      },
+      {
+        "second": 60,
+        "fps": 139.09,
+        "calls": 6,
+        "triangles": "확인 불가",
+        "programs": 6,
+        "textures": 3
+      }
+    ]
+  },
+  "errors": {
+    "issues": [
+      {
+        "type": "unhandledrejection",
+        "message": "m0b-intentional-rejection",
+        "at": 2244.100000023842,
+        "intentional": true
+      }
+    ],
+    "errorCount": 0,
+    "unhandledRejectionCount": 1,
+    "webglContextLostCount": 0,
+    "tdrCount": 0,
+    "intentionalRejectionCount": 1
+  },
+  "mode": "bench",
+  "hud": "backend: WebGPUcanvas: 1280×720preset: lowmode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 138 · calls: 0 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -12° · near 0.1 / far 400WASD 이동 · Shift 달리기 · 드래그 시선"
+}

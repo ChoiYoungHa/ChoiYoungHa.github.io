@@ -115,6 +115,10 @@ export async function collectPerf(renderer: { info?: RendererInfoLike }): Promis
           info.render?.drawCalls ??
           info.render?.frameCalls ??
           (rawCalls >= previousRawCalls ? rawCalls - previousRawCalls : rawCalls)
+        // three r185 `Info.reset()` 은 drawCalls·frameCalls·triangles 만 0 으로 만들고
+        // `render.calls` 는 건드리지 않는다(누적, dispose() 에서만 초기화 — Info.js L187).
+        // 따라서 reset 뒤에도 이번 값을 기준으로 두는 것이 맞다.
+        // 참고: 이 렌더러에는 `render.drawCalls` 가 있어 위 차분은 실제로는 쓰이지 않는다.
         previousRawCalls = rawCalls
         const programs = info.memory?.programs ?? readPrograms(info.programs)
         const textures = info.memory?.textures ?? 0

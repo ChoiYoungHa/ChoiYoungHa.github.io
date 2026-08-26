@@ -2,6 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import { isForcedWebGL, readBackend, type Backend } from '../gl/createRenderer'
 import { useRuntime } from '../store/useRuntime'
+import { CAMERA } from '../player/FollowCamera'
 
 /**
  * M0a-07 — backend·adapter·ANGLE·preset 을 화면(HUD)과 JSON 으로 동시에 남긴다.
@@ -116,6 +117,13 @@ export function RuntimeHud() {
       <div>
         fps: <b>{s.fps}</b> · calls: {s.calls} · tris:{' '}
         {s.triangles === 0 ? '확인 불가' : s.triangles}
+      </div>
+      <div>
+        camera:{' '}
+        <b data-testid="hud-camera">
+          FOV {CAMERA.fov}° · dist {CAMERA.distance}m · h {CAMERA.height}m · pitch{' '}
+          {CAMERA.pitchDeg}° · near {CAMERA.near} / far {CAMERA.far}
+        </b>
       </div>
       <div className="hud-help">WASD 이동 · Shift 달리기 · 드래그 시선</div>
     </div>

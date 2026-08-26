@@ -6,6 +6,7 @@ import { createKeyboardInput } from './input'
 import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
+import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
 
 /**
  * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
@@ -54,7 +55,13 @@ export function Player() {
   useFrame((_, rawDt) => {
     // 탭 전환 등으로 튄 dt 는 물리를 깨뜨린다. 상한을 둔다.
     const dt = Math.min(rawDt, 1 / 20)
-    const input = keys.read(yawRef.current)
+
+    // bench 러너가 입력 소스를 걸어두면 키보드 대신 그것을 읽는다.
+    // yaw 까지 러너가 주므로 카메라도 동선을 따라간다.
+    const source = readInputSource()
+    const input = source ? source() : keys.read(yawRef.current)
+    if (source) yawRef.current = input.yaw
+
     const r = controller.step(input, dt)
     posRef.current = r.position
     const body = bodyRef.current
@@ -62,6 +69,7 @@ export function Player() {
       body.position.set(r.position.x, r.position.y, r.position.z)
       body.rotation.y = r.heading
     }
+    publishPlayerFrame(r)
   })
 
   return (

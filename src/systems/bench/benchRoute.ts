@@ -1,5 +1,10 @@
 import type { InputState } from '../../player/input'
-import type { KinematicController, Vec3 } from '../../player/controllers/types'
+import type { Vec3 } from '../../player/controllers/types'
+import {
+  readPlayerFrame,
+  readPlayerFrameCount,
+  setInputSource,
+} from '../../store/playerBridge'
 
 export interface BenchKeyframe {
   time: number
@@ -56,30 +61,35 @@ export function inputAt(route: BenchRoute, elapsedSeconds: number): InputState {
   }
 }
 
-export async function runBenchRoute(controller: KinematicController): Promise<BenchResult> {
+/**
+ * 동선을 **화면의 실제 Player** 로 재생한다.
+ *
+ * 러너는 자기 controller 를 돌리지 않는다. 입력만 공급하고(setInputSource),
+ * step() 은 Player 의 useFrame 이 실행한다. 그래서 fps·드로우콜·카메라가 전부
+ * 같은 동선 위에서 측정된다. (R12-B 까지는 별도 controller 라 무관했다.)
+ */
+export async function runBenchRoute(): Promise<BenchResult> {
   const route = await loadBenchRoute()
   const startedAt = performance.now()
-  let previous = startedAt
-  let sampleCount = 0
+  const framesAtStart = readPlayerFrameCount()
+
+  setInputSource(() => inputAt(route, (performance.now() - startedAt) / 1000))
 
   return new Promise((resolve) => {
     const tick = (now: number) => {
-      const elapsed = Math.min(60, (now - startedAt) / 1000)
-      const dt = Math.min((now - previous) / 1000, 1 / 20)
-      previous = now
-      controller.step(inputAt(route, elapsed), dt)
-      sampleCount += 1
-
-      if (elapsed < 60) {
+      if ((now - startedAt) / 1000 < 60) {
         requestAnimationFrame(tick)
         return
       }
+      setInputSource(null)
 
+      const frame = readPlayerFrame()
       const result: BenchResult = {
         routeHash: route.routeHash,
         duration: 60,
-        sampleCount,
-        finalPosition: { ...controller.position },
+        // Player 가 실제로 그린 프레임 수. 러너 rAF 틱 수가 아니다.
+        sampleCount: readPlayerFrameCount() - framesAtStart,
+        finalPosition: frame ? { ...frame.position } : { x: NaN, y: NaN, z: NaN },
       }
       window.__bench = result
       console.info(`BENCH_ROUTE ${JSON.stringify(result)}`)
