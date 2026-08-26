@@ -84,3 +84,13 @@ boot 3.32MB(≤4MB) / core 누적 8.12MB(≤12MB) / 총 13.35MB → **PASS**. �
 1. `src/data/assets.csv` 18행 note 쉼표 → `scene-tris.mjs`와 이를 쓰는 `lookdev-variants` trisCheck 전부 실패(소유: codex/master, 워커 수정 안 함).
 2. `check-payload` 경고 3(manifest 바이트 불일치·요약 불일치).
 3. bench 동선 프로브 중 콘솔 error 1건(`m5-pipelines-bench.json` consoleErrors=1) — 프레임 결손 없음, 본문은 미확인.
+
+## master 판정 (2026-08-27 10:4x, 영하님 결정 반영)
+
+| 미결 | 결정 | 결과 |
+|---|---|---|
+| programs 예산 정의 | **영하님 승인: 제안 A(pipelines ≤48)** — 계획서 §10 정정 #3 확정 | bench peak pipelines 48/48 → **PASS(경계, 여유 0)**. 재질 추가 시 즉시 초과 — M6 렌더부(SkillFx 공유 재질 +1·wobble +0) 병합 후 재측정 필수 |
+| WebGL2 1차 끊김(hitch 2, 1%low 10.6) vs 재측정(29.66, hitch 0) | master: 1차는 워밍업 직후 타 워커 CPU 간섭이 기록되어 있어 **재측정을 채택하되 1차를 병기** | WebGL2 PASS(병기) |
+| RAM(프로세스 트리 ≤24GB) | 헤드리스 확인 불가 — 영하님 수동 캡처 대기(`Docs/perf/process-ram-howto.md`) | 조건부 |
+
+**M5-GATE 판정: 조건부 GO** — 성능·soak·텍스처·payload·pipelines PASS, RAM만 수동 캡처 대기. 룩 판정(M5-13)은 영하님 육안(`m5-side-by-side.png`) 대기.
