@@ -1,0 +1,2 @@
+date,preset,resolution,duration_s,avg_fps,low1_fps,hitch_1s,js_heap_mb,chrome_ram_gb,crash,note
+2026-08-26,low,manual,60,확인 불가,확인 불가,확인 불가,확인 불가,~2.0,0,영하님 수동 예비 1회(비관문). HUD backend=WebGPU 및 ?gl=webgl→WebGL2 육안 확인. WASD·카메라 정상.
