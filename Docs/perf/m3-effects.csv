@@ -1,0 +1,6 @@
+# build_hash=87ee4d6; preset=low; reason=효과 3종 미구현 → 측정 대상 없음
+# evidence=src 전체에서 EffectComposer/@react-three/postprocessing/GTAO/Bloom/LUT 구현 0건; quality-presets.json의 base 문자열 선언만 존재하며 low에는 GTAO·bloom·LUT 없음
+effect,implemented,enabled_in_low,on_frame_time_ms,off_frame_time_ms,delta_ms,status,reason
+GTAO,false,false,N/A,N/A,N/A,NOT_MEASURED,런타임 구현·EffectComposer 연결 없음
+bloom,false,false,N/A,N/A,N/A,NOT_MEASURED,런타임 구현·EffectComposer 연결 없음
+LUT,false,false,N/A,N/A,N/A,NOT_MEASURED,런타임 구현·EffectComposer 연결 없음
