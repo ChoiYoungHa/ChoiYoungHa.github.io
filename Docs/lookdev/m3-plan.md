@@ -20,6 +20,8 @@
 
 ## 1. 현재 코드 실측값 (읽기만, 2026-08-26 HEAD 481db4e)
 
+> **R30-A 정정**: 톤매퍼 행의 "NoToneMapping" 은 틀렸다. R3F `<Canvas>` 가 gl 생성 뒤 기본 **ACESFilmic** 을 주입하므로 M2 까지의 실제 톤매퍼는 ACES 였다(노출 1.0 에서 AgX 와 baseline 이 거의 같았던 이유). 그래서 M3 는 `flat` + `onCreated(applyToneMapping)` 으로 넘겼다. 결과는 `l1-l5-decision.json`.
+
 | 손잡이 | 현재값 | 어디서 | 비고 |
 |---|---|---|---|
 | `renderer.toneMapping` | **NoToneMapping(0)** — 설정 코드 없음 | three r185 `Renderer.js` L192 기본값. `gl/createRenderer.ts` 는 안 만짐 | lookdev.json 은 AgX(6) 시작 예정 |

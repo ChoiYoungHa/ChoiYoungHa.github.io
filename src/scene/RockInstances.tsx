@@ -10,6 +10,7 @@ import qualityPresets from '../data/quality-presets.json'
 import { useRuntime } from '../store/useRuntime'
 import { WORLD_HALF_EXTENT } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
+import { useLookdevMaterial } from './Atmosphere'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
@@ -27,9 +28,8 @@ export interface RockInstancesProps {
   sampleHeight: SampleHeight
 }
 
-function materialColor(material: Material | Material[]): Color {
-  const candidate = Array.isArray(material) ? material[0] : material
-  if ('color' in candidate && candidate.color instanceof Color) return candidate.color
+// M3-06 (R30-A) — 바위도 GLB 재질 색 대신 팔레트(저채도 회갈색)로 고정한다.
+function materialColor(_material: Material | Material[]): Color {
   return new Color('#5b5845')
 }
 
@@ -79,6 +79,8 @@ function RockSpecies({
   const ref = useRef<InstancedMesh>(null)
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
+  // M3-05 (R30-A) — 거리 그레이딩 재질(종별 1개)
+  const material = useLookdevMaterial({ vertexColors: true, roughness: 0.9, metalness: 0 })
 
   /** 지형 높이는 좌표가 안 바뀌므로 한 번만 구한다. */
   const placed = useMemo(
@@ -112,12 +114,10 @@ function RockSpecies({
     <instancedMesh
       ref={ref}
       name={`rock-${name}`}
-      args={[geometry, undefined, points.length]}
+      args={[geometry, material, points.length]}
       castShadow
       receiveShadow
-    >
-      <meshStandardMaterial vertexColors roughness={0.9} metalness={0} />
-    </instancedMesh>
+    />
   )
 }
 

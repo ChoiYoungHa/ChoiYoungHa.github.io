@@ -1,0 +1,54 @@
+{
+  "id": "m3-l4-silhouette",
+  "at": "2026-08-26",
+  "shot": "S2 = vista-start (0,26) → heroTree (수목·지붕 동시 프레임). S3(vista-village)는 수목이 프레임 밖이라 대체",
+  "files": {
+    "color": "Docs/lookdev/m3-after-1.png",
+    "grayscale": "Docs/lookdev/m3-after-1-bw.png",
+    "noHero": "Docs/lookdev/m3-l4nohero2-1.png",
+    "s3Grayscale": "Docs/lookdev/m3-after-3-bw.png"
+  },
+  "method": "나무 있음/없음 차분(≥24)으로 나무 픽셀을 분리하고 흑백(L)에서 수관(상단 1/3)·줄기(하단 1/3)·나무 옆 하늘의 평균 휘도를 비교. 문턱 20/20/8 은 §6-2 \"흑백에서 줄기/수관/하늘 3체크\" 를 수치화한 추정값.",
+  "treeBboxPx": {
+    "left": 553,
+    "top": 89,
+    "right": 739,
+    "bottom": 302
+  },
+  "treePixels": 11925,
+  "checks": {
+    "줄기 vs 하늘 (|ΔY| ≥ 20)": {
+      "trunk": 105.6,
+      "sky": 142.8,
+      "delta": 37.2,
+      "pass": true
+    },
+    "수관 vs 하늘 (|ΔY| ≥ 20)": {
+      "canopy": 100.5,
+      "sky": 142.8,
+      "delta": 42.4,
+      "pass": true
+    },
+    "줄기 vs 수관 (|ΔY| ≥ 8)": {
+      "trunk": 105.6,
+      "canopy": 100.5,
+      "delta": 5.1,
+      "pass": false
+    }
+  },
+  "sun": {
+    "lightPosition": [
+      48.4,
+      14.6,
+      -48.4
+    ],
+    "elevationDeg": 12.04,
+    "azimuthDeg": 135.0,
+    "target": {
+      "elevationDeg": 12,
+      "azimuthDeg": 135
+    },
+    "match": true
+  },
+  "result": "FAIL"
+}
