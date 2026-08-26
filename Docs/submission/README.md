@@ -73,6 +73,8 @@ M3는 평균·하위 1%·15분 안정성·1초 끊김과 룩 L1~L5 **5/5**를 �
 
 ## 5. 자산과 라이선스
 
+전체 자산·라이선스 감사표와 Mixamo·자체 생성 아이콘 고지는 [`assets-and-licenses.md`](assets-and-licenses.md)에 있다.
+
 [`assets.csv`](../../src/data/assets.csv)는 14개 자산을 19열로 기록한다.
 
 | 분류 | 수량 | 라이선스 | 사용 내용 |
