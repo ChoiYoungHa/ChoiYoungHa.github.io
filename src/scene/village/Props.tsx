@@ -2,11 +2,13 @@ import { useGLTF } from '@react-three/drei'
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { BufferGeometry, InstancedMesh, Material, Mesh, Object3D, Texture } from 'three'
 import { Object3D as Transform } from 'three'
+import { luminance, mix, texture, uv, vec3 } from 'three/tsl'
+import type { Node } from 'three/webgpu'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import placement from '../../data/placement.json'
 import { useLookdevMaterial } from '../Atmosphere'
 import { sampleHeight } from '../terrain/heightmap'
-import { PROP_KINDS, type PropKind, type PropPlacement } from './propsLayout'
+import { PROP_KINDS, propRuntimeScale, type PropKind, type PropPlacement } from './propsLayout'
 
 const PROP_URLS: Record<PropKind, string> = {
   fence: '/models/prop_fence.glb',
@@ -20,8 +22,17 @@ const PROP_LIFT_Y: Record<PropKind, number> = {
   fence: 0,
   stonewall: 0,
   arch: 0,
-  // The placement schema stays on the terrain; banners are lifted onto house walls at runtime.
-  banner: 2.4,
+  // R103-A: 현수막은 접지(heightmap) + 0.05m — 2.4m 부유(R100 S2)를 없앤다. 집이 6m 로 커져 벽 옆 지면에 세워도 자연스럽다.
+  banner: 0.05,
+}
+/**
+ * R103-A — 소품 탈채도. 곱색(color)은 채도가 있는 아틀라스(주황 울타리 → S2 근경 채도 65%)를 탈채도할 수 없어(실측 곱색 #E5E2DC 로 변화 0)
+ * colorNode 로 텍스처 rgb 를 자기 휘도(무채색) 쪽으로 0.4 섞는다(재질 1개, 프로그램은 colorNode 변형 1). 목표 S2 근경 채도 ≤45%.
+ */
+export const PROP_DESATURATE = 0.65 // R103-A: 0.4 → S2 근경 채도 65.8→58.2(목표 ≤45) 미달이라 0.65
+function propColorNode(map: Texture): Node<'vec3'> {
+  const rgb = texture(map, uv()).rgb
+  return mix(rgb, vec3(luminance(rgb)), PROP_DESATURATE) as unknown as Node<'vec3'>
 }
 
 const PROPS = placement.props as PropPlacement[]
@@ -78,7 +89,7 @@ function PropInstances({ kind, geometry, entries, material }: {
       const [x, z] = entry.position
       transform.position.set(x, sampleHeight(x, z) + PROP_LIFT_Y[kind], z)
       transform.rotation.set(0, entry.yaw, 0)
-      transform.scale.setScalar(entry.scale)
+      transform.scale.setScalar(propRuntimeScale(kind)) // R103-A: placement.scale 대신 실제 높이 정규화
       transform.updateMatrix()
       mesh.setMatrixAt(index, transform.matrix)
     })
@@ -105,7 +116,9 @@ function LoadedVillageProps() {
     [gltfs],
   )
   // R78-A: all four source GLBs embed the same atlas SHA-256, so one runtime material is shared.
-  const material = useLookdevMaterial({ map: firstMap(gltfs[0].scene), color: '#ffffff', roughness: 0.9, metalness: 0 })
+  const map = firstMap(gltfs[0].scene)
+  const colorNode = useMemo(() => (map ? propColorNode(map) : undefined), [map])
+  const material = useLookdevMaterial({ map, colorNode, roughness: 0.9, metalness: 0 })
 
   return (
     <group name="village-props">

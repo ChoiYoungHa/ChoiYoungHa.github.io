@@ -52,8 +52,22 @@ const BASE_FOOTPRINT_RADIUS: Record<PropKind, number> = {
   banner: 0.133,
 }
 
+/**
+ * R103-A — 소품 실제 높이 정규화. placement.scale 대신 종별 목표 높이(m) / GLB 정규화 높이(단위, 원점 바닥) 로 런타임 스케일을 정한다.
+ * 이전 placement scale(fence 2.2·stonewall 3·arch 3·banner 4)은 자산 실측 없이 잡은 값이라 울타리가 집보다 컸다(R100 S2).
+ */
+// 스윕(R103-A, auditPropsLayout): stonewall 1.0(스케일 3.7)은 길 제외대 침범(idx 1,2), banner 2.2(7.86)는 village-01 collider 겹침 → 0.8/1.8 이 겹침 0 인 최대값.
+export const PROP_TARGET_HEIGHTS: Record<PropKind, number> = { fence: 1.1, stonewall: 0.8, arch: 4.5, banner: 1.8 }
+/** normalizedGeometry(Props.tsx) 후 bbox 높이(GLB 단위) — public/models/prop_*.glb accessor min/max 실측(R103-A). */
+export const PROP_BASE_HEIGHTS: Record<PropKind, number> = { fence: 0.55, stonewall: 0.27, arch: 1.41, banner: 0.28 }
+
+export function propRuntimeScale(kind: PropKind): number {
+  return PROP_TARGET_HEIGHTS[kind] / PROP_BASE_HEIGHTS[kind]
+}
+
+/** 발자국 반경은 런타임 스케일 기준(placement.scale 은 더 이상 렌더에 쓰지 않는다). */
 export function propFootprintRadius(prop: PropPlacement): number {
-  return BASE_FOOTPRINT_RADIUS[prop.kind] * prop.scale
+  return BASE_FOOTPRINT_RADIUS[prop.kind] * propRuntimeScale(prop.kind)
 }
 
 export function distanceToPolyline(point: LayoutPoint, centerline: readonly LayoutPoint[]): number {

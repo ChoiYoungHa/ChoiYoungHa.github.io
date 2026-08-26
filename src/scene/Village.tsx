@@ -26,13 +26,20 @@ interface VillageEntry {
 }
 
 const VILLAGE = placement.village as VillageEntry[]
+/**
+ * R103-A(D4-2) — GLB 집 높이 정규화. KayKit 집은 bbox 높이 0.93~1.4 단위(≈1m)라 미니어처로 보였다(R100 S2).
+ * GLB 종별 bbox 높이로 균일 스케일 k = 목표/높이 를 구하고 placement.scale(0.85~1)은 상대 배율로 곱한다.
+ * 콘티 목표 처마 4.5·용마루 6.5m → 6.0. 충돌 proxy(colliders/village.ts LOCAL_BOXES, 절차 집 기준 half 2.5~3.5)는
+ * 스케일 후 GLB 발자국(a 5.1×5.5·b 4.1×5.2·c 5.0×5.7m)보다 크므로 그대로 둔다.
+ */
+export const HOUSE_TARGET_HEIGHT_METERS = 6.0
 
-/** placement 한 채의 지면 위 변환(집 본체 기준). */
-function placeEntry(transform: Object3D, entry: VillageEntry, liftY: number) {
+/** placement 한 채의 지면 위 변환(집 본체 기준). scaleMultiplier 는 GLB 높이 정규화 배율(절차 집은 1). */
+function placeEntry(transform: Object3D, entry: VillageEntry, liftY: number, scaleMultiplier = 1) {
   const [x, z] = entry.position
   transform.position.set(x, sampleHeight(x, z) + liftY, z)
   transform.rotation.set(0, (entry.rotationYDeg * Math.PI) / 180, 0)
-  transform.scale.setScalar(entry.scale)
+  transform.scale.setScalar(entry.scale * scaleMultiplier)
   transform.updateMatrix()
 }
 
@@ -43,6 +50,7 @@ function Instances({
   roof,
   material,
   instanceColors,
+  scaleMultiplier = 1,
 }: {
   name: string
   geometry: BufferGeometry
@@ -51,6 +59,8 @@ function Instances({
   material: MeshStandardNodeMaterial
   /** R75-C — 인스턴스별 곱색(지붕 3변형). 없으면 instanceColor 미설정(=재질 색 그대로). */
   instanceColors?: Color[]
+  /** R103-A — GLB 높이 정규화 배율. */
+  scaleMultiplier?: number
 }) {
   const ref = useRef<InstancedMesh>(null)
 
@@ -60,14 +70,14 @@ function Instances({
     const transform = new Object3D()
     entries.forEach((entry, index) => {
       const socket = HOUSE_SOCKETS[entry.house]
-      placeEntry(transform, entry, roof ? socket.position[1] * entry.scale : 0)
+      placeEntry(transform, entry, roof ? socket.position[1] * entry.scale : 0, scaleMultiplier)
       mesh.setMatrixAt(index, transform.matrix)
       if (instanceColors) mesh.setColorAt(index, instanceColors[index])
     })
     mesh.instanceMatrix.needsUpdate = true
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     mesh.computeBoundingSphere()
-  }, [entries, roof, instanceColors])
+  }, [entries, roof, instanceColors, scaleMultiplier])
 
   return (
     <instancedMesh
@@ -124,6 +134,8 @@ interface HouseGltfParts {
   body: BufferGeometry | null
   cap: BufferGeometry | null
   map: Texture | undefined
+  /** body+cap 합집합 bbox 높이(GLB 단위). R103-A 스케일 정규화에 쓴다. */
+  height: number
 }
 
 function mapOf(material: Material | Material[]): Texture | undefined {
@@ -155,7 +167,18 @@ function splitHouseGltf(scene: Object3D, url: string): HouseGltfParts {
     merged.computeBoundingSphere()
     return merged
   }
-  return { body: merge(body), cap: merge(cap), map }
+  const bodyG = merge(body)
+  const capG = merge(cap)
+  let minY = Infinity
+  let maxY = -Infinity
+  for (const g of [bodyG, capG]) {
+    if (!g) continue
+    g.computeBoundingBox()
+    minY = Math.min(minY, g.boundingBox!.min.y)
+    maxY = Math.max(maxY, g.boundingBox!.max.y)
+  }
+  const height = Number.isFinite(maxY - minY) && maxY - minY > 0 ? maxY - minY : 1
+  return { body: bodyG, cap: capG, map, height }
 }
 
 /**
@@ -178,13 +201,14 @@ function VillageGltf({ houses }: { houses: { id: HouseId; url: string }[] }) {
         const entries = VILLAGE.filter((entry) => entry.house === id)
         const capColors = entries.map((entry) => new Color(ROOF_COLORS[entry.roof]))
         const bodyColors = entries.map(() => white)
+        const k = HOUSE_TARGET_HEIGHT_METERS / p.height
         return (
-          <group key={id} name={`village-${id}`} userData={{ source: 'gltf' }}>
+          <group key={id} name={`village-${id}`} userData={{ source: 'gltf', heightUnits: p.height, scaleMultiplier: k }}>
             {p.body && (
-              <Instances name={`village-${id}-body`} geometry={p.body} entries={entries} roof={false} material={material} instanceColors={bodyColors} />
+              <Instances name={`village-${id}-body`} geometry={p.body} entries={entries} roof={false} material={material} instanceColors={bodyColors} scaleMultiplier={k} />
             )}
             {p.cap && (
-              <Instances name={`village-${id}-cap`} geometry={p.cap} entries={entries} roof={false} material={material} instanceColors={capColors} />
+              <Instances name={`village-${id}-cap`} geometry={p.cap} entries={entries} roof={false} material={material} instanceColors={capColors} scaleMultiplier={k} />
             )}
           </group>
         )

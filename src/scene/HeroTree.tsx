@@ -35,7 +35,7 @@ export const LOD_SWITCH_DISTANCE = LOOK.heroTree.mode === 'gltf' ? HERO_GLTF_LOD
 export const HERO_ROOT_Y_PERCENTILE = 0.02
 export const HERO_ROOT_SINK_METERS = 0.5
 /** R100-A — 잎 탈채도: 잎 baseColor 를 팔레트 수관색(#3B3E26, §6-2) 쪽으로 이 비율만큼 섞는다(선형 lerp). */
-export const HERO_LEAF_DESATURATE = 0.35
+export const HERO_LEAF_DESATURATE = 0.55 // R103-A: 0.35(S1 far 채도 14.0) → 0.55 시험
 
 /** HUD 가 읽어가는 현재 LOD. 매 프레임 바뀔 수 있어 스토어에 넣지 않는다(계획서 §3-3). */
 let activeLod: Lod = 0
