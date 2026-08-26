@@ -131,10 +131,16 @@ export function readForceProcedural(search: string): boolean {
   return new URLSearchParams(search).get('lookAssets') === '0'
 }
 
-/** 잎/줄기 분류 — GLB 메시·재질 이름 기준(계약). */
-export function classifyHeroMesh(meshName: string, materialName: string): 'leaf' | 'bark' {
+/**
+ * 잎/줄기 분류 — GLB 메시·재질 이름 기준(계약). R96-A: 이름이 무의미한 자산(BigTree_3Donimus: mat9/mat10/…, 텍스처 없음)을 위해
+ * baseColor(선형 RGB) 가 녹색 우세(g > r·g > b)면 잎으로 보는 fallback 을 둔다. 이름 규칙이 먼저다.
+ */
+export function classifyHeroMesh(meshName: string, materialName: string, baseColor?: { r: number; g: number; b: number }): 'leaf' | 'bark' {
   const s = `${meshName} ${materialName}`.toLowerCase()
-  return /leaf|leaves|foliage|canopy/.test(s) ? 'leaf' : 'bark'
+  if (/leaf|leaves|foliage|canopy/.test(s)) return 'leaf'
+  if (/bark|trunk|branch|root/.test(s)) return 'bark'
+  if (baseColor && baseColor.g > baseColor.r && baseColor.g > baseColor.b) return 'leaf'
+  return 'bark'
 }
 
 /** 갓/지붕(인스턴스 색 적용) vs 본체 분류 — GLB 메시 이름 기준(계약). */

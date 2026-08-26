@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "measuredFromHead": "30665a7",
+  "measuredFromHead": "a1e7272",
   "measurement": "R77-A: Node node:fs statSync against dist/ (npm run build at 30665a7); procedural entries are included in the boot JS and add 0 bytes; look-asset textures (core) and GLBs (detail) added from Automation/look-assets.mjs manifestSuggestions.",
   "phases": {
     "boot": [
@@ -10,17 +10,17 @@
         "kind": "html"
       },
       { "id": "boot.js-main",
-        "url": "dist/assets/main-s_PwUn7H.js",
-        "bytes": 870195,
+        "url": "dist/assets/main-D2g1X1Qi.js",
+        "bytes": 876032,
         "kind": "javascript"
       },
       { "id": "boot.js-renderer",
-        "url": "dist/assets/createRenderer-CPda_t-U.js",
-        "bytes": 1015045,
+        "url": "dist/assets/createRenderer-Btpp4TmX.js",
+        "bytes": 1015259,
         "kind": "javascript"
       },
       { "id": "boot.heightmap-procedural",
-        "url": "dist/assets/main-s_PwUn7H.js",
+        "url": "dist/assets/main-D2g1X1Qi.js",
         "bytes": 0,
         "kind": "procedural-in-boot-js"
       },
@@ -32,7 +32,7 @@
     ],
     "core": [
       { "id": "core.terrain-procedural",
-        "url": "dist/assets/main-s_PwUn7H.js",
+        "url": "dist/assets/main-D2g1X1Qi.js",
         "bytes": 0,
         "kind": "procedural-in-boot-js"
       },
@@ -42,7 +42,7 @@
         "kind": "glb"
       },
       { "id": "core.hero-lod1-procedural",
-        "url": "dist/assets/main-s_PwUn7H.js",
+        "url": "dist/assets/main-D2g1X1Qi.js",
         "bytes": 0,
         "kind": "procedural-in-boot-js"
       },
@@ -74,13 +74,13 @@
     ],
     "detail": [
       { "id": "detail.village-procedural",
-        "url": "dist/assets/main-s_PwUn7H.js",
+        "url": "dist/assets/main-D2g1X1Qi.js",
         "bytes": 0,
         "kind": "procedural-in-boot-js",
         "note": "R77-A: house_{a,b,c}.glb 존재 시 GLB 항목이 대신 로드되고 이 절차 경로는 Suspense fallback·LOD1 용으로 남는다(0B)"
       },
       { "id": "detail.hero-lod0-procedural",
-        "url": "dist/assets/main-s_PwUn7H.js",
+        "url": "dist/assets/main-D2g1X1Qi.js",
         "bytes": 0,
         "kind": "procedural-in-boot-js",
         "note": "R77-A: hero_tree.glb 존재 시 GLB 항목이 대신 로드되고 이 절차 경로는 Suspense fallback·LOD1 용으로 남는다(0B)"
@@ -92,36 +92,36 @@
       },
       { "id": "detail.hero-tree-glb",
         "url": "dist/models/hero_tree.glb",
-        "bytes": 1389012,
+        "bytes": 3407832,
         "kind": "glb"
       },
       { "id": "detail.house-a-glb",
         "url": "dist/models/house_a.glb",
-        "bytes": 72524,
+        "bytes": 79272,
         "kind": "glb"
       },
       { "id": "detail.house-b-glb",
         "url": "dist/models/house_b.glb",
-        "bytes": 99296,
+        "bytes": 108340,
         "kind": "glb"
       },
       { "id": "detail.house-c-glb",
         "url": "dist/models/house_c.glb",
-        "bytes": 188028,
+        "bytes": 206664,
         "kind": "glb"
       }
     ]
   },
   "summary": {
     "phaseBytes": {
-      "boot": 3314538,
+      "boot": 3320589,
       "core": 4801137,
-      "detail": 3177620
+      "detail": 5230868
     },
     "cumulativeBytes": {
-      "boot": 3314538,
-      "core": 8115675,
-      "detail": 11293295
+      "boot": 3320589,
+      "core": 8121726,
+      "detail": 13352594
     },
     "limitsBytes": {
       "boot": 4000000,

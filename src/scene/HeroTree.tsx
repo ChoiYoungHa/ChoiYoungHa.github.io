@@ -93,14 +93,17 @@ function prepareHeroGltf(scene: Object3D): GltfMeshes {
     if (!mesh.isMesh) return
     const material = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material
     sourceMaterials.add(material.uuid)
-    const kind = classifyHeroMesh(mesh.name, material.name)
+    const srcColor = (material as { color?: { r: number; g: number; b: number; getHexString(): string } }).color
+    const kind = classifyHeroMesh(mesh.name, material.name, srcColor)
     const map = mapOf(mesh.material)
-    const key = `${kind}:${map?.uuid ?? 'none'}`
+    // R96-A: 텍스처 없는 GLB(BigTree)는 baseColorFactor 가 색의 전부 — 재질 교체 시 color 로 넘긴다(없으면 백색이 된다).
+    const color = map || !srcColor ? undefined : `#${srcColor.getHexString()}`
+    const key = `${kind}:${map?.uuid ?? 'none'}:${color ?? ''}`
     let replaced = cache.get(key)
     if (!replaced) {
       replaced = kind === 'leaf'
-        ? createLookdevMaterial({ map, alphaTest: 0.5, side: DoubleSide, roughness: 0.85, metalness: 0 })
-        : createLookdevMaterial({ map, roughness: 0.92, metalness: 0 })
+        ? createLookdevMaterial({ map, color, alphaTest: map ? 0.5 : undefined, side: DoubleSide, roughness: 0.85, metalness: 0 })
+        : createLookdevMaterial({ map, color, roughness: 0.92, metalness: 0 })
       cache.set(key, replaced)
     }
     const clone = mesh.clone()

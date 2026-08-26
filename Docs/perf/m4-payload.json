@@ -1,24 +1,24 @@
 {
-  "buildHash": "4ba174b",
+  "buildHash": "a1e7272",
   "mode": "actual-build",
   "manifestPath": "src/data/loading-manifest.json",
-  "manifestMeasuredFromHead": "30665a7",
+  "manifestMeasuredFromHead": "a1e7272",
   "note": "M4-16 actual-build mode resolves current hash-named dist chunks; manifest snapshot differences remain warnings.",
   "phaseBytes": {
-    "boot": 3315753,
+    "boot": 3320589,
     "core": 4801137,
-    "detail": 3177620
+    "detail": 5230868
   },
   "cumulativeBytes": {
-    "boot": 3315753,
-    "core": 8116890,
-    "detail": 11294510
+    "boot": 3320589,
+    "core": 8121726,
+    "detail": 13352594
   },
-  "totalBytes": 11294510,
+  "totalBytes": 13352594,
   "singleMax": {
-    "id": "core.terrain-grass-normal",
-    "url": "dist/textures/ground_grass_normal.jpg",
-    "bytes": 1440314
+    "id": "detail.hero-tree-glb",
+    "url": "dist/models/hero_tree.glb",
+    "bytes": 3407832
   },
   "limitsBytes": {
     "boot": 4000000,
@@ -31,27 +31,12 @@
     "coreWithinBudget": true,
     "totalWithinBudget": true,
     "singleWithinBudget": true,
-    "manifestPhaseSummaryMatches": false,
-    "manifestCumulativeSummaryMatches": false,
+    "manifestPhaseSummaryMatches": true,
+    "manifestCumulativeSummaryMatches": true,
     "duplicateIdCount": 0,
     "errors": 0
   },
   "errors": [],
-  "warnings": [
-    {
-      "type": "byte_mismatch",
-      "id": "boot.js-main",
-      "url": "dist/assets/main-s_PwUn7H.js",
-      "resolvedUrl": "dist/assets/main-BNB1zj4W.js",
-      "declared": 870195,
-      "actual": 871410
-    },
-    {
-      "type": "manifest_phase_summary_differs_from_actual_build"
-    },
-    {
-      "type": "manifest_cumulative_summary_differs_from_actual_build"
-    }
-  ],
+  "warnings": [],
   "pass": true
 }
