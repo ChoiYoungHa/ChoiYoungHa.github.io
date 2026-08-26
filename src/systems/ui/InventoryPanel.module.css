@@ -1,0 +1,12 @@
+.newItem {
+  animation: new-item-pulse 1s ease-in-out infinite;
+}
+
+@keyframes new-item-pulse {
+  0%, 100% {
+    box-shadow: 0 0 7px rgba(240, 197, 91, 0.42);
+  }
+  50% {
+    box-shadow: 0 0 17px rgba(240, 197, 91, 0.92);
+  }
+}
