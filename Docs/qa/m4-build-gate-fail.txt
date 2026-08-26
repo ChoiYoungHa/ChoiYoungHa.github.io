@@ -1,0 +1,45 @@
+# M4-16 통합 빌드 게이트 — 고의 실패 검증
+
+- 실행일: 2026-08-26 KST
+- worktree / HEAD: `web3d-wt-codexA` / `cdcbc72`
+- fixture: `public/models/__dummy_unregistered.glb`
+- fixture 실측 크기: `1 byte`
+- 명령: `& .\Automation\build.ps1`(정상 실행과 같은 전체 체인, build 포함)
+
+## 실행 결과
+
+| 단계 | exit | elapsed | 핵심 결과 |
+|---|---:|---:|---|
+| typecheck | 0 | 23.294s | PASS |
+| build | 0 | 10.032s | 612 modules, production build PASS (`built in 5.98s`) |
+| check-assets | **1** | 0.164s | 미등록 public asset 1건 검출 |
+| check-budgets | 미실행 | - | 앞 단계 fail-fast |
+| check-files | 미실행 | - | 앞 단계 fail-fast |
+| check-payload | 미실행 | - | 앞 단계 fail-fast |
+
+핵심 원문:
+
+```text
+"pass": false
+"publicFiles": 4
+"registeredPublicPaths": 3
+"unregisteredFiles": [
+  "public/models/__dummy_unregistered.glb"
+]
+STEP check-assets exit=1 elapsed=0.164s
+BUILD_GATE FAIL exit=1 elapsed=33.525s
+```
+
+## fixture 삭제·잔존 확인
+
+삭제 직후 실측:
+
+```text
+public\models\__dummy_unregistered.glb_exists=False
+dist\models\__dummy_unregistered.glb_exists=False
+dummy_status_lines=0
+```
+
+`git status --short -- public/models/__dummy_unregistered.glb` 출력은 0줄이며, source·build output의 더미 파일과 해당 경로의 git 잔존 변경은 모두 0이다.
+
+판정: 고의 미등록 GLB에서 전체 체인이 non-zero(`1`)로 fail-fast했고, fixture 삭제 후 잔존 0이므로 M4-16 실패 검출 완료 조건을 충족함.

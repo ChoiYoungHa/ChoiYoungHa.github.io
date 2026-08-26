@@ -1,0 +1,41 @@
+# M4-16 통합 빌드 게이트 — 정상 실행
+
+- 실행일: 2026-08-26 KST
+- worktree: `web3d-wt-codexA`
+- branch / HEAD: `wt/bench` / `cdcbc72`
+- 명령: `& .\Automation\build.ps1`
+- build: 포함(`-SkipBuild` 미사용)
+- perf 입력: `Docs/m2/village-integration-smoke.json`
+- perf 인자 규약: root 또는 `perf` 키 아래에 `maxCalls`, `maxTriangles`, `maxPrograms`, `textureGpuMB`, `jsHeapPeakMB`를 둔 JSON; CSV는 허용하지 않음
+
+## 최초 실행에서 확인한 체인 결함
+
+- 최초 총 결과: `BUILD_GATE FAIL exit=1 elapsed=5.688s`
+- 실패 단계: `check-payload exit=1 elapsed=0.204s`
+- 원인: manifest snapshot(`d0692ef`)의 `main-wrfkKES9.js`·declared bytes가 actual build(`cdcbc72`, `main-BxoMBSFH.js`)와 달라 missing 6건, byte mismatch 1건, summary mismatch가 발생함.
+- 최소 수정: build gate만 `check-payload.mjs --actual-build`를 사용해 현재 hash-named dist chunk를 단일 same-stem 파일로 해석하고, 실제 파일 존재·실측 예산·중복·오류를 gate하며 snapshot 차이는 경고로 보존함; 기본 snapshot-strict 모드는 유지함.
+
+## 수정 후 전체 재실행
+
+| 단계 | exit | elapsed | 핵심 결과 |
+|---|---:|---:|---|
+| typecheck | 0 | 2.447s | `npx tsc -b` PASS |
+| build | 0 | 3.215s | 612 modules, Vite production build PASS (`built in 971ms`) |
+| check-assets | 0 | 0.129s | assets 14, public files 3, unregistered/missing/license errors 0 |
+| check-budgets | 0 | 0.137s | calls 63/200, tris unknown allowUnknown, programs 40/40, texture 36.88/300, heap 77.27/900 |
+| check-files | 0 | 0.280s | 16 files, `dist_included=true` |
+| check-payload | 0 | 0.263s | actual-build 3,214,787 bytes, errors 0, limits PASS |
+
+최종 원문:
+
+```text
+BUILD_GATE PASS exit=0 elapsed=6.489s
+```
+
+관찰 경고(실패 아님):
+
+- programs가 상한과 동일함: `40/40`.
+- Vite는 500kB 초과 chunk 2개와 향후 native config loader의 `__dirname` 비호환을 경고함.
+- payload snapshot 대비 actual build 차이: index `538→551`, main JS `826673→826805`, phase/cumulative summary 차이; actual-build 모드에서 명시적 warning 4건으로 보존됨.
+
+판정: 정상 통합 체인은 build 포함 전체 단계 exit `0`, 최종 exit `0` 조건을 충족함.

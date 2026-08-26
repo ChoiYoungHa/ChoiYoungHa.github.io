@@ -1,4 +1,6 @@
 [CmdletBinding()]
+# M4-16 (R39-C): -PerfJson must point to a JSON object accepted by
+# Automation/check-budgets.mjs (metrics at the root or under a `perf` key); CSV input is not accepted.
 param(
   [switch]$SkipBuild,
   [string]$PerfJson = 'Docs/m2/village-integration-smoke.json',
@@ -14,14 +16,19 @@ function Invoke-NativeStep {
     [Parameter(Mandatory = $true)][scriptblock]$Command
   )
 
-  Write-Output "STEP $Name"
+  $stepTimer = [System.Diagnostics.Stopwatch]::StartNew()
+  Write-Output "STEP $Name START"
   & $Command
-  if ($LASTEXITCODE -ne 0) {
-    throw "STEP $Name failed with exit code $LASTEXITCODE"
+  $stepExitCode = $LASTEXITCODE
+  $stepTimer.Stop()
+  Write-Output ("STEP {0} exit={1} elapsed={2:N3}s" -f $Name, $stepExitCode, $stepTimer.Elapsed.TotalSeconds)
+  if ($stepExitCode -ne 0) {
+    throw "STEP $Name failed with exit code $stepExitCode"
   }
 }
 
 Push-Location $repoRoot
+$gateTimer = [System.Diagnostics.Stopwatch]::StartNew()
 try {
   Invoke-NativeStep 'typecheck' { npx tsc -b }
 
@@ -44,10 +51,14 @@ try {
     }
   }
 
-  Invoke-NativeStep 'check-payload' { node Automation/check-payload.mjs --out Docs/perf/m4-payload.json }
-  Write-Output 'BUILD_GATE PASS'
+  # M4-16 (R39-C): validate the just-built hash-named dist chunks; keep the manifest snapshot differences visible.
+  Invoke-NativeStep 'check-payload' { node Automation/check-payload.mjs --actual-build --out Docs/perf/m4-payload.json }
+  $gateTimer.Stop()
+  Write-Output ("BUILD_GATE PASS exit=0 elapsed={0:N3}s" -f $gateTimer.Elapsed.TotalSeconds)
   exit 0
 } catch {
+  $gateTimer.Stop()
+  Write-Output ("BUILD_GATE FAIL exit=1 elapsed={0:N3}s" -f $gateTimer.Elapsed.TotalSeconds)
   Write-Error $_
   exit 1
 } finally {
