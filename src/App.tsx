@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber'
-import { Suspense, useEffect } from 'react'
+import { memo, Suspense, useEffect } from 'react'
 import { applyToneMapping, createRenderer } from './gl/createRenderer'
 import { SkyDome } from './scene/SkyDome'
 import { Atmosphere } from './scene/Atmosphere'
@@ -51,6 +51,49 @@ function VistaCamera({ id }: { id: string }) {
   return null
 }
 
+/**
+ * R86-A — 씬 캔버스. **로딩 상태와 분리된 memo 컴포넌트**라 props(전부 원시값)가 같으면 재렌더되지 않는다.
+ * App 이 로딩 progress 마다 재렌더되면 R3F Canvas 의 레이아웃 이펙트(deps 없음)가 매번 root.configure() 를 다시 불러
+ * async gl 팩토리(createRenderer)를 16회 재호출했다(R86-A 실측). configure 의 if (!state.gl) 가드는 await 중 재진입을
+ * 못 막아 두 번째 WebGPURenderer 가 같은 캔버스에 생기고, store 의 최종 gl 은 setSize 를 못 받아 canvasTarget 300×150 →
+ * 매 프레임 depth 검증 에러·검은 프레임(R77-A 결함). 구 빌드는 로딩 ready 뒤에 Canvas 가 마운트되는 타이밍이라 1회였다.
+ * 상세: Docs/decisions/webgpu-blackframe-r86.md
+ */
+const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { width: number; height: number; shot: string | null; hideHero: boolean; dprCap: number }) {
+  return (
+    <Canvas
+      gl={createRenderer}
+      flat // M3-14 (R30-A): R3F 기본 톤매퍼(ACES) 주입을 끄고 아래 onCreated 에서 lookdev.json / ?tonemap= 을 적용한다
+      onCreated={({ gl }) => applyToneMapping(gl)}
+      dpr={dprCap}
+      shadows
+      camera={{ fov: CAMERA.fov, near: CAMERA.near, far: CAMERA.far, position: [0, 3, 8] }}
+      style={{ width, height }}
+    >
+      {/* R18-A 통합 순서: SkyDome → Atmosphere → Lighting → 지오메트리.
+          App 이 직접 들고 있던 배경색·안개·방향광은 이 셋과 **중복**이라 제거했다.
+          배경·환경맵은 SkyDome 이 scene.background/environment 로 설정한다. */}
+      <SkyDome />
+      <Atmosphere />
+      <Lighting />
+      <RuntimeProbe />
+      <Prototype />
+      <Terrain />
+      <MainPath />
+      {hideHero ? null : <HeroTree />}
+      {/* M2-24 마을 8채. 지오메트리를 코드로 만들고 InstancedMesh 로 그린다 — suspend 하지 않으므로
+          Foliage/RockInstances 의 Suspense 경계 밖에 둔다(로딩 중에도 마을은 보인다). */}
+      <Village />
+      {/* useGLTF 는 suspend 하므로 경계가 필요하다. 로딩 중에는 지형만 보인다. */}
+      <Suspense fallback={null}>
+        <Foliage sampleHeight={sampleHeight} />
+        <RockInstances sampleHeight={sampleHeight} />
+      </Suspense>
+      {shot ? <VistaCamera id={shot} /> : <Player />}
+    </Canvas>
+  )
+})
+
 export default function App() {
   const params = new URLSearchParams(location.search)
   const shot = params.get('shot')
@@ -79,36 +122,7 @@ export default function App() {
 
   return (
     <div className="stage" style={{ width, height }}>
-      <Canvas
-        gl={createRenderer}
-        flat // M3-14 (R30-A): R3F 기본 톤매퍼(ACES) 주입을 끄고 아래 onCreated 에서 lookdev.json / ?tonemap= 을 적용한다
-        onCreated={({ gl }) => applyToneMapping(gl)}
-        dpr={quality.dprCap}
-        shadows
-        camera={{ fov: CAMERA.fov, near: CAMERA.near, far: CAMERA.far, position: [0, 3, 8] }}
-        style={{ width, height }}
-      >
-        {/* R18-A 통합 순서: SkyDome → Atmosphere → Lighting → 지오메트리.
-            App 이 직접 들고 있던 배경색·안개·방향광은 이 셋과 **중복**이라 제거했다.
-            배경·환경맵은 SkyDome 이 scene.background/environment 로 설정한다. */}
-        <SkyDome />
-        <Atmosphere />
-        <Lighting />
-        <RuntimeProbe />
-        <Prototype />
-        <Terrain />
-        <MainPath />
-        {hideHero ? null : <HeroTree />}
-        {/* M2-24 마을 8채. 지오메트리를 코드로 만들고 InstancedMesh 로 그린다 — suspend 하지 않으므로
-            Foliage/RockInstances 의 Suspense 경계 밖에 둔다(로딩 중에도 마을은 보인다). */}
-        <Village />
-        {/* useGLTF 는 suspend 하므로 경계가 필요하다. 로딩 중에는 지형만 보인다. */}
-        <Suspense fallback={null}>
-          <Foliage sampleHeight={sampleHeight} />
-          <RockInstances sampleHeight={sampleHeight} />
-        </Suspense>
-        {shot ? <VistaCamera id={shot} /> : <Player />}
-      </Canvas>
+      <Stage width={width} height={height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
       <RuntimeHud />
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
       {/* R48-A: 로딩 ready 뒤에 마운트 — 5초 타이머 시작점 = ready(로드 중 메인 스레드 정지 구간을 피한다) */}
