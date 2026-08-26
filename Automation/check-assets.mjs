@@ -33,6 +33,10 @@ const emptyLicenseFields = []
 
 for (const asset of assets) {
   const runtimeFile = normalize(asset.runtime_file)
+  if (runtimeFile.startsWith('planned:')) {
+    // master 2026-08-27: 아직 런타임에 배치하지 않은 자산(변환·배치 대기). 경로 계획만 기록하며 존재 검사 대상이 아니다.
+    continue
+  }
   if (!runtimeFile || runtimeFile === 'none') {
     missingRuntimeFiles.push({ asset_id: asset.asset_id, runtime_file: asset.runtime_file || '' })
   } else if (!(await exists(resolve(cwd, runtimeFile)))) {

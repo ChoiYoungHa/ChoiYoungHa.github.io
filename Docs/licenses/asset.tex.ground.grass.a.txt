@@ -1,0 +1,11 @@
+Asset: Sparse Grass (1K PBR map set)
+Source: Poly Haven
+Author: Amal Kumar
+Asset page: https://polyhaven.com/a/sparse_grass
+Files API: https://api.polyhaven.com/files/sparse_grass
+License: CC0 1.0 Universal (Public Domain Dedication)
+License URL: https://polyhaven.com/license
+Attribution required: no
+Redistribution allowed: yes
+Acquired: 2026-08-27
+Files: sparse_grass_diff_1k.jpg; sparse_grass_nor_gl_1k.jpg; sparse_grass_rough_1k.jpg

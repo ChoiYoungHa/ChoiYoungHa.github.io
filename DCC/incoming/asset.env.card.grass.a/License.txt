@@ -1,0 +1,22 @@
+Asset 1: vegetation_grass_card_03.png
+Source: OpenGameArt — grass blades alpha card texture (side view)
+Author: para
+Asset page: https://opengameart.org/content/grass-blades-alpha-card-texture-side-view
+Direct file: https://opengameart.org/sites/default/files/vegetation_grass_card_03.png
+License: CC0 1.0 Universal (Public Domain Dedication)
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+Attribution required: no
+Redistribution allowed: yes
+
+Asset 2: grass_medium_01_card_1k.png
+Source: Poly Haven — Grass Medium 01
+Authors: Rob Tuytel; Rico Cilliers
+Asset page: https://polyhaven.com/a/grass_medium_01
+Files API: https://api.polyhaven.com/files/grass_medium_01
+License: CC0 1.0 Universal (Public Domain Dedication)
+License URL: https://polyhaven.com/license
+Attribution required: no
+Redistribution allowed: yes
+Processing: combined official 1K diffuse JPG (RGB) with official 1K alpha PNG as the RGBA alpha channel; source MD5 values 6b18ed50d776fd20c1304d9994bd764e and 6b5b251ef1ca9a69ab9f49def66d758a.
+
+Acquired: 2026-08-27

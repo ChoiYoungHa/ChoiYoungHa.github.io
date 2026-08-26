@@ -1,0 +1,5 @@
+asset_id: asset.char.npc.stan  (NPC "stan" — 콘티 §2-3)
+source: Adobe Mixamo (https://www.mixamo.com) — account "영하", downloaded by master via Playwright, 2026-08-27 00:09~00:10 KST
+file: char_peasant_man_idle_skin.fbx — Character "Peasant Man" + Animation "Breathing Idle", FBX Binary, With Skin, 30fps, keyframe reduction uniform
+license: Adobe Mixamo terms — royalty-free use incl. games; embedding in a packaged/web game permitted; raw FBX redistribution NOT permitted. attribution_required: no. ai_training_allowed: treat as no.
+policy: raw FBX stays in DCC/incoming (not deployed); runtime uses converted GLB public/models/npc_stan.glb.
