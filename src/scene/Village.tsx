@@ -6,10 +6,11 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import type { MeshStandardNodeMaterial } from 'three/webgpu'
 import { useLookdevMaterial } from './Atmosphere'
 import placement from '../data/placement.json'
-import { classifyHouseMesh, getLookAssets, HOUSE_KEYS, type HouseKey } from '../systems/lookAssets'
+import { classifyHouseMesh, getLookAssets, HOUSE_KEYS, readForceProcedural, type HouseKey } from '../systems/lookAssets'
 import { sampleHeight } from './terrain/heightmap'
 import { createHouseGeometry, HOUSE_SOCKETS, type HouseId } from './village/houseGeometry'
 import { createRoofGeometry, ROOF_COLORS, type RoofId } from './village/roofGeometry'
+import { VillageProps } from './village/Props'
 
 const HOUSE_IDS: HouseId[] = ['house-a', 'house-b', 'house-c']
 const ROOF_IDS: RoofId[] = ['roof-a', 'roof-b', 'roof-c']
@@ -202,6 +203,7 @@ export function Village() {
     return entry.mode === 'gltf' ? [{ id: key as HouseId, url: entry.url }] : []
   })
   const proceduralIds = HOUSE_IDS.filter((id) => !gltfHouses.some((h) => h.id === id))
+  const propsEnabled = !readForceProcedural(location.search)
 
   return (
     <group name="village">
@@ -211,6 +213,7 @@ export function Village() {
           <VillageGltf houses={gltfHouses} />
         </Suspense>
       )}
+      <VillageProps enabled={propsEnabled} />
     </group>
   )
 }
