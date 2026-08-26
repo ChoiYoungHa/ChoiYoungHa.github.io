@@ -1,4 +1,3 @@
-import { addAfterEffect } from '@react-three/fiber'
 import { useRuntime } from '../store/useRuntime'
 
 /**
@@ -59,19 +58,13 @@ export function reportIfRequested(delayMs = 4000): () => void {
 async function captureCanvas(): Promise<string | null> {
   const canvas = document.querySelector('.stage canvas') as HTMLCanvasElement | null
   if (!canvas) return null
-  // R77-A: rAF 콜백은 R3F 렌더 루프와 등록 순서 경쟁이라 WebGPU 캔버스가 제시 후 비워진 뒤 읽히면 검은 PNG(20,831B)가 된다
-  // (R64 4/22 → R77 18/18). R3F 의 addAfterEffect 는 renderer.render 직후 같은 태스크에서 불리므로 그 자리에서 읽는다.
-  const url = await new Promise<string | null>((resolve) => {
-    const off = addAfterEffect(() => {
-      off()
-      try {
-        resolve(canvas.toDataURL('image/png'))
-      } catch {
-        resolve(null)
-      }
-    })
-  })
-  return url && url.length > 5000 ? url : null // 5KB 미만이면 사실상 빈 화면
+  await new Promise<void>((r) => requestAnimationFrame(() => r()))
+  try {
+    const url = canvas.toDataURL('image/png')
+    return url.length > 5000 ? url : null // 5KB 미만이면 사실상 빈 화면
+  } catch {
+    return null
+  }
 }
 
 /**
