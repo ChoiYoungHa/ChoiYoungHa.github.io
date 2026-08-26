@@ -1,0 +1,95 @@
+R44-C wt/bench CRLF regression record
+Date: 2026-08-26 (Asia/Seoul)
+Worker: codex-A 54c832e9 / term_39333443-ae5d-4c43-827b-1bec59a6f730
+Branch: wt/bench
+HEAD: 4388f10ea7bc4c434cb5306e767e2050c5663cca
+
+[Cause measurement]
+Command: git config --show-origin --get core.autocrlf
+Exit: 0
+Output: file:C:/Program Files/Git/etc/gitconfig true
+
+Command: git check-attr text eol -- src/player/input.ts Automation/test-raycast.mjs
+Exit: 0
+Output:
+  src/player/input.ts: text: unspecified
+  src/player/input.ts: eol: unspecified
+  Automation/test-raycast.mjs: text: unspecified
+  Automation/test-raycast.mjs: eol: unspecified
+
+.gitattributes only fixes LFS binary paths (blend, glb, ktx2, hdr, png) to -text;
+there is no text/eol rule for TypeScript or MJS files.
+
+Command: git ls-files --eol src/player/input.ts Automation/test-raycast.mjs
+Exit: 0
+Output:
+  i/lf w/crlf attr/ Automation/test-raycast.mjs
+  i/lf w/crlf attr/ src/player/input.ts
+
+The repository blobs are LF, while this newly materialized linked worktree has
+CRLF working-tree copies because core.autocrlf=true and no applicable attribute
+overrides it.  The original test extracted Action with a LF-only terminator
+(/export type Action =([\s\S]*?)\n\n/), so the CRLF source returned no match and
+reported Action count 0.  The reported main-only pass is consistent with an
+existing main working copy retaining LF after a local write instead of being
+freshly checked out; main was not inspected because this dispatch forbids it.
+
+[RED]
+Command: node --test Automation/test-raycast.mjs
+Exit: 1
+Result: tests 12 / pass 11 / fail 1
+Failure: Automation/test-raycast.mjs:184, Action count 0 !== 8
+Probe: LF-only regex=false, CRLF-aware regex=true, BOM=false,
+       CRLF pairs=67, bare LF=0, Action declaration present=true
+
+[Minimal change]
+File: Automation/test-raycast.mjs:181
+Change: normalize the read source with .replace(/\r\n/g, '\n')
+Marker: // R44-C CRLF
+Assertions, expected Action values, DEFAULT_BINDINGS values, and source files
+under test were not changed.  The normalization is a no-op for LF-only input,
+so the result is the same in main and a CRLF checkout.
+
+[GREEN - focused]
+Command: node --test Automation/test-raycast.mjs
+Exit: 0
+Result: tests 12 / pass 12 / fail 0 / duration 185.6509ms
+
+[Full regression]
+Command (explicit list; Automation/*.mjs glob was not used):
+  node --test Automation/test-raycast.mjs Automation/test-scatter.mjs
+  Automation/test-terrain.mjs Automation/test-colliders.mjs
+  Automation/test-village.mjs Automation/test-measure.mjs
+  Automation/test-depth-grade.mjs Automation/test-ui-logic.mjs
+  Automation/test-loading.mjs Automation/test-presets.mjs
+  Automation/test-bench-args.mjs
+Files requested: 11
+Automation/test-preset-consumers.mjs: absent, therefore not included
+Exit: 0
+Result: tests 138 / suites 38 / pass 138 / fail 0 / skipped 0 / todo 0
+Node-reported duration: 1778.6745ms
+Wall elapsed: 1.877s
+
+[TypeScript]
+Command: npx tsc -b
+Exit: 0
+Wall elapsed: 2.638s
+
+[Conclusion]
+PASS.  The exact CRLF failure is fixed with one normalization expression, all
+assertion values are unchanged, all 138 explicit regression tests pass, and
+TypeScript compilation succeeds.
+
+[Final merge scope]
+node --check Automation/test-raycast.mjs: exit 0
+git diff --check: exit 0
+Debug markers: 0
+git status --short:
+  M Automation/test-raycast.mjs
+  ?? Docs/qa/m4-regression-wtbench.txt
+Generated m4-loading.json and m4-presets.json changes were restored to HEAD.
+
+[Prevention]
+Cross-platform source-inspection tests should normalize line endings before
+matching, or the repository should define a deliberate source-file eol rule in
+.gitattributes.  This avoids making test results depend on checkout history.

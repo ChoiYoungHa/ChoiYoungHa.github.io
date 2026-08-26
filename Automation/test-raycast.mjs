@@ -178,7 +178,7 @@ describe('M0b-10 입력 계약 — action 8개, jump·Interact 0', () => {
       'run',
       'toggleQuality',
     ])
-    const src = readFileSync(join(PLAYER, 'input.ts'), 'utf8')
+    const src = readFileSync(join(PLAYER, 'input.ts'), 'utf8').replace(/\r\n/g, '\n') // R44-C CRLF
     const union = src.match(/export type Action =([\s\S]*?)\n\n/)?.[1] ?? ''
     const actions = [...union.matchAll(/'([a-zA-Z]+)'/g)].map((m) => m[1])
     assert.equal(actions.length, 8, `Action 개수=${actions.length}`)
