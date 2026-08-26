@@ -34,8 +34,10 @@ const TREE = placement.heroTree
 describe('M2-10 줄기 충돌 proxy — 순수 함수', () => {
   test('반경은 밑동 반경 + 플레이어 반폭', () => {
     assert.equal(col.PLAYER_RADIUS, 0.4)
-    assert.equal(col.HERO_TRUNK_RADIUS, hero.HERO_TREE.trunkBaseDiameter / 2 + col.PLAYER_RADIUS)
-    assert.equal(col.HERO_TRUNK_RADIUS, 3.0)
+    // R100-A: 충돌 반경은 절차 밑동(2.6)이 아니라 GLB 발자국 7.6 + 플레이어 0.4 = 8.0
+    assert.equal(col.HERO_TRUNK_RADIUS, col.HERO_FOOTPRINT_RADIUS + col.PLAYER_RADIUS)
+    assert.equal(col.HERO_TRUNK_RADIUS, 8.0)
+    assert.ok(hero.HERO_TREE.trunkBaseDiameter / 2 < col.HERO_FOOTPRINT_RADIUS)
   })
 
   test('밖에 있으면 좌표를 그대로 돌려준다', () => {
@@ -167,7 +169,7 @@ describe('M2-08 배치 정합', () => {
     assert.deepEqual({ x: TREE.x, z: TREE.z }, { x: mp.x, z: mp.z })
     // R22-A(M2-30): vista-village 는 줄기 중심이 아니라 밑동 근처다(test-scatter.mjs 와 같은 규칙, master 판정 B).
     const dv = Math.hypot(vv.x - TREE.x, vv.z - TREE.z)
-    assert.ok(dv > col.HERO_TRUNK_RADIUS && dv <= 6, `vista-village 거리 ${dv.toFixed(2)}m`)
+    assert.ok(dv > col.HERO_TRUNK_RADIUS && dv <= 12, `vista-village 거리 ${dv.toFixed(2)}m`) // R100-A: 반경 8 밖 10m
   })
 
   test('heroTree 가 250m 경계 안이고 지면 높이가 유한하다', () => {

@@ -1,13 +1,13 @@
 import { useGLTF } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Suspense, useMemo, useState } from 'react'
-import { Box3, BufferAttribute, BufferGeometry, DoubleSide, type Material, type Mesh, type Object3D, type Texture } from 'three'
+import { Box3, BufferAttribute, BufferGeometry, Color, DoubleSide, type Material, type Mesh, type Object3D, type Texture, Vector3 } from 'three'
 import type { MeshStandardNodeMaterial } from 'three/webgpu'
 import { createLookdevMaterial, useLookdevMaterial } from './Atmosphere'
 import placement from '../data/placement.json' with { type: 'json' }
 import lookdev from '../data/lookdev.json' with { type: 'json' }
-import { classifyHeroMesh, fitHeroTransform, getLookAssets } from '../systems/lookAssets'
-import { buildHeroTree, HERO_TREE, heroContrastColors, type HeroContrastConfig, type HeroTreeColors, type Lod } from './hero/heroTreeGeometry'
+import { classifyHeroMesh, fitHeroTransform, getLookAssets, percentileValue } from '../systems/lookAssets'
+import { buildHeroTree, CANOPY_COLOR, HERO_TREE, heroContrastColors, type HeroContrastConfig, type HeroTreeColors, type Lod } from './hero/heroTreeGeometry'
 import { sampleHeight } from './terrain/heightmap'
 
 /**
@@ -24,8 +24,18 @@ import { sampleHeight } from './terrain/heightmap'
 const SPEC = placement.heroTree
 const LOOK = getLookAssets()
 
-/** M2-09 거리 임계. 이보다 멀면 LOD1. `placement.json` 이 단일 원본이다. */
-export const LOD_SWITCH_DISTANCE = SPEC.lodSwitchDistanceMeters
+/**
+ * M2-09 거리 임계. 이보다 멀면 LOD1. `placement.json` 이 단일 원본이다.
+ * R100-A: GLB 수목일 때는 LOD1(절차 수목)이 실루엣과 맞지 않고 tris 여유(low ≈390K ≤600K)가 있어 전환 거리를 400m(월드 대각 353m 밖)로 둔다
+ * = 항상 GLB. `?lookAssets=0`(절차)에서는 placement 값 그대로.
+ */
+export const HERO_GLTF_LOD_SWITCH_METERS = 400
+export const LOD_SWITCH_DISTANCE = LOOK.heroTree.mode === 'gltf' ? HERO_GLTF_LOD_SWITCH_METERS : SPEC.lodSwitchDistanceMeters
+/** R100-A — 뿌리 부유 보정: 원점을 bbox min 이 아니라 정점 y 하위 2% 분위로 잡고(이상치 뿌리 끝 무시) 추가로 0.5m 침하시킨다. */
+export const HERO_ROOT_Y_PERCENTILE = 0.02
+export const HERO_ROOT_SINK_METERS = 0.5
+/** R100-A — 잎 탈채도: 잎 baseColor 를 팔레트 수관색(#3B3E26, §6-2) 쪽으로 이 비율만큼 섞는다(선형 lerp). */
+export const HERO_LEAF_DESATURATE = 0.55 // R103-A: 0.35(S1 far 채도 14.0) → 0.55 시험
 
 /** HUD 가 읽어가는 현재 LOD. 매 프레임 바뀔 수 있어 스토어에 넣지 않는다(계획서 §3-3). */
 let activeLod: Lod = 0
@@ -83,7 +93,19 @@ function mapOf(material: Material | Material[]): Texture | undefined {
 function prepareHeroGltf(scene: Object3D): GltfMeshes {
   scene.updateMatrixWorld(true)
   const bbox = new Box3().setFromObject(scene)
-  const { scale, offsetY } = fitHeroTransform({ minY: bbox.min.y, maxY: bbox.max.y }, HERO_TREE.height)
+  // R100-A: 밑동 기준 y = 월드 정점 y 의 하위 2% 분위(뿌리 끝 이상치가 bbox min 을 끌어내려 수목이 떠 보이는 것을 막는다)
+  const ys: number[] = []
+  const v = new Vector3()
+  scene.traverse((object) => {
+    const mesh = object as Mesh
+    if (!mesh.isMesh) return
+    const position = mesh.geometry.getAttribute('position')
+    for (let i = 0; i < position.count; i++) ys.push(v.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld).y)
+  })
+  const baseY = ys.length > 0 ? percentileValue(ys, HERO_ROOT_Y_PERCENTILE) : bbox.min.y
+  const fit = fitHeroTransform({ minY: baseY, maxY: bbox.max.y }, HERO_TREE.height)
+  const scale = fit.scale
+  const offsetY = fit.offsetY - HERO_ROOT_SINK_METERS
 
   const cache = new Map<string, MeshStandardNodeMaterial>()
   const sourceMaterials = new Set<string>()
@@ -97,7 +119,11 @@ function prepareHeroGltf(scene: Object3D): GltfMeshes {
     const kind = classifyHeroMesh(mesh.name, material.name, srcColor)
     const map = mapOf(mesh.material)
     // R96-A: 텍스처 없는 GLB(BigTree)는 baseColorFactor 가 색의 전부 — 재질 교체 시 color 로 넘긴다(없으면 백색이 된다).
-    const color = map || !srcColor ? undefined : `#${srcColor.getHexString()}`
+    const color = map || !srcColor
+      ? undefined
+      : kind === 'leaf'
+        ? `#${new Color(srcColor.r, srcColor.g, srcColor.b).lerp(new Color(CANOPY_COLOR.r, CANOPY_COLOR.g, CANOPY_COLOR.b), HERO_LEAF_DESATURATE).getHexString()}`
+        : `#${srcColor.getHexString()}`
     const key = `${kind}:${map?.uuid ?? 'none'}:${color ?? ''}`
     let replaced = cache.get(key)
     if (!replaced) {

@@ -1,5 +1,5 @@
 {
-  "routeHash": "6ad0996f1aff",
+  "routeHash": "a9f1339c4187",
   "routeHashMethod": "SHA-256 of UTF-8 compact JSON.stringify for the full document after removing routeHash and routeHashMethod; first 12 lowercase hex characters.",
   "id": "m4-final-route-v1",
   "sourcePathId": "m1-main-path-v1",
@@ -21,7 +21,7 @@
       "timeSeconds": 0,
       "label": "마을 입구 스폰",
       "sourceMainPathIndex": 0,
-      "pose": { "position": [0, 0, 24], "yaw": 0.005624 },
+      "pose": { "position": [0, 0, 24], "yaw": 0.065624 },
       "input": { "forward": 1, "run": false }
     },
     {
@@ -29,7 +29,7 @@
       "timeSeconds": 5,
       "label": "집 사이",
       "sourceMainPathIndex": 1,
-      "pose": { "position": [-5, 0, 10], "yaw": 0.582379 },
+      "pose": { "position": [-5, 0, 10], "yaw": 0.522379 },
       "input": { "forward": 1, "run": false }
     },
     {
@@ -37,7 +37,7 @@
       "timeSeconds": 10,
       "label": "마을 북단",
       "sourceMainPathIndex": 2,
-      "pose": { "position": [-9, 0, -6], "yaw": 0.160072 },
+      "pose": { "position": [-9, 0, -6], "yaw": 0.152472 },
       "input": { "forward": 1, "run": false }
     },
     {
@@ -45,7 +45,7 @@
       "timeSeconds": 17,
       "label": "초원 진입",
       "sourceMainPathIndex": 3,
-      "pose": { "position": [-6, 0, -28], "yaw": -0.408099 },
+      "pose": { "position": [-6, 0, -28], "yaw": -0.371499 },
       "input": { "forward": 1, "run": false }
     },
     {
@@ -53,7 +53,7 @@
       "timeSeconds": 24,
       "label": "완만한 오르막",
       "sourceMainPathIndex": 4,
-      "pose": { "position": [4, 0, -46], "yaw": -0.758998 },
+      "pose": { "position": [4, 0, -46], "yaw": -0.743998 },
       "input": { "forward": 1, "run": false }
     },
     {
@@ -61,7 +61,7 @@
       "timeSeconds": 30,
       "label": "길 중간 전망",
       "sourceMainPathIndex": 5,
-      "pose": { "position": [18, 0, -60], "yaw": -0.87203 },
+      "pose": { "position": [18, 0, -60], "yaw": -0.91403 },
       "input": { "forward": 1, "run": false }
     },
     {
@@ -69,15 +69,15 @@
       "timeSeconds": 37,
       "label": "거대 수목 접근",
       "sourceMainPathIndex": 6,
-      "pose": { "position": [32, 0, -76], "yaw": -0.414479 },
+      "pose": { "position": [32, 0, -76], "yaw": -0.432679 },
       "input": { "forward": 1, "run": false }
     },
     {
       "id": "hero-approach",
-      "timeSeconds": 43,
+      "timeSeconds": 40.2,
       "label": "거대 수목 밑동 안전 정지",
       "sourceMainPathIndex": 7,
-      "pose": { "position": [36.966, 0, -92.552], "yaw": -0.16035 },
+      "pose": { "position": [35.271, 0, -86.9], "yaw": -0.16915 },
       "input": { "forward": 0, "run": false }
     },
     {
@@ -85,7 +85,7 @@
       "timeSeconds": 50,
       "label": "수관 올려보기",
       "sourceMainPathIndex": 7,
-      "pose": { "position": [36.966, 0, -92.552], "yaw": -0.16035 },
+      "pose": { "position": [35.271, 0, -86.9], "yaw": -0.16915 },
       "input": { "forward": 0, "run": false }
     },
     {
@@ -93,7 +93,7 @@
       "timeSeconds": 65,
       "label": "마을 방향 회전 중간",
       "sourceMainPathIndex": 7,
-      "pose": { "position": [36.966, 0, -92.552], "yaw": 1.248974 },
+      "pose": { "position": [35.271, 0, -86.9], "yaw": 1.248974 },
       "input": { "forward": 0, "run": false }
     },
     {
@@ -101,7 +101,7 @@
       "timeSeconds": 75,
       "label": "마을 되돌아보기",
       "sourceMainPathIndex": 7,
-      "pose": { "position": [36.966, 0, -92.552], "yaw": 2.789298 },
+      "pose": { "position": [35.271, 0, -86.9], "yaw": 2.789298 },
       "input": { "forward": 0, "run": false }
     }
   ]
