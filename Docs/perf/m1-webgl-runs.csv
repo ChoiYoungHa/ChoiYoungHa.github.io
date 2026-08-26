@@ -1,0 +1,5 @@
+run,date,build_hash,backend,angle,preset,routeHash,avg_fps,low1_fps,hitch_1s,calls,programs,textureGpuMB,jsHeapPeakMB,processRAMGB,crash,errors
+1,2026-08-26T07:48:16.777Z,943bbc5,WebGL2,"ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",low,m0b-bench-v3-mainpath,141.13,40.93,0,50,26,36.88,125.44,확인 불가,0,0
+2,2026-08-26T07:49:21.201Z,943bbc5,WebGL2,"ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",low,m0b-bench-v3-mainpath,141.55,45.08,0,50,26,36.88,194.36,확인 불가,0,0
+3,2026-08-26T07:50:25.697Z,943bbc5,WebGL2,"ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",low,m0b-bench-v3-mainpath,141.57,46.14,0,50,26,36.88,203.86,확인 불가,0,0
+median,2026-08-26T07:50:25.698Z,943bbc5,WebGL2,"ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",low,m0b-bench-v3-mainpath,141.55,45.08,0,50,26,36.88,194.36,확인 불가,0,0

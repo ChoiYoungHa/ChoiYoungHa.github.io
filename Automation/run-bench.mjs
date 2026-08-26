@@ -252,7 +252,7 @@ async function writeCsv(path, rows) {
 }
 
 async function writeSoakReport(result) {
-  const outputPath = join(ROOT, 'Docs', 'qa', 'm0b-15min.md')
+  const outputPath = resolve(ROOT, options.soakOutput ?? join('Docs', 'qa', 'm0b-15min.md'))
   const text = `# M0b-25 15분 안정성\n\n` +
     `- date: ${new Date().toISOString()}\n` +
     `- build_hash: ${result.buildHash}\n` +
@@ -618,7 +618,15 @@ function defaultCsvPath(gl) {
 }
 
 function parseArgs(args) {
-  const result = { runs: 3, warmup: 30, gl: undefined, soak: undefined, output: undefined, help: false }
+  const result = {
+    runs: 3,
+    warmup: 30,
+    gl: undefined,
+    soak: undefined,
+    output: undefined,
+    soakOutput: undefined,
+    help: false,
+  }
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index]
     if (arg === '--help' || arg === '-h') result.help = true
@@ -627,6 +635,7 @@ function parseArgs(args) {
     else if (arg === '--gl') result.gl = args[++index]
     else if (arg === '--soak') result.soak = Number(args[++index])
     else if (arg === '--output') result.output = args[++index]
+    else if (arg === '--soak-output') result.soakOutput = args[++index]
     else throw new Error(`unknown option: ${arg}`)
   }
   return result
@@ -643,7 +652,7 @@ function validateOptions(value) {
 
 function printHelp() {
   process.stdout.write(
-    'usage: node Automation/run-bench.mjs [--runs 3] [--warmup 30] [--gl webgl] [--soak 900] [--output path]\n',
+    'usage: node Automation/run-bench.mjs [--runs 3] [--warmup 30] [--gl webgl] [--soak 900] [--output path] [--soak-output path]\n',
   )
 }
 
