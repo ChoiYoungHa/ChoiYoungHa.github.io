@@ -94,7 +94,7 @@ CC0 자산은 attribution이 필요 없고 재배포가 허용된다. 절차적 
 - M3-GATE는 자동 지표와 룩 5/5를 통과했으나 프로세스 RAM 수동 측정이 남아 **조건부 PASS**다.
 - tris 예산 결함은 **해소**됐다. 검사기를 `계획서.md §4-1` 원표의 preset별 한도(low≤600K, base≤1.1M)로 정정하고 grassLite를 기본 채택해 low **312,434 PASS**, base **704,834 PASS**다([`base-tris-decision.md`](../decisions/base-tris-decision.md), [`m4-scene-tris-grass-lite.json`](../perf/m4-scene-tris-grass-lite.json)).
 - S3 원경/하늘 luma는 **166.4>145**이고, L4 세 번째 체크인 줄기/수관 Δ는 **5.1<10**이어서 휘도만으로 분리되지 않지만 수관/줄기 폭 비율 7.15의 형태 구분으로 수동 PASS했다.
-- programs는 M3-GATE와 grassLite 확인에서 **40/40**으로 상한 여유가 없다.
+- 승인된 현행 주 게이트는 WebGPU render pipelines `≤48`이며, R108 bench peak는 **48/48 PASS(여유 0)**다. programs 62는 판정에서 제외한 참고값이다.
 - Draco·KTX2가 이 PC에서 주는 실제 압축률과 로딩 이득은 **TBD(M4-08/M4-09E)** 이다.
 - Intel Arc 드라이버와 브라우저 조합에서 특정 셰이더가 깨질 위험이 있어 WebGL2 강제 폴백을 유지한다.
 - 동적 GI·실내·오픈월드 스트리밍은 의도적으로 범위 밖이며, 현재 룩은 IBL·고정 조명·안개·팔레트·실루엣에 의존한다.

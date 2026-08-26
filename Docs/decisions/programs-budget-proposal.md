@@ -59,3 +59,5 @@ R96의 `castShadow off`는 programs와 calls를 각각 3 줄였지만 평균 FPS
 - [ ] 보류: 현행 `programs ≤40`을 유지하고 M5/M6 게이트 초과를 결함으로 남긴다.
 
 추천: **A 승인**. R91의 36 pipelines가 현재 장면을 통과시키면서도 48까지 25% 여유만 허용하고, `programs`가 재질 상한이라는 잘못된 해석을 제거한다.
+
+결정: **A 채택(2026-08-27)** — 주 게이트는 WebGPU render pipelines `≤48`, `programs`는 참고값으로 기록한다.

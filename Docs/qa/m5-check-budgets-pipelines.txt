@@ -1,0 +1,38 @@
+R112-A budget checker — approved pipelines criterion
+Date: 2026-08-27 KST
+
+$ node Automation/check-budgets.mjs Docs/qa/m5-gate-perf.json --preset low --tris-json Docs/perf/m5-scene-tris-low.json --pipelines-json Docs/qa/m5-pipelines-bench.json
+exit: 0
+{
+  "pass": true,
+  "preset": "low",
+  "source": "계획서 §10 정정 #3 (A 채택, 2026-08-27)",
+  "checks": {
+    "calls": { "value": 63, "limit": 200, "status": "pass", "allowUnknown": false },
+    "tris": { "value": 312434, "limit": 600000, "status": "pass", "allowUnknown": true, "method": "estimated(source)", "scenario": "worstCase", "source": "Docs/perf/m5-scene-tris-low.json" },
+    "pipelines": { "value": 48, "limit": 48, "status": "pass", "allowUnknown": true, "method": "measured(probe)", "source": "Docs/qa/m5-pipelines-bench.json" },
+    "textureGPU": { "value": 71.87, "limit": 300, "status": "pass", "allowUnknown": false },
+    "JSheap": { "value": 229.51, "limit": 900, "status": "pass", "allowUnknown": false },
+    "programs": { "value": 62, "status": "reference", "evaluated": false, "reason": "참고값(예산 판정 제외)" }
+  },
+  "warnings": ["pipelines is exactly at limit (48/48)"]
+}
+WARNING: pipelines is exactly at limit (48/48)
+
+$ node Automation/check-budgets.mjs Docs/qa/m5-gate-perf.json --preset base --tris-json Docs/perf/m5-scene-tris-base.json --pipelines-json Docs/qa/m5-pipelines-bench.json
+exit: 0
+{
+  "pass": true,
+  "preset": "base",
+  "source": "계획서 §10 정정 #3 (A 채택, 2026-08-27)",
+  "checks": {
+    "calls": { "value": 63, "limit": 350, "status": "pass", "allowUnknown": false },
+    "tris": { "value": 704834, "limit": 1100000, "status": "pass", "allowUnknown": true, "method": "estimated(source)", "scenario": "worstCase", "source": "Docs/perf/m5-scene-tris-base.json" },
+    "pipelines": { "value": 48, "limit": 48, "status": "pass", "allowUnknown": true, "method": "measured(probe)", "source": "Docs/qa/m5-pipelines-bench.json" },
+    "textureGPU": { "value": 71.87, "limit": 550, "status": "pass", "allowUnknown": false },
+    "JSheap": { "value": 229.51, "limit": 1200, "status": "pass", "allowUnknown": false },
+    "programs": { "value": 62, "status": "reference", "evaluated": false, "reason": "참고값(예산 판정 제외)" }
+  },
+  "warnings": ["pipelines is exactly at limit (48/48)"]
+}
+WARNING: pipelines is exactly at limit (48/48)
