@@ -1,48 +1,19 @@
-import { WORLD_SIZE } from './bounds'
-import { sampleHeight } from './terrain/heightmap'
-
 /**
- * 조명과 눈금.
+ * 환경광 보험.
  *
- * M0-a 에서는 여기에 40m 평면 바닥과 `sampleGround` 가 있었다.
- * **M1-04 에서 그 자리를 `Terrain.tsx` + `terrain/heightmap.ts` 가 넘겨받았다** —
- * 바닥은 ±125m 절차적 지형이고 접지 샘플러도 heightmap 이 유일한 출처다.
- * R18-A 에서 그림자 방향광까지 `Lighting.tsx` 로 넘겼다.
- * 여기 남은 것은 환경광 보험 + 거리 눈금 + 기준 큐브(임시 스캐폴딩)뿐이다.
+ * 이 컴포넌트는 M0-a 의 임시 씬이었다. 들고 있던 것들이 차례로 자기 자리를 찾아갔다:
+ *   - 40m 평면 바닥·`sampleGround` → **M1-04** `Terrain.tsx` + `terrain/heightmap.ts`
+ *   - 그림자 방향광 → **R18-A** `Lighting.tsx`
+ *   - 거리 눈금(gridHelper)·기준 큐브 4개 → **R19-B 제거**
+ *
+ * 눈금과 큐브는 지형·길이 없던 M0-a 에서 "움직이고 있는가"를 눈으로 확인하려고 둔
+ * 디버그 스캐폴딩이다. 지형·하늘·식생·바위가 들어온 지금은 역할이 끝났고,
+ * 특히 눈금은 지형 위 6.5m 에 떠 있어 룩을 해쳤다.
+ *
+ * 남은 것은 환경광 하나뿐이다. 이건 중복이 아니라 **보험**이다 —
+ * `SkyDome` 의 HDR 은 비동기 로드이고 실패 경로가 있어서(console.error),
+ * 그때 씬이 완전히 어두워지지 않게 한다.
  */
-
-/** 그리드 한 칸 10m — 250m 월드에서 5m 눈금은 너무 촘촘하다. */
-const GRID_STEP = 10
-
-/** 눈으로 스케일을 재는 기준물. 지형 위에 앉힌다. */
-const MARKERS: { x: number; z: number }[] = [
-  { x: 0, z: -12 },
-  { x: 10, z: -22 },
-  { x: -14, z: -6 },
-  { x: 6, z: 8 },
-]
-
 export function Prototype() {
-  return (
-    <>
-      {/* R18-A: 그림자 방향광은 `Lighting.tsx` 가 넘겨받았다(중복 제거).
-          환경광은 중복이 아니라 남긴다 — SkyDome 의 HDR 이 비동기 로드이고
-          실패 경로가 있어(console.error) 그때 씬이 완전히 어두워지지 않게 하는 최소 보험이다. */}
-      <ambientLight intensity={0.35} />
-
-      {/* 거리 눈금 — 지형 기복 위로 살짝 띄운다 */}
-      <gridHelper
-        args={[WORLD_SIZE, WORLD_SIZE / GRID_STEP, '#6b6a52', '#3a3a2a']}
-        position={[0, 6.5, 0]}
-      />
-
-      {/* 기준 큐브 — 지형 높이에 앉힌다(M0-a 에서는 평면이라 y 가 상수였다) */}
-      {MARKERS.map((m, i) => (
-        <mesh key={i} position={[m.x, sampleHeight(m.x, m.z) + 1, m.z]} castShadow>
-          <boxGeometry args={[2, 2, 2]} />
-          <meshStandardMaterial color="#7a4a32" roughness={0.8} metalness={0} />
-        </mesh>
-      ))}
-    </>
-  )
+  return <ambientLight intensity={0.35} />
 }
