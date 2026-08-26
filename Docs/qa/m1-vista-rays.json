@@ -1,0 +1,188 @@
+{
+  "id": "m1-vista-rays",
+  "at": "2026-08-26",
+  "method": "순수 계산. 산포는 Foliage/RockInstances 와 같은 seed·같은 reject(path 2m + slope 25도 + vista 쐐기)로 재현했다. 지형은 heightmap 을 400스텝 샘플, instance 는 시선 원기둥 안에 들어오는지와 높이가 시선보다 위인지로 판정한다. instance 바운딩은 Kenney 저폴리 실물보다 크게 잡은 보수값(식생 r0.6/h1.2, 바위 r1.2/h1.6)이다.",
+  "eyeHeightMeters": 1.6,
+  "spreadDeg": 6,
+  "preset": "low",
+  "vistaExclusion": {
+    "nearClearMeters": 6,
+    "spreadDeg": 6
+  },
+  "totalRays": 9,
+  "clearRays": 9,
+  "result": "PASS",
+  "rays": [
+    {
+      "vista": "vista-start",
+      "side": "left",
+      "spreadDeg": -6,
+      "from": {
+        "x": 0,
+        "z": 26
+      },
+      "target": {
+        "x": 38,
+        "z": -96
+      },
+      "rayEnd": {
+        "x": 25.04,
+        "z": -99.3
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-start",
+      "side": "center",
+      "spreadDeg": 0,
+      "from": {
+        "x": 0,
+        "z": 26
+      },
+      "target": {
+        "x": 38,
+        "z": -96
+      },
+      "rayEnd": {
+        "x": 38,
+        "z": -96
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-start",
+      "side": "right",
+      "spreadDeg": 6,
+      "from": {
+        "x": 0,
+        "z": 26
+      },
+      "target": {
+        "x": 38,
+        "z": -96
+      },
+      "rayEnd": {
+        "x": 50.54,
+        "z": -91.36
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-mid",
+      "side": "left",
+      "spreadDeg": -6,
+      "from": {
+        "x": 18,
+        "z": -60
+      },
+      "target": {
+        "x": 38,
+        "z": -96
+      },
+      "rayEnd": {
+        "x": 34.13,
+        "z": -97.89
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-mid",
+      "side": "center",
+      "spreadDeg": 0,
+      "from": {
+        "x": 18,
+        "z": -60
+      },
+      "target": {
+        "x": 38,
+        "z": -96
+      },
+      "rayEnd": {
+        "x": 38,
+        "z": -96
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-mid",
+      "side": "right",
+      "spreadDeg": 6,
+      "from": {
+        "x": 18,
+        "z": -60
+      },
+      "target": {
+        "x": 38,
+        "z": -96
+      },
+      "rayEnd": {
+        "x": 41.65,
+        "z": -93.71
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-village",
+      "side": "left",
+      "spreadDeg": -6,
+      "from": {
+        "x": 38,
+        "z": -96
+      },
+      "target": {
+        "x": 0,
+        "z": 8
+      },
+      "rayEnd": {
+        "x": 11.08,
+        "z": 11.4
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-village",
+      "side": "center",
+      "spreadDeg": 0,
+      "from": {
+        "x": 38,
+        "z": -96
+      },
+      "target": {
+        "x": 0,
+        "z": 8
+      },
+      "rayEnd": {
+        "x": 0,
+        "z": 8
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    },
+    {
+      "vista": "vista-village",
+      "side": "right",
+      "spreadDeg": 6,
+      "from": {
+        "x": 38,
+        "z": -96
+      },
+      "target": {
+        "x": 0,
+        "z": 8
+      },
+      "rayEnd": {
+        "x": -10.66,
+        "z": 3.46
+      },
+      "occluderIds": [],
+      "occluderDetail": []
+    }
+  ]
+}

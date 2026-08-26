@@ -1,28 +1,71 @@
 {
   "low": {
-    "renderResolution": { "width": 1280, "height": 720 },
+    "renderResolution": {
+      "width": 1280,
+      "height": 720
+    },
     "dprCap": 1.0,
-    "shadowCascades": { "count": 2, "resolution": 1024 },
+    "shadowCascades": {
+      "count": 2,
+      "resolution": 1024
+    },
     "shadowMaxDistance": 80,
-    "coniferLodDistances": [25, 60, 90],
-    "grassInstances": { "count": 6000, "radius": 25 },
+    "coniferLodDistances": [
+      25,
+      60,
+      90
+    ],
+    "grassInstances": {
+      "count": 6000,
+      "radius": 25
+    },
     "rockInstances": 300,
-    "postChain": ["toneMapping", "fxaa"],
+    "postChain": [
+      "toneMapping",
+      "fxaa"
+    ],
     "fogDensity": 0.008,
-    "textureTier": { "default": "1K", "hero": "2K" },
-    "anisotropy": 1
+    "textureTier": {
+      "default": "1K",
+      "hero": "2K"
+    },
+    "anisotropy": 1,
+    "rockDrawDistance": 80
   },
   "base": {
-    "renderResolution": { "width": 1600, "height": 900 },
+    "renderResolution": {
+      "width": 1600,
+      "height": 900
+    },
     "dprCap": 1.5,
-    "shadowCascades": { "count": 3, "resolution": 2048 },
+    "shadowCascades": {
+      "count": 3,
+      "resolution": 2048
+    },
     "shadowMaxDistance": 150,
-    "coniferLodDistances": [35, 80, 140],
-    "grassInstances": { "count": 20000, "radius": 40 },
+    "coniferLodDistances": [
+      35,
+      80,
+      140
+    ],
+    "grassInstances": {
+      "count": 20000,
+      "radius": 40
+    },
     "rockInstances": 600,
-    "postChain": ["toneMapping", "fxaa", "bloom", "gtaoHalfResolution", "lut"],
+    "postChain": [
+      "toneMapping",
+      "fxaa",
+      "bloom",
+      "gtaoHalfResolution",
+      "lut"
+    ],
     "fogDensity": 0.0055,
-    "textureTier": { "default": "2K", "hero": "2K" },
-    "anisotropy": 4
+    "textureTier": {
+      "default": "2K",
+      "hero": "2K"
+    },
+    "anisotropy": 4,
+    "rockDrawDistance": 150
   }
 }

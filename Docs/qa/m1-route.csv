@@ -1,0 +1,14 @@
+run,routeHash,finalX,finalY,finalZ,treeErr,ungrounded,minY,maxPathDev,deviationOver15m,stuckSegments,integratedSec,avgFps,low1Fps,hitches,maxCalls,maxPrograms,errorCount,trace
+1,m0b-bench-v3-mainpath,42.76,0.9,-92.26,6.06,0,-2.281,5.63,0,0,58.095,139.16,31.59,1,59,30,0,15:-11.4,-14.0;30:12.7,-54.7;45:42.7,-92.0;60:42.8,-92.3
+2,m0b-bench-v3-mainpath,42.47,0.92,-92.53,5.65,0,-2.275,5.28,0,0,58.216,139.28,30.59,1,59,30,0,15:-11.7,-14.3;30:12.4,-55.0;45:42.4,-92.2;60:42.5,-92.5
+3,m0b-bench-v3-mainpath,42.92,0.88,-92.09,6.28,0,-2.284,5.84,0,0,58.02,138.85,29.03,1,59,30,0,15:-11.3,-13.8;30:12.9,-54.5;45:42.8,-91.8;60:42.9,-92.1
+
+# M1-30 동선 무결성 판정
+# 측정: actual build(npm run build) + vite 미사용 정적 서버, ?route=bench&q=low, 60초
+# 워밍업: 측정 3회 앞에 버리는 런 1회(m1-run0). 각 회차 새 크롬 프로필.
+# route hash 동일: YES (m0b-bench-v3-mainpath)
+# stuck 0: YES (합 0)
+# 낙하 0: YES (접지실패 합 0)
+# 길 이탈 0 (master 정의: 15m 초과): YES (초과 0회)
+# 기준선: bench v3 시뮬 평균 편차 5.98m / 최대 8.94m (R17-A). 위 maxPathDev 는 15/30/45/60초 4지점 기준.
+# errorCount 0: YES

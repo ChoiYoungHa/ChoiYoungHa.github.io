@@ -1,9 +1,15 @@
 import { Canvas } from '@react-three/fiber'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { createRenderer } from './gl/createRenderer'
+import { SkyDome } from './scene/SkyDome'
+import { Atmosphere } from './scene/Atmosphere'
+import { Lighting } from './scene/Lighting'
 import { Prototype } from './scene/Prototype'
 import { Terrain } from './scene/Terrain'
 import { MainPath } from './scene/MainPath'
+import { Foliage } from './scene/Foliage'
+import { RockInstances } from './scene/RockInstances'
+import { sampleHeight } from './scene/terrain/heightmap'
 import { Player } from './player/Controller'
 import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
 import { CAMERA } from './player/FollowCamera'
@@ -46,12 +52,21 @@ export default function App() {
         camera={{ fov: CAMERA.fov, near: CAMERA.near, far: CAMERA.far, position: [0, 3, 8] }}
         style={{ width, height }}
       >
-        <color attach="background" args={['#8fa0b0']} />
-        <fogExp2 attach="fog" args={['#8fa0b0', quality.fogDensity]} />
+        {/* R18-A 통합 순서: SkyDome → Atmosphere → Lighting → 지오메트리.
+            App 이 직접 들고 있던 배경색·안개·방향광은 이 셋과 **중복**이라 제거했다.
+            배경·환경맵은 SkyDome 이 scene.background/environment 로 설정한다. */}
+        <SkyDome />
+        <Atmosphere />
+        <Lighting />
         <RuntimeProbe />
-        <Prototype shadowMapResolution={quality.shadowCascades.resolution} />
+        <Prototype />
         <Terrain />
         <MainPath />
+        {/* useGLTF 는 suspend 하므로 경계가 필요하다. 로딩 중에는 지형만 보인다. */}
+        <Suspense fallback={null}>
+          <Foliage sampleHeight={sampleHeight} />
+          <RockInstances sampleHeight={sampleHeight} />
+        </Suspense>
         <Player />
       </Canvas>
       <RuntimeHud />

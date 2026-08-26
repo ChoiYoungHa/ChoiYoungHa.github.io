@@ -1,0 +1,26 @@
+# M1-29 다운로드 크기 (npm run build 산출물)
+측정 2026-08-26 KST · 명령: npm run build 후 dist/ 전수 집계
+
+총 파일 12개
+총 바이트 3230265 B = 3.08 MiB
+최대 단일 파일 env/sky_1k.hdr = 1428760 B (1.36 MiB)
+단일 파일 25MiB(26,214,400 B) 미만: 전부 미만 (초과 0개)
+계획서 §5-3 내부 게이트 20MB 초과: 없음
+
+| # | 파일 | 바이트 | MiB |
+|---:|---|---:|---:|
+| 1 | env/sky_1k.hdr | 1428760 | 1.363 |
+| 2 | assets/createRenderer-C5ncXYj_.js | 941771 | 0.898 |
+| 3 | assets/main-By9w1_k3.js | 812419 | 0.775 |
+| 4 | models/vegetation_kit.glb | 16900 | 0.016 |
+| 5 | models/props_rocks.glb | 12844 | 0.012 |
+| 6 | favicon.svg | 9522 | 0.009 |
+| 7 | icons.svg | 5031 | 0.005 |
+| 8 | assets/probe-CmF8PyXw.js | 1449 | 0.001 |
+| 9 | assets/main-BbBB35An.css | 673 | 0.001 |
+| 10 | index.html | 538 | 0.001 |
+| 11 | probe.html | 357 | 0.000 |
+| 12 | models/.gitkeep | 1 | 0.000 |
+
+참고: Cloudflare Pages 파일당 25 MiB 제한(리서치/04 §7-1). 계획서 §4-1 총 다운로드 예산 60MB.
+총 다운로드 60MB 예산 대비: 3.08 MiB / 60 MiB -> 이내

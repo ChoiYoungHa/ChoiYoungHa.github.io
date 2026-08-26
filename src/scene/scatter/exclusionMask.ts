@@ -63,6 +63,64 @@ export function createPathExclusion(
   return (x, z) => isExcludedBy(x, z, centerline, radius)
 }
 
+/**
+ * M1-20 전망 제외 마스크.
+ *
+ * vista 에서 target 을 보는 시선 통로에는 산포하지 않는다. 통로는 vista 와 target 을
+ * 잇는 선분 주변의 **쐐기(wedge)** 다 — vista 근처는 좁고 멀어질수록 넓어진다.
+ * 좌·중·우 ray 3개(±spreadDeg)가 전부 비어 있어야 하므로 그 각도만큼을 반폭으로 잡는다.
+ */
+export interface VistaLine {
+  position: PathPoint
+  target: PathPoint
+}
+
+/** vista 바로 앞은 무조건 비운다(m). */
+export const VISTA_NEAR_CLEAR = 6
+/** 좌·중·우 ray 의 좌우 벌림(도). Docs/qa/m1-vista-rays.json 검사와 같은 값이어야 한다. */
+export const VISTA_SPREAD_DEG = 6
+
+/**
+ * (x,z) 가 어떤 vista 의 시선 쐐기 안인가.
+ * target 뒤쪽(투영 t>1)은 시야를 가리지 않으므로 제외하지 않는다.
+ */
+export function isExcludedByVistas(
+  x: number,
+  z: number,
+  vistas: VistaLine[],
+  spreadDeg: number = VISTA_SPREAD_DEG,
+  nearClear: number = VISTA_NEAR_CLEAR,
+): boolean {
+  const tan = Math.tan((spreadDeg * Math.PI) / 180)
+  for (const v of vistas) {
+    const dx = v.target.x - v.position.x
+    const dz = v.target.z - v.position.z
+    const lenSq = dx * dx + dz * dz
+    if (lenSq === 0) continue
+    const px = x - v.position.x
+    const pz = z - v.position.z
+    const t = (px * dx + pz * dz) / lenSq
+    if (t < 0 || t > 1) {
+      // 시선 방향 밖 — 단 vista 발밑은 비운다
+      if (Math.hypot(px, pz) < nearClear) return true
+      continue
+    }
+    const along = t * Math.sqrt(lenSq)
+    const perp = Math.abs(px * dz - pz * dx) / Math.sqrt(lenSq)
+    if (perp < Math.max(nearClear, along * tan)) return true
+  }
+  return false
+}
+
+/** vista 목록을 고정한 2인자 마스크. `scatter({ reject })` 에 그대로 넘길 수 있다. */
+export function createVistaExclusion(
+  vistas: VistaLine[],
+  spreadDeg: number = VISTA_SPREAD_DEG,
+  nearClear: number = VISTA_NEAR_CLEAR,
+): (x: number, z: number) => boolean {
+  return (x, z) => isExcludedByVistas(x, z, vistas, spreadDeg, nearClear)
+}
+
 /** 중심선을 따라 등간격으로 샘플한다. 마스크 검증·길 메시 생성에 쓴다. */
 export function sampleCenterline(centerline: PathPoint[], count: number): PathPoint[] {
   if (centerline.length < 2 || count < 1) return []

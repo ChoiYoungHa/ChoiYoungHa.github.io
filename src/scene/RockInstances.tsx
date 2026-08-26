@@ -1,19 +1,23 @@
 import { useGLTF } from '@react-three/drei'
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useMemo, useRef } from 'react'
 import type { InstancedMesh, Material, Mesh, Object3D } from 'three'
-import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform } from 'three'
+import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, Vector3 } from 'three'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import mainPath from '../data/main-path.json'
+import vistas from '../data/vistas.json'
 import qualityPresets from '../data/quality-presets.json'
 import { useRuntime } from '../store/useRuntime'
 import { WORLD_HALF_EXTENT } from './bounds'
-import { createPathExclusion } from './scatter/exclusionMask'
+import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
 const MODEL_URL = '/models/props_rocks.glb'
 const SPECIES = ['rock_smallA', 'rock_smallFlatA', 'rock_tallA'] as const
 const CENTERLINE = mainPath.waypoints.map(({ x, z }) => ({ x, z }))
+/** M1-20 — vista 시선 통로에는 산포하지 않는다. */
+const VISTA_LINES = vistas.markers.map((m) => ({ position: m.position, target: m.target }))
 
 interface LoadedModel {
   scene: Object3D
@@ -63,28 +67,46 @@ function RockSpecies({
   geometry,
   points,
   sampleHeight,
+  maxDistance,
 }: {
   name: string
   geometry: BufferGeometry
   points: ScatterPoint[]
   sampleHeight: SampleHeight
+  /** M1-24 종별 최대 표시 거리(m). 이보다 먼 instance 는 draw 하지 않는다. */
+  maxDistance: number
 }) {
   const ref = useRef<InstancedMesh>(null)
+  const transform = useMemo(() => new Transform(), [])
+  const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
 
-  useLayoutEffect(() => {
+  /** 지형 높이는 좌표가 안 바뀌므로 한 번만 구한다. */
+  const placed = useMemo(
+    () => points.map((p) => ({ ...p, y: sampleHeight(p.x, p.z) })),
+    [points, sampleHeight],
+  )
+
+  // M1-24 — 카메라 거리 밖 instance 표시 0. `mesh.count` 로 제출 자체를 끊는다.
+  useFrame(({ camera }) => {
     const mesh = ref.current
     if (!mesh) return
-    const transform = new Transform()
-    points.forEach((point, index) => {
-      transform.position.set(point.x, sampleHeight(point.x, point.z), point.z)
-      transform.rotation.set(0, point.rotationY, 0)
-      transform.scale.setScalar(point.scale)
+    if (camera.position.distanceToSquared(lastCamera.current) < 4) return
+    lastCamera.current.copy(camera.position)
+
+    let visible = 0
+    for (const p of placed) {
+      if (Math.hypot(p.x - camera.position.x, p.z - camera.position.z) > maxDistance) continue
+      transform.position.set(p.x, p.y, p.z)
+      transform.rotation.set(0, p.rotationY, 0)
+      transform.scale.setScalar(p.scale)
       transform.updateMatrix()
-      mesh.setMatrixAt(index, transform.matrix)
-    })
+      mesh.setMatrixAt(visible, transform.matrix)
+      visible += 1
+    }
+    mesh.count = visible
     mesh.instanceMatrix.needsUpdate = true
     mesh.computeBoundingSphere()
-  }, [points, sampleHeight])
+  })
 
   return (
     <instancedMesh
@@ -114,7 +136,9 @@ export function RockInstances({ sampleHeight }: RockInstancesProps) {
     counts.push(total - counts[0] - counts[1])
     const pathReject = createPathExclusion(CENTERLINE, 2)
     const slopeReject = createSlopeExclusion(sampleHeight)
-    const reject = (x: number, z: number) => pathReject(x, z) || slopeReject(x, z)
+    const vistaReject = createVistaExclusion(VISTA_LINES)
+    const reject = (x: number, z: number) =>
+      pathReject(x, z) || slopeReject(x, z) || vistaReject(x, z)
 
     return SPECIES.map((species, index) =>
       scatter(hashSeed(`m1-${species}`), {
@@ -136,6 +160,7 @@ export function RockInstances({ sampleHeight }: RockInstancesProps) {
           geometry={geometries[index]}
           points={pointSets[index]}
           sampleHeight={sampleHeight}
+          maxDistance={qualityPresets[preset].rockDrawDistance}
         />
       ))}
     </group>
