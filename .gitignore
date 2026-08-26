@@ -33,3 +33,6 @@ dist/
 .vite/
 .env
 *.blend1
+
+# Mixamo raw FBX: license forbids redistribution — keep local only (DCC/incoming), runtime uses converted GLB
+DCC/incoming/asset.char.*/*.fbx
