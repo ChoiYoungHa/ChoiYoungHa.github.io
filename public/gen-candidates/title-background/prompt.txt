@@ -1,0 +1,28 @@
+tool: built-in image_gen.imagegen (generate, then one precise-object-edit iteration)
+generated_at_kst: 2026-08-27 07:34:04; edit 07:44:42 +09:00
+references: Docs/lookdev/m5-tree-after-r105.png; Docs/lookdev/m3-after-3.png
+reproducibility: semantic-only; no seed exposed
+postprocess: selected edit output RGB 1672x941; Pillow Lanczos resize to 1280x720
+
+[initial generation]
+Use case: stylized-concept
+Asset type: 16:9 game title background candidate
+Primary request: original low-poly rural fantasy landscape with one enormous ancient tree and a distant red-roof village
+Input images: Image 1 is tree scale and faceted rendering reference; Image 2 is road, village distance, sky, and muted palette reference; preserve only the broad art direction, do not copy exact geometry
+Scene/backdrop: broad muted blue-gray dawn sky, rolling olive-brown field, winding pale dirt road leading toward a compact cluster of simple warm beige houses with muted red polygon roofs
+Subject: monumental gnarled faceted tree rising from the lower middle-left, village silhouette in the lower right distance, both readable at thumbnail size
+Style/medium: polished stylized low-poly 3D game key art, matte materials, restrained saturation, clean silhouettes, atmospheric depth
+Composition/framing: cinematic 16:9 landscape; reserve the entire top one-third as calm uncluttered sky for a title overlay; keep all branches, roof peaks, and horizon below that title-safe band; strong path leading line
+Lighting/mood: soft cool morning haze with a subtle warm rim on tree and roofs, hopeful journey mood
+Constraints: original own-IP scene; no characters, text, typography, logo, watermark, UI, border, floating islands, castle, or modern object
+Avoid: copying any known game, anime, photorealism, dense foliage in the title-safe area, oversaturated colors
+
+[selected edit]
+Use case: precise-object-edit
+Asset type: 16:9 game title background candidate
+Input images: Image 1 is the edit target
+Primary request: change only the vertical composition so the entire top one-third of the canvas is calm open blue-gray sky for title text
+Required edit: uniformly scale the giant tree, village, road, terrain, and horizon down slightly and shift all of them lower; keep the highest tree leaf and every roof peak below the horizontal one-third line at y=240 on a 1280x720 canvas
+Invariants: preserve the exact tree design, village design, red roofs, winding path, faceted low-poly style, palette, morning light, atmospheric depth, 16:9 framing, and own-IP scene; keep tree left and village right
+Constraints: no new objects, characters, text, typography, logo, watermark, UI, border, castle, or dense cloud detail in the top third
+Avoid: cropping the tree base, moving the title-safe band, redesigning any object
