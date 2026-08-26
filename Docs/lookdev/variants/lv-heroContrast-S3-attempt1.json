@@ -1,0 +1,13 @@
+{
+  "name": "lv-heroContrast-S3",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-village&report=lv-heroContrast-S3&heroContrast=1&heroTrunk=0.75&heroCanopy=1.1",
+  "attempt": 1,
+  "at": "2026-08-26T13:38:30.489Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12741,
+    "shotMs": 12741,
+    "gotShot": true
+  },
+  "topBand": 142.7
+}

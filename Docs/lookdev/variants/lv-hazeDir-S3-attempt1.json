@@ -1,0 +1,13 @@
+{
+  "name": "lv-hazeDir-S3",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-village&report=lv-hazeDir-S3&hazeDir=1",
+  "attempt": 1,
+  "at": "2026-08-26T13:37:31.527Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12737,
+    "shotMs": 12844,
+    "gotShot": true
+  },
+  "topBand": 132.5
+}

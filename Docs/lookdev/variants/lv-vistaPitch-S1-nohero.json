@@ -1,0 +1,24 @@
+{
+  "at": "2026-08-26T13:39:13.099Z",
+  "query": "?q=low&shot=vista-mid&report=lv-vistaPitch-S1-nohero&hideHero=1&vistaPitch=22.1",
+  "backend": "WebGPU",
+  "forceWebGL": false,
+  "adapter": "intel / xe-lpg",
+  "angle": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "preset": "low",
+  "canvas": {
+    "w": 1280,
+    "h": 720
+  },
+  "fps": 144,
+  "calls": 22,
+  "triangles": 0,
+  "errorCount": 0,
+  "errors": [],
+  "hud": "backend: WebGPUcanvas: 1280×720preset: lowmode: manualadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 144 · calls: 22 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -4° · near 0.1 / far 400heroTree LOD: 0 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선",
+  "sceneCounts": {
+    "mesh": 29,
+    "light": 1,
+    "gridHelper": 0
+  }
+}

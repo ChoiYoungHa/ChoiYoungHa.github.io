@@ -1,0 +1,13 @@
+{
+  "name": "lv-grassLite-S3",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-village&report=lv-grassLite-S3&grassLite=1",
+  "attempt": 1,
+  "at": "2026-08-26T13:39:59.965Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12838,
+    "shotMs": 12838,
+    "gotShot": true
+  },
+  "topBand": 142.7
+}

@@ -1,0 +1,14 @@
+{
+  "name": "lv-vistaPitch-S1-nohero",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-mid&report=lv-vistaPitch-S1-nohero&hideHero=1&vistaPitch=22.1",
+  "attempt": 1,
+  "at": "2026-08-26T13:39:00.144Z",
+  "status": "unloaded",
+  "error": "HDR 미로드 의심(상단 밴드 176.8, 짝 156)",
+  "timing": {
+    "resultMs": 12733,
+    "shotMs": 12842,
+    "gotShot": true
+  },
+  "topBand": 176.8
+}

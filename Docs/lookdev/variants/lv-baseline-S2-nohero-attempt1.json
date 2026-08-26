@@ -1,0 +1,14 @@
+{
+  "name": "lv-baseline-S2-nohero",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-start&report=lv-baseline-S2-nohero&hideHero=1",
+  "attempt": 1,
+  "at": "2026-08-26T13:43:34.256Z",
+  "status": "black",
+  "error": "검은 프레임(전 밴드 휘도 <3)",
+  "timing": {
+    "resultMs": 12840,
+    "shotMs": 12840,
+    "gotShot": true
+  },
+  "topBand": 0
+}

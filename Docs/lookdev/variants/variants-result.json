@@ -1,0 +1,831 @@
+{
+  "schema": "lookdev-variants/1",
+  "at": "2026-08-26T13:44:23.970Z",
+  "variants": [
+    {
+      "name": "baseline",
+      "label": "옵션 전부 off (현재 채택값)",
+      "query": "",
+      "switches": [],
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [
+        "S2"
+      ],
+      "targets": []
+    },
+    {
+      "name": "hazeDir",
+      "label": "?hazeDir=1 — 하늘 방위 가중(worker-codex, wt/loading). 목표 S3 원경 ≤145",
+      "query": "hazeDir=1",
+      "switches": [
+        "hazeDir"
+      ],
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "targets": [
+        {
+          "metric": "s3.far.luma",
+          "op": "<=",
+          "value": 145
+        }
+      ]
+    },
+    {
+      "name": "heroContrast",
+      "label": "?heroContrast=1&heroTrunk=0.75&heroCanopy=1.1 — L4 줄기/수관 Δ≥10 (R54-A K1)",
+      "query": "heroContrast=1&heroTrunk=0.75&heroCanopy=1.1",
+      "switches": [
+        "heroContrast"
+      ],
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "metric": "l4.trunkCanopyDelta",
+          "op": ">=",
+          "value": 10
+        },
+        {
+          "metric": "l4.minDelta",
+          "op": ">=",
+          "value": 10
+        }
+      ]
+    },
+    {
+      "name": "vistaPitch",
+      "label": "?vistaPitch=22.1 — vista-mid 카메라 pitch 후보 B(R52-A). 목표 수관이 프레임 안(hideHero 차분 bbox 상단 y>0)",
+      "query": "vistaPitch=22.1",
+      "switches": [
+        "vistaPitch"
+      ],
+      "shots": [
+        "S1"
+      ],
+      "noHero": [
+        "S1"
+      ],
+      "targets": [
+        {
+          "metric": "s1.treeBboxTop",
+          "op": ">",
+          "value": 0
+        }
+      ],
+      "reuseBaselineFor": [
+        "S2",
+        "S3"
+      ]
+    },
+    {
+      "name": "grassLite",
+      "label": "?grassLite=1 — 절차적 저폴리 풀(worker-codex, wt/loading). 목표 자동 PASS 합계 ≥ baseline 그리고 low worst-case tris ≤600K(scene-tris.mjs --grass-lite)",
+      "query": "grassLite=1",
+      "switches": [
+        "grassLite"
+      ],
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [],
+      "targets": [
+        {
+          "metric": "tris.worstCase",
+          "op": "<=",
+          "value": 600000
+        }
+      ],
+      "trisCheck": {
+        "script": "Automation/scene-tris.mjs",
+        "args": [
+          "--preset",
+          "low",
+          "--grass-lite"
+        ]
+      }
+    },
+    {
+      "name": "combo",
+      "label": "hazeDir + heroContrast(K1) + grassLite 동시 — 최종 후보",
+      "query": "hazeDir=1&heroContrast=1&heroTrunk=0.75&heroCanopy=1.1&grassLite=1",
+      "switches": [
+        "hazeDir",
+        "heroContrast",
+        "grassLite"
+      ],
+      "shots": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "noHero": [
+        "S2"
+      ],
+      "targets": [
+        {
+          "metric": "s3.far.luma",
+          "op": "<=",
+          "value": 145
+        },
+        {
+          "metric": "l4.trunkCanopyDelta",
+          "op": ">=",
+          "value": 10
+        },
+        {
+          "metric": "l4.minDelta",
+          "op": ">=",
+          "value": 10
+        },
+        {
+          "metric": "tris.worstCase",
+          "op": "<=",
+          "value": 600000
+        }
+      ],
+      "trisCheck": {
+        "script": "Automation/scene-tris.mjs",
+        "args": [
+          "--preset",
+          "low",
+          "--grass-lite"
+        ]
+      }
+    }
+  ],
+  "supported": {
+    "hazeDir": true,
+    "heroContrast": true,
+    "vistaPitch": true,
+    "grassLite": true
+  },
+  "scripts": {
+    "grassLite": true,
+    "combo": true
+  },
+  "failures": [],
+  "rows": [
+    {
+      "name": "baseline",
+      "verdict": "기준",
+      "passCount": 8,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 134.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5,
+          "treeBboxTop": 89,
+          "treeBbox": {
+            "left": 553,
+            "top": 89,
+            "right": 738,
+            "bottom": 301
+          },
+          "maskPixels": 11935
+        },
+        "l4": {
+          "trunk": 105.9,
+          "canopy": 101.3,
+          "sky": 147.6,
+          "trunkCanopyDelta": 4.6,
+          "minDelta": 4.6,
+          "checks": {
+            "trunk vs sky": {
+              "trunk": 105.9,
+              "sky": 147.6,
+              "delta": 41.7,
+              "threshold": 10,
+              "pass": true
+            },
+            "canopy vs sky": {
+              "canopy": 101.3,
+              "sky": 147.6,
+              "delta": 46.3,
+              "threshold": 10,
+              "pass": true
+            },
+            "trunk vs canopy": {
+              "trunk": 105.9,
+              "canopy": 101.3,
+              "delta": 4.6,
+              "threshold": 10,
+              "pass": false
+            }
+          }
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 3,
+          "L5": 15.1
+        }
+      },
+      "reasons": []
+    },
+    {
+      "name": "hazeDir",
+      "verdict": "REJECT",
+      "reasons": [
+        "자동 PASS 합계 7 < baseline 8",
+        "s3.far.luma 155.1 !<= 145"
+      ],
+      "passCount": 7,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 134.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#8F9DAB",
+            "saturationPct": 14.7,
+            "hueDeg": 209.8,
+            "luma": 155.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 2,
+          "L5": 17.8
+        }
+      }
+    },
+    {
+      "name": "heroContrast",
+      "verdict": "REJECT",
+      "reasons": [
+        "l4.trunkCanopyDelta 1.8 !>= 10",
+        "l4.minDelta 1.8 !>= 10"
+      ],
+      "passCount": 8,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 133.6
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5,
+          "treeBboxTop": 89,
+          "treeBbox": {
+            "left": 553,
+            "top": 89,
+            "right": 738,
+            "bottom": 301
+          },
+          "maskPixels": 11935
+        },
+        "l4": {
+          "trunk": 103.6,
+          "canopy": 101.8,
+          "sky": 147.6,
+          "trunkCanopyDelta": 1.8,
+          "minDelta": 1.8,
+          "checks": {
+            "trunk vs sky": {
+              "trunk": 103.6,
+              "sky": 147.6,
+              "delta": 44,
+              "threshold": 10,
+              "pass": true
+            },
+            "canopy vs sky": {
+              "canopy": 101.8,
+              "sky": 147.6,
+              "delta": 45.8,
+              "threshold": 10,
+              "pass": true
+            },
+            "trunk vs canopy": {
+              "trunk": 103.6,
+              "canopy": 101.8,
+              "delta": 1.8,
+              "threshold": 10,
+              "pass": false
+            }
+          }
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 3,
+          "L5": 15.1
+        }
+      }
+    },
+    {
+      "name": "vistaPitch",
+      "verdict": "REJECT",
+      "reasons": [
+        "자동 PASS 합계 5 < baseline 8",
+        "s1.treeBboxTop 0 !> 0"
+      ],
+      "passCount": 5,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#8B939D",
+            "saturationPct": 10.9,
+            "hueDeg": 213.2,
+            "luma": 146.3
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#6D7170",
+            "saturationPct": 10.8,
+            "hueDeg": 171.9,
+            "luma": 111.9
+          },
+          "pass": 1,
+          "L5": 10.3,
+          "treeBboxTop": 0,
+          "treeBbox": {
+            "left": 420,
+            "top": 0,
+            "right": 824,
+            "bottom": 672
+          },
+          "maskPixels": 86180
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 3,
+          "L5": 15.1
+        }
+      }
+    },
+    {
+      "name": "grassLite",
+      "verdict": "ADOPT 후보",
+      "reasons": [],
+      "passCount": 8,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 134.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#9FA8B1",
+            "saturationPct": 10.5,
+            "hueDeg": 211.6,
+            "luma": 166.4
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 3,
+          "L5": 15.2
+        },
+        "tris": {
+          "worstCase": 312434,
+          "typical": 310736,
+          "budgetStatus": "pass",
+          "budgetLimit": 600000
+        }
+      }
+    },
+    {
+      "name": "combo",
+      "verdict": "REJECT",
+      "reasons": [
+        "자동 PASS 합계 7 < baseline 8",
+        "s3.far.luma 155.1 !<= 145",
+        "l4.trunkCanopyDelta 1.8 !>= 10",
+        "l4.minDelta 1.8 !>= 10"
+      ],
+      "passCount": 7,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 133.6
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        },
+        "s2": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#61656B",
+            "saturationPct": 23.2,
+            "hueDeg": 215.7,
+            "luma": 100.9
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 31.4,
+            "hueDeg": 49.5,
+            "luma": 67.3
+          },
+          "pass": 1,
+          "L5": 20.5,
+          "treeBboxTop": 89,
+          "treeBbox": {
+            "left": 553,
+            "top": 89,
+            "right": 738,
+            "bottom": 301
+          },
+          "maskPixels": 11935
+        },
+        "l4": {
+          "trunk": 103.6,
+          "canopy": 101.8,
+          "sky": 147.6,
+          "trunkCanopyDelta": 1.8,
+          "minDelta": 1.8,
+          "checks": {
+            "trunk vs sky": {
+              "trunk": 103.6,
+              "sky": 147.6,
+              "delta": 44,
+              "threshold": 10,
+              "pass": true
+            },
+            "canopy vs sky": {
+              "canopy": 101.8,
+              "sky": 147.6,
+              "delta": 45.8,
+              "threshold": 10,
+              "pass": true
+            },
+            "trunk vs canopy": {
+              "trunk": 103.6,
+              "canopy": 101.8,
+              "delta": 1.8,
+              "threshold": 10,
+              "pass": false
+            }
+          }
+        },
+        "s3": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#8F9DAB",
+            "saturationPct": 14.7,
+            "hueDeg": 209.8,
+            "luma": 155.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#494326",
+            "saturationPct": 33.3,
+            "hueDeg": 49.9,
+            "luma": 66.3
+          },
+          "pass": 2,
+          "L5": 17.8
+        },
+        "tris": {
+          "worstCase": 312434,
+          "typical": 310736,
+          "budgetStatus": "pass",
+          "budgetLimit": 600000
+        }
+      }
+    }
+  ]
+}

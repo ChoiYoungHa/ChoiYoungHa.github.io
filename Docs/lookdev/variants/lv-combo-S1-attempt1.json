@@ -1,0 +1,13 @@
+{
+  "name": "lv-combo-S1",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-mid&report=lv-combo-S1&hazeDir=1&heroContrast=1&heroTrunk=0.75&heroCanopy=1.1&grassLite=1",
+  "attempt": 1,
+  "at": "2026-08-26T13:40:14.879Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12744,
+    "shotMs": 12852,
+    "gotShot": true
+  },
+  "topBand": 157.6
+}

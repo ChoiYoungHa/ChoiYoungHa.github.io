@@ -1,0 +1,13 @@
+{
+  "name": "lv-heroContrast-S2",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-start&report=lv-heroContrast-S2&heroContrast=1&heroTrunk=0.75&heroCanopy=1.1",
+  "attempt": 1,
+  "at": "2026-08-26T13:38:01.032Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12731,
+    "shotMs": 12731,
+    "gotShot": true
+  },
+  "topBand": 158.6
+}

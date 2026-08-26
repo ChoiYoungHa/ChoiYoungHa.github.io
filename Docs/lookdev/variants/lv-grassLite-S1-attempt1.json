@@ -1,0 +1,13 @@
+{
+  "name": "lv-grassLite-S1",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-mid&report=lv-grassLite-S1&grassLite=1",
+  "attempt": 1,
+  "at": "2026-08-26T13:39:30.145Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12854,
+    "shotMs": 12854,
+    "gotShot": true
+  },
+  "topBand": 157.9
+}

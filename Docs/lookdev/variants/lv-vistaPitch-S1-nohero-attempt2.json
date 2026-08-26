@@ -1,0 +1,13 @@
+{
+  "name": "lv-vistaPitch-S1-nohero",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-mid&report=lv-vistaPitch-S1-nohero&hideHero=1&vistaPitch=22.1",
+  "attempt": 2,
+  "at": "2026-08-26T13:39:15.134Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12839,
+    "shotMs": 12946,
+    "gotShot": true
+  },
+  "topBand": 176.8
+}

@@ -17,7 +17,9 @@ const L4 = await load('Automation/l4-contrast.mjs')
 
 describe('parseArgs', () => {
   test('기본값', () => {
-    assert.deepEqual(V.parseArgs([]), { variants: 'default', outDir: 'Docs/lookdev/variants', dryRun: false, skipBuild: false, shots: null, port: 5183, settleMs: 12000, timeoutMs: 60000, help: false })
+    assert.deepEqual(V.parseArgs([]), { variants: 'default', outDir: 'Docs/lookdev/variants', dryRun: false, skipBuild: false, shots: null, port: 5183, settleMs: 12000, timeoutMs: 60000, help: false, only: null, reuseExisting: false })
+    assert.deepEqual(V.parseArgs(['--only', 'lv-a,lv-b', '--reuse-existing']).only, ['lv-a', 'lv-b'])
+    assert.equal(V.parseArgs(['--reuse-existing']).reuseExisting, true)
   })
   test('옵션 파싱', () => {
     const o = V.parseArgs(['--variants', 'x.json', '--out-dir', 'out', '--dry-run', '--skip-build', '--shots', 'S1,S3', '--port', '5190', '--timeout-ms', '90000'])
@@ -146,7 +148,55 @@ describe('judge (순수 판정)', () => {
   })
 })
 
+describe('captureWithRetry (R64-A 재시도 제어 흐름)', () => {
+  const item = { variant: 'baseline', shot: 'S1', kind: 'color', name: 'lv-baseline-S1', url: 'http://x/' }
+  const okMeasure = () => ({ bands: [{ luma: 134 }, { luma: 130 }] })
+  test('1회차 캡처 예외 → 2회차 성공 (예외를 검증 실패와 같은 경로로 흡수)', async () => {
+    let n = 0
+    const captured = {}
+    const r = await V.captureWithRetry(item, { captured, attempts: 2, measureFn: okMeasure }, async () => { n++; if (n === 1) throw new Error('png 없음'); return { png: 'a.png', timing: { resultMs: 1 } } })
+    assert.equal(r.ok, true)
+    assert.equal(r.attempt, 2)
+    assert.equal(captured.baseline.S1.color, 'a.png')
+    assert.equal(captured.baseline.S1.colorTop, 134)
+  })
+  test('2회 모두 예외 → ok:false + 마지막 오류 (러너는 다음 캡처로 진행)', async () => {
+    const r = await V.captureWithRetry(item, { captured: {}, attempts: 2, measureFn: okMeasure }, async () => { throw new Error('RESULT 없음') })
+    assert.equal(r.ok, false)
+    assert.match(r.error, /RESULT 없음/)
+  })
+  test('1회차 HDR 미로드 → 재캡처, 2회차 정상', async () => {
+    let n = 0
+    const r = await V.captureWithRetry(item, { captured: {}, attempts: 2, measureFn: () => (n === 1 ? { bands: [{ luma: 250 }, { luma: 245 }] } : okMeasure()) }, async () => { n++; return { png: `p${n}.png` } })
+    assert.equal(r.ok, true)
+    assert.equal(r.attempt, 2)
+    assert.equal(r.files.png, 'p2.png')
+  })
+  test('검은 프레임 → 재캡처, 3회 소진 시 ok:false (그대로 채택하지 않음)', async () => {
+    let n = 0
+    const black = { bands: Array.from({ length: 8 }, () => ({ luma: 0 })) }
+    const r = await V.captureWithRetry(item, { captured: {}, attempts: 3, measureFn: () => black }, async () => { n++; return { png: `b${n}.png` } })
+    assert.equal(r.ok, false)
+    assert.equal(n, 3)
+    assert.match(r.error, /검은 프레임/)
+    let k = 0
+    const r2 = await V.captureWithRetry(item, { captured: {}, attempts: 3, measureFn: () => (k === 1 ? black : okMeasure()) }, async () => { k++; return { png: `c${k}.png` } })
+    assert.equal(r2.ok, true)
+    assert.equal(r2.attempt, 2)
+  })
+  test('nohero 짝 상단 밴드 차이는 더 이상 재캡처 사유가 아니다(vistaPitch 오탐)', async () => {
+    const captured = { baseline: { S1: { colorTop: 156 } } }
+    const it = { ...item, kind: 'nohero', name: 'lv-baseline-S1-nohero' }
+    const r = await V.captureWithRetry(it, { captured, attempts: 3, measureFn: () => ({ bands: [{ luma: 176.8 }, { luma: 150 }] }) }, async () => ({ png: 'n.png' }))
+    assert.equal(r.attempt, 1)
+  })
+})
+
 describe('HDR 미로드 감지 · 흑백 PNG', () => {
+  test('looksBlack — 전 밴드 < 3', () => {
+    assert.equal(V.looksBlack({ bands: [{ luma: 0 }, { luma: 0.4 }, { luma: 2.9 }] }), true)
+    assert.equal(V.looksBlack({ bands: [{ luma: 0 }, { luma: 134 }] }), false)
+  })
   test('looksUnloaded — 상단 2밴드 > 235 이면 true', () => {
     assert.equal(V.looksUnloaded({ bands: [{ luma: 250 }, { luma: 240 }, { luma: 100 }] }), true)
     assert.equal(V.looksUnloaded({ bands: [{ luma: 134 }, { luma: 130 }, { luma: 100 }] }), false)

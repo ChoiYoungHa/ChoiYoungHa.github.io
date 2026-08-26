@@ -1,0 +1,55 @@
+{
+  "schema": "lookdev-variants/1",
+  "at": "2026-08-26T13:35:02.534Z",
+  "variants": [
+    {
+      "name": "baseline",
+      "query": "",
+      "shots": [
+        "S1"
+      ],
+      "noHero": [],
+      "targets": [],
+      "switches": [],
+      "reuseBaselineFor": []
+    }
+  ],
+  "supported": {},
+  "scripts": {},
+  "failures": [],
+  "rows": [
+    {
+      "name": "baseline",
+      "verdict": "기준",
+      "passCount": 4,
+      "metrics": {
+        "s1": {
+          "far": {
+            "bands": [
+              2
+            ],
+            "pixels": 115200,
+            "hex": "#7D8793",
+            "saturationPct": 11.4,
+            "hueDeg": 212.2,
+            "luma": 134.1
+          },
+          "near": {
+            "bands": [
+              6,
+              7
+            ],
+            "pixels": 230400,
+            "hex": "#4A4427",
+            "saturationPct": 32.4,
+            "hueDeg": 49.7,
+            "luma": 67.3
+          },
+          "pass": 4,
+          "L5": 12.7
+        }
+      },
+      "reasons": []
+    }
+  ]
+}

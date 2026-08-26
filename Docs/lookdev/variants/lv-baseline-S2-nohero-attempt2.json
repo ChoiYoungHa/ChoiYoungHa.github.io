@@ -1,0 +1,13 @@
+{
+  "name": "lv-baseline-S2-nohero",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-start&report=lv-baseline-S2-nohero&hideHero=1",
+  "attempt": 2,
+  "at": "2026-08-26T13:43:49.321Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12870,
+    "shotMs": 12870,
+    "gotShot": true
+  },
+  "topBand": 158.6
+}

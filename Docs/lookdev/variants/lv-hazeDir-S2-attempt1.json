@@ -1,0 +1,13 @@
+{
+  "name": "lv-hazeDir-S2",
+  "url": "http://127.0.0.1:5183/?q=low&shot=vista-start&report=lv-hazeDir-S2&hazeDir=1",
+  "attempt": 1,
+  "at": "2026-08-26T13:37:16.599Z",
+  "status": "ok",
+  "timing": {
+    "resultMs": 12740,
+    "shotMs": 12846,
+    "gotShot": true
+  },
+  "topBand": 158.6
+}

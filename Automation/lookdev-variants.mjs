@@ -8,6 +8,8 @@
 //       --skip-build                   : dist 를 그대로 사용(없으면 에러)
 //       --shots S1,S2,S3               : 캡처할 vista 를 제한(기본 전부)
 //       --port 5183 · --settle-ms 12000 · --timeout-ms 60000
+//       --reuse-existing               : out-dir 에 이미 있는 정상(검정·미로드 아님) PNG 는 다시 찍지 않는다(부분 재실행)
+//       --only lv-a,lv-b               : 이 이름만 다시 찍는다(나머지는 --reuse-existing 처럼 재사용)
 //
 // 구조(기존 도구 재사용):
 //   빌드 1회(npm run build) → 캡처마다 probe-server.mjs(dist 서빙·/shot·/result 수신, Docs/m0a/<name>.{png,json})
@@ -174,7 +176,7 @@ export function validateVariants(list) {
 // ───────────────────────── 인자 ─────────────────────────
 
 export function parseArgs(argv) {
-  const o = { variants: 'default', outDir: 'Docs/lookdev/variants', dryRun: false, skipBuild: false, shots: null, port: 5183, settleMs: 12000, timeoutMs: 60000, help: false }
+  const o = { variants: 'default', outDir: 'Docs/lookdev/variants', dryRun: false, skipBuild: false, shots: null, port: 5183, settleMs: 12000, timeoutMs: 60000, help: false, only: null, reuseExisting: false }
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]
     const next = () => {
@@ -189,6 +191,8 @@ export function parseArgs(argv) {
     else if (a === '--port') o.port = Number(next())
     else if (a === '--settle-ms') o.settleMs = Number(next())
     else if (a === '--timeout-ms') o.timeoutMs = Number(next())
+    else if (a === '--only') o.only = next().split(',').map((x) => x.trim()).filter(Boolean)
+    else if (a === '--reuse-existing') o.reuseExisting = true
     else if (a === '--help' || a === '-h') o.help = true
     else throw new Error(`unknown argument ${a}`)
   }
@@ -258,6 +262,14 @@ export function looksUnloaded(measured) {
   return top.every((b) => b.luma > 235)
 }
 
+/**
+ * 검은 프레임(전 밴드 휘도 < 3). R64-A 실측: 22 캡처 중 4건이 20,831B 전면 검정 — WebGPU 캔버스 리드백이
+ * 프레임 제시 전에 읽힌 것(R48 교훈 "캡처 트리거는 첫 프레임을 보장하지 않는다"). 앱·변형과 무관한 간헐 현상.
+ */
+export function looksBlack(measured) {
+  return measured.bands.every((b) => b.luma < 3)
+}
+
 // ───────────────────────── PNG 흑백 변환 (l4-contrast 입력) ─────────────────────────
 
 function chunk(type, data) {
@@ -304,7 +316,7 @@ export function computeMetrics(files, { targetsPath, baselineMeasured = null, re
       const color = decodePng(readFileSync(files[s].color))
       const nohero = decodePng(readFileSync(files[s].nohero))
       const bwPath = files[s].color.replace(/\.png$/, '-bw.png')
-      if (!existsSync(bwPath)) writeFileSync(bwPath, toGrayPng(color))
+      writeFileSync(bwPath, toGrayPng(color)) // 항상 다시 만든다(재캡처 뒤 stale 흑백 방지)
       // gray PNG 는 measure.decodePng 이 거부하므로 l4-contrast 의 디코더(gray 지원)로 읽는다.
       const bw = decodeAnyPng(readFileSync(bwPath))
       const res = l4Contrast({ color, nohero, bw, threshold: 24, delta: 10, bbox: s === 'S2' ? L4_BBOX : null })
@@ -383,34 +395,89 @@ function run(command, args) {
   })
 }
 
-/** 캡처 1회: probe-server(1건 대기) + Chrome → RESULT 로그 → Docs/m0a/<name>.{png,json} 을 outDir 로 이동. */
-async function captureOne(item, { outDir, port, timeoutMs, chromePath }) {
-  const server = spawn(process.execPath, [join(HERE, 'probe-server.mjs'), String(port), '1', String(timeoutMs)], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
+/**
+ * 캡처 1회. R64-A 수정: report.ts 는 /result 를 즉시 POST 하고 /shot(PNG) 은 rAF 뒤 비동기로 POST 한다.
+ * 이전 러너는 probe-server 기대 수 1 → RESULT 300ms 뒤 서버 자동 종료 + Chrome 즉시 kill 이라 /shot 이 유실됐다
+ * (R30 m3-capture.sh 는 기대 수 N + "SHOT <name>" 대기로 동작). 지금은 기대 수 2(자동 종료 방지) → RESULT →
+ * SHOT 로그를 shotWaitMs 까지 기다린 뒤 Chrome·서버를 명시적으로 종료한다.
+ */
+async function captureOne(item, { outDir, port, timeoutMs, chromePath, shotWaitMs = 15000 }) {
+  const server = spawn(process.execPath, [join(HERE, 'probe-server.mjs'), String(port), '2', String(timeoutMs)], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true })
   let log = ''
-  const done = new Promise((res) => {
-    server.stdout.on('data', (c) => { log += c; if (log.includes(`RESULT ${item.name} `)) res('ok') })
-    server.once('exit', () => res(log.includes(`RESULT ${item.name} `) ? 'ok' : 'timeout'))
-  })
-  let listening = false
-  for (let i = 0; i < 100 && !listening; i++) { await sleep(100); listening = log.includes('LISTENING') }
-  if (!listening) { server.kill(); throw new Error('probe-server did not start') }
+  let exited = false
+  server.once('exit', () => { exited = true })
+  server.stdout.on('data', (c) => { log += c })
+  server.stderr.on('data', (c) => { log += c })
+  const waitLog = async (needle, ms) => {
+    const deadline = Date.now() + ms
+    while (Date.now() < deadline) {
+      if (log.includes(needle)) return true
+      if (exited) return log.includes(needle)
+      await sleep(100)
+    }
+    return log.includes(needle)
+  }
+  if (!(await waitLog('LISTENING', 10000))) { server.kill(); throw new Error('probe-server did not start\n' + log.slice(-400)) }
   const profileTag = `web3d-lv-${process.pid}-${Date.now()}`
   const profile = join(tmpdir(), profileTag)
   await mkdir(profile, { recursive: true })
   const chrome = spawn(chromePath, chromeArgs(profile, item.url), { cwd: ROOT, stdio: 'ignore', windowsHide: true })
-  const status = await done
+  const t0 = Date.now()
+  const gotResult = await waitLog(`RESULT ${item.name} `, timeoutMs)
+  const resultMs = Date.now() - t0
+  const gotShot = gotResult && (await waitLog(`SHOT ${item.name} `, shotWaitMs))
+  const shotMs = Date.now() - t0
   chrome.kill()
   await killChromeProfile(profileTag)
+  server.kill()
   await sleep(500)
-  if (status !== 'ok') throw new Error(`capture ${item.name}: ${status}\n${log.slice(-800)}`)
-  const files = {}
+  if (!gotResult) throw new Error(`capture ${item.name}: RESULT 없음(timeout ${timeoutMs}ms)\n${log.slice(-800)}`)
+  const files = { timing: { resultMs, shotMs, gotShot } }
   for (const ext of ['png', 'json']) {
     const from = join(ROOT, 'Docs', 'm0a', `${item.name}.${ext}`)
     const to = join(outDir, `${item.name}.${ext}`)
     if (existsSync(from)) { renameSync(from, to); files[ext] = to }
   }
-  if (!files.png) throw new Error(`capture ${item.name}: png 없음(캔버스 빈 화면 → report.ts 가 5KB 미만이면 안 보낸다)`)
+  if (!files.png) throw new Error(`capture ${item.name}: png 없음 — SHOT 로그 ${gotShot ? '있음(파일 이동 실패)' : `없음(${shotWaitMs}ms 대기; 캔버스 5KB 미만이면 report.ts 가 안 보낸다)`}\n${log.slice(-600)}`)
   return files
+}
+
+/**
+ * 캡처 + 검증 + 재시도(순수 제어 흐름, capture 함수 주입 — 테스트 대상).
+ * R64-A: 캡처 예외(RESULT 없음·png 없음)도 검증 실패(HDR 미로드)와 같은 경로로 재시도한다.
+ * attempt 마다 원인을 `<name>-attempt<N>.json` 으로 남긴다(성공 attempt 는 timing 만).
+ */
+export async function captureWithRetry(item, { captured, outDir = null, attempts = 3, measureFn = (png) => measure(readFileSync(png), { file: png }) }, capture) {
+  const record = (n, info) => { if (outDir) writeFileSync(join(outDir, `${item.name}-attempt${n}.json`), JSON.stringify({ name: item.name, url: item.url, attempt: n, at: new Date().toISOString(), ...info }, null, 2) + '\n') }
+  let lastError = null
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    process.stdout.write(`\n▶ ${item.name} (attempt ${attempt}) ${item.url}\n`)
+    let f
+    try {
+      f = await capture(item)
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : String(e)
+      record(attempt, { status: 'capture-error', error: lastError })
+      process.stdout.write(`  ⚠ 캡처 실패: ${lastError.split('\n')[0]}${attempt < attempts ? ' → 재시도' : ''}\n`)
+      continue
+    }
+    const m = measureFn(f.png)
+    // nohero 짝 상단 밴드 비교 규칙은 제거 — vistaPitch 처럼 수관이 상단 밴드를 덮는 샷에서 오탐(R64-A 실측 156 vs 176.8).
+    const bad = looksBlack(m) ? '검은 프레임(전 밴드 휘도 <3)' : looksUnloaded(m) ? `HDR 미로드 의심(상단 밴드 ${m.bands[0].luma})` : null
+    if (bad) {
+      lastError = bad
+      record(attempt, { status: looksBlack(m) ? 'black' : 'unloaded', error: bad, timing: f.timing ?? null, topBand: m.bands[0].luma })
+      process.stdout.write(`  ⚠ ${bad}${attempt < attempts ? ' → 재캡처' : ' (재시도 소진 — 실패 처리)'}\n`)
+      continue
+    }
+    record(attempt, { status: 'ok', timing: f.timing ?? null, topBand: m.bands[0].luma })
+    captured[item.variant] ??= {}
+    captured[item.variant][item.shot] ??= {}
+    captured[item.variant][item.shot][item.kind] = f.png
+    if (item.kind === 'color') captured[item.variant][item.shot].colorTop = m.bands[0].luma
+    return { ok: true, files: f, attempt }
+  }
+  return { ok: false, error: lastError }
 }
 
 export async function main(argv) {
@@ -460,21 +527,24 @@ export async function main(argv) {
   const chromePath = await findChrome()
 
   const captured = {} // variant → shot → {color, nohero}
+  const failures = []
+  const reuseAll = o.reuseExisting || (o.only !== null)
   for (const item of runnable) {
-    let files = null
-    for (let attempt = 1; attempt <= 2 && !files; attempt++) {
-      process.stdout.write(`\n▶ ${item.name} (attempt ${attempt}) ${item.url}\n`)
-      const f = await captureOne(item, { outDir, port: o.port, timeoutMs: o.timeoutMs, chromePath })
-      const m = measure(readFileSync(f.png), { file: f.png })
-      const pair = captured[item.variant]?.[item.shot]?.colorTop
-      const unloaded = looksUnloaded(m) || (item.kind === 'nohero' && pair != null && Math.abs(m.bands[0].luma - pair) > 15)
-      if (unloaded && attempt === 1) { process.stdout.write(`  ⚠ HDR 미로드 의심(상단 밴드 ${m.bands[0].luma}) → 재캡처\n`); continue }
-      files = f
-      captured[item.variant] ??= {}
-      captured[item.variant][item.shot] ??= {}
-      captured[item.variant][item.shot][item.kind] = f.png
-      if (item.kind === 'color') captured[item.variant][item.shot].colorTop = m.bands[0].luma
+    const existing = join(outDir, `${item.name}.png`)
+    const forced = o.only?.includes(item.name)
+    if (reuseAll && !forced && existsSync(existing)) {
+      const m = measure(readFileSync(existing), { file: existing })
+      if (!looksBlack(m) && !looksUnloaded(m)) {
+        captured[item.variant] ??= {}
+        captured[item.variant][item.shot] ??= {}
+        captured[item.variant][item.shot][item.kind] = existing
+        process.stdout.write(`↻ ${item.name} 재사용(상단 밴드 ${m.bands[0].luma})\n`)
+        continue
+      }
+      process.stdout.write(`↻ ${item.name} 기존 파일 불량(상단 밴드 ${m.bands[0].luma}) → 재캡처\n`)
     }
+    const r = await captureWithRetry(item, { captured, outDir, attempts: 3 }, (it) => captureOne(it, { outDir, port: o.port, timeoutMs: o.timeoutMs, chromePath }))
+    if (!r.ok) { failures.push({ name: item.name, variant: item.variant, error: r.error }); process.stdout.write(`  ✖ ${item.name}: ${r.error}\n`) }
   }
 
   const rows = []
@@ -490,7 +560,7 @@ export async function main(argv) {
     rows.push({ name: v.name, ...verdict, passCount: r.passCount, metrics: r.metrics })
   }
   const at = new Date().toISOString()
-  writeFileSync(join(outDir, 'variants-result.json'), JSON.stringify({ schema: 'lookdev-variants/1', at, variants, supported, rows }, null, 2) + '\n')
+  writeFileSync(join(outDir, 'variants-result.json'), JSON.stringify({ schema: 'lookdev-variants/1', at, variants, supported, scripts, failures, rows }, null, 2) + '\n')
   writeFileSync(join(outDir, 'variants-result.md'), renderResultMd(rows, { at }))
   process.stdout.write('\n' + renderResultMd(rows, { at }))
   return 0
