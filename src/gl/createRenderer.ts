@@ -90,7 +90,35 @@ export function readBackend(renderer: WebGPURenderer): Backend | 'unknown' {
  * R3F `<Canvas gl={createRenderer}>` 에 넘기는 async 팩토리.
  * props 로 canvas 등이 들어온다.
  */
-export async function createRenderer(props: Record<string, unknown>): Promise<WebGPURenderer> {
+/**
+ * R86-A — 캔버스별 렌더러 캐시. R3F v9 `configure()` 는 `if (!state.gl)` 로 "1회 생성" 을 보장하려 하지만 async gl 팩토리를
+ * `await` 하는 동안 Canvas 가 재렌더되면(로딩 phase 전환 등) 재진입해 **두 번째 WebGPURenderer 를 같은 캔버스에 만든다**.
+ * 첫 렌더러만 `setSize(1280×720)` 를 받고(캔버스 속성은 그 값) store 의 최종 gl 은 300×150 인 채로 남아 매 프레임
+ * "depth stencil attachment 300×150 ≠ color 1280×720" 검증 에러 → 검은 프레임(R77-A 결함, R86-A 실측: canvasTarget._width 300).
+ * 같은 캔버스에 대한 두 번째 호출은 같은 프로미스를 돌려주어 렌더러를 1개로 고정한다.
+ */
+const rendererByCanvas = new WeakMap<object, Promise<WebGPURenderer>>()
+let createRendererCalls = 0
+
+/** 실측용: 이 페이지에서 팩토리가 몇 번 불렸는지(검정 프레임 재현 조건 = 2 이상). */
+export function readCreateRendererCalls(): number {
+  return createRendererCalls
+}
+
+export function createRenderer(props: Record<string, unknown>): Promise<WebGPURenderer> {
+  createRendererCalls += 1
+  const canvas = props.canvas as object | undefined
+  const cached = canvas ? rendererByCanvas.get(canvas) : undefined
+  if (cached) {
+    console.info(`[gl] createRenderer call #${createRendererCalls} → cached renderer reused (R86-A)`)
+    return cached
+  }
+  const created = createRendererOnce(props)
+  if (canvas) rendererByCanvas.set(canvas, created)
+  return created
+}
+
+async function createRendererOnce(props: Record<string, unknown>): Promise<WebGPURenderer> {
   const forceWebGL = isForcedWebGL()
   const texturePolicy = readRendererTexturePolicy()
   const renderer = new WebGPURenderer({
