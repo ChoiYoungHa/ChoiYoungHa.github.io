@@ -1,23 +1,24 @@
 {
-  "buildHash": "73fdaac",
+  "buildHash": "4ba174b",
+  "mode": "actual-build",
   "manifestPath": "src/data/loading-manifest.json",
-  "manifestMeasuredFromHead": "d0692ef",
-  "note": "Hash-named dist chunks are snapshot-bound; regenerate loading-manifest.json after the next build if chunk hashes change.",
+  "manifestMeasuredFromHead": "30665a7",
+  "note": "M4-16 actual-build mode resolves current hash-named dist chunks; manifest snapshot differences remain warnings.",
   "phaseBytes": {
-    "boot": 3197742,
-    "core": 16900,
-    "detail": 0
+    "boot": 3315753,
+    "core": 4801137,
+    "detail": 3177620
   },
   "cumulativeBytes": {
-    "boot": 3197742,
-    "core": 3214642,
-    "detail": 3214642
+    "boot": 3315753,
+    "core": 8116890,
+    "detail": 11294510
   },
-  "totalBytes": 3214642,
+  "totalBytes": 11294510,
   "singleMax": {
-    "id": "boot.sky-hdr",
-    "url": "dist/env/sky_1k.hdr",
-    "bytes": 1428760
+    "id": "core.terrain-grass-normal",
+    "url": "dist/textures/ground_grass_normal.jpg",
+    "bytes": 1440314
   },
   "limitsBytes": {
     "boot": 4000000,
@@ -30,11 +31,27 @@
     "coreWithinBudget": true,
     "totalWithinBudget": true,
     "singleWithinBudget": true,
-    "manifestPhaseSummaryMatches": true,
-    "manifestCumulativeSummaryMatches": true,
+    "manifestPhaseSummaryMatches": false,
+    "manifestCumulativeSummaryMatches": false,
     "duplicateIdCount": 0,
     "errors": 0
   },
   "errors": [],
+  "warnings": [
+    {
+      "type": "byte_mismatch",
+      "id": "boot.js-main",
+      "url": "dist/assets/main-s_PwUn7H.js",
+      "resolvedUrl": "dist/assets/main-BNB1zj4W.js",
+      "declared": 870195,
+      "actual": 871410
+    },
+    {
+      "type": "manifest_phase_summary_differs_from_actual_build"
+    },
+    {
+      "type": "manifest_cumulative_summary_differs_from_actual_build"
+    }
+  ],
   "pass": true
 }

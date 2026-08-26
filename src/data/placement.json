@@ -18,5 +18,23 @@
     { "id": "village-06", "house": "house-c", "roof": "roof-c", "position": [-17, -7], "rotationYDeg": -14, "scale": 0.92 },
     { "id": "village-07", "house": "house-a", "roof": "roof-a", "position": [13, -11], "rotationYDeg": 12, "scale": 0.85 },
     { "id": "village-08", "house": "house-b", "roof": "roof-b", "position": [-17, -17], "rotationYDeg": -20, "scale": 0.88 }
+  ],
+  "props": [
+    { "kind": "arch", "position": [-1.5, 19.8], "yaw": 0.343, "scale": 3 },
+    { "kind": "stonewall", "position": [4.06, 17.82], "yaw": 1.913, "scale": 3 },
+    { "kind": "stonewall", "position": [-7.06, 21.78], "yaw": 1.913, "scale": 3 },
+    { "kind": "fence", "position": [5, 22], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [5, 18.8], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [8, 24.5], "yaw": 1.571, "scale": 2.2 },
+    { "kind": "fence", "position": [11, 24.5], "yaw": 1.571, "scale": 2.2 },
+    { "kind": "fence", "position": [6.5, 11.5], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [7, 8.5], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [6, 1.5], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [6, -1.5], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [8, -9.5], "yaw": 0, "scale": 2.2 },
+    { "kind": "fence", "position": [8, -12.5], "yaw": 0, "scale": 2.2 },
+    { "kind": "banner", "position": [10, 16.4], "yaw": -0.209, "scale": 4 },
+    { "kind": "banner", "position": [12, 6.5], "yaw": -0.436, "scale": 4 },
+    { "kind": "banner", "position": [11, -4.5], "yaw": 0.349, "scale": 4 }
   ]
 }

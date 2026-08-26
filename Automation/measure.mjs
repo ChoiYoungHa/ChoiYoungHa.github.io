@@ -41,25 +41,47 @@ import { inflateSync } from 'node:zlib'
 
 function cli(args) {
 if (args.length === 0 || args.includes('--help')) {
-  process.stdout.write('usage: node Automation/measure.mjs <png> [--targets <json>] [--out <json>]\n')
+  process.stdout.write([
+    'usage:',
+    '  node Automation/measure.mjs <png> [--targets <json>] [--out <json>]',
+    '  node Automation/measure.mjs --capture <png> [--stats <json>] [--baseline <density-json>] [--out <json>]',
+    '',
+  ].join('\n'))
   process.exit(args.length === 0 ? 2 : 0)
 }
 let file = null
 let targetsPath = null
 let outPath = null
+let capturePath = null
+let statsPath = null
+let baselinePath = null
 for (let i = 0; i < args.length; i++) {
   const a = args[i]
   if (a === '--targets') targetsPath = args[++i]
   else if (a === '--out') outPath = args[++i]
+  else if (a === '--capture') capturePath = args[++i]
+  else if (a === '--stats') statsPath = args[++i]
+  else if (a === '--baseline') baselinePath = args[++i]
   else if (a.startsWith('--')) fail(`unknown option: ${a}`)
   else file = a
 }
-if (!file) fail('png path required')
+if (capturePath && file) fail('use either positional <png> or --capture <png>, not both')
+if ((statsPath || baselinePath) && !capturePath) fail('--stats/--baseline require --capture')
+if (!file && !capturePath) fail('png path required')
 
 try {
-  const buf = readFileSync(file)
-  const targets = targetsPath ? JSON.parse(readFileSync(targetsPath, 'utf8')) : null
-  const result = measure(buf, { file, targets, targetsPath })
+  let result
+  if (capturePath) {
+    if (targetsPath) fail('--targets is only valid with the legacy positional PNG mode')
+    const capture = readFileSync(capturePath)
+    const stats = statsPath ? JSON.parse(readFileSync(statsPath, 'utf8')) : null
+    const baseline = baselinePath ? JSON.parse(readFileSync(baselinePath, 'utf8')) : null
+    result = measureDensity(capture, { capturePath, stats, statsPath, baseline, baselinePath })
+  } else {
+    const buf = readFileSync(file)
+    const targets = targetsPath ? JSON.parse(readFileSync(targetsPath, 'utf8')) : null
+    result = measure(buf, { file, targets, targetsPath })
+  }
   const text = JSON.stringify(result, null, 2)
   if (outPath) {
     mkdirSync(dirname(resolve(outPath)), { recursive: true })
@@ -181,6 +203,232 @@ export function luma709(r, g, b) {
 const hex2 = (v) => Math.round(v).toString(16).padStart(2, '0')
 const toHex = (r, g, b) => `#${hex2(r)}${hex2(g)}${hex2(b)}`.toUpperCase()
 const r1 = (v) => Math.round(v * 10) / 10
+const r6 = (v) => Math.round(v * 1_000_000) / 1_000_000
+
+// M3 L4 evidence uses this exact S2/vista-start tree ROI at 1280x720.
+export const M3_HERO_ROI = { left: 553 / 1280, top: 89 / 720, right: 739 / 1280, bottom: 302 / 720 }
+
+function clampBox(box, width, height) {
+  return {
+    left: Math.max(0, Math.min(width - 1, Math.round(box.left))),
+    top: Math.max(0, Math.min(height - 1, Math.round(box.top))),
+    right: Math.max(0, Math.min(width - 1, Math.round(box.right))),
+    bottom: Math.max(0, Math.min(height - 1, Math.round(box.bottom))),
+  }
+}
+
+function defaultHeroRoi(width, height) {
+  return clampBox({
+    left: M3_HERO_ROI.left * width,
+    top: M3_HERO_ROI.top * height,
+    right: M3_HERO_ROI.right * width,
+    bottom: M3_HERO_ROI.bottom * height,
+  }, width, height)
+}
+
+function meanSkyReference(image, roi, skyMargin) {
+  let lumaSum = 0
+  let saturationSum = 0
+  let count = 0
+  const skyBottom = Math.min(roi.bottom, Math.ceil(roi.top + ((roi.bottom - roi.top + 1) * 2) / 3) - 1)
+  for (let y = roi.top; y <= skyBottom; y++) {
+    for (const [x0, x1] of [
+      [Math.max(0, roi.left - skyMargin), roi.left - 1],
+      [roi.right + 1, Math.min(image.width - 1, roi.right + skyMargin)],
+    ]) {
+      for (let x = x0; x <= x1; x++) {
+        const offset = (y * image.width + x) * image.channels
+        const r = image.data[offset], g = image.data[offset + 1], b = image.data[offset + 2]
+        lumaSum += luma709(r, g, b)
+        saturationSum += hslSaturation(r, g, b) * 100
+        count += 1
+      }
+    }
+  }
+  if (count === 0) throw new Error('hero silhouette sky reference is empty')
+  return { pixels: count, luma: lumaSum / count, saturationPct: saturationSum / count }
+}
+
+function largestMaskComponent(mask, width, height, roi) {
+  const visited = new Uint8Array(mask.length)
+  let largest = []
+  const queue = []
+  for (let y = roi.top; y <= roi.bottom; y++) {
+    for (let x = roi.left; x <= roi.right; x++) {
+      const start = y * width + x
+      if (!mask[start] || visited[start]) continue
+      const component = []
+      queue.length = 0
+      queue.push(start)
+      visited[start] = 1
+      for (let head = 0; head < queue.length; head++) {
+        const index = queue[head]
+        component.push(index)
+        const px = index % width
+        const py = Math.floor(index / width)
+        for (const [nx, ny] of [[px - 1, py], [px + 1, py], [px, py - 1], [px, py + 1]]) {
+          if (nx < roi.left || nx > roi.right || ny < roi.top || ny > roi.bottom) continue
+          const next = ny * width + nx
+          if (mask[next] && !visited[next]) {
+            visited[next] = 1
+            queue.push(next)
+          }
+        }
+      }
+      if (component.length > largest.length) largest = component
+    }
+  }
+  return largest
+}
+
+/**
+ * Single-capture hero complexity proxy. It reuses the L4 S2 ROI and side sky bands,
+ * then keeps the largest brightness/saturation-contrast component before counting its 4-neighbour boundary.
+ */
+export function measureHeroSilhouette(
+  png,
+  { roi = null, skyMargin = null, lumaThreshold = 18, saturationThresholdPct = 12 } = {},
+) {
+  const image = Buffer.isBuffer(png) ? decodePng(png) : png
+  const box = clampBox(roi ?? defaultHeroRoi(image.width, image.height), image.width, image.height)
+  if (box.right <= box.left || box.bottom <= box.top) throw new Error('hero silhouette ROI is empty')
+  const margin = skyMargin ?? Math.max(4, Math.round((40 / 1280) * image.width))
+  const sky = meanSkyReference(image, box, margin)
+  const candidate = new Uint8Array(image.width * image.height)
+
+  for (let y = box.top; y <= box.bottom; y++) {
+    for (let x = box.left; x <= box.right; x++) {
+      const index = y * image.width + x
+      const offset = index * image.channels
+      const r = image.data[offset], g = image.data[offset + 1], b = image.data[offset + 2]
+      const lumaDelta = Math.abs(luma709(r, g, b) - sky.luma)
+      const saturationDelta = Math.abs(hslSaturation(r, g, b) * 100 - sky.saturationPct)
+      if (lumaDelta >= lumaThreshold || saturationDelta >= saturationThresholdPct) candidate[index] = 1
+    }
+  }
+
+  const component = largestMaskComponent(candidate, image.width, image.height, box)
+  if (component.length === 0) throw new Error('hero silhouette mask is empty')
+  const mask = new Uint8Array(candidate.length)
+  component.forEach((index) => { mask[index] = 1 })
+  let boundaryPixels = 0
+  let bounds = { left: image.width, top: image.height, right: -1, bottom: -1 }
+  for (const index of component) {
+    const x = index % image.width
+    const y = Math.floor(index / image.width)
+    if (x < bounds.left) bounds.left = x
+    if (x > bounds.right) bounds.right = x
+    if (y < bounds.top) bounds.top = y
+    if (y > bounds.bottom) bounds.bottom = y
+    if (
+      x === 0 || x === image.width - 1 || y === 0 || y === image.height - 1 ||
+      !mask[index - 1] || !mask[index + 1] || !mask[index - image.width] || !mask[index + image.width]
+    ) boundaryPixels += 1
+  }
+
+  return {
+    value: r6(boundaryPixels / component.length),
+    boundaryPixels,
+    maskPixels: component.length,
+    roi: box,
+    maskBbox: bounds,
+    sky: { pixels: sky.pixels, luma: r1(sky.luma), saturationPct: r1(sky.saturationPct), margin },
+    thresholds: { luma: lumaThreshold, saturationPct: saturationThresholdPct },
+    method: 'M3 L4 S2 ROI + side-sky mean; largest |luma delta|/|HSL saturation delta| mask component; 4-neighbour boundary pixels / mask pixels',
+  }
+}
+
+function finiteAt(value, paths) {
+  for (const path of paths) {
+    let current = value
+    for (const key of path) current = current?.[key]
+    if (Number.isFinite(current) && current >= 0) return { value: current, source: path.join('.') }
+  }
+  return { value: null, source: null }
+}
+
+function sceneTrisGeometryKinds(stats) {
+  if (stats?.schema !== 'scene-tris/1' || !stats.inputs) return null
+  const positiveKeys = (record = {}) => Object.entries(record).filter(([, value]) => Number(value) > 0).length
+  let count = 0
+  if (stats.inputs.terrain) count += 1
+  if (stats.inputs.mainPath) count += 1
+  if (stats.inputs.heroTree) count += ['lod0Triangles', 'lod1Triangles'].filter((key) => Number(stats.inputs.heroTree[key]) > 0).length
+  count += positiveKeys(stats.inputs.village?.houseCounts)
+  count += positiveKeys(stats.inputs.village?.roofCounts)
+  count += positiveKeys(stats.inputs.foliage?.countsBySpecies)
+  count += positiveKeys(stats.inputs.rocks?.countsBySpecies)
+  return count || null
+}
+
+/** Accept renderer.info snapshots, bench smoke reports, or scene-tris/1 source reports. */
+export function extractDensityStats(stats) {
+  if (!stats) return {
+    textureCount: { value: null, source: null, reason: 'stats JSON not supplied' },
+    meshKinds: { value: null, source: null, reason: 'stats JSON not supplied' },
+  }
+  const textureCount = finiteAt(stats, [
+    ['renderer', 'info', 'memory', 'textures'], ['rendererInfo', 'memory', 'textures'], ['info', 'memory', 'textures'],
+    ['memory', 'textures'], ['perf', 'maxTextures'], ['maxTextures'], ['textures'],
+  ])
+  let meshKinds = finiteAt(stats, [
+    ['renderer', 'info', 'memory', 'geometries'], ['rendererInfo', 'memory', 'geometries'], ['info', 'memory', 'geometries'],
+    ['memory', 'geometries'], ['perf', 'maxGeometries'], ['maxGeometries'], ['geometries'],
+  ])
+  if (meshKinds.value == null) {
+    const derived = sceneTrisGeometryKinds(stats)
+    if (derived != null) meshKinds = { value: derived, source: 'scene-tris/1 inputs distinct geometry sources' }
+  }
+  return {
+    textureCount: { ...textureCount, reason: textureCount.value == null ? 'renderer.info.memory.textures unavailable' : null },
+    meshKinds: { ...meshKinds, reason: meshKinds.value == null ? 'renderer.info.memory.geometries and scene-tris inputs unavailable' : null },
+  }
+}
+
+export function measureDensity(
+  capture,
+  { capturePath = null, stats = null, statsPath = null, baseline = null, baselinePath = null } = {},
+) {
+  const image = decodePng(capture)
+  const silhouette = measureHeroSilhouette(image)
+  const measuredStats = extractDensityStats(stats)
+  const baselineRatio = baseline?.metrics?.heroSilhouetteRatio?.value ?? null
+  const heroMinimum = Number.isFinite(baselineRatio) ? r6(baselineRatio * 2) : null
+  const checks = {
+    textureCount: { value: measuredStats.textureCount.value, minimum: 6, pass: measuredStats.textureCount.value == null ? null : measuredStats.textureCount.value >= 6 },
+    meshKinds: { value: measuredStats.meshKinds.value, minimum: 8, pass: measuredStats.meshKinds.value == null ? null : measuredStats.meshKinds.value >= 8 },
+    heroSilhouetteRatio: { value: silhouette.value, baseline: baselineRatio, minimum: heroMinimum, pass: heroMinimum == null ? null : silhouette.value >= heroMinimum },
+  }
+  return {
+    schema: 'asset-density/1',
+    capture: {
+      file: capturePath,
+      sha256: createHash('sha256').update(capture).digest('hex'),
+      width: image.width,
+      height: image.height,
+    },
+    stats: { file: statsPath, schema: stats?.schema ?? null },
+    baseline: { file: baselinePath, heroSilhouetteRatio: baselineRatio },
+    metrics: {
+      textureCount: measuredStats.textureCount,
+      meshKinds: measuredStats.meshKinds,
+      heroSilhouetteRatio: silhouette,
+    },
+    checks,
+    targets: {
+      textureCountMinimum: 6,
+      meshKindsMinimum: 8,
+      heroSilhouetteMultiplierVsM3: 2,
+      heroSilhouetteMinimum: heroMinimum ?? r6(silhouette.value * 2),
+      heroSilhouetteMinimumBasis: heroMinimum == null ? 'current capture recorded as M3 baseline candidate' : baselinePath,
+    },
+    definitions: {
+      textureCount: 'renderer.info.memory.textures (or bench smoke perf.maxTextures)',
+      meshKinds: 'renderer.info.memory.geometries; scene-tris/1 fallback counts distinct submitted geometry sources',
+      heroSilhouetteRatio: 'largest sky-contrast hero mask 4-neighbour boundary pixels / mask pixels',
+    },
+  }
+}
 
 // ───────────────────────── 측정 ─────────────────────────
 

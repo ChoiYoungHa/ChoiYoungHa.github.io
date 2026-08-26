@@ -1,0 +1,207 @@
+{
+  "schema": "lookdev-measure/1",
+  "file": "Docs/lookdev/m5-variants/m5-gl-after-S1.png",
+  "sha256": "c539d3b4c24d933a2c3db8dcab155f4a48f585b11e8c8700b0955d6a4b4f32c7",
+  "width": 1258,
+  "height": 566,
+  "channels": 3,
+  "alphaBelow255": 0,
+  "targets": null,
+  "bands": [
+    {
+      "index": 0,
+      "y0": 0,
+      "y1": 70,
+      "pixels": 88060,
+      "meanRgb": {
+        "r": 114.5,
+        "g": 119.4,
+        "b": 120.2
+      },
+      "hex": "#737778",
+      "hsl": {
+        "h": 188,
+        "s": 2,
+        "l": 46
+      },
+      "saturationPct": 14.5,
+      "hueDeg": 187.7,
+      "luma": 118.4
+    },
+    {
+      "index": 1,
+      "y0": 70,
+      "y1": 141,
+      "pixels": 89318,
+      "meanRgb": {
+        "r": 112.7,
+        "g": 118.6,
+        "b": 123.3
+      },
+      "hex": "#71777B",
+      "hsl": {
+        "h": 206,
+        "s": 4,
+        "l": 46
+      },
+      "saturationPct": 12.3,
+      "hueDeg": 206.2,
+      "luma": 117.7
+    },
+    {
+      "index": 2,
+      "y0": 141,
+      "y1": 212,
+      "pixels": 89318,
+      "meanRgb": {
+        "r": 103.6,
+        "g": 111.4,
+        "b": 120.1
+      },
+      "hex": "#686F78",
+      "hsl": {
+        "h": 212,
+        "s": 7,
+        "l": 44
+      },
+      "saturationPct": 11.6,
+      "hueDeg": 211.7,
+      "luma": 110.4
+    },
+    {
+      "index": 3,
+      "y0": 212,
+      "y1": 283,
+      "pixels": 89318,
+      "meanRgb": {
+        "r": 128.7,
+        "g": 139.1,
+        "b": 151
+      },
+      "hex": "#818B97",
+      "hsl": {
+        "h": 212,
+        "s": 10,
+        "l": 55
+      },
+      "saturationPct": 10.5,
+      "hueDeg": 212,
+      "luma": 137.8
+    },
+    {
+      "index": 4,
+      "y0": 283,
+      "y1": 353,
+      "pixels": 88060,
+      "meanRgb": {
+        "r": 131.8,
+        "g": 139.5,
+        "b": 147.5
+      },
+      "hex": "#848B94",
+      "hsl": {
+        "h": 211,
+        "s": 7,
+        "l": 55
+      },
+      "saturationPct": 7.2,
+      "hueDeg": 210.7,
+      "luma": 138.4
+    },
+    {
+      "index": 5,
+      "y0": 353,
+      "y1": 424,
+      "pixels": 89318,
+      "meanRgb": {
+        "r": 73.1,
+        "g": 73.5,
+        "b": 76.4
+      },
+      "hex": "#49494C",
+      "hsl": {
+        "h": 233,
+        "s": 2,
+        "l": 29
+      },
+      "saturationPct": 9,
+      "hueDeg": 233,
+      "luma": 73.6
+    },
+    {
+      "index": 6,
+      "y0": 424,
+      "y1": 495,
+      "pixels": 89318,
+      "meanRgb": {
+        "r": 51.6,
+        "g": 42.7,
+        "b": 43.4
+      },
+      "hex": "#342B2B",
+      "hsl": {
+        "h": 355,
+        "s": 9,
+        "l": 18
+      },
+      "saturationPct": 19,
+      "hueDeg": 355.5,
+      "luma": 44.6
+    },
+    {
+      "index": 7,
+      "y0": 495,
+      "y1": 566,
+      "pixels": 89318,
+      "meanRgb": {
+        "r": 66.2,
+        "g": 55.6,
+        "b": 56.5
+      },
+      "hex": "#423838",
+      "hsl": {
+        "h": 355,
+        "s": 9,
+        "l": 24
+      },
+      "saturationPct": 18.9,
+      "hueDeg": 355.1,
+      "luma": 57.9
+    }
+  ],
+  "global": {
+    "saturationMedianPct": 10
+  },
+  "regions": {
+    "near": {
+      "bands": [
+        6,
+        7
+      ],
+      "pixels": 178636,
+      "hex": "#3B3132",
+      "saturationPct": 19,
+      "hueDeg": 355.3,
+      "luma": 51.3
+    },
+    "far": {
+      "bands": [
+        2
+      ],
+      "pixels": 89318,
+      "hex": "#686F78",
+      "saturationPct": 11.6,
+      "hueDeg": 211.7,
+      "luma": 110.4
+    }
+  },
+  "checks": null,
+  "summary": null,
+  "definitions": {
+    "saturationPct": "mean of per-pixel HSL S (0~100)",
+    "hueDeg": "HSL hue of band mean RGB",
+    "luma": "Rec.709 luma of band mean RGB (0~255)",
+    "globalSaturationMedianPct": "median of per-pixel HSL S (0.1 resolution, lower median for even N)",
+    "bands": "band i = [floor(i*H/8), floor((i+1)*H/8))"
+  }
+}

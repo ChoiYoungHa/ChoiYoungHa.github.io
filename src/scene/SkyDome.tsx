@@ -9,6 +9,11 @@ import { FOG_COLOR } from './Atmosphere'
 import { yawDegFromXZ } from './sky/hazeDirection'
 
 export const SKY_HDR_URL = '/env/sky_1k.hdr'
+/** R77-A(M5-12) — `?sky=2k` 이면 2K HDRI(public/env/sky_2k.hdr, 비교용). 기본은 1K 유지. */
+export const SKY_HDR_2K_URL = '/env/sky_2k.hdr'
+export function readSkyHdrUrl(search: string = location.search): string {
+  return new URLSearchParams(search).get('sky') === '2k' ? SKY_HDR_2K_URL : SKY_HDR_URL
+}
 
 export async function loadSkyTexture(url = SKY_HDR_URL): Promise<Texture> {
   const texture = await new RGBELoader().loadAsync(url)
@@ -96,7 +101,7 @@ export function SkyDome() {
     let active = true
     let sky: Texture | undefined
 
-    void loadSkyTexture()
+    void loadSkyTexture(readSkyHdrUrl())
       .then((texture) => {
         if (!active) {
           texture.dispose()

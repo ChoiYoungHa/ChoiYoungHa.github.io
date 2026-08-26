@@ -1,0 +1,165 @@
+{
+  "id": "m5-budget",
+  "round": "R77-A",
+  "head": "30665a7",
+  "at": "2026-08-26T15:53:11.988Z",
+  "blocker": {
+    "summary": "WebGPU 헤드리스 캡처 전부 검은 프레임(20.6KB) — 콘솔에 매 프레임 GPUValidationError \"depth stencil attachment depthBuffer size (300×150) does not match color attachment (1280×720)\" + Invalid CommandBuffer. ?lookAssets=0(폴백)도 동일. 42557e2(R75-C 이전) 빌드는 5/5 정상(에러 0, PNG 249KB). 파일 단위 이분은 상충(Atmosphere만: 정상 / +grassLite 또는 +Foliage: 검정 / old+grassLite만: 정상) → 코드 의미가 아니라 빌드/초기화 타이밍에 따라 결정론적으로 갈리는 three r185 WebGPU canvasTarget depth 버퍼 재생성 결함으로 추정. onCreated setSize 재적용·1×1→원복 강제 모두 무효(되돌림). WebGL2(?gl=webgl) 는 정상 렌더.",
+    "evidenceFiles": [
+      "Docs/lookdev/m5-variants/m5-after-S1.json",
+      "Docs/lookdev/m5-variants/m5-before-S1.json"
+    ],
+    "impact": "WebGPU 기본 백엔드에서 사용자 화면도 검정일 가능성 — 배포 전 최우선 확인 필요(영하님 Chrome 실기 확인 권장)."
+  },
+  "fourPathEvidence": {
+    "after": {
+      "backend": "WebGPU",
+      "fps": 128,
+      "calls": 24,
+      "evidence": {
+        "heroTree": {
+          "type": "Group",
+          "source": "gltf",
+          "materialCount": {
+            "source": 2,
+            "replaced": 2
+          }
+        },
+        "terrain": "pbr",
+        "village": [
+          {
+            "name": "village-house-a",
+            "source": "gltf",
+            "type": "Group"
+          },
+          {
+            "name": "village-house-b",
+            "source": "gltf",
+            "type": "Group"
+          },
+          {
+            "name": "village-house-c",
+            "source": "gltf",
+            "type": "Group"
+          }
+        ],
+        "foliageGrassMap": true,
+        "texturedMeshes": 6,
+        "alphaTestMeshes": 2,
+        "meshes": 28,
+        "foliageGrassAlphaTest": 0.5,
+        "materialCount": 11,
+        "mapCount": 4,
+        "hud": "backend: WebGPUcanvas: 1280×720preset: lowmode: manualadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 128 · calls: 24 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -4° · near 0.1 / far 400heroTree LOD: 0 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선"
+      },
+      "consoleErrors": 1012,
+      "pngBytes": 20682
+    },
+    "before": {
+      "backend": "WebGPU",
+      "fps": 131,
+      "calls": 26,
+      "evidence": {
+        "heroTree": {
+          "type": "Mesh",
+          "source": "procedural",
+          "materialCount": null
+        },
+        "terrain": "flat",
+        "village": [
+          {
+            "name": "village-house-a",
+            "source": "procedural",
+            "type": "Mesh"
+          },
+          {
+            "name": "village-house-b",
+            "source": "procedural",
+            "type": "Mesh"
+          },
+          {
+            "name": "village-house-c",
+            "source": "procedural",
+            "type": "Mesh"
+          }
+        ],
+        "foliageGrassMap": false,
+        "texturedMeshes": 0,
+        "alphaTestMeshes": 0,
+        "meshes": 30,
+        "foliageGrassAlphaTest": 0,
+        "materialCount": 10,
+        "mapCount": 0,
+        "hud": "backend: WebGPUcanvas: 1280×720preset: lowmode: manualadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 121 · calls: 26 · tris: 확인 불가camera: FOV 55° · dist 6m · h 2.2m · pitch -4° · near 0.1 / far 400heroTree LOD: 0 (전환 90m)WASD 이동 · Shift 달리기 · 드래그 시선"
+      },
+      "consoleErrors": 1460,
+      "pngBytes": 20635
+    },
+    "note": "씬 그래프 userData.source / material.map 실측(CDP Runtime.evaluate). after: hero gltf·terrain pbr·village gltf×3·grass map=true·textured meshes 6·alphaTest meshes 2·materials 11·maps 4 / before: 전부 폴백·textured 0·materials 10"
+  },
+  "materials": {
+    "before": 10,
+    "after": 11,
+    "delta": "+1 (hero bark+leaf 2 추가, 절차 hero 재질 LOD1용 유지, village 공유 1 → 절차 village 1 대체, terrain/grass 0)"
+  },
+  "bench1run": {
+    "backend": "WebGPU",
+    "preset": "low",
+    "avgFps": 125.61,
+    "low1Fps": 30.36,
+    "hitch": 0,
+    "calls": 35,
+    "programs": 36,
+    "textureGpuMB": 71.87,
+    "jsHeapPeakMB": 138.34,
+    "errors": 0,
+    "before_R67": {
+      "avgFps": 140.8,
+      "low1Fps": 38.5,
+      "calls": 57,
+      "programs": 40,
+      "textureGpuMB": 34.55
+    },
+    "caveat": "WebGPU 검은 프레임 결함 상태의 수치 — 프레임이 유효 제시되지 않아 fps/calls/programs 신뢰 불가. textureGpuMB 34.55→71.87(+37.3MB) 은 텍스처 업로드 실측."
+  },
+  "sceneTris": {
+    "low": {
+      "worst": 312434,
+      "limit": 600000,
+      "status": "pass"
+    },
+    "base": {
+      "worst": 704834,
+      "limit": 1100000,
+      "status": "pass"
+    },
+    "caveat": "scene-tris.mjs 는 절차 자산 추정기 — GLB(hero 7,660 tris·집 1,011/1,393/2,992 ×8채 ≈ 14.3K) 미포함. 실 tris 는 renderer.info 가 0 이라 브라우저 실측 불가."
+  },
+  "payload": {
+    "bootBytes": 3314538,
+    "coreCumulative": 8115675,
+    "total": 11293295,
+    "limits": {
+      "boot": 4000000,
+      "coreCumulative": 12000000,
+      "total": 60000000
+    },
+    "checkPayload": "PASS (--actual-build, errors 0, warnings 0)",
+    "sky2kBytes": 5451493,
+    "sky2kNote": "public/env/sky_2k.hdr 추가(?sky=2k 토글). manifest 미등록(채택 전). 채택 시 detail +5.45MB → 총 16.7MB(60MB 안)."
+  },
+  "captures": {
+    "webgl": {
+      "treeAfter": "Docs/lookdev/m5-tree-after.png",
+      "treeBefore": "Docs/lookdev/m5-tree-before.png",
+      "villageBefore": "Docs/lookdev/m5-village-before.png",
+      "sky2kS1": "Docs/lookdev/m5-sky2k-S1.png"
+    },
+    "missing": [
+      "village-after",
+      "ground-before",
+      "ground-after"
+    ],
+    "missingReason": "WebGL S2/S3 캡처가 5.9~6KB 안개색 단색 프레임(vista 카메라 셋업 전 캡처 추정, 재시도 1회 실패). WebGPU 는 전부 검정."
+  }
+}
