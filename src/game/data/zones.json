@@ -1,0 +1,29 @@
+{
+  "hysteresisMeters": 2,
+  "priority": ["forest", "village", "park"],
+  "sourceNote": "P0 forest circle and the aggregate village AABB overlap geometrically. The effective village volume subtracts forest so P0 remains forest and effective overlap is zero.",
+  "zones": {
+    "forest": {
+      "shape": "circle",
+      "center": { "x": 0, "z": 24 },
+      "radiusMeters": 25,
+      "excludes": [],
+      "source": "src/data/main-path.json waypoints[0] (P0)"
+    },
+    "village": {
+      "shape": "aabb",
+      "min": { "x": -25, "z": -25 },
+      "max": { "x": 21, "z": 28 },
+      "marginMeters": 8,
+      "excludes": ["forest"],
+      "source": "src/data/placement.json village positions; min/max coordinates expanded by 8m"
+    },
+    "park": {
+      "shape": "circle",
+      "center": { "x": -80, "z": 8 },
+      "radiusMeters": 40,
+      "excludes": [],
+      "source": "src/data/main-path.json landmarks.villageCenter (0,8), shifted 80m west per 게임콘티 §2-2 and R80-B"
+    }
+  }
+}
