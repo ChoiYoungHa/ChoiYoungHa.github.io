@@ -1,5 +1,5 @@
 import type { IpMode } from '../../game/i18n.ts'
-import { Portrait } from '../../game/portrait/Portrait.tsx'
+import { Portrait } from './Portrait.tsx'
 import type { PortraitSelection } from '../../game/portrait/compose.ts'
 import type { JobId } from '../../game/state.ts'
 import { HUD_TOKENS } from './hudTokens.ts'

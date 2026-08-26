@@ -20,6 +20,7 @@ test('jobs 데이터가 네 직업의 콘티 시작 능력치를 보존한다', 
       thief: [175, 90, 13],
     },
   )
+  assert.equal(Object.values(jobs).some((job) => 'weaponId' in job), false)
 })
 
 test('레벨별 필요 경험치는 15 × Lv²이다', async () => {

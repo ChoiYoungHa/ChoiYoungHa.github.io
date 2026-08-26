@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
+import { readdir, readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -7,6 +7,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const load = (relativePath) => import(pathToFileURL(join(ROOT, relativePath)).href)
 const parts = JSON.parse(await readFile(join(ROOT, 'src/game/data/portrait-parts.json'), 'utf8'))
+
+test('M-03/M-04 game 규칙층은 JSX runtime과 systems/ui 역방향 의존이 없다', async () => {
+  const portraitFiles = await readdir(join(ROOT, 'src/game/portrait'))
+  assert.equal(portraitFiles.some((file) => file.endsWith('.tsx')), false)
+  const sessionSource = await readFile(join(ROOT, 'src/game/session.ts'), 'utf8')
+  assert.equal(sessionSource.includes('../systems/ui/'), false)
+})
 
 test('원본 조합기의 9종 파츠와 팔레트 개수를 보존한다', () => {
   assert.deepEqual({

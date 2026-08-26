@@ -7,22 +7,22 @@ import placementData from '../data/placement.json' with { type: 'json' }
 import zoneData from './data/zones.json' with { type: 'json' }
 import { advance, createDialogue, type DialogueId, type DialogueState } from './dialogue.ts'
 import { enter } from './flow.ts'
-import { createSpawner, damageSpawnerMob, stepSpawner, type SpawnerState } from './mobs/spawner.ts'
+import { clearSpawnerAggro, createSpawner, damageSpawnerMob, stepSpawner, type SpawnerState } from './mobs/spawner.ts'
 import { reduce, type GameAction } from './reducers.ts'
-import { applyMonsterHit, resolveBasicAttack, resolveSkillAttack, type CombatHit, type PlayerCombatState, type SkillId } from './rules/combat.ts'
+import { applyMonsterHit, applyTimedMobEffect, leapDestination, resolveBasicAttack, resolveEquipmentCombatModifiers, resolveSkillAttack, type CombatHit, type PlayerCombatState, type SkillId } from './rules/combat.ts'
 import type { DropTable } from './rules/drops.ts'
 import type { ItemDefinition } from './rules/inventory.ts'
 import { equipInventoryItem } from './rules/inventory.ts'
-import { collectDrop, createDropEntities, type DropEntity } from './rules/pickup.ts'
+import { addDropToCollection, collectDrop, createDropCollection, createDropEntities, dropCollectionValues, removeDropFromCollection, type DropCollection, type DropEntity } from './rules/pickup.ts'
 import type { QuestDefinition } from './rules/quest.ts'
 import { beginDeath, stepRespawn, type RespawnState } from './rules/respawn.ts'
 import { mulberry32 } from './rules/rng.ts'
 import { createSkillState, tryCastSkill, type SkillDefinition, type SkillState } from './rules/skills.ts'
-import { createInitialState, type GameState, type JobId } from './state.ts'
-import type { IpMode } from './i18n.ts'
+import { createInitialState, type FaceParts, type GameState, type JobId } from './state.ts'
+import { resolveIpMode, type IpMode } from './i18n.ts'
+import type { TutorialInputEvent } from './tutorial.ts'
 import { findInteractable } from './world/interact.ts'
 import { step as stepZone, type ZoneId, type ZoneStepState } from './world/zones.ts'
-import type { TutorialInputEvent } from '../systems/ui/tutorialHintsLogic.ts'
 
 export interface SessionPosition {
   x: number
@@ -33,6 +33,7 @@ export interface SessionPosition {
 export interface SessionCharacterInput {
   jobId: JobId
   name: string
+  faceParts?: Partial<FaceParts>
 }
 
 export interface SessionInputs {
@@ -168,6 +169,14 @@ interface JobDefinition {
   basicAttack: { cooldownMs: number }
 }
 
+interface BurnState {
+  mobId: string
+  damagePerTick: number
+  remainingTicks: number
+  nextTickAtMs: number
+  intervalMs: number
+}
+
 interface MonsterDefinition {
   id: string
   exp: number
@@ -191,7 +200,8 @@ function inGate(position: SessionPosition): boolean {
 }
 
 export function createSession(options: CreateSessionOptions): GameSession {
-  let game: GameState = { ...createInitialState(null, ''), ipMode: options.ipMode }
+  const sessionIpMode = resolveIpMode(options.ipMode)
+  let game: GameState = { ...createInitialState(null, ''), ipMode: sessionIpMode }
   let nowMs = 0
   let playerPos: SessionPosition = { x: 0, z: 24 }
   let playerYaw = 0
@@ -202,11 +212,13 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let purchased = false
   let inventoryOpen = false
   let selectedShopItemId: string | null = null
-  const aiRng = mulberry32(options.seed ^ 0x6030)
-  const combatRng = mulberry32(options.seed ^ 0x6031)
-  const dropRng = mulberry32(options.seed)
+  let aiRng = mulberry32(options.seed ^ 0x6030)
+  let combatRng = mulberry32(options.seed ^ 0x6031)
+  let dropRng = mulberry32(options.seed)
   let spawner = createSpawner(aiRng)
+  let dropCollection: DropCollection = createDropCollection()
   let drops: DropEntity[] = []
+  let burns: BurnState[] = []
   let dropSequence = 0
   let skillState = createSkillState(0)
   let basicReadyAtMs = 0
@@ -276,6 +288,10 @@ export function createSession(options: CreateSessionOptions): GameSession {
     const bonuses = ITEMS.find((item) => item.id === weaponId)?.bonuses ?? {}
     return bonuses.attack ?? bonuses.magic ?? 0
   }
+  const weaponBonuses = () => {
+    const weaponId = game.equipment.weapon
+    return weaponId === null ? {} : (ITEMS.find((item) => item.id === weaponId)?.bonuses ?? {})
+  }
   const applyCombatHits = (hits: readonly CombatHit[], events: SessionEvent[]) => {
     for (const hit of hits) {
       const before = mobById(hit.targetId)
@@ -293,6 +309,8 @@ export function createSession(options: CreateSessionOptions): GameSession {
 
       const previousLevel = game.level
       dispatch({ type: 'gain-exp', amount: PIG.exp })
+      const previousKillCount = game.quest.killCount
+      dispatch({ type: 'quest-kill', quest: PIG_QUEST, monsterId: PIG.id })
       if (game.level > previousLevel) {
         emit(events, { type: 'level-up', previousLevel, currentLevel: game.level })
       }
@@ -304,12 +322,19 @@ export function createSession(options: CreateSessionOptions): GameSession {
         dropRng,
         { sequence: dropSequence, sourceMonsterId: PIG.id },
       )
-      drops = [...drops, ...spawned]
+      for (const drop of spawned) {
+        dropCollection = addDropToCollection(dropCollection, drop, nowMs + dropSequence / 100).collection
+      }
+      drops = dropCollectionValues(dropCollection)
       spawned.forEach((drop) => emit(events, {
         type: 'drop-spawn',
         dropId: drop.id,
         position: { ...drop.landingPosition },
       }))
+      if (previousKillCount === 0 && game.quest.killCount === 1 && activeDialogue === null) {
+        activeDialogue = createDialogue('firstKill', { questStatus: game.quest.status, purchased })
+        emit(events, { type: 'dialogue-open', dialogueId: 'firstKill' })
+      }
     }
   }
 
@@ -339,17 +364,46 @@ export function createSession(options: CreateSessionOptions): GameSession {
       queuedInputs = []
       const events: SessionEvent[] = []
       let dialogueHandled = false
+      const dialogueOpenAtTickStart = activeDialogue !== null
 
       if (banner !== null && nowMs - banner.startedAtMs >= 4_000) banner = null
       if (inputs.closeReward) reward = null
-      if (inputs.epilogueAction === 'free') changeScene('free', events)
-      if (inputs.epilogueAction === 'retry') {
-        game = { ...createInitialState(null, ''), ipMode: options.ipMode }
+      if (game.scene === 'epilogue' && inputs.epilogueAction === 'free') changeScene('free', events)
+      if (game.scene === 'epilogue' && inputs.epilogueAction === 'retry') {
+        game = { ...createInitialState(null, ''), ipMode: sessionIpMode }
         binding?.setState(game)
+        nowMs = 0
+        sequence = 0
+        aiRng = mulberry32(options.seed ^ 0x6030)
+        combatRng = mulberry32(options.seed ^ 0x6031)
+        dropRng = mulberry32(options.seed)
+        playerPos = { x: 0, z: 24 }
+        previousPlayerPos = { ...playerPos }
+        playerYaw = 0
+        zoneState = { zone: null }
+        gateInside = false
         activeDialogue = null
+        purchased = false
+        inventoryOpen = false
+        selectedShopItemId = null
+        spawner = createSpawner(aiRng)
+        dropCollection = createDropCollection()
+        drops = []
+        burns = []
+        dropSequence = 0
+        skillState = createSkillState(0)
+        basicReadyAtMs = 0
+        playerCombat = { hp: 0, invulnerableUntilSeconds: 0 }
+        respawnState = {
+          phase: 'alive', hp: 0, maxHp: 0, mp: 0, meso: game.meso,
+          position: { ...playerPos }, dyingUntilSeconds: null,
+        }
         reward = null
         epilogueStartedAtMs = null
         tutorialEvents = []
+        banner = null
+        acquiredAtByItemId = {}
+        recentEvents = []
         emit(events, { type: 'scene', from: 'epilogue', to: 'title' })
       }
 
@@ -370,7 +424,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
         changeScene('forest', events)
       }
 
-      if (game.scene !== 'title' && game.scene !== 'create') {
+      if (game.scene !== 'title' && game.scene !== 'create' && !dialogueOpenAtTickStart) {
         const moved = Math.hypot(playerPos.x - previousPlayerPos.x, playerPos.z - previousPlayerPos.z)
         const speed = input.dtMs <= 0 ? 0 : moved / (input.dtMs / 1000)
         const tutorialCandidates: TutorialInputEvent[] = [
@@ -429,7 +483,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
         }
       }
 
-      if (activeDialogue === null && inputs.interact) {
+      if (activeDialogue === null && inputs.interact && !dialogueHandled) {
         const npcId = findInteractable(playerPos, playerYaw, NPCS)
         if (npcId === 'stan' || npcId === 'maya') {
           if (npcId === 'stan') changeScene(game.quest.status === 'ready' ? 'complete' : 'stan', events)
@@ -465,7 +519,19 @@ export function createSession(options: CreateSessionOptions): GameSession {
       }
 
       const inPark = zoneState.zone === 'park'
-      if (inPark) {
+      if (inPark && !dialogueOpenAtTickStart && activeDialogue === null) {
+        const burnHits: CombatHit[] = []
+        burns = burns.flatMap((burn) => {
+          let nextTickAtMs = burn.nextTickAtMs
+          let remainingTicks = burn.remainingTicks
+          while (remainingTicks > 0 && nextTickAtMs <= nowMs) {
+            burnHits.push({ targetId: burn.mobId, damage: burn.damagePerTick, critical: false, hitIndex: burn.remainingTicks - remainingTicks })
+            remainingTicks -= 1
+            nextTickAtMs += burn.intervalMs
+          }
+          return remainingTicks > 0 ? [{ ...burn, nextTickAtMs, remainingTicks }] : []
+        })
+        applyCombatHits(burnHits, events)
         const stepped = stepSpawner(spawner, {
           dtSeconds: input.dtMs / 1000,
           nowSeconds: nowMs / 1000,
@@ -506,11 +572,13 @@ export function createSession(options: CreateSessionOptions): GameSession {
             : [{ id: mob.id, position: mob.position }]
         })
         const job = game.jobId === null ? null : JOBS[game.jobId]
-        if (job !== null && inputs.skill) {
+        const playerCanAct = respawnState.phase === 'alive'
+        if (job !== null && inputs.skill && playerCanAct) {
           const skill = SKILLS[job.skillId]
           const cast = tryCastSkill(skillState, skill, nowMs)
           if (cast.ok) {
             skillState = cast.state
+            dispatch({ type: 'spend-mp', amount: skill.mpCost })
             const skillAttack = resolveSkillAttack({
               skillId: job.skillId,
               origin: { x: playerPos.x, z: playerPos.z },
@@ -523,11 +591,38 @@ export function createSession(options: CreateSessionOptions): GameSession {
               rng: combatRng,
             })
             applyCombatHits(skillAttack.hits, events)
+            const affectedIds = [...new Set(skillAttack.hits.map(({ targetId }) => targetId))]
+            if (skillAttack.effect.type === 'freeze') {
+              spawner = {
+                ...spawner,
+                slots: spawner.slots.map((slot) => slot.mob === null || !affectedIds.includes(slot.mob.id)
+                  ? slot
+                  : { ...slot, mob: applyTimedMobEffect(slot.mob, skillAttack.effect, nowMs / 1000) }),
+              }
+            }
+            if (skillAttack.effect.type === 'burn') {
+              const ticks = skillAttack.effect.ticks ?? 0
+              const durationMs = skillAttack.effect.durationMs ?? 0
+              const damagePerTick = skillAttack.effect.damagePerTick ?? 0
+              if (ticks > 0 && durationMs > 0 && damagePerTick > 0) {
+                burns = [
+                  ...burns.filter(({ mobId }) => !affectedIds.includes(mobId)),
+                  ...affectedIds.map((mobId): BurnState => ({
+                    mobId, damagePerTick, remainingTicks: ticks,
+                    intervalMs: durationMs / ticks, nextTickAtMs: nowMs + durationMs / ticks,
+                  })),
+                ]
+              }
+            }
+            if (skillAttack.effect.type === 'leap' && targets[0] !== undefined) {
+              playerPos = leapDestination(playerPos, targets[0].position, skillAttack.effect.radiusMeters ?? 2.5)
+            }
           } else {
             emit(events, { type: 'skill-rejected', reason: cast.reason })
           }
         }
-        if (job !== null && inputs.attack && nowMs >= basicReadyAtMs) {
+        if (job !== null && inputs.attack && playerCanAct && nowMs >= basicReadyAtMs) {
+          const modifiers = resolveEquipmentCombatModifiers(weaponBonuses(), 1.8, job.basicAttack.cooldownMs)
           const attack = resolveBasicAttack({
             origin: { x: playerPos.x, z: playerPos.z },
             yaw: playerYaw,
@@ -535,14 +630,16 @@ export function createSession(options: CreateSessionOptions): GameSession {
             weaponAttack: weaponAttack(),
             targets,
             rng: combatRng,
+            rangeMeters: modifiers.rangeMeters,
           })
-          basicReadyAtMs = nowMs + job.basicAttack.cooldownMs
+          basicReadyAtMs = nowMs + modifiers.cooldownMs
           applyCombatHits(attack.hits, events)
         }
       }
 
+      const canCollectDrops = respawnState.phase === 'alive' && activeDialogue === null && !dialogueOpenAtTickStart
       const remainingDrops: DropEntity[] = []
-      for (const drop of drops) {
+      for (const drop of canCollectDrops ? drops : []) {
         const collection = collectDrop(
           game,
           drop,
@@ -555,13 +652,14 @@ export function createSession(options: CreateSessionOptions): GameSession {
           continue
         }
         collection.actions.forEach(dispatch)
+        dropCollection = removeDropFromCollection(dropCollection, drop.id)
         if (drop.payload.kind === 'item') acquiredAtByItemId = {
           ...acquiredAtByItemId,
           [drop.payload.itemId]: nowMs,
         }
         emit(events, { type: 'drop-collect', dropId: drop.id, position: { ...drop.landingPosition } })
       }
-      drops = remainingDrops
+      if (canCollectDrops) drops = remainingDrops
 
       const respawned = stepRespawn(respawnState, nowMs / 1000)
       respawnState = respawned.state
@@ -572,6 +670,9 @@ export function createSession(options: CreateSessionOptions): GameSession {
           playerPos = { ...event.position }
           emit(events, { type: 'respawn', position: { ...event.position } })
         } else {
+          spawner = clearSpawnerAggro(spawner, aiRng)
+          zoneState = { zone: null }
+          gateInside = false
           emit(events, { type: 'clear-monster-aggro' })
         }
       }

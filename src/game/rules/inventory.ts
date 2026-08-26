@@ -8,7 +8,7 @@ export type ItemBonuses = Record<string, number>
 
 export interface ItemDefinition {
   id: string
-  name: string
+  nameKey: string
   kind: ItemKind
   equipSlot?: EquipmentSlot
   jobId?: string
@@ -130,10 +130,10 @@ const BONUS_LABELS: Record<string, string> = {
   luck: '행운',
 }
 
-export function tooltipForItem(item: ItemDefinition): string {
+export function tooltipForItem(item: ItemDefinition, displayName = item.nameKey): string {
   const bonusLines = Object.entries(item.bonuses).map(([key, value]) => {
     const suffix = key === 'attackSpeedPercent' ? '%' : ''
     return `${BONUS_LABELS[key] ?? key} +${value}${suffix}`
   })
-  return [item.name, ...bonusLines].join('\n')
+  return [displayName, ...bonusLines].join('\n')
 }

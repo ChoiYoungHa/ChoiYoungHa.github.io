@@ -30,7 +30,7 @@ test('궁수에게 다른 세 무기는 장착 불가이며 상태가 불변이�
 
   assert.equal(incompatible.length, 3)
   for (const item of incompatible) {
-    assert.deepEqual(buyItem(initial, item), { ok: false, reason: '장착 불가', state: initial })
+    assert.deepEqual(buyItem(initial, item), { ok: false, reason: 'unavailable', state: initial })
   }
 })
 
@@ -41,5 +41,5 @@ test('메소가 부족하면 구매·차감·장착이 모두 일어나지 않�
   const bow = items.find((item) => item.id === 'weapon.hunting-bow')
   const initial = { jobId: 'archer', meso: 899, inventory: createInventory() }
 
-  assert.deepEqual(buyItem(initial, bow), { ok: false, reason: '메소 부족', state: initial })
+  assert.deepEqual(buyItem(initial, bow), { ok: false, reason: 'insufficient', state: initial })
 })

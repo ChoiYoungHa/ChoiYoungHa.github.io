@@ -22,7 +22,7 @@ test('네 직업 스킬이 배수·MP·쿨다운·대상 수를 정의한다', a
   )
 })
 
-test('불꽃베기는 MP를 차감하고 3초·5틱·합계15 화상을 반환한다', async () => {
+test('I-01 불꽃베기는 콘티대로 MP를 차감하고 3초·5틱·틱당5 화상을 반환한다', async () => {
   const { createSkillState, tryCastSkill } = await load('src/game/rules/skills.ts')
   const skills = await readSkills()
   const result = tryCastSkill(createSkillState(60), skills['flame-slash'], 1000)
@@ -34,8 +34,8 @@ test('불꽃베기는 MP를 차감하고 3초·5틱·합계15 화상을 반환�
     type: 'burn',
     durationMs: 3000,
     ticks: 5,
-    damagePerTick: 3,
-    totalDamage: 15,
+    damagePerTick: 5,
+    totalDamage: 25,
   })
 })
 

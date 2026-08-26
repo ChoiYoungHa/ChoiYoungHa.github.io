@@ -2,6 +2,7 @@ import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join, resolve } from 'node:path'
+import { readFile } from 'node:fs/promises'
 
 /**
  * M4-02·M4-11 UI 규칙(순수 함수) 계약 테스트.
@@ -13,6 +14,11 @@ const ROOT = resolve(HERE, '..')
 const load = (rel) => import(pathToFileURL(join(ROOT, rel)).href)
 const H = await load('src/systems/ui/controlsHintLogic.ts')
 const L = await load('src/systems/ui/loadingLogic.ts')
+
+test('M-05 GameOverlay는 useGame store를 한 번만 구독한다', async () => {
+  const source = await readFile(join(ROOT, 'src/systems/ui/GameOverlay.tsx'), 'utf8')
+  assert.equal([...source.matchAll(/useGame\(/g)].length, 1)
+})
 
 describe('M4-02 hintVisibleAt — 0~5.0초 표시, 5.1초 이후 숨김', () => {
   test('경계값', () => {

@@ -1,7 +1,7 @@
 import jobs from './data/jobs.json' with { type: 'json' }
 import { createInventory, type EquipmentSlot, type Inventory } from './rules/inventory.ts'
 import { createQuestProgress, type QuestProgress } from './rules/quest.ts'
-import type { IpMode } from './i18n.ts'
+import { IP_MODE_DEFAULT, type IpMode } from './i18n.ts'
 
 export const GAME_SCENES = [
   'title',
@@ -22,8 +22,14 @@ export type JobId = keyof typeof jobs
 
 export interface FaceParts {
   faceId: string
+  eyeId: string
+  noseId: string
+  mouthId: string
   hairId: string
   skinId: string
+  hairColorId: string
+  eyeColorId: string
+  outfitId: string
 }
 
 export interface GameState {
@@ -45,9 +51,15 @@ export interface GameState {
 }
 
 const DEFAULT_FACE_PARTS: FaceParts = {
-  faceId: 'face.default',
-  hairId: 'hair.default',
-  skinId: 'skin.default',
+  faceId: 'round',
+  eyeId: 'basic',
+  noseId: 'dot',
+  mouthId: 'smile',
+  hairId: 'short',
+  skinId: 'skin-warm',
+  hairColorId: 'hair-espresso',
+  eyeColorId: 'eye-brown',
+  outfitId: 'warrior',
 }
 
 export function createInitialState(jobId: JobId | null, name: string): GameState {
@@ -68,8 +80,8 @@ export function createInitialState(jobId: JobId | null, name: string): GameState
     equipment: { ...inventory.equipment },
     quest: createQuestProgress('pig-cleanup'),
     scene: 'title',
-    ipMode: 'conti',
-    faceParts: { ...DEFAULT_FACE_PARTS },
+    ipMode: IP_MODE_DEFAULT,
+    faceParts: { ...DEFAULT_FACE_PARTS, outfitId: jobId ?? DEFAULT_FACE_PARTS.outfitId },
   }
 }
 

@@ -11,7 +11,7 @@ export interface SkillEffect {
 export interface SkillDefinition {
   id: string
   jobId: string
-  name: string
+  nameKey: string
   multiplier: number
   mpCost: number
   cooldownMs: number

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "seed": 45,
-  "simulatedSeconds": 103.8,
+  "simulatedSeconds": 97.2,
   "sceneTrace": [
     "title",
     "create",
@@ -18,16 +18,16 @@
   "dropMeso": 185,
   "ribbonDrops": 1,
   "pickups": 11,
-  "combatHits": 32,
+  "combatHits": 41,
   "aiSteps": 40,
   "deathCount": 0,
   "respawnChecks": 10,
   "skillCastTimesSeconds": [
     69.05,
-    74.77,
-    80.49,
-    85.01,
-    90.73
+    73.57,
+    77.49,
+    81.41,
+    85.33
   ],
   "skillCooldownRejections": 4,
   "skillMpRejections": 1,
@@ -40,7 +40,7 @@
   "questKillCount": 10,
   "inventoryRibbon": 2,
   "spawner": {
-    "totalSpawned": 14,
+    "totalSpawned": 13,
     "totalDeaths": 10,
     "maxConcurrent": 8
   }

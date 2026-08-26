@@ -13,14 +13,14 @@ export type PortraitPartKey = keyof PortraitSelection
 
 interface JobDefinition {
   id: JobId
-  name: string
+  nameKey: string
   startHp: number
   startMp: number
   baseAttack: number
   skillId: string
 }
 
-interface SkillDefinition { name: string }
+interface SkillDefinition { nameKey: string }
 
 const JOBS = rawJobs as unknown as Record<JobId, JobDefinition>
 const SKILLS = rawSkills as unknown as Record<string, SkillDefinition>
@@ -118,11 +118,11 @@ export function characterCreatePresentation(name: string, selectedJobId: JobId, 
       const job = JOBS[id]
       return {
         id,
-        name: job.name,
+        name: t(job.nameKey, ipMode),
         description: t(`s01.job.${id}`, ipMode),
         color: JOB_COLORS[id],
         startStats: { hp: job.startHp, mp: job.startMp, attack: job.baseAttack },
-        skillName: SKILLS[job.skillId]?.name ?? job.skillId,
+        skillName: SKILLS[job.skillId] === undefined ? job.skillId : t(SKILLS[job.skillId].nameKey, ipMode),
         selected: id === selectedJobId,
         intensity: id === selectedJobId ? 1 : 0.6,
       }

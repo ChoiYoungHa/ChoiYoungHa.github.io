@@ -62,11 +62,12 @@ function occurrenceOffsets(text, term) {
   return offsets
 }
 
-async function scanForbiddenNames(root, files, terms, { extensions = DIST_TEXT_EXTENSIONS, warningTerms = new Set(), allowWarnings = false } = {}) {
+async function scanForbiddenNames(root, files, terms, { extensions = DIST_TEXT_EXTENSIONS, warningTerms = new Set(), allowWarnings = false, ignoredTerms = new Set() } = {}) {
   const matches = []
   for (const file of files.filter((path) => extensions.has(extension(path)))) {
     const text = await readFile(file, 'utf8')
     for (const term of terms) {
+      if (ignoredTerms.has(term)) continue
       const severity = allowWarnings && warningTerms.has(term) ? 'warn' : 'fail'
       for (const offset of occurrenceOffsets(text, term))
         matches.push({ file: relative(root, file).replaceAll('\\', '/'), term, offset, severity })
@@ -81,6 +82,17 @@ async function scanForbiddenNames(root, files, terms, { extensions = DIST_TEXT_E
     warnCount: warnMatches.length,
     matches,
   }
+}
+
+async function scanOwnVisibleStrings(root, terms) {
+  const stringsPath = resolve(root, 'src/game/data/strings.ko.json')
+  const stringsText = await readTextIfFile(stringsPath)
+  if (stringsText === null) return { status: 'not-assessable', count: 0, matches: [] }
+  const ownText = stringValues(JSON.parse(stringsText).own).join('\n')
+  const matches = terms.flatMap((term) => occurrenceOffsets(ownText, term).map((offset) => ({
+    file: 'src/game/data/strings.ko.json#own', term, offset, severity: 'fail',
+  })))
+  return { status: matches.length === 0 ? 'pass' : 'fail', count: matches.length, matches }
 }
 
 async function readTextIfFile(path) {
@@ -232,10 +244,15 @@ async function main(argv) {
   const scanRoot = resolve(root, sourceMode ? 'src' : options.dist)
   if (!(await exists(scanRoot))) throw new Error(`scan directory not found: ${relative(root, scanRoot)}`)
   const files = await walk(scanRoot)
+  const ownVisibleStrings = await scanOwnVisibleStrings(root, denylist.terms)
   const forbiddenNames = await scanForbiddenNames(root, files.filter((file) => file !== denylistPath), denylist.terms, {
     extensions: sourceMode ? SRC_TEXT_EXTENSIONS : DIST_TEXT_EXTENSIONS,
     warningTerms: new Set(ipPolicy.contiTerms),
-    allowWarnings: ipPolicy.forcedOwn,
+    allowWarnings: ipPolicy.forcedOwn && !sourceMode,
+    // Source identifiers (stan, meso, etc.) are not user-visible. In forced-own
+    // source mode the authoritative check is the rendered own string catalog;
+    // production bundles remain scanned as text below.
+    ignoredTerms: ipPolicy.forcedOwn && sourceMode ? new Set(denylist.terms) : new Set(),
   })
   const referenceImageHashes = sourceMode
     ? { status: 'not-run', reason: 'dist check skipped in --src mode' }
@@ -250,7 +267,7 @@ async function main(argv) {
       : forbiddenNames.warnCount > 0
         ? { status: 'residual-warn', reason: 'runtime is forced to own, but conti-only terms remain in scanned output' }
         : { status: 'excluded', reason: 'runtime is forced to own and no conti-only denylist term remains in scanned output' }
-  const checks = [forbiddenNames, referenceImageHashes, registeredAssets, contiTreeShaking]
+  const checks = [forbiddenNames, ownVisibleStrings, referenceImageHashes, registeredAssets, contiTreeShaking]
   const failed = checks.some((check) => check.status === 'fail')
   const warned = checks.some((check) => check.status === 'warn' || check.status === 'residual-warn')
   const report = {
@@ -265,6 +282,7 @@ async function main(argv) {
     contiTreeShaking,
     checks: {
       forbiddenNames,
+      ownVisibleStrings,
       referenceImageHashes,
       registeredAssets,
     },

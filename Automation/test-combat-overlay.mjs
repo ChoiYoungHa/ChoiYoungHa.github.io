@@ -36,3 +36,8 @@ test('전투 DOM 표현은 플로터 16개와 몬스터 HP 바 10개를 넘지 �
   assert.equal(hpBars[0].percent, 100)
   assert.deepEqual(combatOverlayNodeCounts(state, mobs, 0), { floaters: 16, hpBars: 10, total: 26 })
 })
+
+test('I-05 돼지 HP 바는 데이터 SSOT의 65를 maxHp로 쓴다', async () => {
+  const { mobHpBarInput } = await load('src/systems/ui/damageFloaterLogic.ts')
+  assert.deepEqual(mobHpBarInput({ id: 'pig-1', hp: 55 }, 10, 20), { id: 'pig-1', hp: 55, maxHp: 65, screenX: 10, screenY: 20 })
+})

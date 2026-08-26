@@ -26,19 +26,24 @@ test('conti와 own 표는 동일 키셋이며 빈 번역이 없다', async () =>
   }
 })
 
-test('own 모드는 지정 IP 명칭 4개를 모두 치환한다', async () => {
+test('B-01 own 모드는 전체 IP denylist와 사용자 노출 데이터 명칭을 모두 치환한다', async () => {
   const { own } = await readStrings()
+  const denylist = JSON.parse(await readFile(join(ROOT, 'src/game/data/ip-denylist.json'), 'utf8'))
   const joined = Object.values(own).join('\n')
-  for (const banned of ['헤네시스', '스탄', '메소', '돼지리본']) {
+  for (const banned of denylist.terms) {
     assert.equal(joined.includes(banned), false, `${banned} 잔존`)
   }
-  for (const replacement of ['버섯마을', '촌장 오릭', '코인', '분홍 리본']) {
+  for (const replacement of ['버섯마을', '촌장 오릭', '상인 리아', '코인', '분홍 리본', '분홍갈기 공원', '마력 발톱', '빙결 폭풍']) {
     assert.equal(joined.includes(replacement), true, `${replacement} 누락`)
   }
 })
 
 test('i18n 공개 함수는 모드별 문자열을 반환하고 없는 키를 거절한다', async () => {
-  const { getStrings, t } = await load('src/game/i18n.ts')
+  const { getStrings, IP_MODE_DEFAULT, resolveIpMode, t } = await load('src/game/i18n.ts')
+  assert.equal(IP_MODE_DEFAULT, 'own')
+  assert.equal(resolveIpMode('conti', true), 'own')
+  assert.equal(resolveIpMode('conti', false), 'conti')
+  assert.equal(t('s04.elder.name'), '촌장 오릭')
   assert.equal(t('s04.elder.name', 'conti'), '장로 스탄')
   assert.equal(t('s04.elder.name', 'own'), '촌장 오릭')
   assert.equal(Object.keys(getStrings('conti')).length, Object.keys(getStrings('own')).length)

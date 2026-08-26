@@ -171,3 +171,52 @@
 | 공개 API 순서 재현 | dying 공격, 대화 중 피격, close+reopen, title→free 우회 모두 재현 |
 
 전체 테스트는 결함 재현 분기를 포함하지 않아 녹색이다. 테스트가 통과한다는 사실과 규칙/세션 순서가 맞다는 사실을 분리해 판정해야 한다.
+
+## 12. R102 처리 결과
+
+- 처리 기준: 공개 인터페이스 재현 테스트를 먼저 RED로 확인한 뒤 최소 수정으로 GREEN 전환했다.
+- 요약: 수정 19건(차단 1, 중요 14, 경미 4), 보류 2건(경미 2). 콘티 수치 불일치 3건은 I-01·I-02·I-05에서 모두 수정했다.
+
+| 번호 | 결과 | 파일 | 수정 요약 | 재현/회귀 테스트명 |
+|---|---|---|---|---|
+| B-01 | 수정 | `src/game/{i18n,state}.ts`, `data/{strings.ko,items,jobs,skills,ip-denylist}.json`, `rules/shop.ts`, UI presentation, `Automation/check-ip.mjs` | `IP_MODE_DEFAULT='own'`, state 기본·production own 고정, 모든 표시명/상점 실패 문구 키화, own 표/denylist 보강, own 렌더·source 검사 0건 | `B-01 own 모드의 문자열 표·캐릭터·상점·인벤토리 렌더 문자열에는 고유명이 0건이다`; `B-01 own-forced source scan...zero residuals` |
+| I-01 | 수정 | `data/skills.json`, `session.ts` | 화상을 틱당 5·5틱·총 25로 정정하고 600ms 간격 지속 피해를 세션에 적용 | `I-01 불꽃베기는...틱당5`; `I-01/I-03/I-11 스킬은...` |
+| I-02 | 수정 | `rules/combat.ts` | 궁수 스킬을 최대 5대상 각각 5회 타격으로 분리 | `I-02 궁수 스킬은 단일 대상에도...5회` |
+| I-03 | 수정 | `rules/combat.ts`, `mobs/ai.ts`, `session.ts` | 0.8초 freeze로 AI 정지, leap 목적지를 최대 2.5m로 계산·세션 위치에 반영 | `I-03/I-04 동결·도약과 장비...`; `I-01/I-03/I-11 스킬은...` |
+| I-04 | 수정 | `rules/combat.ts`, `session.ts` | 장착 활 range 12와 단검 공속 +15%를 기본공격 사거리/쿨다운 계산에 반영 | `I-03/I-04 동결·도약과 장비...` |
+| I-05 | 수정 | `damageFloaterLogic.ts`, `GameOverlay.tsx` | 몬스터 데이터 HP 65를 HP bar `maxHp` SSOT로 사용 | `I-05 돼지 HP 바는 데이터 SSOT의 65...` |
+| I-06 | 수정 | `rules/pickup.ts`, `session.ts` | 세션 드롭을 capacity 24 풀로 소유하고 oldest 교체·수거 release 적용 | `I-06 세션용 드롭 컬렉션은 24개를 넘으면...` |
+| I-07 | 수정 | `rules/pickup.ts`, `session.ts` | quest kill을 드롭 습득에서 제거하고 HP 0 전환 프레임에 즉시 1회 기록 | `I-07 습득은 보상만 반영...`; `park ticks connect...` |
+| I-08 | 수정 | `session.ts` | `dying` 동안 skill/attack/pickup 차단, 사망 프레임 이후 입력도 차단 | `park ticks connect...death, and timed respawn`의 `dyingInputsChecked` |
+| I-09 | 수정 | `session.ts` | tick 시작 시 열린 dialogue는 zone/AI/combat을 정지하고 close 처리 tick의 interact 재평가 금지 | `I-09 열린 대화는 월드 tick을 멈추고...` |
+| I-10 | 수정 | `session.ts`, `run-story.mjs` | epilogue scene guard 추가, retry에서 RNG·spawner·drop·skill·zone·UI/session 상태 전부 초기화 | `I-10 에필로그 액션은...`; `I-10 retry는...모든 mutable...초기화` |
+| I-11 | 수정 | `reducers.ts`, `session.ts`, `GameOverlay.tsx` | `spend-mp` action으로 skill MP를 `GameState`/zustand와 동기화하고 임시 Overlay 덮어쓰기 제거 | `I-01/I-03/I-11 스킬은...`; `I-11 skill-rejected...두 사유` |
+| I-12 | 수정 | `mobs/spawner.ts`, `session.ts` | respawn의 clear 시 chase/attack을 wander로 실제 초기화하고 zone/gate도 초기화 | `park ticks connect...`의 respawn 후 zone/aggro assertion |
+| I-13 | 수정 | `state.ts`, `session.ts`, `GameOverlay.tsx` | 9종 portrait selection을 character input→`select-job`→`GameState.faceParts`로 보존 | `title and character inputs...`의 9종 faceParts assertion |
+| I-14 | 수정 | `session.ts`, `run-story.mjs` | 최초 kill 확정 시 `firstKill` dialogue를 정확히 1회 열고 headless driver도 modal을 완료 | `park ticks connect...`의 `firstKill` event assertion |
+| M-01 | 보류 | `data/*.json` | canonical ID 전면 변경은 아이콘·asset ledger·quest/save 계약을 함께 깨는 범위 확장이라 master의 migration 결정 필요 | 기존 ID/asset 회귀 유지 |
+| M-02 | 수정 | `data/jobs.json` | 실제 쓰는 baseAttack/cooldown은 전투 tuning SSOT로 유지하고 미사용 `weaponId` 4개 제거 | `jobs 데이터가...`; `weaponId in job === false` |
+| M-03 | 수정 | `src/systems/ui/Portrait.tsx` | JSX component를 UI 계층으로 이동해 `src/game/**` React JSX runtime 의존 제거 | `M-03/M-04 game 규칙층은 JSX runtime...없다` |
+| M-04 | 수정 | `game/tutorial.ts`, `session.ts`, `tutorialHintsLogic.ts` | 공용 input type을 game 계층으로 이동해 game→UI 역방향 의존 제거 | `M-03/M-04 game 규칙층은...역방향 의존이 없다` |
+| M-05 | 수정 | `GameOverlay.tsx` | `useGame()` 1회 구독 결과에서 selector를 계산 | `M-05 GameOverlay는 useGame store를 한 번만 구독한다` |
+| M-06 | 보류 | `CLAUDE.md`, `m6-integration-checklist.md` | 코드 결함이 아니라 상위 SSOT 문서 충돌이며 이번 수정 허용 범위 밖; master가 jump/interact M6 예외 여부 확정 필요 | 코드의 기존 M6 입력 회귀 유지 |
+
+### RED → GREEN 증거
+
+| 묶음 | 최초 RED | GREEN |
+|---|---:|---:|
+| B-01 i18n/checker/render | 18개 중 5 fail | 18/18 pass |
+| I-01~I-05 combat/skill/UI | 9개 중 4 fail 및 HP bar 1 fail | 13/13 pass |
+| I-06~I-07 pickup/pool | 4개 중 2 fail | 4/4 pass |
+| I-08~I-14 session/story | session 6개 중 4 fail, retry 1 fail | session/story 10/10 pass |
+| M-02~M-05 | stats 1 fail, 계층/구독 2 fail | 관련 26/26 pass |
+
+### 최종 회귀
+
+| 검증 | R102 결과 |
+|---|---|
+| `npx tsc -b` | exit 0, 진단 0 |
+| game·ui 테스트 파일별 개별 실행 | 43 files / 184 tests / pass 184 / fail 0 |
+| `node Automation/check-ip.mjs --src` | PASS, `forbiddenNames=0`, `ownVisibleStrings=0` |
+| `runStory()` | 84.981초·10처치·3,785메소·Lv4 exp220·quest done·event order violation 0로 §9-3 일치 |
+| game 계층 direct React/three 및 game→UI import | 각각 0파일 |

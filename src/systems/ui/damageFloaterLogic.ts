@@ -4,6 +4,7 @@ import {
   release,
   type PoolState,
 } from '../../game/util/pool.ts'
+import monsterData from '../../game/data/monsters.json' with { type: 'json' }
 
 export const DAMAGE_FLOATER_LIFETIME_MS = 800
 export const MOB_HP_BAR_LIMIT = 10
@@ -42,6 +43,10 @@ export interface MobHpBarInput {
 
 export interface MobHpBarPresentation extends MobHpBarInput {
   percent: number
+}
+
+export function mobHpBarInput(mob: { id: string, hp: number }, screenX: number, screenY: number): MobHpBarInput {
+  return { id: mob.id, hp: mob.hp, maxHp: monsterData.pig.hp, screenX, screenY }
 }
 
 export function createDamageFloaterState(): DamageFloaterState {
