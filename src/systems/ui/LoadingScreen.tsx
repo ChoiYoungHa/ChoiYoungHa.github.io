@@ -1,3 +1,5 @@
+import { useEffect, useSyncExternalStore } from 'react'
+import { loadingStore } from '../loading'
 import {
   PHASE_LABEL,
   isSceneVisiblePhase,
@@ -13,7 +15,7 @@ import {
  * `progress` 를 직접 주면 그 값을, 대신 `loadedBytes`/`phaseBytes` 를 주면 `loadingProgress` 로 계산한다.
  * detail·ready 단계에서는(화면이 이미 떠 있으므로) 오류가 없는 한 아무것도 그리지 않는다.
  *
- * 아직 마운트하지 않는다 — R29 에서 App.tsx 가 로더 phase 를 상태로 들고 `<LoadingScreen phase=… />` 로 붙인다.
+ * `useLoadingState` 가 별도 로딩 스토어를 구독하고 App.tsx 가 표시 props를 바인딩한다.
  */
 export interface LoadingScreenProps {
   phase: LoadingPhase
@@ -24,6 +26,18 @@ export interface LoadingScreenProps {
   /** 오류 원문(Error 또는 문자열). 있으면 진행바 대신 오류와 재시도 버튼 */
   error?: unknown
   onRetry?: () => void
+}
+
+export function useLoadingState() {
+  const state = useSyncExternalStore(loadingStore.subscribe, loadingStore.getState, loadingStore.getState)
+  useEffect(() => {
+    void loadingStore.start()
+  }, [])
+  return {
+    ...state,
+    progress: loadingProgress(state.phase, state.loadedBytes, state.phaseBytes),
+    retry: loadingStore.retry,
+  }
 }
 
 export function LoadingScreen({ phase, progress, loadedBytes, phaseBytes, error, onRetry }: LoadingScreenProps) {

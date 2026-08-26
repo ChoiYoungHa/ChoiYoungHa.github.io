@@ -16,6 +16,7 @@ import { Player, setMouseSensitivity } from './player/Controller'
 import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
 import { ControlsHint } from './systems/ui/ControlsHint'
 import { Settings } from './systems/ui/Settings'
+import { LoadingScreen, useLoadingState } from './systems/ui/LoadingScreen'
 import { CAMERA } from './player/FollowCamera'
 import { useRuntime } from './store/useRuntime'
 import { reportIfRequested } from './systems/report'
@@ -53,6 +54,7 @@ export default function App() {
   const pushError = useRuntime((s) => s.pushError)
   const preset = useRuntime((s) => s.preset)
   const quality = qualityPresets[preset]
+  const loading = useLoadingState()
   const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
   const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
 
@@ -106,6 +108,7 @@ export default function App() {
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
       {shot ? null : <ControlsHint />}
       {shot ? null : <Settings onSensitivityChange={setMouseSensitivity} />}
+      <LoadingScreen phase={loading.phase} progress={loading.progress} error={loading.error} onRetry={loading.retry} />
     </div>
   )
 }

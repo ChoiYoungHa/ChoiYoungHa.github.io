@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "testedHead": "f98808a",
+  "sources": [
+    "계획서.md §3-6",
+    "로드맵.md M4-03",
+    "로드맵.md M4-04"
+  ],
+  "itemKeys": [
+    "renderResolution",
+    "dprCap",
+    "shadowCascades",
+    "shadowMaxDistance",
+    "coniferLodDistances",
+    "grassInstances",
+    "rockInstances",
+    "postChain",
+    "fogDensity",
+    "textureTier",
+    "anisotropy"
+  ],
+  "coverage": {
+    "low": {
+      "present": 11,
+      "required": 11
+    },
+    "base": {
+      "present": 11,
+      "required": 11
+    }
+  },
+  "comparisons": [
+    {
+      "preset": "low",
+      "item": "renderResolution",
+      "expected": {
+        "width": 1280,
+        "height": 720
+      },
+      "current": {
+        "width": 1280,
+        "height": 720
+      },
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "dprCap",
+      "expected": 1,
+      "current": 1,
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "shadowCascades",
+      "expected": {
+        "count": 2,
+        "resolution": 1024
+      },
+      "current": {
+        "count": 2,
+        "resolution": 1024
+      },
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "shadowMaxDistance",
+      "expected": 80,
+      "current": 80,
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "coniferLodDistances",
+      "expected": [
+        25,
+        60,
+        90
+      ],
+      "current": [
+        25,
+        60,
+        90
+      ],
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "grassInstances",
+      "expected": {
+        "count": 6000,
+        "radius": 25
+      },
+      "current": {
+        "count": 6000,
+        "radius": 25
+      },
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "rockInstances",
+      "expected": 300,
+      "current": 300,
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "postChain",
+      "expected": [
+        "toneMapping",
+        "fxaa"
+      ],
+      "current": [
+        "toneMapping",
+        "fxaa"
+      ],
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "fogDensity",
+      "expected": 0.008,
+      "current": 0.008,
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "textureTier",
+      "expected": {
+        "default": "1K",
+        "hero": "2K"
+      },
+      "current": {
+        "default": "1K",
+        "hero": "2K"
+      },
+      "matches": true
+    },
+    {
+      "preset": "low",
+      "item": "anisotropy",
+      "expected": 1,
+      "current": 1,
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "renderResolution",
+      "expected": {
+        "width": 1600,
+        "height": 900
+      },
+      "current": {
+        "width": 1600,
+        "height": 900
+      },
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "dprCap",
+      "expected": 1.5,
+      "current": 1.5,
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "shadowCascades",
+      "expected": {
+        "count": 3,
+        "resolution": 2048
+      },
+      "current": {
+        "count": 3,
+        "resolution": 2048
+      },
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "shadowMaxDistance",
+      "expected": 150,
+      "current": 150,
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "coniferLodDistances",
+      "expected": [
+        35,
+        80,
+        140
+      ],
+      "current": [
+        35,
+        80,
+        140
+      ],
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "grassInstances",
+      "expected": {
+        "count": 20000,
+        "radius": 40
+      },
+      "current": {
+        "count": 20000,
+        "radius": 40
+      },
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "rockInstances",
+      "expected": 600,
+      "current": 600,
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "postChain",
+      "expected": [
+        "toneMapping",
+        "fxaa",
+        "bloom",
+        "gtaoHalfResolution",
+        "lut"
+      ],
+      "current": [
+        "toneMapping",
+        "fxaa",
+        "bloom",
+        "gtaoHalfResolution",
+        "lut"
+      ],
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "fogDensity",
+      "expected": 0.0055,
+      "current": 0.0055,
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "textureTier",
+      "expected": {
+        "default": "2K",
+        "hero": "2K"
+      },
+      "current": {
+        "default": "2K",
+        "hero": "2K"
+      },
+      "matches": true
+    },
+    {
+      "preset": "base",
+      "item": "anisotropy",
+      "expected": 4,
+      "current": 4,
+      "matches": true
+    }
+  ],
+  "contractDeviations": [],
+  "runtimeConnections": [
+    {
+      "item": "renderResolution",
+      "connected": true,
+      "evidence": "src/App.tsx: quality.renderResolution"
+    },
+    {
+      "item": "dprCap",
+      "connected": true,
+      "evidence": "src/App.tsx: quality.dprCap"
+    },
+    {
+      "item": "shadowCascades",
+      "connected": false,
+      "evidence": "src/scene/Lighting.tsx: M1_SHADOW_CONFIG hard-coded"
+    },
+    {
+      "item": "shadowMaxDistance",
+      "connected": false,
+      "evidence": "src/scene/Lighting.tsx: M1_SHADOW_CONFIG hard-coded"
+    },
+    {
+      "item": "coniferLodDistances",
+      "connected": false,
+      "evidence": "no TS/TSX consumer in this worktree"
+    },
+    {
+      "item": "grassInstances",
+      "connected": true,
+      "evidence": "src/scene/Foliage.tsx: quality.grassInstances"
+    },
+    {
+      "item": "rockInstances",
+      "connected": true,
+      "evidence": "src/scene/RockInstances.tsx: qualityPresets[preset].rockInstances"
+    },
+    {
+      "item": "postChain",
+      "connected": false,
+      "evidence": "no TS/TSX consumer; createRenderer.ts only sets antialias/forceWebGL"
+    },
+    {
+      "item": "fogDensity",
+      "connected": true,
+      "evidence": "src/scene/Atmosphere.tsx: presets[preset].fogDensity"
+    },
+    {
+      "item": "textureTier",
+      "connected": false,
+      "evidence": "no TS/TSX consumer; SkyDome.tsx fixes /env/sky_1k.hdr"
+    },
+    {
+      "item": "anisotropy",
+      "connected": false,
+      "evidence": "no TS/TSX consumer"
+    }
+  ],
+  "runtimeConnectedCount": 5,
+  "deviations": [
+    {
+      "item": "shadowCascades",
+      "planned": {
+        "low": {
+          "count": 2,
+          "resolution": 1024
+        },
+        "base": {
+          "count": 3,
+          "resolution": 2048
+        }
+      },
+      "runtime": {
+        "count": 1,
+        "resolution": 1024
+      },
+      "decision": "preset key is not consumed; master decides CSM integration after merge"
+    },
+    {
+      "item": "shadowMaxDistance",
+      "planned": {
+        "low": 80,
+        "base": 150
+      },
+      "runtime": 80,
+      "decision": "low is numerically equal, base differs, and neither preset value is consumed"
+    },
+    {
+      "item": "coniferLodDistances",
+      "planned": {
+        "low": [
+          25,
+          60,
+          90
+        ],
+        "base": [
+          35,
+          80,
+          140
+        ]
+      },
+      "runtime": "not-connected",
+      "decision": "consumer implementation is deferred to master"
+    },
+    {
+      "item": "postChain",
+      "planned": {
+        "low": [
+          "toneMapping",
+          "fxaa"
+        ],
+        "base": [
+          "toneMapping",
+          "fxaa",
+          "bloom",
+          "gtaoHalfResolution",
+          "lut"
+        ]
+      },
+      "runtime": [],
+      "decision": "tone mapping, FXAA, bloom, GTAO half-resolution, and LUT are not selected from the preset"
+    },
+    {
+      "item": "textureTier",
+      "planned": {
+        "low": {
+          "default": "1K",
+          "hero": "2K"
+        },
+        "base": {
+          "default": "2K",
+          "hero": "2K"
+        }
+      },
+      "runtime": {
+        "sky": "1K fixed",
+        "otherTextures": "not-connected"
+      },
+      "decision": "asset/loader consumers are deferred to master"
+    },
+    {
+      "item": "anisotropy",
+      "planned": {
+        "low": 1,
+        "base": 4
+      },
+      "runtime": "not-configured",
+      "decision": "texture sampler consumer is deferred to master"
+    }
+  ],
+  "presetMutation": "none; both committed presets already matched all 22 §3-6 values",
+  "integrationDecision": "master-after-merge"
+}
