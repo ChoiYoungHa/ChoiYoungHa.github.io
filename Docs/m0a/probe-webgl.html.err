@@ -1,2 +1,0 @@
-[46500:9944:0826/131948.080:INFO:components\enterprise\browser\controller\chrome_browser_cloud_management_controller.cc:241] No machine level policy manager exists.
-[46500:9944:0826/131948.309:WARNING:chrome\browser\extensions\external_registry_loader_win.cc:236] Error observing HKLM: 액세스가 거부되었습니다. (0x5)

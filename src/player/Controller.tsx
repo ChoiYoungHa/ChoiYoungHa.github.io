@@ -1,0 +1,76 @@
+import { useFrame } from '@react-three/fiber'
+import { useEffect, useMemo, useRef } from 'react'
+import type { Mesh } from 'three'
+import { sampleGround } from '../scene/Prototype'
+import { createKeyboardInput } from './input'
+import { createRaycastController } from './controllers/raycast'
+import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
+import { FollowCamera } from './FollowCamera'
+
+/**
+ * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
+ * 계획서.md §3-4 구현 A(raycast). **점프·상호작용 없음**(§1-2 제출 후 선택).
+ *
+ * 상태는 스토어에 넣지 않는다(§3-3). 위치·yaw 는 ref 로만 흐른다.
+ */
+export function Player() {
+  const bodyRef = useRef<Mesh>(null)
+  const posRef = useRef<Vec3>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0 })
+  const yawRef = useRef(0)
+
+  const controller = useMemo(
+    () => createRaycastController(sampleGround, { x: 0, y: 0, z: 0 }),
+    [],
+  )
+  const keys = useMemo(() => createKeyboardInput(), [])
+
+  // 드래그로 시선 회전 (lookX). 포인터락은 M0-a 범위 밖.
+  useEffect(() => {
+    let dragging = false
+    let lastX = 0
+    const down = (e: PointerEvent) => {
+      dragging = true
+      lastX = e.clientX
+    }
+    const move = (e: PointerEvent) => {
+      if (!dragging) return
+      yawRef.current -= (e.clientX - lastX) * 0.005
+      lastX = e.clientX
+    }
+    const up = () => {
+      dragging = false
+    }
+    window.addEventListener('pointerdown', down)
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    return () => {
+      window.removeEventListener('pointerdown', down)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+      keys.dispose()
+    }
+  }, [keys])
+
+  useFrame((_, rawDt) => {
+    // 탭 전환 등으로 튄 dt 는 물리를 깨뜨린다. 상한을 둔다.
+    const dt = Math.min(rawDt, 1 / 20)
+    const input = keys.read(yawRef.current)
+    const r = controller.step(input, dt)
+    posRef.current = r.position
+    const body = bodyRef.current
+    if (body) {
+      body.position.set(r.position.x, r.position.y, r.position.z)
+      body.rotation.y = r.heading
+    }
+  })
+
+  return (
+    <>
+      <mesh ref={bodyRef} position={[0, RAYCAST_DEFAULTS.eyeOffset, 0]}>
+        <boxGeometry args={[0.8, 1.8, 0.8]} />
+        <meshStandardMaterial color="#8fa0b0" roughness={0.6} metalness={0} />
+      </mesh>
+      <FollowCamera targetRef={posRef} yawRef={yawRef} />
+    </>
+  )
+}

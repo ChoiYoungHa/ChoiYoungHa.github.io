@@ -1,0 +1,88 @@
+{
+  "at": "2026-08-26T04:35:35.915Z",
+  "note": "헤드리스 Chrome(--headless=new --use-angle=d3d11 --enable-unsafe-webgpu)에서 실측. fps는 헤드리스 값이므로 성능 관문 근거가 아니다(계획서.md §4-3).",
+  "machine": "LG gram 16ZD90SP-GX59K / Core Ultra 5 125H / Intel Arc Xe-LPG / RAM 32GB",
+  "backends": [
+    {
+      "row": "M0a-04",
+      "scope": "순수 three WebGPURenderer (R3F 없음)",
+      "url": "/probe.html",
+      "forceWebGL": false,
+      "backend": "WebGPU",
+      "adapter": "intel / xe-lpg",
+      "angle": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "init": "OK",
+      "deviceOk": true
+    },
+    {
+      "row": "M0a-06",
+      "scope": "순수 three WebGPURenderer, forceWebGL 강제",
+      "url": "/probe.html?gl=webgl",
+      "forceWebGL": true,
+      "backend": "WebGL2",
+      "adapter": "intel / xe-lpg",
+      "angle": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "init": "OK",
+      "deviceOk": true
+    },
+    {
+      "row": "M0a-07",
+      "scope": "R3F 앱 전체",
+      "url": "/index.html",
+      "forceWebGL": false,
+      "backend": "WebGPU",
+      "adapter": "intel / xe-lpg",
+      "angle": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "canvas": {
+        "w": 1280,
+        "h": 720
+      },
+      "preset": "low",
+      "errorCount": 0,
+      "sceneCounts": {
+        "mesh": 6,
+        "light": 2,
+        "gridHelper": 1
+      },
+      "hudText": "backend: WebGPUcanvas: 1280×720preset: lowadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 142 · calls: 726 · tris: 0WASD 이동 · Shift 달리기 · 드래그 시선",
+      "png": "m0a07-webgpu.png (64381 bytes)",
+      "fps_headless": 142
+    },
+    {
+      "row": "M0a-07",
+      "scope": "R3F 앱 전체, forceWebGL 강제",
+      "url": "/index.html?gl=webgl",
+      "forceWebGL": true,
+      "backend": "WebGL2",
+      "adapter": "intel / xe-lpg",
+      "angle": "ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "canvas": {
+        "w": 1280,
+        "h": 720
+      },
+      "preset": "low",
+      "errorCount": 0,
+      "sceneCounts": {
+        "mesh": 6,
+        "light": 2,
+        "gridHelper": 1
+      },
+      "hudText": "backend: WebGL2 (forceWebGL)canvas: 1280×720preset: lowadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 144 · calls: 744 · tris: 0WASD 이동 · Shift 달리기 · 드래그 시선",
+      "png": "m0a07-webgl.png (64505 bytes)",
+      "fps_headless": 144
+    }
+  ],
+  "checks": {
+    "WebGPU 경로 backend=WebGPU": true,
+    "forceWebGL 경로 backend=WebGL2": true,
+    "두 경로 모두 canvas 1280x720": true,
+    "두 경로 모두 console error 0": true,
+    "씬 3요소(바닥/큐브 mesh, 광원 light) 존재": true,
+    "adapter 하드웨어(xe-lpg)": true
+  },
+  "known_issue": {
+    "renderer.info.render.calls": "1초 집계값이 768/696으로 나왔다. 프레임당 값이 아니라 **누적값**으로 보인다(6 mesh × 약 144프레임 ≈ 700). 계획서 §4-1의 드로우콜 예산은 프레임당 기준이므로, M0-b 측정기는 프레임 수로 나누거나 프레임 경계에서 reset 후 읽어야 한다.",
+    "renderer.info.render.triangles": "WebGPU/WebGL 백엔드 모두 0으로 보고됐다. 삼각형 예산(≤600K) 검증에 이 값을 그대로 쓸 수 없다. M0-b에서 대체 측정원이 필요하다."
+  },
+  "result": "PASS"
+}

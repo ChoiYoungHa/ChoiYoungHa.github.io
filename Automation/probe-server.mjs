@@ -36,6 +36,19 @@ let received = 0
 const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://localhost:${PORT}`)
 
+  if (req.method === 'POST' && url.pathname === '/shot') {
+    const chunks = []
+    for await (const c of req) chunks.push(c)
+    const dataUrl = Buffer.concat(chunks).toString('utf8')
+    const b64 = dataUrl.replace(/^data:image\/png;base64,/, '')
+    const name = url.searchParams.get('name') ?? `shot-${received}`
+    await writeFile(join(OUT, `${name}.png`), Buffer.from(b64, 'base64'))
+    process.stdout.write(`SHOT ${name} (${b64.length} b64 chars)\n`)
+    res.writeHead(200, { 'content-type': 'text/plain' })
+    res.end('ok')
+    return
+  }
+
   if (req.method === 'POST' && url.pathname === '/result') {
     const chunks = []
     for await (const c of req) chunks.push(c)
