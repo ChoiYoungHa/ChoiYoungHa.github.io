@@ -1,0 +1,203 @@
+{
+  "id": "m2-herotree",
+  "at": "2026-08-26",
+  "method": "절차적 생성(Blender 미설치, master 결정). `src/scene/hero/heroTreeGeometry.ts` 를 Node 에서 직접 실행해 삼각형·바운딩을 셌다. 비인덱스 삼각형 + 면 법선(플랫 셰이딩), 알파 없음, 정점 색으로 줄기/수관 구분 → 재질 1개.",
+  "fixed": {
+    "height": 48,
+    "canopyDiameter": 34,
+    "trunkBaseDiameter": 5.2,
+    "trunkTopDiameter": 1.1,
+    "seed": 539363366
+  },
+  "branchSpecs": [
+    {
+      "name": "branch_A",
+      "attachAtHeightRatio": 0.46,
+      "elevationDeg": 38,
+      "lengthRatio": 0.42,
+      "baseRadius": 1.05,
+      "count": 3
+    },
+    {
+      "name": "branch_B",
+      "attachAtHeightRatio": 0.62,
+      "elevationDeg": 26,
+      "lengthRatio": 0.34,
+      "baseRadius": 0.8,
+      "count": 3
+    },
+    {
+      "name": "branch_C",
+      "attachAtHeightRatio": 0.76,
+      "elevationDeg": 14,
+      "lengthRatio": 0.24,
+      "baseRadius": 0.55,
+      "count": 2
+    }
+  ],
+  "canopySpecs": [
+    {
+      "name": "canopy_A",
+      "radiusRatio": 0.3,
+      "count": 4
+    },
+    {
+      "name": "canopy_B",
+      "radiusRatio": 0.19,
+      "count": 5
+    }
+  ],
+  "deterministic": {
+    "sameSeedHashes": [
+      "8ed72d6",
+      "8ed72d6",
+      "8ed72d6"
+    ],
+    "identical": true
+  },
+  "lod0": {
+    "triangleCount": 2416,
+    "vertexCount": 7248,
+    "bounds": {
+      "minY": 0,
+      "maxY": 46.8537592133697,
+      "radiusXZ": 22.500971614272522
+    },
+    "modules": [
+      {
+        "name": "trunk",
+        "kind": "trunk",
+        "count": 1,
+        "trianglesEach": 336,
+        "trianglesTotal": 336
+      },
+      {
+        "name": "branch_A",
+        "kind": "branch",
+        "count": 3,
+        "trianglesEach": 98,
+        "trianglesTotal": 294
+      },
+      {
+        "name": "branch_B",
+        "kind": "branch",
+        "count": 3,
+        "trianglesEach": 98,
+        "trianglesTotal": 294
+      },
+      {
+        "name": "branch_C",
+        "kind": "branch",
+        "count": 2,
+        "trianglesEach": 98,
+        "trianglesTotal": 196
+      },
+      {
+        "name": "canopy_A",
+        "kind": "canopy",
+        "count": 4,
+        "trianglesEach": 144,
+        "trianglesTotal": 576
+      },
+      {
+        "name": "canopy_B",
+        "kind": "canopy",
+        "count": 5,
+        "trianglesEach": 144,
+        "trianglesTotal": 720
+      }
+    ]
+  },
+  "lod1": {
+    "triangleCount": 718,
+    "vertexCount": 2154,
+    "bounds": {
+      "minY": 0,
+      "maxY": 46.873615197878216,
+      "radiusXZ": 22.623926389728805
+    },
+    "modules": [
+      {
+        "name": "trunk",
+        "kind": "trunk",
+        "count": 1,
+        "trianglesEach": 84,
+        "trianglesTotal": 84
+      },
+      {
+        "name": "branch_A",
+        "kind": "branch",
+        "count": 3,
+        "trianglesEach": 32,
+        "trianglesTotal": 96
+      },
+      {
+        "name": "branch_B",
+        "kind": "branch",
+        "count": 3,
+        "trianglesEach": 32,
+        "trianglesTotal": 96
+      },
+      {
+        "name": "branch_C",
+        "kind": "branch",
+        "count": 2,
+        "trianglesEach": 32,
+        "trianglesTotal": 64
+      },
+      {
+        "name": "canopy_A",
+        "kind": "canopy",
+        "count": 4,
+        "trianglesEach": 42,
+        "trianglesTotal": 168
+      },
+      {
+        "name": "canopy_B",
+        "kind": "canopy",
+        "count": 5,
+        "trianglesEach": 42,
+        "trianglesTotal": 210
+      }
+    ]
+  },
+  "checks": {
+    "모듈 5~7개 (계획서 §1-2)": {
+      "value": 6,
+      "pass": true
+    },
+    "LOD0 tris ≤ 120,000 (§4-1)": {
+      "value": 2416,
+      "pass": true
+    },
+    "LOD1 tris ≤ LOD0 50%": {
+      "value": "718 / 1208",
+      "ratio": 0.2972,
+      "pass": true
+    },
+    "알파 없음 (alphaTest/blend 0)": {
+      "value": "지오메트리에 UV·알파 채널 자체가 없다",
+      "pass": true
+    },
+    "피벗이 밑동(minY≈0)": {
+      "value": 0,
+      "pass": true
+    },
+    "높이 40~70m": {
+      "value": 46.85,
+      "pass": true
+    }
+  },
+  "silhouette": {
+    "vista": "vista-start",
+    "distanceMeters": 127.78,
+    "cameraFovDeg": 55,
+    "eyeHeightMeters": 1.6,
+    "verticalOccupancy": 35.22,
+    "targetOccupancy": 35,
+    "fogDensityLow": 0.008,
+    "fogTransmittance": 0.3598,
+    "note": "점유율은 원근 투영 계산값이다. 실제 화면 확인은 M2-08 의 S1 흑백 샷."
+  },
+  "result": "PASS"
+}

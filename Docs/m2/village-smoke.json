@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "date": "2026-08-26",
+  "query": "?gl=webgl&q=low",
+  "instancedMeshes": 6,
+  "houseInstances": 8,
+  "roofInstances": 8,
+  "sharedMaterialCount": 1,
+  "rendererCalls": 7,
+  "callsLimit": 12,
+  "colliders": 10,
+  "buildings": 8,
+  "collidersPerBuilding": "1-2",
+  "minimumConservativePathClearanceMeters": 3.58,
+  "pathClearanceLimitMeters": 1,
+  "resolvedExteriorPenetrations": 0,
+  "internalColliders": 0,
+  "consoleErrors": []
+}

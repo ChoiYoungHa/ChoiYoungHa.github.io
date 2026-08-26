@@ -1,0 +1,54 @@
+{
+  "id": "m2-herotree-S1",
+  "at": "2026-08-26",
+  "method": "같은 vista·같은 조명으로 두 장을 찍고(?shot=vista-start, 하나는 ?hideHero=1) 차분해 나무 픽셀만 남겼다. HDR 하늘의 구름이 밝기 임계·지평선 검출을 모두 교란해서(2차례 실패) 휴리스틱 대신 차분을 썼다. 차분은 카메라·조명·하늘이 동일하므로 나무 유무만 남는다.",
+  "files": {
+    "withTree": "Docs/m0a/m2-s1.png",
+    "withoutTree": "Docs/m0a/m2-s1-nohero.png",
+    "grayscale": "Docs/lookdev/m2-herotree-S1-bw.png",
+    "mask": "Docs/lookdev/m2-herotree-S1-mask.png"
+  },
+  "capture": {
+    "resolution": [
+      1280,
+      720
+    ],
+    "preset": "low",
+    "activeLod": 1,
+    "distanceMeters": 127.78,
+    "note": "vista-start 는 127.78m 라 LOD 전환 90m 를 넘어 LOD1(718 tris) 로 그려진다."
+  },
+  "silhouette": {
+    "boundingBoxPx": {
+      "left": 553,
+      "right": 738,
+      "top": 89,
+      "bottom": 368
+    },
+    "verticalOccupancy": 38.89,
+    "geometricOccupancy": 35.22,
+    "horizontalOccupancy": 14.53,
+    "pixelCount": 13134,
+    "canopyWidthPxTopThird": 186,
+    "trunkWidthPxBottomThird": 26,
+    "canopyToTrunkWidthRatio": 7.15,
+    "treeMeanLuma": 160.1,
+    "backgroundMeanLuma": 196.3,
+    "contrast": 36.1
+  },
+  "checks": {
+    "줄기 외곽이 식별된다 (하단 1/3 폭 > 0)": {
+      "value": "26px",
+      "pass": true
+    },
+    "수관 외곽이 줄기보다 넓다 (상단 1/3 폭 > 하단 1/3 × 1.5)": {
+      "value": "수관 186px vs 줄기 26px (배율 7.15)",
+      "pass": true
+    },
+    "세로 화면 점유율 35% ±5%p (M2-01 목표)": {
+      "value": 38.89,
+      "pass": true
+    }
+  },
+  "result": "PASS"
+}

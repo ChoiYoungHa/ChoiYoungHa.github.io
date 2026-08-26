@@ -1,0 +1,22 @@
+{
+  "id": "m2-placement-v1",
+  "note": "M2-08 배치 좌표. heroTree 는 main-path.json 의 landmarks.heroTree, vistas.json 의 vista-village.position 과 같은 값이어야 한다(세 파일이 서로를 검증한다). y 는 담지 않는다 — 런타임에 terrain/heightmap.ts 로 지면에 앉힌다.",
+  "heroTree": {
+    "id": "hero-tree-A",
+    "x": 38,
+    "z": -96,
+    "rotationY": 0.6,
+    "scale": 1.0,
+    "lodSwitchDistanceMeters": 90
+  },
+  "village": [
+    { "id": "village-01", "house": "house-a", "roof": "roof-a", "position": [10, 20], "rotationYDeg": -12, "scale": 1 },
+    { "id": "village-02", "house": "house-b", "roof": "roof-b", "position": [-12, 20], "rotationYDeg": 18, "scale": 0.95 },
+    { "id": "village-03", "house": "house-c", "roof": "roof-c", "position": [12, 10], "rotationYDeg": -25, "scale": 1 },
+    { "id": "village-04", "house": "house-a", "roof": "roof-a", "position": [-15, 6], "rotationYDeg": 8, "scale": 0.9 },
+    { "id": "village-05", "house": "house-b", "roof": "roof-b", "position": [11, 0], "rotationYDeg": 20, "scale": 0.9 },
+    { "id": "village-06", "house": "house-c", "roof": "roof-c", "position": [-17, -7], "rotationYDeg": -14, "scale": 0.92 },
+    { "id": "village-07", "house": "house-a", "roof": "roof-a", "position": [13, -11], "rotationYDeg": 12, "scale": 0.85 },
+    { "id": "village-08", "house": "house-b", "roof": "roof-b", "position": [-17, -17], "rotationYDeg": -20, "scale": 0.88 }
+  ]
+}

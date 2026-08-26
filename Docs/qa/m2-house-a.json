@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "date": "2026-08-26",
+  "mode": "procedural-no-blender",
+  "palette": {
+    "wall": { "hex": "#b5aa91", "hsl": [41.7, 19.6, 63.9] },
+    "window": { "hex": "#39434a", "hsl": [204.7, 13.0, 25.7] },
+    "roof": { "hex": "#704b38", "hsl": [20.4, 33.3, 32.9], "saturationLimit": "30-38%" }
+  },
+  "houses": [
+    {
+      "id": "house-a",
+      "tris": 48,
+      "interiorMeshes": 0,
+      "boundsMeters": [6.0, 3.0, 5.12],
+      "silhouette": { "roofLine": "wide", "widthHeightRatio": 2.0, "entranceX": 0 },
+      "roofSocket": { "position": [0, 3, 0], "rotationDeg": [0, 0, 0] }
+    },
+    {
+      "id": "house-b",
+      "tris": 48,
+      "interiorMeshes": 0,
+      "boundsMeters": [5.0, 3.8, 7.12],
+      "silhouette": { "roofLine": "steep", "widthHeightRatio": 1.32, "entranceX": -1.35 },
+      "roofSocket": { "position": [0, 3.8, 0], "rotationDeg": [0, 0, 0] }
+    },
+    {
+      "id": "house-c",
+      "tris": 60,
+      "interiorMeshes": 0,
+      "boundsMeters": [7.5, 4.6, 5.62],
+      "silhouette": { "roofLine": "tower-hip", "widthHeightRatio": 1.63, "entranceX": -1.6 },
+      "roofSocket": { "position": [0, 4.6, 0], "rotationDeg": [0, 0, 0] }
+    }
+  ],
+  "roofs": [
+    { "id": "roof-a", "tris": 8, "width": 6.6, "depth": 5.6, "rise": 1.5, "pitchDeg": 24.4, "silhouette": "wide-gable" },
+    { "id": "roof-b", "tris": 8, "width": 5.6, "depth": 7.6, "rise": 2.8, "pitchDeg": 45.0, "silhouette": "steep-gable" },
+    { "id": "roof-c", "tris": 6, "width": 4.2, "depth": 4.2, "rise": 2.6, "pitchDeg": 51.0, "silhouette": "tower-hip" }
+  ],
+  "checks": {
+    "housesAtOrBelow4000Tris": true,
+    "socketCount": 3,
+    "distinctHouseSilhouettes": 3,
+    "distinctRoofSilhouettes": 3,
+    "vertexColorCount": 3,
+    "roofSaturationWithin30To38Percent": true
+  }
+}

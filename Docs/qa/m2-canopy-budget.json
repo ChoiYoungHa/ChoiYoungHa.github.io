@@ -1,0 +1,56 @@
+{
+  "id": "m2-canopy-budget",
+  "at": "2026-08-26",
+  "note": "수관은 알파 텍스처가 아니라 저폴리 덩어리(ellipsoid)다. 계획서 §3-2 렌더 순서 규약이 알파 블렌딩을 금지하고 alphaTest 도 오버드로를 만들기 때문이다. 실루엣(L4)만 있으면 되므로 덩어리로 충분하다.",
+  "canopyDiameterMeters": 34,
+  "lod0": {
+    "modules": [
+      {
+        "name": "canopy_A",
+        "kind": "canopy",
+        "count": 4,
+        "trianglesEach": 144,
+        "trianglesTotal": 576
+      },
+      {
+        "name": "canopy_B",
+        "kind": "canopy",
+        "count": 5,
+        "trianglesEach": 144,
+        "trianglesTotal": 720
+      }
+    ],
+    "triangles": 1296,
+    "shareOfTree": 0.5364
+  },
+  "lod1": {
+    "modules": [
+      {
+        "name": "canopy_A",
+        "kind": "canopy",
+        "count": 4,
+        "trianglesEach": 42,
+        "trianglesTotal": 168
+      },
+      {
+        "name": "canopy_B",
+        "kind": "canopy",
+        "count": 5,
+        "trianglesEach": 42,
+        "trianglesTotal": 210
+      }
+    ],
+    "triangles": 378,
+    "shareOfTree": 0.5265
+  },
+  "alpha": {
+    "alphaTest": 0,
+    "transparent": false,
+    "uvChannels": 0
+  },
+  "drawCalls": {
+    "lod0": 1,
+    "lod1": 1,
+    "reason": "정점 색으로 줄기/수관을 구분해 재질 1개로 합쳤다. 한 시점에 LOD 하나만 보인다."
+  }
+}
