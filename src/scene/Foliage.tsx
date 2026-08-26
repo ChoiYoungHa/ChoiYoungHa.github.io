@@ -6,11 +6,11 @@ import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, V
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import mainPath from '../data/main-path.json'
 import vistas from '../data/vistas.json'
-import qualityPresets from '../data/quality-presets.json'
 import { useRuntime } from '../store/useRuntime'
 import { WORLD_HALF_EXTENT, WORLD_SIZE } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { useLookdevMaterial } from './Atmosphere'
+import { lodConfigForPreset } from './foliage/lodConfig'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
@@ -136,21 +136,21 @@ function SpeciesInstances({
 export function Foliage({ sampleHeight }: FoliageProps) {
   const { scene } = useGLTF(MODEL_URL) as unknown as LoadedModel
   const preset = useRuntime((state) => state.preset)
-  const quality = qualityPresets[preset]
+  const lod = lodConfigForPreset(preset)
 
   const geometries = useMemo(
     () => SPECIES.map((species) => geometryForSpecies(scene, species)),
     [scene],
   )
   const visibleCounts = useMemo(() => {
-    const total = quality.grassInstances.count
+    const total = lod.grassInstances.count
     const counts = [Math.floor(total * 0.7), Math.floor(total * 0.2)]
     counts.push(total - counts[0] - counts[1])
     return counts
-  }, [quality.grassInstances.count])
+  }, [lod.grassInstances.count])
   const pointSets = useMemo(() => {
-    const radius = quality.grassInstances.radius
-    const density = quality.grassInstances.count / (Math.PI * radius * radius)
+    const radius = lod.grassInstances.radius
+    const density = lod.grassInstances.count / (Math.PI * radius * radius)
     const candidateTotal = Math.min(MAX_WORLD_CANDIDATES, Math.ceil(density * WORLD_SIZE * WORLD_SIZE))
     const counts = [Math.floor(candidateTotal * 0.7), Math.floor(candidateTotal * 0.2)]
     counts.push(candidateTotal - counts[0] - counts[1])
@@ -169,17 +169,21 @@ export function Foliage({ sampleHeight }: FoliageProps) {
         reject,
       }).map((point) => ({ ...point, y: sampleHeight(point.x, point.z) })),
     )
-  }, [quality.grassInstances.count, quality.grassInstances.radius, sampleHeight])
+  }, [lod.grassInstances.count, lod.grassInstances.radius, sampleHeight])
+
+  // This GLB has no lower-detail conifer meshes yet, so retain the existing
+  // grass-radius cull and expose the planned conifer bands on the scene node.
+  const maxDistance = Math.min(lod.grassInstances.radius, lod.coniferLodDistances[2])
 
   return (
-    <group name="foliage-instances">
+    <group name="foliage-instances" userData={{ lodDistances: lod.coniferLodDistances }}>
       {SPECIES.map((species, index) => (
         <SpeciesInstances
           key={species}
           name={species}
           geometry={geometries[index]}
           points={pointSets[index]}
-          maxDistance={quality.grassInstances.radius}
+          maxDistance={maxDistance}
           maxVisible={visibleCounts[index]}
         />
       ))}

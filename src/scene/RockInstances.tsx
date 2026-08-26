@@ -6,11 +6,11 @@ import { BufferGeometry, Color, Float32BufferAttribute, Object3D as Transform, V
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import mainPath from '../data/main-path.json'
 import vistas from '../data/vistas.json'
-import qualityPresets from '../data/quality-presets.json'
 import { useRuntime } from '../store/useRuntime'
 import { WORLD_HALF_EXTENT } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { useLookdevMaterial } from './Atmosphere'
+import { lodConfigForPreset } from './foliage/lodConfig'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
 
@@ -125,7 +125,8 @@ function RockSpecies({
 export function RockInstances({ sampleHeight }: RockInstancesProps) {
   const { scene } = useGLTF(MODEL_URL) as unknown as LoadedModel
   const preset = useRuntime((state) => state.preset)
-  const total = qualityPresets[preset].rockInstances
+  const lod = lodConfigForPreset(preset)
+  const total = lod.rockInstances
 
   const geometries = useMemo(
     () => SPECIES.map((species) => geometryForSpecies(scene, species)),
@@ -152,7 +153,7 @@ export function RockInstances({ sampleHeight }: RockInstancesProps) {
   }, [sampleHeight, total])
 
   return (
-    <group name="rock-instances">
+    <group name="rock-instances" userData={{ lodDistances: lod.rockLodDistances }}>
       {SPECIES.map((species, index) => (
         <RockSpecies
           key={species}
@@ -160,7 +161,7 @@ export function RockInstances({ sampleHeight }: RockInstancesProps) {
           geometry={geometries[index]}
           points={pointSets[index]}
           sampleHeight={sampleHeight}
-          maxDistance={qualityPresets[preset].rockDrawDistance}
+          maxDistance={lod.rockLodDistances[2]}
         />
       ))}
     </group>

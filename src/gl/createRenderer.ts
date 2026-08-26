@@ -1,6 +1,7 @@
 import { ACESFilmicToneMapping, AgXToneMapping, NeutralToneMapping, NoToneMapping } from 'three'
-import { WebGPURenderer } from 'three/webgpu'
+import { Texture, WebGPURenderer } from 'three/webgpu'
 import lookdev from '../data/lookdev.json'
+import { textureConfigForPreset, type TextureConfig } from './textureConfig'
 
 /**
  * 계획서.md §2-3 적용 규약.
@@ -10,6 +11,30 @@ import lookdev from '../data/lookdev.json'
  */
 
 export type Backend = 'WebGPU' | 'WebGL2'
+export type RendererPreset = 'low' | 'base'
+
+export interface RendererTexturePolicy extends TextureConfig {
+  preset: RendererPreset
+}
+
+let activeTexturePolicy: RendererTexturePolicy = {
+  preset: 'low',
+  ...textureConfigForPreset('low'),
+}
+
+/** Resolve the sampler and asset tier selected before renderer creation. */
+export function readRendererTexturePolicy(search: string = location.search): RendererTexturePolicy {
+  const preset: RendererPreset = new URLSearchParams(search).get('q') === 'base' ? 'base' : 'low'
+  return { preset, ...textureConfigForPreset(preset) }
+}
+
+/** Exposes the selected tier to future texture URL/loader consumers. */
+export function getActiveTexturePolicy(): RendererTexturePolicy {
+  return {
+    ...activeTexturePolicy,
+    textureTier: { ...activeTexturePolicy.textureTier },
+  }
+}
 
 /** M3-14 (R30-A) — 톤매퍼 이름 → three 상수. lookdev.json 의 이름과 `?tonemap=` 쿼리 양쪽에서 쓴다. */
 export const TONE_MAPPERS = {
@@ -67,12 +92,18 @@ export function readBackend(renderer: WebGPURenderer): Backend | 'unknown' {
  */
 export async function createRenderer(props: Record<string, unknown>): Promise<WebGPURenderer> {
   const forceWebGL = isForcedWebGL()
+  const texturePolicy = readRendererTexturePolicy()
   const renderer = new WebGPURenderer({
     ...props,
     antialias: false, // §2-3: iGPU에서 MSAA 대역폭 비용이 크다
     forceWebGL,
   } as ConstructorParameters<typeof WebGPURenderer>[0])
   await renderer.init()
+  activeTexturePolicy = {
+    ...texturePolicy,
+    anisotropy: Math.min(texturePolicy.anisotropy, renderer.getMaxAnisotropy()),
+  }
+  Texture.DEFAULT_ANISOTROPY = activeTexturePolicy.anisotropy
   return renderer
 }
 
