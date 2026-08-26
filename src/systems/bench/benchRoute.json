@@ -1,0 +1,30 @@
+{
+  "routeHash": "m0b-bench-v1-p0-village-path-tree-turn",
+  "keyframes": [
+    {
+      "time": 0,
+      "pose": { "position": [0, 0, 0], "yaw": -0.927295 },
+      "input": { "forward": 1, "strafe": 0, "run": false }
+    },
+    {
+      "time": 15,
+      "pose": { "position": [40, 0, -30], "yaw": 0.358771 },
+      "input": { "forward": 1, "strafe": 0, "run": false }
+    },
+    {
+      "time": 30,
+      "pose": { "position": [25, 0, -70], "yaw": 0.558599 },
+      "input": { "forward": 1, "strafe": 0, "run": false }
+    },
+    {
+      "time": 45,
+      "pose": { "position": [0, 0, -110], "yaw": 0.558599 },
+      "input": { "forward": 0, "strafe": 0, "run": false }
+    },
+    {
+      "time": 60,
+      "pose": { "position": [0, 0, -110], "yaw": 3.700192 },
+      "input": { "forward": 0, "strafe": 0, "run": false }
+    }
+  ]
+}

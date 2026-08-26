@@ -16,6 +16,8 @@ export function RuntimeProbe() {
   const set = useRuntime((s) => s.set)
   const frames = useRef(0)
   const acc = useRef(0)
+  const previousRawCalls = useRef(0)
+  const maxFrameCalls = useRef(0)
 
   // 검증 하네스(systems/report.ts)가 씬 요소 수를 셀 수 있게 노출한다.
   useEffect(() => {
@@ -23,6 +25,7 @@ export function RuntimeProbe() {
   }, [scene])
 
   useEffect(() => {
+    window.__R3F_RENDERER__ = gl as unknown as typeof window.__R3F_RENDERER__
     const backend: Backend | 'unknown' = readBackend(gl as never)
     const canvas = gl.domElement
     set({
@@ -56,16 +59,27 @@ export function RuntimeProbe() {
   useFrame((_, dt) => {
     frames.current += 1
     acc.current += dt
+    const info = (
+      gl as unknown as {
+        info?: { render?: { calls: number; frameCalls?: number; drawCalls?: number } }
+      }
+    ).info
+    const rawCalls = info?.render?.calls ?? 0
+    const frameCalls =
+      info?.render?.drawCalls ??
+      info?.render?.frameCalls ??
+      (rawCalls >= previousRawCalls.current ? rawCalls - previousRawCalls.current : rawCalls)
+    previousRawCalls.current = rawCalls
+    maxFrameCalls.current = Math.max(maxFrameCalls.current, frameCalls)
     if (acc.current >= 1) {
-      const info = (gl as unknown as { info?: { render?: { calls: number; triangles: number } } })
-        .info
       set({
         fps: Math.round(frames.current / acc.current),
-        calls: info?.render?.calls ?? 0,
-        triangles: info?.render?.triangles ?? 0,
+        calls: maxFrameCalls.current,
+        triangles: 0,
       })
       frames.current = 0
       acc.current = 0
+      maxFrameCalls.current = 0
     }
   })
 
@@ -91,13 +105,17 @@ export function RuntimeHud() {
         preset: <b data-testid="hud-preset">{s.preset}</b>
       </div>
       <div>
+        mode: <b data-testid="hud-mode">{window.__benchMode ?? 'manual'}</b>
+      </div>
+      <div>
         adapter: <span data-testid="hud-adapter">{s.adapter}</span>
       </div>
       <div>
         ANGLE: <span data-testid="hud-angle">{s.angle}</span>
       </div>
       <div>
-        fps: <b>{s.fps}</b> · calls: {s.calls} · tris: {s.triangles}
+        fps: <b>{s.fps}</b> · calls: {s.calls} · tris:{' '}
+        {s.triangles === 0 ? '확인 불가' : s.triangles}
       </div>
       <div className="hud-help">WASD 이동 · Shift 달리기 · 드래그 시선</div>
     </div>
