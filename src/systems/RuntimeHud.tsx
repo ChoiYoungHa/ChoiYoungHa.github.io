@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react'
 import { isForcedWebGL, readBackend, type Backend } from '../gl/createRenderer'
 import { useRuntime } from '../store/useRuntime'
 import { CAMERA } from '../player/FollowCamera'
+import { GAME_INPUT_ENABLED } from '../player/input'
+import { readCameraDistanceMultiplier } from '../game/cameraDistance'
 import { LOD_SWITCH_DISTANCE, readHeroTreeLod } from '../scene/HeroTree'
 import { sampleRendererFrame, type RendererForPerf } from './perf'
 
@@ -115,7 +117,7 @@ export function RuntimeHud() {
       <div>
         camera:{' '}
         <b data-testid="hud-camera">
-          FOV {CAMERA.fov}° · dist {CAMERA.distance}m · h {CAMERA.height}m · pitch{' '}
+          FOV {CAMERA.fov}° · dist {CAMERA.distance * (GAME_INPUT_ENABLED ? readCameraDistanceMultiplier() : 1)}m · h {CAMERA.height}m · pitch{' '}
           {CAMERA.pitchDeg}° · near {CAMERA.near} / far {CAMERA.far}
         </b>
       </div>

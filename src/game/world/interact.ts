@@ -1,3 +1,5 @@
+import { forwardFromYaw } from '../../player/input.ts'
+
 export interface InteractionPosition {
   x: number
   z: number
@@ -22,8 +24,7 @@ export function findInteractable(
   npcs: InteractableNpc[],
   options: InteractionOptions = DEFAULT_OPTIONS,
 ): string | null {
-  const forwardX = Math.sin(playerYaw)
-  const forwardZ = -Math.cos(playerYaw)
+  const forward = forwardFromYaw(playerYaw)
   const minimumCosine = Math.cos((options.fovDeg * Math.PI / 180) / 2)
 
   const candidates = npcs.flatMap((npc) => {
@@ -33,7 +34,7 @@ export function findInteractable(
     if (distance > options.range + EPSILON) return []
     const cosine = distance <= EPSILON
       ? 1
-      : (dx * forwardX + dz * forwardZ) / distance
+      : (dx * forward.x + dz * forward.z) / distance
     return cosine + EPSILON >= minimumCosine ? [{ npc, distance }] : []
   })
 

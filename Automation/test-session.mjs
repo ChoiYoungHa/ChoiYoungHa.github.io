@@ -160,6 +160,9 @@ test('gate, NPC dialogue, quest acceptance, and shop purchase share one ordered 
   const shopOpened = tick(maya, 0, { confirm: true })
   assert.equal(shopOpened.snapshot.game.scene, 'shop')
 
+  const guarded = tick(maya, 0, { confirm: true, selectedItemId: 'weapon.hunting-bow' })
+  assert.equal(guarded.snapshot.game.meso, 1500)
+  assert.equal(guarded.events.some(({ type }) => type === 'purchase'), false)
   const purchased = tick(maya, 0, { confirm: true, selectedItemId: 'weapon.hunting-bow' })
   assert.equal(purchased.snapshot.game.meso, 600)
   assert.equal(purchased.snapshot.game.equipment.weapon, 'weapon.hunting-bow')
@@ -243,4 +246,68 @@ test('park ticks connect AI combat, drops, quest credit, death, and timed respaw
   assert.ok(allEvents.some(({ type }) => type === 'death'))
   assert.ok(allEvents.some(({ type }) => type === 'clear-monster-aggro'))
   assert.ok(allEvents.every((event, index) => index === 0 || event.sequence > allEvents[index - 1].sequence))
+})
+
+test('firstKill 대화 3초 동안 돼지 위치와 플레이어 HP가 함께 멈춘다', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const session = createSession({ seed: 45, ipMode: 'own', initialScene: 'hunt' })
+  const tick = (playerPos, inputs = {}, dtMs = 650) => session.tick({ dtMs, playerPos, playerYaw: 0, inputs })
+  for (let guard = 0; guard < 20 && session.getSnapshot().activeDialogue?.treeId !== 'firstKill'; guard += 1) {
+    const target = session.getSnapshot().spawner.slots.find(({ mob }) => mob !== null && mob.state !== 'dead')?.mob
+    assert.notEqual(target, undefined)
+    tick({ x: target.position.x, z: target.position.z + 1 }, { attack: true })
+  }
+  const opened = session.getSnapshot()
+  assert.equal(opened.activeDialogue?.treeId, 'firstKill')
+  const hp = opened.game.hp
+  const positions = opened.spawner.slots.map(({ mob }) => mob?.position ?? null)
+  const playerPos = opened.spawner.slots.find(({ mob }) => mob !== null)?.mob?.position ?? { x: -80, z: 8 }
+  for (let second = 0; second < 3; second += 1) tick(playerPos, {}, 1_000)
+  assert.equal(session.getSnapshot().game.hp, hp)
+  assert.deepEqual(session.getSnapshot().spawner.slots.map(({ mob }) => mob?.position ?? null), positions)
+})
+
+test('quest reward는 다음 confirm까지 epilogue를 막고 reward→scene 순서를 보장한다', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const { dialogueView } = await load('src/game/dialogue.ts')
+  const session = createSession({ seed: 95, ipMode: 'own', initialScene: 'complete' })
+  const stan = { x: -4.104056, z: 3.276014 }
+  const tick = (inputs = {}, dtMs = 16) => session.tick({ dtMs, playerPos: stan, playerYaw: 0, inputs })
+  const events = [...tick({ interact: true }).events]
+  for (let guard = 0; guard < 20 && session.getSnapshot().activeDialogue !== null; guard += 1) {
+    const view = dialogueView(session.getSnapshot().activeDialogue)
+    events.push(...tick(view.choices.length > 0 ? { choice: 'complete' } : { confirm: true }).events)
+  }
+  const rewarded = session.getSnapshot()
+  assert.equal(rewarded.activeDialogue, null)
+  assert.notEqual(rewarded.reward, null)
+  assert.equal(rewarded.game.scene, 'complete')
+  const closed = tick({ confirm: true })
+  events.push(...closed.events)
+  assert.equal(closed.snapshot.reward, null)
+  assert.equal(closed.snapshot.game.scene, 'epilogue')
+  const rewardIndex = events.findIndex(({ type }) => type === 'reward')
+  const epilogueIndex = events.findIndex(({ type, to }) => type === 'scene' && to === 'epilogue')
+  assert.ok(rewardIndex >= 0 && epilogueIndex > rewardIndex)
+})
+
+test('quest reward는 입력이 없어도 3초 뒤 닫히고 epilogue로 넘어간다', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const { dialogueView } = await load('src/game/dialogue.ts')
+  const session = createSession({ seed: 96, ipMode: 'own', initialScene: 'complete' })
+  const stan = { x: -4.104056, z: 3.276014 }
+  const tick = (inputs = {}, dtMs = 16) => session.tick({ dtMs, playerPos: stan, playerYaw: 0, inputs })
+  tick({ interact: true })
+  for (let guard = 0; guard < 20 && session.getSnapshot().activeDialogue !== null; guard += 1) {
+    const view = dialogueView(session.getSnapshot().activeDialogue)
+    tick(view.choices.length > 0 ? { choice: 'complete' } : { confirm: true })
+  }
+  const shownAt = session.getSnapshot().reward?.shownAtMs
+  assert.equal(typeof shownAt, 'number')
+  const before = tick({}, 2_999)
+  assert.notEqual(before.snapshot.reward, null)
+  assert.equal(before.snapshot.game.scene, 'complete')
+  const after = tick({}, 1)
+  assert.equal(after.snapshot.reward, null)
+  assert.equal(after.snapshot.game.scene, 'epilogue')
 })

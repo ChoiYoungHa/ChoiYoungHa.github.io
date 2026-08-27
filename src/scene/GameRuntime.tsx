@@ -21,6 +21,7 @@ import placement from '../data/placement.json' with { type: 'json' }
 import { gameBootstrap, type GameBootstrap } from '../game/bootstrap.ts'
 import { createGameFrameBridge } from '../game/bridge.ts'
 import { epilogueExposureAt } from '../game/epilogueGrade.ts'
+import { setGameRuntimeReady } from '../game/runtimeReadiness.ts'
 import monsterData from '../game/data/monsters.json' with { type: 'json' }
 import terraceData from '../game/data/park-terraces.json' with { type: 'json' }
 import spawnData from '../game/data/spawns.json' with { type: 'json' }
@@ -190,7 +191,9 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     const keyboard = createKeyboardInput(window, { gameInputEnabled: true })
     const bridge = createGameFrameBridge(bootstrap.session, keyboard)
     runtimeRef.current = { bridge, keyboard }
+    setGameRuntimeReady(true)
     return () => {
+      setGameRuntimeReady(false)
       if (runtimeRef.current?.bridge === bridge) runtimeRef.current = null
       bridge.dispose()
       keyboard.dispose()

@@ -254,3 +254,32 @@ R111-B는 점프·오프닝 카메라·에필로그 그레이드·상호작용 �
 - 같은 forest 진입 직후 0초 하늘·1.5초 거대 수목 우듬지·3초 플레이어 인계 3장을 고정 시간으로 캡처하고, 3초 뒤 마우스 yaw와 FollowCamera 거리 이징이 정상인지 본다.
 - Stan/Maya의 2.5m·전방 90° 안팎을 왕복해 프롬프트 DOM이 각각 1/0개인지, F 직후 프롬프트가 사라지고 대화가 한 번 열리는지 확인한다. 대화 중 Space는 confirm만 하고 플레이어가 뜨지 않아야 한다.
 - `?game=1&scene=epilogue`에서 renderer exposure가 2초 동안 시작값×1.12로 올라가고 material/program/call이 늘지 않는지 기록한다. 다시 하기·자유 탐험 뒤에는 원 exposure가 복구되고 console/shader error가 0이어야 한다.
+
+## R113 R109 브라우저 결함 수정 (2026-08-27)
+
+R113-B는 R109 결함 정본의 D1·D2·D3·D4/D8·D7·D10·D12를 `?game=1` 경계 안에서 수정했다. 기본 URL·`?route=bench`·`?route=final`은 기존 컨트롤러·소품 인스턴스·디버그 HUD 경로를 유지하며, D5·D6·D9·D11은 이번 범위 밖이라 변경하지 않았다.
+
+| 결함 | 구현·계약 | CPU 증거 |
+|---|---|---|
+| D1 전방 x 부호 | 이동 규약의 소유 파일 `src/player/input.ts:50-57`에서 뽑은 `forwardFromYaw=(-sin(yaw),-cos(yaw))`를 `combat.ts:79`, `interact.ts:27`, `raycast.ts:55`가 함께 사용한다. 세션의 대상 없는 스킬 부착점도 같은 함수로 맞췄고 `Automation/game-walk.mjs`의 전투/NPC yaw 반전 우회를 제거했다. | `Automation/test-forward.mjs`: yaw 0/±π/2, +π/2 정면 공격·상호작용, 러너 우회 부재 통과. 헤드리스 story는 별도 yaw 보정 없이 10/10 처치한다. |
+| D2 문 열림 | `src/game/rules/gateDoor.ts:1-41`이 7m 열림·12m 닫힘 히스테리시스와 1초 cubic ease-out을 결정론적으로 계산한다. `src/scene/village/Props.tsx:115-153,179`는 게임 gate에서만 GLB의 left/right 노드를 원래 바깥 모서리 원점에 둔 채 y축 ±100°로 돌리고, OFF에서는 기존 단일 InstancedMesh 아치를 그대로 쓴다. | `Automation/test-gate-door.mjs`: 0/0.5/1.0초 **0°/87.5°/100°**, 이탈 1초 닫힘, OFF step 호출 0, GLB 힌지 accessor 검증 통과. 문틀은 기존 `collision:none`을 유지해 열린 통로 안 이동을 막지 않는다. |
+| D3 상점 confirm | `src/game/session.ts:251,499-505,532-534`의 `shopConfirmGuard`가 Maya 종료 edge를 구매로 재사용하지 않는다. 다음 중립 frame 또는 첫 edge 한 번 뒤에만 패널의 선택 item을 구매한다. | `Automation/test-session.mjs`: 상점 전환 직후 confirm 메소 1,500 유지·purchase 0, 다음 confirm에서 사냥활 구매·메소 600 통과. |
+| D4/D8 HUD | `src/systems/runtimeHudGate.ts:1-3`과 `src/App.tsx:131`이 게임에서 `?hud=1`일 때만 디버그 HUD를 표시한다. 표시한 경우 `RuntimeHud.tsx:120`의 거리 값은 실제 camera easing multiplier를 곱한다. | `Automation/test-runtime-hud-gate.mjs`: 기본/bench 표시, game 숨김, game+hud 표시와 multiplier 연결 통과. |
+| D7 title Enter | `src/game/titleConfirmBuffer.ts:1-22`가 준비 전 confirm을 최대 1개 보존한다. `runtimeReadiness.ts`를 `GameRuntime.tsx:194-196`과 `GameOverlay.tsx:78-97`이 공유해 Suspense 뒤 bridge 준비 시 정확히 한 번 방출한다. | `Automation/test-title-confirm-buffer.mjs`: 준비 전 반복 Enter 1개 보존, 준비 시 1회 방출, 준비 후 즉시 방출 통과. StrictMode cleanup/setup도 readiness를 되돌린다. |
+| D10 firstKill | 세션의 기존 `session.ts:546` 대화 gate가 activeDialogue 동안 spawner step·공격·이동을 모두 건너뛴다. R113은 이 보장에 3초 직접 회귀를 추가했다. | `Automation/test-session.mjs`: firstKill 대화 3초 동안 플레이어 HP와 모든 돼지 위치 deepEqual. |
+| D12 reward 순서 | `src/game/session.ts:383-390,505`가 Stan 완료 뒤 epilogue를 pending으로 두고 reward가 confirm/닫기 또는 3초 timeout으로 사라진 다음 scene 이벤트를 낸다. | `Automation/test-session.mjs`: reward 표시 중 scene=`complete`, confirm·3초 두 경로, `reward` sequence 뒤 `scene→epilogue` 순서 통과. |
+
+### worker-claude 브라우저 확인 포인트
+
+1. `/`, `?route=bench`, `?route=final`에서 기존 `runtime-hud`가 보이고 game overlay/door animation이 없으며 final-route·collider 결과가 기존과 같은지 확인한다. `?game=1`에서는 debug HUD가 없고 `?game=1&hud=1`에서만 나타나며 gate 진입 시 dist가 6→9m로 바뀌어야 한다.
+2. `?game=1` 로딩 직후 Enter를 즉시 한 번 누르고, 준비 완료 뒤 별도 재입력 없이 create로 정확히 한 번 넘어가는지 확인한다.
+3. yaw 0/±90°에서 화면 정면의 Stan/Maya와 돼지에 F/1/2가 맞는지 확인한다. `game-walk.mjs`를 실행할 때 `stanInteractNeededFlip`·`mayaInteractNeededFlip`·`aimExperiment` 같은 보정 결과가 없어야 한다.
+4. 아치 중심 `(-1.5,19.8)` 7m 경계 밖/안과 진입 0/0.5/1초를 캡처한다. 두 문이 바깥 힌지에서 0/87.5/100°로 열리고 열린 문틀 중앙을 시각 관통 없이 지나가며, 12m 이탈 1초 뒤 닫혀야 한다.
+5. Maya 마지막 Enter를 연타해도 메소가 1,500으로 유지되고 상점 선택지가 먼저 보여야 한다. item 선택과 구매 click 뒤에만 사냥활·메소 600·purchase 이벤트가 생겨야 한다.
+6. 첫 처치 대화에서 3초 기다리며 HP와 돼지 위치가 고정인지 확인한다. Stan 완료 뒤 reward와 epilogue 문구가 겹치지 않고, 확인 click 또는 3초 뒤에만 epilogue가 시작되는 두 경로를 각각 확인한다.
+7. S00·S03 문 0/0.5/1초·S04·S05 전/후·S07 firstKill·S09 reward·S10 epilogue를 캡처하고 console/shader error 0을 기록한다. D5 돼지 근접 품질, D6 지붕 카메라, D9 title 돼지 선생성, D11 정보성 스케일은 후속 범위로 남긴다.
+
+### R113 CPU 결과
+
+- 파일별 전체 회귀는 **75 files, 454/454 tests PASS**이고 `npx tsc -b`, `npm run lint`, `npm run build`가 모두 exit 0이다. build는 722 modules이며 HEAD 기준과 같은 기본 preload 3개(`input`, `three.core`, `createRenderer`)를 유지해 D1 공용화로 기본 요청을 늘리지 않았다.
+- `Automation/run-story.mjs`는 yaw 보정 없이 84.981초, 10/10 처치, 최종 `epilogue`로 완주했다. `final-route`·`colliders`·`input` 개별 회귀도 통과했으며 CPU 지시대로 브라우저는 실행하지 않았다.
