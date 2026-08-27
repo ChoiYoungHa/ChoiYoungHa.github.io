@@ -17,7 +17,7 @@ test('궁수 상점은 자기 무기만 활성화하고 구매하면 900 메소�
   assert.equal(view.items.find(({ id }) => id === 'weapon.hunting-bow')?.disabled, false)
   assert.ok(view.items.filter(({ id }) => id !== 'weapon.hunting-bow').every(({ disabledReason }) => disabledReason === '장착 불가'))
   assert.equal(view.detail?.id, 'weapon.hunting-bow')
-  assert.equal(view.detail?.iconUrl, '/ui/items/wpn-bow-hunting.png')
+  assert.equal(view.detail?.iconUrl, '/ui/icons/wpn-bow-hunting.png')
 
   const result = purchaseShopItem(state, 'weapon.hunting-bow')
   assert.equal(result.ok, true)

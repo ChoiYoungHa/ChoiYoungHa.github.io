@@ -97,7 +97,7 @@ export interface SessionEvent {
   previousLevel?: number
   currentLevel?: number
   reason?: string
-  skillId?: SkillId
+  skillId?: SkillId | 'basic-attack'
   playerYaw?: number
   targetPosition?: SessionPosition
   impactPosition?: SessionPosition
@@ -679,6 +679,18 @@ export function createSession(options: CreateSessionOptions): GameSession {
             rangeMeters: modifiers.rangeMeters,
           })
           basicReadyAtMs = nowMs + modifiers.cooldownMs
+          const primaryTarget = targets.find(({ id }) => id === attack.hits[0]?.targetId)
+          const forward = forwardFromYaw(playerYaw)
+          const impactPosition = primaryTarget?.position ?? {
+            x: playerPos.x + forward.x * 2,
+            z: playerPos.z + forward.z * 2,
+          }
+          emit(events, {
+            type: 'fx-spawn', skillId: 'basic-attack', mobId: primaryTarget?.id,
+            position: { ...playerPos }, playerYaw,
+            targetPosition: primaryTarget === undefined ? undefined : { ...primaryTarget.position },
+            impactPosition: { ...impactPosition }, landingPosition: { ...impactPosition },
+          })
           applyCombatHits(attack.hits, events)
         }
       }

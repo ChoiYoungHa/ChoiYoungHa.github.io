@@ -1,7 +1,7 @@
 import { t, type IpMode } from '../../game/i18n.ts'
 import type { QuestStatus } from '../../game/rules/quest.ts'
 import type { ZoneId } from '../../game/world/zones.ts'
-import { barPercent, cooldownPercent, hudLabels, hudPresentation } from './hudLogic.ts'
+import { barPercent, cooldownPercent, HUD_ICON_URLS, hudLabels, hudPresentation } from './hudLogic.ts'
 import { HUD_TOKENS } from './hudTokens.ts'
 
 export interface HudStats {
@@ -39,8 +39,8 @@ export interface GameHudProps {
 }
 
 const DEFAULT_SLOTS: readonly HudQuickSlot[] = [
-  { slot: 1, labelKey: 's07.attack', cooldownRemainingMs: 0, cooldownTotalMs: 0 },
-  { slot: 2, labelKey: 's07.skill', cooldownRemainingMs: 0, cooldownTotalMs: 0 },
+  { slot: 1, labelKey: 's07.attack', iconUrl: HUD_ICON_URLS.basicAttack, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
+  { slot: 2, labelKey: 's07.skill', iconUrl: HUD_ICON_URLS.skill, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
   { slot: 3, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
   { slot: 4, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
 ]
@@ -116,8 +116,9 @@ export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickS
       )}
 
       {visibility.showMeso && (
-        <div aria-label={`${labels.currency} ${meso}`} style={{ ...panelBase, position: 'absolute', ...HUD_TOKENS.layout.meso, minWidth: 132, padding: '9px 14px', textAlign: 'right', fontSize: 13, fontWeight: 700 }}>
-          {labels.currency} {Math.max(0, Math.trunc(meso)).toLocaleString('ko-KR')}
+        <div aria-label={`${labels.currency} ${meso}`} style={{ ...panelBase, position: 'absolute', ...HUD_TOKENS.layout.meso, minWidth: 132, padding: '7px 14px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 7, fontSize: 13, fontWeight: 700 }}>
+          <img src={HUD_ICON_URLS.meso} alt="" style={{ width: 22, height: 22, objectFit: 'contain' }} />
+          {Math.max(0, Math.trunc(meso)).toLocaleString('ko-KR')}
         </div>
       )}
     </div>

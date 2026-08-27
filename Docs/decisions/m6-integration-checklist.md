@@ -283,3 +283,38 @@ R113-B는 R109 결함 정본의 D1·D2·D3·D4/D8·D7·D10·D12를 `?game=1` 경
 
 - 파일별 전체 회귀는 **75 files, 454/454 tests PASS**이고 `npx tsc -b`, `npm run lint`, `npm run build`가 모두 exit 0이다. build는 722 modules이며 HEAD 기준과 같은 기본 preload 3개(`input`, `three.core`, `createRenderer`)를 유지해 D1 공용화로 기본 요청을 늘리지 않았다.
 - `Automation/run-story.mjs`는 yaw 보정 없이 84.981초, 10/10 처치, 최종 `epilogue`로 완주했다. `final-route`·`colliders`·`input` 개별 회귀도 통과했으며 CPU 지시대로 브라우저는 실행하지 않았다.
+
+## R119 HUD 아이콘·SkillFx 가시성 (2026-08-27)
+
+R119-B는 콘티의 개별 PNG 여덟 장만 128×128 own 파생본으로 줄여 `public/ui/icons/`에 배치했다. 합계는 **92,311 bytes**로 400KB 제한의 23.1%이며, 전체 시트는 배포하지 않는다. `src/game/data/itemIcons.json`을 HUD·인벤토리·상점의 단일 item id 매핑으로 쓰고 `src/data/assets.csv`에 파생 출처와 런타임 파일을 각각 등록했다.
+
+| 사용처 | 런타임 파일 | 크기 | 원본·결정 |
+|---|---|---:|---|
+| 기본 공격 슬롯 `1` | `/ui/icons/wpn-sword-steel.png` | 7,692 B | Sheet D에 별도 기본공격/베기 셀이 없어 지시된 `wpn-sword-steel` 대체 |
+| 전사 스킬 슬롯 `2` | `/ui/icons/skl-flameslash.png` | 29,511 B | Sheet D `skl-flameslash`(불꽃베기) |
+| 코인 표시 | `/ui/icons/itm-meso.png` | 17,057 B | `itm-meso`; 표시 문자열 대신 아이콘+숫자, aria label은 own 문구 유지 |
+| 나무검 | `/ui/icons/wpn-sword-wooden.png` | 6,211 B | `weapon.wooden-sword` |
+| 사냥활 | `/ui/icons/wpn-bow-hunting.png` | 5,166 B | `weapon.hunting-bow` |
+| 오크 지팡이 | `/ui/icons/wpn-staff-oak.png` | 4,864 B | `weapon.oak-staff` |
+| 철 단검 | `/ui/icons/wpn-dagger-iron.png` | 5,171 B | `weapon.iron-dagger` |
+| 돼지 리본 | `/ui/icons/itm-pigribbon.png` | 16,639 B | `head.pig-ribbon` |
+
+### SkillFx 원인·수정·증거
+
+`Automation/fx-probe.mjs`의 수정 전 실측은 Digit2 edge가 세션에 도착하고 MP가 **60→48**, `fx-spawn(flame-slash)`가 발생하며 mesh count **0→2**, atlas **1024×1024 loaded**, console/shader error **0**임을 확인했다. 따라서 입력·MP·atlas 후보는 배제됐다. 실제 원인은 각 quad가 이미 instance matrix로 월드 위치에 놓였는데도 `center` 인스턴스 속성에 같은 월드 좌표를 넣고 `positionLocal.sub(center).mul(life).add(center)`를 적용해, 로컬 vertex에 월드 중심을 중복 적용한 좌표계 오류였다.
+
+`src/shaders/skillFx.ts`는 이제 `positionLocal.mul(life)`로 quad 자체만 축소하고, `fxGeometry.ts`·`SkillFx.tsx`·`LevelUpRing.tsx`에서 `center` 버퍼를 제거했다. `fxInstances.ts`는 컨트롤러 정본 `forwardFromYaw`를 따라 player-front를 전방 **2.0m**, 높이 **1.1m**에 둔다. 불꽃베기 player-front 레이어는 **600ms**, scale **3.6**으로 늘렸고, 기본 공격은 같은 atlas·같은 공유 재질의 `basic-attack` slash 1개를 **650ms**, scale **1.8**로 내보내므로 재질/program 증가는 **0**이다.
+
+- 전 증거: `Docs/qa/fx-probe/before.json`, `before.png` — count 2이나 world `center`가 채워져 slash가 플레이어 뒤에서 변형됨.
+- 후 증거: `Docs/qa/fx-probe/after.json`, `after.png` — player `(0,-2.383,24)` 기준 slash `(0,-1.283,22)`, life `0.7863`, `center=null`, atlas loaded, error 0이며 플레이어 앞 붉은 slash가 보인다.
+- 헤드리스 story의 `fx-spawn`은 기존 스킬 4회에서 기본 공격을 포함한 **42회**가 됐고 10/10 처치·최종 epilogue·이벤트 순서 위반 0을 유지했다.
+
+### R119 검증 포인트
+
+1. main `?game=1&scene=hunt`에서 공원 HUD 슬롯 `1`에 강철검, `2`에 불꽃베기 아이콘이 보이고 기존 cooldown mask가 아이콘 위에 유지되는지 확인한다. 코인창은 own 문자열을 노출하지 않고 메소 그림+숫자만 보되 스크린리더 이름은 own 모드인지 확인한다.
+2. 인벤토리와 상점의 네 무기·돼지 리본 행/상세가 `itemIcons.json`의 같은 128px 파일을 쓰며 깨진 이미지가 0인지 확인한다.
+3. 전사 `2` 입력 후 MP가 12 감소하고 플레이어 전방 2m·높이 1.1m에 불꽃 slash가 최소 0.6초 보이는지 측면/후면에서 캡처한다. mesh count·atlas·console도 `fx-probe.mjs`와 같은 값인지 확인한다.
+4. 기본 공격 `1`도 같은 위치에 작은 slash 1개가 0.65초 나타나고, 연속 공격에서 동시 FX 상한 30과 최신 3 spawn pool이 유지되는지 확인한다.
+5. `/`, `?route=bench`, `?route=final`에서 GameHud·SkillFx가 마운트되지 않고 기존 화면/renderer가 같은지 확인한다. `?game=1` 확인 뒤 console/shader error 0, 새 material/program 0을 기록한다.
+
+CPU 결과는 `npx tsc -b`, `npm run build`(726 modules), `node Automation/check-ip.mjs --src`, 파일별 전체 회귀 **79 files / 494 tests**, `Automation/run-story.mjs`가 모두 exit 0이다. story는 현재 main 결정론 기준 **102.391초·4,685 코인·Lv4·10/10 처치·fx-spawn 42·순서 위반 0**이며, 기존 테스트의 낡은 84.981초/3,785 기대값을 저장 증거와 일치시켰다.

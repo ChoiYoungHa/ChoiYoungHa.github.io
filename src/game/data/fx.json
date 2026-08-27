@@ -16,6 +16,24 @@
   },
   "maxConcurrent": 3,
   "skills": {
+    "basic-attack": {
+      "skillId": "basic-attack",
+      "attachment": "player-front",
+      "billboard": "full",
+      "lifetimeMs": 650,
+      "instanceColors": ["#FFF3D0"],
+      "layers": [
+        {
+          "id": "basic-slash",
+          "cellRects": [[0, 0, 0.25, 0.25], [0.25, 0, 0.25, 0.25], [0.5, 0, 0.25, 0.25]],
+          "frameCount": 3,
+          "frameIntervalMs": 180,
+          "startMs": 0,
+          "lifetimeMs": 650,
+          "scale": [1.8, 1.8]
+        }
+      ]
+    },
     "flame-slash": {
       "skillId": "flame-slash",
       "attachment": "player-front",
@@ -28,10 +46,10 @@
           "id": "slash-trail",
           "cellRects": [[0, 0, 0.25, 0.25], [0.25, 0, 0.25, 0.25], [0.5, 0, 0.25, 0.25]],
           "frameCount": 3,
-          "frameIntervalMs": 80,
+          "frameIntervalMs": 180,
           "startMs": 0,
-          "lifetimeMs": 250,
-          "scale": [3.2, 3.2]
+          "lifetimeMs": 600,
+          "scale": [3.6, 3.6]
         },
         {
           "id": "impact-fire",

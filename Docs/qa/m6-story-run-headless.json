@@ -25,7 +25,7 @@
     "camera-ease-start": 1,
     "dialogue-open": 4,
     "dialogue-close": 4,
-    "fx-spawn": 4,
+    "fx-spawn": 42,
     "floater": 58,
     "skill-rejected": 11,
     "level-up": 2,

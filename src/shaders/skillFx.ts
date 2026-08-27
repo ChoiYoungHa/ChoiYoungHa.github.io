@@ -10,7 +10,6 @@ export function createSkillFxMaterial(atlas: Texture): MeshBasicNodeMaterial {
   const instanceColor = attribute('color', 'vec3') as unknown as Node<'vec3'>
   const frame = attribute('frame', 'float') as unknown as Node<'float'>
   const life = (attribute('life', 'float') as unknown as Node<'float'>).clamp(0, 1)
-  const center = attribute('center', 'vec3') as unknown as Node<'vec3'>
   const atlasUv = uv()
     .mul(uvRect.zw)
     .add(uvRect.xy)
@@ -26,8 +25,8 @@ export function createSkillFxMaterial(atlas: Texture): MeshBasicNodeMaterial {
   })
   material.colorNode = vec4(sampled.rgb.mul(instanceColor), sampled.a)
   // 컷아웃 알파는 바꾸지 않고 쿼드 자체를 줄여 수명 페이드를 표현한다.
-  material.positionNode = positionLocal.sub(center).mul(life).add(center)
+  material.positionNode = positionLocal.mul(life)
   material.name = 'm6-shared-skill-fx-level-ring'
-  material.userData = { sharedFxMaterial: true, instanceAttributes: ['uvRect', 'color', 'frame', 'life', 'center'] }
+  material.userData = { sharedFxMaterial: true, instanceAttributes: ['uvRect', 'color', 'frame', 'life'] }
   return material
 }

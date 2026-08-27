@@ -1,4 +1,5 @@
 import fxData from '../../game/data/fx.json' with { type: 'json' }
+import { forwardFromYaw } from '../../player/input.ts'
 import {
   sampleFx,
   spawnFx,
@@ -117,10 +118,11 @@ function resolveAttachment(
   const target = spawn.mobId === undefined ? undefined : anchors.targetPositions[spawn.mobId]
   const lateral = (instanceIndex - (instanceCount - 1) * 0.5) * 0.35
   if (attachment === 'player-front') {
+    const forward = forwardFromYaw(anchors.playerYaw)
     return {
-      x: anchors.playerPosition.x + Math.sin(anchors.playerYaw) * 1.25 + Math.cos(anchors.playerYaw) * lateral,
+      x: anchors.playerPosition.x + forward.x * 2 - forward.z * lateral,
       y: 1.1,
-      z: anchors.playerPosition.z - Math.cos(anchors.playerYaw) * 1.25 + Math.sin(anchors.playerYaw) * lateral,
+      z: anchors.playerPosition.z + forward.z * 2 + forward.x * lateral,
     }
   }
   const spread = (source: FxPoint | undefined, y: number) => {

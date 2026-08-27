@@ -1,20 +1,11 @@
-import rawIcons from '../../game/data/icons.json' with { type: 'json' }
+import iconData from '../../game/data/itemIcons.json' with { type: 'json' }
 import rawItems from '../../game/data/items.json' with { type: 'json' }
 import { t, type IpMode } from '../../game/i18n.ts'
 import { tooltipForItem, type ItemDefinition } from '../../game/rules/inventory.ts'
 import { buyItem, type PurchaseResult, type ShopState } from '../../game/rules/shop.ts'
 
-interface IconEntry { icon: string }
-interface IconCatalog { icons: Record<string, IconEntry> }
-
 const SHOP_ITEMS = (rawItems as unknown as ItemDefinition[]).filter((item) => item.kind === 'weapon')
-const ICONS = (rawIcons as unknown as IconCatalog).icons
-const ITEM_ICON_IDS: Readonly<Record<string, string>> = {
-  'weapon.wooden-sword': 'wpn.sword.wooden',
-  'weapon.hunting-bow': 'wpn.bow.hunting',
-  'weapon.oak-staff': 'wpn.staff.oak',
-  'weapon.iron-dagger': 'wpn.dagger.iron',
-}
+const ITEM_ICONS: Readonly<Record<string, string>> = iconData.items
 
 export interface ShopItemPresentation {
   id: string
@@ -38,8 +29,7 @@ export interface ShopPanelPresentation {
 }
 
 function iconFor(itemId: string): string {
-  const iconId = ITEM_ICON_IDS[itemId]
-  return iconId === undefined ? '' : (ICONS[iconId]?.icon ?? '')
+  return ITEM_ICONS[itemId] ?? ''
 }
 
 function localizedFailure(result: PurchaseResult, ipMode: IpMode): string | null {

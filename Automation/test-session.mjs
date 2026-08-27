@@ -267,6 +267,21 @@ test('firstKill 대화 3초 동안 돼지 위치와 플레이어 HP가 함께 �
   assert.deepEqual(session.getSnapshot().spawner.slots.map(({ mob }) => mob?.position ?? null), positions)
 })
 
+test('accepted basic attack emits one player-front slash FX event', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const session = createSession({ seed: 45, ipMode: 'own', initialScene: 'hunt' })
+  const result = session.tick({
+    dtMs: 16,
+    playerPos: { x: -80, z: 8 },
+    playerYaw: 0,
+    inputs: { attack: true },
+  })
+  const effect = result.events.find(({ type }) => type === 'fx-spawn')
+  assert.equal(effect?.skillId, 'basic-attack')
+  assert.deepEqual(effect?.position, { x: -80, z: 8 })
+  assert.equal(effect?.playerYaw, 0)
+})
+
 test('quest reward는 다음 confirm까지 epilogue를 막고 reward→scene 순서를 보장한다', async () => {
   const { createSession } = await load('src/game/session.ts')
   const { dialogueView } = await load('src/game/dialogue.ts')

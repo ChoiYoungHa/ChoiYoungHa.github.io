@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "source": "게임콘티/assets/items",
+  "hud": {
+    "basicAttack": "/ui/icons/wpn-sword-steel.png",
+    "skill": "/ui/icons/skl-flameslash.png",
+    "meso": "/ui/icons/itm-meso.png"
+  },
+  "items": {
+    "weapon.wooden-sword": "/ui/icons/wpn-sword-wooden.png",
+    "weapon.hunting-bow": "/ui/icons/wpn-bow-hunting.png",
+    "weapon.oak-staff": "/ui/icons/wpn-staff-oak.png",
+    "weapon.iron-dagger": "/ui/icons/wpn-dagger-iron.png",
+    "currency.meso": "/ui/icons/itm-meso.png",
+    "head.pig-ribbon": "/ui/icons/itm-pigribbon.png"
+  }
+}

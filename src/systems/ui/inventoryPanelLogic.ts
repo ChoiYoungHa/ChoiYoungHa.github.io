@@ -1,4 +1,4 @@
-import rawIcons from '../../game/data/icons.json' with { type: 'json' }
+import iconData from '../../game/data/itemIcons.json' with { type: 'json' }
 import rawItems from '../../game/data/items.json' with { type: 'json' }
 import { t, type IpMode } from '../../game/i18n.ts'
 import {
@@ -9,20 +9,10 @@ import {
   type ItemDefinition,
 } from '../../game/rules/inventory.ts'
 
-interface IconEntry { icon: string }
-interface IconCatalog { icons: Record<string, IconEntry> }
-
 export const NEW_ITEM_PULSE_MS = 4_000
 const ITEMS = rawItems as unknown as ItemDefinition[]
 const ITEM_BY_ID = Object.fromEntries(ITEMS.map((item) => [item.id, item]))
-const ICONS = (rawIcons as unknown as IconCatalog).icons
-const ITEM_ICON_IDS: Readonly<Record<string, string>> = {
-  'weapon.wooden-sword': 'wpn.sword.wooden',
-  'weapon.hunting-bow': 'wpn.bow.hunting',
-  'weapon.oak-staff': 'wpn.staff.oak',
-  'weapon.iron-dagger': 'wpn.dagger.iron',
-  'head.pig-ribbon': 'itm.pigribbon',
-}
+const ITEM_ICONS: Readonly<Record<string, string>> = iconData.items
 
 export interface InventoryCellPresentation {
   index: number
@@ -58,8 +48,7 @@ export interface InventoryPanelPresentation {
 }
 
 function iconFor(itemId: string): string {
-  const iconId = ITEM_ICON_IDS[itemId]
-  return iconId === undefined ? '' : (ICONS[iconId]?.icon ?? '')
+  return ITEM_ICONS[itemId] ?? ''
 }
 
 function isNewItem(itemId: string, acquiredAtByItemId: Readonly<Record<string, number>>, nowMs: number): boolean {

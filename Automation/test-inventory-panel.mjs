@@ -24,7 +24,7 @@ test('인벤토리 표현은 4×6 슬롯·장착 슬롯·스탯·hover 툴팁을
 
   assert.equal(view.cells.length, 24)
   assert.equal(view.cells[0].itemId, 'weapon.hunting-bow')
-  assert.equal(view.cells[0].iconUrl, '/ui/items/wpn-bow-hunting.png')
+  assert.equal(view.cells[0].iconUrl, '/ui/icons/wpn-bow-hunting.png')
   assert.equal(view.cells[1].quantity, 2)
   assert.equal(view.equipment.weapon?.itemId, 'weapon.hunting-bow')
   assert.equal(view.equipment.head, null)

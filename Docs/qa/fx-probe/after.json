@@ -1,0 +1,3401 @@
+{
+  "label": "after",
+  "url": "http://localhost:5185",
+  "forceWebGl": true,
+  "domKey": true,
+  "forcePark": true,
+  "before": {
+    "mounted": true,
+    "count": 0,
+    "positions": [],
+    "playerPosition": [
+      0,
+      -2.383,
+      24
+    ],
+    "life": [],
+    "frame": [],
+    "uvRect": [],
+    "center": null,
+    "material": {
+      "name": "m6-shared-skill-fx-level-ring",
+      "visible": true,
+      "alphaTest": 0.5,
+      "depthTest": true,
+      "depthWrite": true,
+      "mapLoaded": true,
+      "mapWidth": 1024,
+      "mapHeight": 1024
+    },
+    "session": {
+      "nowMs": 166.30000007152557,
+      "scene": "hunt",
+      "jobId": "warrior",
+      "mp": 60,
+      "recentEvents": [
+        {
+          "type": "tutorial",
+          "sequence": 0,
+          "atMs": 117.60000002384186
+        },
+        {
+          "type": "tutorial",
+          "sequence": 1,
+          "atMs": 117.60000002384186
+        },
+        {
+          "type": "banner",
+          "sequence": 2,
+          "atMs": 117.60000002384186
+        }
+      ]
+    },
+    "keydownListeners": -1,
+    "probeLog": [
+      {
+        "kind": "tick",
+        "direct": {
+          "move": false,
+          "run": false
+        },
+        "beforeMp": 60,
+        "afterMp": 60,
+        "respawn": "alive",
+        "activeDialogue": null,
+        "events": [
+          {
+            "type": "tutorial"
+          },
+          {
+            "type": "tutorial"
+          },
+          {
+            "type": "banner"
+          }
+        ]
+      }
+    ],
+    "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+  },
+  "peak": {
+    "elapsedMs": 40,
+    "mounted": true,
+    "count": 2,
+    "positions": [
+      [
+        0,
+        -1.283,
+        22
+      ],
+      [
+        -80,
+        -0.861,
+        8
+      ]
+    ],
+    "playerPosition": [
+      0,
+      -2.383,
+      24
+    ],
+    "life": [
+      0.7863,
+      0.7863
+    ],
+    "frame": [
+      0,
+      0
+    ],
+    "uvRect": [
+      0,
+      0,
+      0.25,
+      0.25,
+      0.75,
+      0,
+      0.25,
+      0.25
+    ],
+    "center": null,
+    "material": {
+      "name": "m6-shared-skill-fx-level-ring",
+      "visible": true,
+      "alphaTest": 0.5,
+      "depthTest": true,
+      "depthWrite": true,
+      "mapLoaded": true,
+      "mapWidth": 1024,
+      "mapHeight": 1024
+    },
+    "session": {
+      "nowMs": 344.89999997615814,
+      "scene": "hunt",
+      "jobId": "warrior",
+      "mp": 48,
+      "recentEvents": [
+        {
+          "type": "tutorial",
+          "sequence": 0,
+          "atMs": 117.60000002384186
+        },
+        {
+          "type": "tutorial",
+          "sequence": 1,
+          "atMs": 117.60000002384186
+        },
+        {
+          "type": "banner",
+          "sequence": 2,
+          "atMs": 117.60000002384186
+        },
+        {
+          "type": "fx-spawn",
+          "sequence": 3,
+          "atMs": 205.10000002384186,
+          "skillId": "flame-slash"
+        },
+        {
+          "type": "floater",
+          "sequence": 4,
+          "atMs": 205.10000002384186
+        }
+      ]
+    },
+    "keydownListeners": -1,
+    "probeLog": [
+      {
+        "kind": "tick",
+        "direct": {
+          "move": false,
+          "run": false
+        },
+        "beforeMp": 60,
+        "afterMp": 60,
+        "respawn": "alive",
+        "activeDialogue": null,
+        "events": [
+          {
+            "type": "tutorial"
+          },
+          {
+            "type": "tutorial"
+          },
+          {
+            "type": "banner"
+          }
+        ]
+      },
+      {
+        "kind": "enqueue",
+        "input": {
+          "skill": true
+        }
+      },
+      {
+        "kind": "tick",
+        "direct": {
+          "move": false,
+          "run": false
+        },
+        "beforeMp": 60,
+        "afterMp": 48,
+        "respawn": "alive",
+        "activeDialogue": null,
+        "events": [
+          {
+            "type": "fx-spawn",
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater"
+          }
+        ]
+      }
+    ],
+    "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+  },
+  "samples": [
+    {
+      "elapsedMs": 40,
+      "mounted": true,
+      "count": 2,
+      "positions": [
+        [
+          0,
+          -1.283,
+          22
+        ],
+        [
+          -80,
+          -0.861,
+          8
+        ]
+      ],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [
+        0.7863,
+        0.7863
+      ],
+      "frame": [
+        0,
+        0
+      ],
+      "uvRect": [
+        0,
+        0,
+        0.25,
+        0.25,
+        0.75,
+        0,
+        0.25,
+        0.25
+      ],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 344.89999997615814,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 80,
+      "mounted": true,
+      "count": 2,
+      "positions": [
+        [
+          0,
+          -1.283,
+          22
+        ],
+        [
+          -80,
+          -0.861,
+          8
+        ]
+      ],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [
+        0.0208,
+        0.0208
+      ],
+      "frame": [
+        2,
+        0
+      ],
+      "uvRect": [
+        0,
+        0,
+        0.25,
+        0.25,
+        0.75,
+        0,
+        0.25,
+        0.25
+      ],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 803.8999999761581,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 120,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 895.8999999761581,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 160,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 987.6000000238419,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 200,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1072.8999999761581,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 240,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1165,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 280,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1259.6000000238419,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 320,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1341.6000000238419,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 360,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1435.3999999761581,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 400,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1506.6000000238419,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 440,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1577.8999999761581,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 480,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1677.3000000715256,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 520,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1778.1000000238419,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 560,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1879.3999999761581,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 600,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 1988.2000000476837,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 640,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 2090.899999976158,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          },
+          {
+            "type": "floater",
+            "sequence": 7,
+            "atMs": 2012.8000000715256
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자212/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 680,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 2180.600000023842,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          },
+          {
+            "type": "floater",
+            "sequence": 7,
+            "atMs": 2012.8000000715256
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자204/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 720,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 2288.7000000476837,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          },
+          {
+            "type": "floater",
+            "sequence": 7,
+            "atMs": 2012.8000000715256
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자204/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 760,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 2389.100000023842,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          },
+          {
+            "type": "floater",
+            "sequence": 7,
+            "atMs": 2012.8000000715256
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자204/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 800,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 2482.2000000476837,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          },
+          {
+            "type": "floater",
+            "sequence": 7,
+            "atMs": 2012.8000000715256
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자204/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    },
+    {
+      "elapsedMs": 840,
+      "mounted": true,
+      "count": 0,
+      "positions": [],
+      "playerPosition": [
+        0,
+        -2.383,
+        24
+      ],
+      "life": [],
+      "frame": [],
+      "uvRect": [],
+      "center": null,
+      "material": {
+        "name": "m6-shared-skill-fx-level-ring",
+        "visible": true,
+        "alphaTest": 0.5,
+        "depthTest": true,
+        "depthWrite": true,
+        "mapLoaded": true,
+        "mapWidth": 1024,
+        "mapHeight": 1024
+      },
+      "session": {
+        "nowMs": 2561.899999976158,
+        "scene": "hunt",
+        "jobId": "warrior",
+        "mp": 48,
+        "recentEvents": [
+          {
+            "type": "tutorial",
+            "sequence": 0,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "tutorial",
+            "sequence": 1,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "banner",
+            "sequence": 2,
+            "atMs": 117.60000002384186
+          },
+          {
+            "type": "fx-spawn",
+            "sequence": 3,
+            "atMs": 205.10000002384186,
+            "skillId": "flame-slash"
+          },
+          {
+            "type": "floater",
+            "sequence": 4,
+            "atMs": 205.10000002384186
+          },
+          {
+            "type": "floater",
+            "sequence": 5,
+            "atMs": 816.5
+          },
+          {
+            "type": "floater",
+            "sequence": 6,
+            "atMs": 1412.1000000238419
+          },
+          {
+            "type": "floater",
+            "sequence": 7,
+            "atMs": 2012.8000000715256
+          }
+        ]
+      },
+      "keydownListeners": -1,
+      "probeLog": [
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 60,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "tutorial"
+            },
+            {
+              "type": "banner"
+            }
+          ]
+        },
+        {
+          "kind": "enqueue",
+          "input": {
+            "skill": true
+          }
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 60,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "fx-spawn",
+              "skillId": "flame-slash"
+            },
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        },
+        {
+          "kind": "tick",
+          "direct": {
+            "move": false,
+            "run": false
+          },
+          "beforeMp": 48,
+          "afterMp": 48,
+          "respawn": "alive",
+          "activeDialogue": null,
+          "events": [
+            {
+              "type": "floater"
+            }
+          ]
+        }
+      ],
+      "hud": "Lv.1 여행자204/220HPMPEXP(Lv.10) 돼지 사냥돼지 0/1012—3—41,500"
+    }
+  ],
+  "errors": []
+}

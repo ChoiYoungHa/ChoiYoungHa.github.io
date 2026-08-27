@@ -1,6 +1,9 @@
 import { t, type IpMode } from '../../game/i18n.ts'
+import iconData from '../../game/data/itemIcons.json' with { type: 'json' }
 import type { QuestStatus } from '../../game/rules/quest.ts'
 import type { ZoneId } from '../../game/world/zones.ts'
+
+export const HUD_ICON_URLS = iconData.hud
 
 export interface HudPresentationInput {
   dialogueOpen: boolean

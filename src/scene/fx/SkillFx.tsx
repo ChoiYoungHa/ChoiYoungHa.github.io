@@ -22,10 +22,6 @@ export function SkillFx({ session, material }: SkillFxProps) {
   const meshRef = useRef<InstancedMesh>(null)
   const stateRef = useRef(createFxRenderState())
   const geometry = useMemo(() => createFxGeometry(FX_INSTANCE_CAPACITY), [])
-  const centers = useMemo<[number, number, number][]>(
-    () => Array.from({ length: FX_INSTANCE_CAPACITY }, () => [0, 0, 0]),
-    [],
-  )
   const transform = useMemo(() => new Transform(), [])
 
   useEffect(() => () => geometry.dispose(), [geometry])
@@ -47,9 +43,6 @@ export function SkillFx({ session, material }: SkillFxProps) {
     result.instances.forEach((instance, index) => {
       const y = sampleHeight(instance.position.x, instance.position.z) + instance.position.y
       transform.position.set(instance.position.x, y, instance.position.z)
-      centers[index][0] = instance.position.x
-      centers[index][1] = y
-      centers[index][2] = instance.position.z
       if (instance.billboard === 'full') transform.quaternion.copy(camera.quaternion)
       else transform.rotation.set(0, Math.atan2(
         camera.position.x - instance.position.x,
@@ -59,7 +52,7 @@ export function SkillFx({ session, material }: SkillFxProps) {
       transform.updateMatrix()
       mesh.setMatrixAt(index, transform.matrix)
     })
-    writeFxAttributes(geometry, result.instances, centers)
+    writeFxAttributes(geometry, result.instances)
     mesh.count = result.instances.length
     mesh.instanceMatrix.needsUpdate = true
   })

@@ -106,9 +106,10 @@ test('all 16 cells retain 5–60% coverage at alphaTest 0.5', async () => {
   }
 })
 
-test('fx.json fixes the four skill sequences and renderer handoff contract', async () => {
+test('fx.json fixes the basic attack plus four skill sequences and renderer handoff contract', async () => {
   const fx = JSON.parse(await readFile(join(ROOT, 'src/game/data/fx.json'), 'utf8'))
   assert.deepEqual(Object.keys(fx.skills), [
+    'basic-attack',
     'flame-slash',
     'rainbow-shot',
     'ice-age',
@@ -119,7 +120,7 @@ test('fx.json fixes the four skill sequences and renderer handoff contract', asy
     [1024, 1024, 4, 4, 256, 0.5],
   )
   assert.equal(fx.maxConcurrent, 3)
-  assert.deepEqual(fx.skills['flame-slash'].layers.map((layer) => layer.lifetimeMs), [250, 600])
+  assert.deepEqual(fx.skills['flame-slash'].layers.map((layer) => layer.lifetimeMs), [600, 600])
   assert.equal(fx.skills['flame-slash'].layers[0].frameCount, 3)
   assert.equal(fx.skills['rainbow-shot'].projectileCount, 5)
   assert.equal(fx.skills['rainbow-shot'].instanceColors.length, 7)
@@ -128,7 +129,7 @@ test('fx.json fixes the four skill sequences and renderer handoff contract', asy
   assert.equal(fx.skills['leaping-slash'].impactRadiusMeters, 2.5)
   assert.deepEqual(
     Object.values(fx.skills).map((skill) => skill.attachment),
-    ['player-front', 'player-front', 'target-above', 'landing-point'],
+    ['player-front', 'player-front', 'player-front', 'target-above', 'landing-point'],
   )
   assert.equal(fx.skills['flame-slash'].layers[1].attachment, 'impact-point')
   assert.equal(fx.skills['ice-age'].layers[2].attachment, 'target-body')
@@ -155,17 +156,21 @@ test('fx.json fixes the four skill sequences and renderer handoff contract', asy
   assert.equal(usedRects.size, 16, 'every generated atlas cell must belong to a sequence')
 })
 
-test('timeline frame boundaries are deterministic for all four skills', async () => {
+test('timeline frame boundaries are deterministic for basic attack and all four skills', async () => {
   const { sampleFx, spawnFx } = await load('src/game/rules/fxTimeline.ts')
 
   const flame = spawnFx('flame-slash', 1_000)
   assert.deepEqual(sampleFx(flame, 999), { active: false, elapsedMs: -1, layers: [] })
   assert.equal(sampleFx(flame, 1_000).layers[0].frameIndex, 0)
-  assert.equal(sampleFx(flame, 1_080).layers[0].frameIndex, 1)
-  assert.equal(sampleFx(flame, 1_160).layers[0].frameIndex, 2)
-  assert.equal(sampleFx(flame, 1_250).layers[0].active, false)
+  assert.equal(sampleFx(flame, 1_180).layers[0].frameIndex, 1)
+  assert.equal(sampleFx(flame, 1_360).layers[0].frameIndex, 2)
+  assert.equal(sampleFx(flame, 1_599).layers[0].active, true)
   assert.equal(sampleFx(flame, 1_599).active, true)
   assert.equal(sampleFx(flame, 1_600).active, false)
+
+  const basic = spawnFx('basic-attack', 1_000)
+  assert.equal(sampleFx(basic, 1_599).layers[0].active, true)
+  assert.equal(sampleFx(basic, 1_650).active, false)
 
   const rainbow = spawnFx('rainbow-shot', 2_000)
   assert.equal(sampleFx(rainbow, 2_089).layers[1].frameIndex, 0)
