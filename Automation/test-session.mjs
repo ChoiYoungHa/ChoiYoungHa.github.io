@@ -378,3 +378,12 @@ test('상점 진입 직후라도 품목을 고른 confirm(구매 버튼)은 삼�
   assert.equal(after.meso, before - 60)
   assert.ok(after.inventory.slots.some((s) => s?.itemId === 'consumable.potion-hp-s'))
 })
+
+test('전사 선택 시 나무 검이 장착된 채 시작한다 (2026-08-27 영하님)', async () => {
+  const { reduce } = await load('src/game/reducers.ts')
+  const { createInventory } = await load('src/game/rules/inventory.ts')
+  const before = { jobId: null, name: '', hp: 0, maxHp: 0, mp: 0, maxMp: 0, meso: 1500, faceParts: {}, inventory: createInventory(), equipment: { weapon: null, head: null } }
+  const after = reduce(before, { type: 'select-job', jobId: 'warrior', name: '영하' })
+  assert.equal(after.equipment.weapon, 'weapon.wooden-sword')
+  assert.ok(after.inventory.slots.some((s) => s?.itemId === 'weapon.wooden-sword'))
+})

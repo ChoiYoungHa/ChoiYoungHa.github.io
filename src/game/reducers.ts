@@ -2,6 +2,7 @@ import itemData from './data/items.json' with { type: 'json' }
 import {
   addInventoryItem,
   consumeInventoryItem,
+  equipInventoryItem,
   type ItemDefinition,
 } from './rules/inventory.ts'
 import {
@@ -39,6 +40,11 @@ export type GameAction =
   | { type: 'quest-complete', quest: QuestDefinition }
   | { type: 'scene-transition', scene: GameScene }
 
+const ITEM_LIST = itemData as unknown as ItemDefinition[]
+const STARTER_WEAPONS: Partial<Record<string, ItemDefinition>> = {
+  warrior: ITEM_LIST.find((item) => item.id === 'weapon.wooden-sword'),
+}
+
 function withInventory(state: GameState, inventory: GameState['inventory']): GameState {
   return { ...state, inventory, equipment: { ...inventory.equipment } }
 }
@@ -47,7 +53,12 @@ export function reduce(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'select-job': {
       const stats = jobStartStats(action.jobId)
-      return {
+      // 2026-08-27 영하님: 시작 무기는 나무 검(장착 상태). 직업별 시작 무기가 있으면 그것, 없으면 그대로.
+      const starter = STARTER_WEAPONS[action.jobId]
+      const inventory = starter === undefined || state.inventory.equipment.weapon !== null
+        ? state.inventory
+        : equipInventoryItem(addInventoryItem(state.inventory, starter, 1).inventory, starter)
+      return withInventory({
         ...state,
         jobId: action.jobId,
         name: action.name ?? state.name,
@@ -56,7 +67,7 @@ export function reduce(state: GameState, action: GameAction): GameState {
         mp: stats.mp,
         maxMp: stats.mp,
         faceParts: { ...state.faceParts, outfitId: action.jobId, ...action.faceParts },
-      }
+      }, inventory)
     }
     case 'damage':
       return { ...state, hp: Math.max(0, state.hp - Math.max(0, action.amount)) }

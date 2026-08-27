@@ -3,19 +3,12 @@ import { Portrait } from './Portrait.tsx'
 import type { PortraitSelection } from '../../game/portrait/compose.ts'
 import type { JobId } from '../../game/state.ts'
 import { HUD_TOKENS } from './hudTokens.ts'
-import {
-  characterCreatePresentation,
-  type CharacterCreateSelection,
-  type PortraitPartKey,
-} from './characterCreateLogic.ts'
+import { characterCreatePresentation, type PortraitPartKey } from './characterCreateLogic.ts'
 
-const PART_CONTROLS: ReadonlyArray<{ key: PortraitPartKey, label: string }> = [
-  { key: 'faceId', label: '얼굴' }, { key: 'eyeId', label: '눈' },
-  { key: 'noseId', label: '코' }, { key: 'mouthId', label: '입' },
-  { key: 'hairId', label: '머리' }, { key: 'skinId', label: '피부' },
-  { key: 'hairColorId', label: '머리색' }, { key: 'eyeColorId', label: '눈동자' },
-]
-
+/**
+ * S01 캐릭터 생성 — 2026-08-27 영하님: 직업은 전사 고정이므로 이름만 입력한다.
+ * 얼굴 파츠 커스텀·랜덤·직업 넘김은 제거했고(props 는 호환을 위해 남김), 전사 카드 1장을 가운데 정렬한다.
+ */
 export interface CharacterCreateProps {
   name: string
   selectedJobId: JobId
@@ -23,41 +16,65 @@ export interface CharacterCreateProps {
   ipMode: IpMode
   onNameChange: (name: string) => void
   onSelectJob: (jobId: JobId) => void
-  onPrev: () => void
-  onNext: () => void
-  onCyclePart: (partKey: PortraitPartKey, direction: -1 | 1) => void
-  onRandom: () => void
-  onConfirm: (selection: CharacterCreateSelection) => void
+  onPrev?: () => void
+  onNext?: () => void
+  onCyclePart?: (part: PortraitPartKey, direction: 1 | -1) => void
+  onRandom?: () => void
+  onConfirm: (selection: { name: string; jobId: JobId; portrait: PortraitSelection }) => void
 }
 
-export function CharacterCreate({ name, selectedJobId, portrait, ipMode, onNameChange, onSelectJob, onPrev, onNext, onCyclePart, onRandom, onConfirm }: CharacterCreateProps) {
+export function CharacterCreate({ name, selectedJobId, portrait, ipMode, onNameChange, onSelectJob, onConfirm }: CharacterCreateProps) {
   const view = characterCreatePresentation(name, selectedJobId, ipMode)
   const displayPortrait = { ...portrait, outfitId: selectedJobId }
+  const job = view.jobs.find((candidate) => candidate.id === selectedJobId) ?? view.jobs[0]
+  const confirm = () => { if (view.canConfirm) onConfirm({ name, jobId: selectedJobId, portrait: displayPortrait }) }
   return (
-    <section aria-label={view.title} style={{ position: 'absolute', inset: 0, padding: '28px 34px', boxSizing: 'border-box', background: 'linear-gradient(135deg, rgba(20,26,29,0.94), rgba(42,37,34,0.9))', color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto' }}>
-      <h1 style={{ margin: '0 0 18px', textAlign: 'center', fontSize: 28 }}>{view.title}</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr', gap: 24 }}>
-        <aside style={{ padding: 14, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 12, background: HUD_TOKENS.colors.panel }}>
-          <div style={{ display: 'grid', placeItems: 'center', height: 210 }}><Portrait selection={displayPortrait} imageUrl="/ui/portraits/player-warrior.png" size={205} /></div>
-          <label style={{ display: 'grid', gap: 5, marginBottom: 12 }}><span>{view.nameLabel}</span><input value={name} maxLength={9} placeholder={view.namePlaceholder} onChange={(event) => onNameChange(event.target.value)} style={{ border: `1px solid ${view.nameError === null ? HUD_TOKENS.colors.border : '#d87367'}`, borderRadius: 6, padding: '9px 10px', background: 'rgba(0,0,0,0.25)', color: HUD_TOKENS.colors.text, font: 'inherit' }} />{view.nameError !== null && <small style={{ color: '#e38b81' }}>{view.nameError}</small>}</label>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
-            {PART_CONTROLS.map((part) => <div key={part.key} style={{ display: 'grid', gridTemplateColumns: '24px 1fr 24px', alignItems: 'center', gap: 3 }}><button type="button" onClick={() => onCyclePart(part.key, -1)}>‹</button><small style={{ textAlign: 'center' }}>{part.label}</small><button type="button" onClick={() => onCyclePart(part.key, 1)}>›</button></div>)}
-          </div>
-          <button type="button" onClick={onRandom} style={{ width: '100%', marginTop: 10 }}>{view.randomLabel}</button>
-        </aside>
-        <main style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '36px repeat(4, 1fr) 36px', alignItems: 'center', gap: 10 }}>
-            <button type="button" onClick={onPrev} aria-label="이전 직업">←</button>
-            {view.jobs.map((job) => <button key={job.id} type="button" onClick={() => onSelectJob(job.id)} style={{ height: 260, border: `2px solid ${job.selected ? job.color : HUD_TOKENS.colors.border}`, borderRadius: 12, padding: 14, background: `linear-gradient(180deg, ${job.color}33, rgba(15,17,21,0.92))`, boxShadow: job.selected ? `0 0 22px ${job.color}88` : undefined, filter: job.selected ? undefined : 'brightness(0.6) saturate(0.6)', color: HUD_TOKENS.colors.text, textAlign: 'left', cursor: 'pointer', font: 'inherit' }}>
-              <strong style={{ display: 'block', color: job.color, fontSize: 21 }}>{job.name}</strong>
-              <p style={{ minHeight: 48, lineHeight: 1.45 }}>{job.description}</p>
-              <small style={{ display: 'block', lineHeight: 1.7 }}>HP {job.startStats.hp}<br />MP {job.startStats.mp}<br />공격 {job.startStats.attack}</small>
+    <section aria-label={view.title} style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', boxSizing: 'border-box', padding: 24, background: 'linear-gradient(135deg, rgba(20,26,29,0.94), rgba(42,37,34,0.9))', color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto' }}>
+      <div style={{ width: 'min(560px, 100%)', display: 'grid', gap: 18, justifyItems: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: 28, letterSpacing: '0.08em' }}>{view.title}</h1>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 18, width: '100%', alignItems: 'stretch' }}>
+          <aside style={{ display: 'grid', justifyItems: 'center', gap: 10, padding: 14, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 12, background: HUD_TOKENS.colors.panel }}>
+            <Portrait selection={displayPortrait} imageUrl="/ui/portraits/player-warrior.png" size={160} />
+            <label style={{ display: 'grid', gap: 5, width: '100%' }}>
+              <span style={{ fontSize: 12, color: HUD_TOKENS.colors.muted }}>{view.nameLabel}</span>
+              <input
+                data-testid="create-name"
+                value={name}
+                maxLength={9}
+                placeholder={view.namePlaceholder}
+                autoFocus
+                onChange={(event) => onNameChange(event.target.value)}
+                onKeyDown={(event) => { if (event.key === 'Enter') confirm() }}
+                style={{ padding: '8px 10px', border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, background: 'rgba(0,0,0,0.35)', color: HUD_TOKENS.colors.text, font: 'inherit', fontSize: 15 }}
+              />
+            </label>
+          </aside>
+
+          {job !== undefined && (
+            <button
+              type="button"
+              data-testid="create-job-warrior"
+              onClick={() => onSelectJob(job.id)}
+              style={{ border: `2px solid ${job.color}`, borderRadius: 12, padding: 18, background: `linear-gradient(180deg, ${job.color}33, rgba(15,17,21,0.92))`, boxShadow: `0 0 22px ${job.color}66`, color: HUD_TOKENS.colors.text, textAlign: 'left', cursor: 'default', font: 'inherit' }}
+            >
+              <strong style={{ display: 'block', color: job.color, fontSize: 24 }}>{job.name}</strong>
+              <p style={{ margin: '10px 0 14px', lineHeight: 1.5 }}>{job.description}</p>
+              <small style={{ display: 'block', lineHeight: 1.8, fontSize: 12 }}>HP {job.startStats.hp}<br />MP {job.startStats.mp}<br />공격 {job.startStats.attack}</small>
               <span style={{ display: 'block', marginTop: 12, color: '#e6cb8d' }}>{job.skillName}</span>
-            </button>)}
-            <button type="button" onClick={onNext} aria-label="다음 직업">→</button>
-          </div>
-          <button type="button" disabled={!view.canConfirm} onClick={() => onConfirm({ name, jobId: selectedJobId, portrait: displayPortrait })} style={{ alignSelf: 'center', minWidth: 190, marginTop: 26, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, padding: '12px 24px', background: view.canConfirm ? '#7b612d' : '#34353b', color: view.canConfirm ? '#fff7dc' : '#85858b', cursor: view.canConfirm ? 'pointer' : 'not-allowed', font: 'inherit', fontWeight: 700 }}>{view.confirmLabel}</button>
-        </main>
+            </button>
+          )}
+        </div>
+
+        <button
+          type="button"
+          data-testid="create-confirm"
+          disabled={!view.canConfirm}
+          onClick={confirm}
+          style={{ minWidth: 220, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, padding: '12px 24px', background: view.canConfirm ? '#7b612d' : '#34353b', color: view.canConfirm ? '#fff7dc' : '#85858b', cursor: view.canConfirm ? 'pointer' : 'not-allowed', font: 'inherit', fontWeight: 700, fontSize: 16 }}
+        >
+          {view.confirmLabel}
+        </button>
       </div>
     </section>
   )

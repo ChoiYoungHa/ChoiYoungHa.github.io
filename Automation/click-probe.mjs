@@ -22,5 +22,6 @@ await click(640, 200); await sleep(800); s = await state(); console.log('after 2
 s = await state(); console.log('after bg click', JSON.stringify({ title: s.title, text: s.text.slice(0, 60), buttons: s.buttons.slice(0, 6) }))
 // 생성 화면: 첫 버튼들 좌표로 클릭 시도(확인 버튼 = 마지막)
 if (s.title) { await click(640, 333); await sleep(800); s = await state(); console.log('after button click', JSON.stringify({ title: s.title, text: s.text.slice(0, 60) })) }
+{ const sh = await send('Page.captureScreenshot', { format: 'png' }); await (await import('node:fs/promises')).writeFile('Docs/qa/anim-probe/create-screen.png', Buffer.from(sh.data, 'base64')) }
 if (!s.title && s.buttons.length) { const b = s.buttons.at(-1); await click(b.x, b.y); await sleep(800); const s2 = await state(); console.log('after confirm click', JSON.stringify({ text: s2.text.slice(0, 80), buttons: s2.buttons.slice(0, 4) })) }
 ws.close(); chrome.kill()
