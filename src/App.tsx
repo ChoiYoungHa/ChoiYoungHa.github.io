@@ -64,17 +64,20 @@ function VistaCamera({ id }: { id: string }) {
  * 매 프레임 depth 검증 에러·검은 프레임(R77-A 결함). 구 빌드는 로딩 ready 뒤에 Canvas 가 마운트되는 타이밍이라 1회였다.
  * 상세: Docs/decisions/webgpu-blackframe-r86.md
  */
-/** 창 안에 스테이지가 들어가도록 축소 배율(≤1). shot 모드·서버 렌더에서는 1. */
-function useStageFit(width: number, height: number, disabled: boolean): number {
-  const [fit, setFit] = useState(1)
+/** 창이 스테이지보다 작으면 스테이지 크기를 창에 맞춰 줄인다(확대 없음). CSS transform 은 R3F 리사이즈 측정과 이중 적용돼 쓰지 않는다. */
+function useStageFit(width: number, height: number, disabled: boolean): { width: number; height: number } {
+  const [size, setSize] = useState({ width, height })
   useEffect(() => {
-    if (disabled) { setFit(1); return }
-    const update = () => setFit(Math.min(1, window.innerWidth / width, window.innerHeight / height))
+    if (disabled) { setSize({ width, height }); return }
+    const update = () => {
+      const k = Math.min(1, window.innerWidth / width, window.innerHeight / height)
+      setSize({ width: Math.floor(width * k), height: Math.floor(height * k) })
+    }
     update()
     window.addEventListener('resize', update)
     return () => window.removeEventListener('resize', update)
   }, [width, height, disabled])
-  return fit
+  return size
 }
 
 const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { width: number; height: number; shot: string | null; hideHero: boolean; dprCap: number }) {
@@ -124,7 +127,7 @@ export default function App() {
   const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
   const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
   // 스테이지는 고정 픽셀이라 창이 작으면 하단 HUD(스킬바)가 잘렸다(2026-08-27 영하님 피드백). 창에 맞춰 축소만 한다(확대 없음, 캡처 규약 불변).
-  const fit = useStageFit(width, height, shot !== null)
+  const stageSize = useStageFit(width, height, shot !== null)
 
   useEffect(() => {
     const onErr = (e: ErrorEvent) => pushError(String(e.message))
@@ -141,8 +144,8 @@ export default function App() {
   }, [pushError, shot])
 
   return (
-    <div className="stage" style={{ width, height, transform: fit === 1 ? undefined : `scale(${fit})`, transformOrigin: 'top center' }}>
-      <Stage width={width} height={height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
+    <div className="stage" style={{ width: stageSize.width, height: stageSize.height }}>
+      <Stage width={stageSize.width} height={stageSize.height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
       {shouldShowRuntimeHud(location.search, GAME_INPUT_ENABLED) ? <RuntimeHud /> : null}
       {!shot && GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameOverlay loading={loading} preset={preset} /></Suspense> : null}
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
