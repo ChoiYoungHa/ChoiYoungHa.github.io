@@ -1,10 +1,11 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { isForcedWebGL, readBackend, type Backend } from '../gl/createRenderer'
 import { useRuntime } from '../store/useRuntime'
 import { CAMERA } from '../player/FollowCamera'
 import { LOD_SWITCH_DISTANCE, readHeroTreeLod } from '../scene/HeroTree'
 import { sampleRendererFrame, type RendererForPerf } from './perf'
+import { createAutoFallback, isAutoFallbackEligible } from './perf/autoFallback'
 
 /**
  * M0a-07 — backend·adapter·ANGLE·preset 을 화면(HUD)과 JSON 으로 동시에 남긴다.
@@ -20,6 +21,11 @@ export function RuntimeProbe() {
   const frames = useRef(0)
   const acc = useRef(0)
   const maxFrameCalls = useRef(0)
+  // R117-A — 기본 base 승격에 딸린 1회성 자동 후퇴. `?q` 지정·bench/final 측정 중에는 비활성이다.
+  const autoFallback = useMemo(
+    () => (isAutoFallbackEligible(location.search, window.__benchMode) ? createAutoFallback() : null),
+    [],
+  )
 
   // 검증 하네스(systems/report.ts)가 씬 요소 수를 셀 수 있게 노출한다. 카메라는 M4-05 감도 실측용(R41-A).
   const camera = useThree((s) => s.camera)
@@ -61,6 +67,10 @@ export function RuntimeProbe() {
 
   // 계획서 §3-3: 매 프레임이 아니라 **1초 1회** 집계만 올린다.
   useFrame((_, dt) => {
+    const decision = autoFallback?.step(dt) ?? null
+    if (decision !== null && decision.fallback && useRuntime.getState().preset === 'base') {
+      set({ preset: 'low', autoFallback: true })
+    }
     frames.current += 1
     acc.current += dt
     const perf = sampleRendererFrame(gl as unknown as RendererForPerf)
