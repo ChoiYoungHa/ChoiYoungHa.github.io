@@ -28,7 +28,7 @@ test('HUD 표시 조건은 대화·공원·퀘스트 상태를 독립 적용한�
     dialogueOpen: false,
     zone: 'village',
     questStatus: 'active',
-  }).showQuickSlots, false)
+  }).showQuickSlots, true) // 2026-08-27: 공원 밖에서도 스킬바 표시
   assert.equal(hudPresentation({
     dialogueOpen: false,
     zone: 'park',

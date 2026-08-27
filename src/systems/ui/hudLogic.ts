@@ -22,7 +22,7 @@ export function hudPresentation(input: HudPresentationInput): HudPresentation {
   return {
     showStats: !input.dialogueOpen,
     showQuestTracker: input.questStatus === 'active' || input.questStatus === 'ready',
-    showQuickSlots: input.zone === 'park',
+    showQuickSlots: !input.dialogueOpen, // 2026-08-27 영하님 피드백: 공원 밖에서도 스킬바가 보여야 한다
     showMeso: true,
   }
 }

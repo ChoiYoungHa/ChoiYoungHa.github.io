@@ -1,5 +1,5 @@
 import { Canvas, useThree } from '@react-three/fiber'
-import { lazy, memo, Suspense, useEffect } from 'react'
+import { lazy, memo, Suspense, useEffect, useState } from 'react'
 import { applyToneMapping, createRenderer } from './gl/createRenderer'
 import { SkyDome } from './scene/SkyDome'
 import { Atmosphere } from './scene/Atmosphere'
@@ -64,6 +64,19 @@ function VistaCamera({ id }: { id: string }) {
  * 매 프레임 depth 검증 에러·검은 프레임(R77-A 결함). 구 빌드는 로딩 ready 뒤에 Canvas 가 마운트되는 타이밍이라 1회였다.
  * 상세: Docs/decisions/webgpu-blackframe-r86.md
  */
+/** 창 안에 스테이지가 들어가도록 축소 배율(≤1). shot 모드·서버 렌더에서는 1. */
+function useStageFit(width: number, height: number, disabled: boolean): number {
+  const [fit, setFit] = useState(1)
+  useEffect(() => {
+    if (disabled) { setFit(1); return }
+    const update = () => setFit(Math.min(1, window.innerWidth / width, window.innerHeight / height))
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [width, height, disabled])
+  return fit
+}
+
 const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { width: number; height: number; shot: string | null; hideHero: boolean; dprCap: number }) {
   return (
     <Canvas
@@ -110,6 +123,8 @@ export default function App() {
   const loading = useLoadingState()
   const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
   const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
+  // 스테이지는 고정 픽셀이라 창이 작으면 하단 HUD(스킬바)가 잘렸다(2026-08-27 영하님 피드백). 창에 맞춰 축소만 한다(확대 없음, 캡처 규약 불변).
+  const fit = useStageFit(width, height, shot !== null)
 
   useEffect(() => {
     const onErr = (e: ErrorEvent) => pushError(String(e.message))
@@ -126,7 +141,7 @@ export default function App() {
   }, [pushError, shot])
 
   return (
-    <div className="stage" style={{ width, height }}>
+    <div className="stage" style={{ width, height, transform: fit === 1 ? undefined : `scale(${fit})`, transformOrigin: 'top center' }}>
       <Stage width={width} height={height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
       {shouldShowRuntimeHud(location.search, GAME_INPUT_ENABLED) ? <RuntimeHud /> : null}
       {!shot && GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameOverlay loading={loading} preset={preset} /></Suspense> : null}
