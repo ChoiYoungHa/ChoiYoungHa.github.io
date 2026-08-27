@@ -1,0 +1,44 @@
+tool: built-in image_gen.imagegen
+generated_at_kst: 2026-08-27 07:29:33–07:30:29 +09:00
+reference: Docs/lookdev/m5-tree-after-r105.png (style/palette only)
+reproducibility: semantic-only; the built-in tool exposes no seed, model id, size, or output-format parameter, so bitwise reproduction is unavailable
+postprocess: remove_chroma_key.py --auto-key border --soft-matte --transparent-threshold 12 --opaque-threshold 220 --despill; Pillow Lanczos resize 1254x1254 -> 512x512
+
+[stan.png]
+Use case: stylized-concept
+Asset type: game NPC portrait candidate, square bust cutout
+Primary request: an original bearded village elder, front-facing head-and-shoulders portrait
+Input images: Image 1 is style and palette reference only; do not copy its objects or composition
+Subject: sturdy elderly man, kind but serious face, broad nose, thick short faceted gray beard and eyebrows, warm brown sleeveless vest over a cream tunic, simple bronze clasp
+Style/medium: polished stylized low-poly 3D game render, clearly faceted forms, matte hand-painted materials, compact readable silhouette matching a muted rural village
+Composition/framing: centered exact front view, symmetrical head-and-shoulders bust, entire hair and shoulders inside frame, generous padding
+Lighting/mood: soft neutral frontal light, warm approachable mood
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background for local background removal
+Constraints: one character only; original own-IP design; background must be a single uniform color with no shadow, gradient, texture, floor, reflection, or lighting variation; crisp opaque edges; no wispy hair; do not use #00ff00 in the subject; no text, logo, watermark, border, or cast shadow
+Avoid: resemblance to any existing game character, anime line art, photorealism, extra props, side view
+
+[maya.png]
+Use case: stylized-concept
+Asset type: game NPC portrait candidate, square bust cutout
+Primary request: an original village merchant woman, front-facing head-and-shoulders portrait
+Input images: Image 1 is style and palette reference only; do not copy its objects or composition
+Subject: capable adult woman merchant, calm welcoming face, dark brown hair in one clean low-poly bun with no loose strands, ochre blouse, muted burgundy apron straps, small leather coin pouch clasp visible at chest
+Style/medium: polished stylized low-poly 3D game render, clearly faceted forms, matte hand-painted materials, compact readable silhouette matching a muted rural village
+Composition/framing: centered exact front view, symmetrical head-and-shoulders bust, entire bun and shoulders inside frame, generous padding
+Lighting/mood: soft neutral frontal light, practical and friendly
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background for local background removal
+Constraints: one character only; original own-IP design; background must be a single uniform color with no shadow, gradient, texture, floor, reflection, or lighting variation; crisp opaque edges; no wispy hair; do not use #00ff00 in the subject; no text, logo, watermark, border, or cast shadow
+Avoid: resemblance to any existing game character, anime line art, photorealism, extra props, side view
+
+[player-archer.png]
+Use case: stylized-concept
+Asset type: game player portrait candidate, square bust cutout
+Primary request: an original default archer player, front-facing head-and-shoulders portrait
+Input images: Image 1 is style and palette reference only; do not copy its objects or composition
+Subject: young adult archer with attentive expression, short dark auburn faceted hair, muted blue hood folded down, tan leather shoulder guard, cream undershirt, simple wooden bow curve visible behind one shoulder
+Style/medium: polished stylized low-poly 3D game render, clearly faceted forms, matte hand-painted materials, compact readable silhouette matching a muted rural village
+Composition/framing: centered exact front view, symmetrical head-and-shoulders bust, entire hair, shoulders, and bow tip inside frame, generous padding
+Lighting/mood: soft neutral frontal light, adventurous but grounded
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background for local background removal
+Constraints: one character only; original own-IP design; background must be a single uniform color with no shadow, gradient, texture, floor, reflection, or lighting variation; crisp opaque edges; no wispy hair; do not use #00ff00 in the subject; no text, logo, watermark, border, or cast shadow
+Avoid: resemblance to any existing game character, anime line art, photorealism, extra props, side view

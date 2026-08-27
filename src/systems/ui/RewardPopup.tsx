@@ -14,7 +14,7 @@ export function RewardPopup({ visible, ipMode, previousLevel, currentLevel, onCl
   if (!visible) return null
   const view = rewardPopupPresentation(ipMode, previousLevel, currentLevel)
   return (
-    <section aria-label={view.title} style={{ position: 'absolute', left: '50%', top: '50%', width: 390, transform: 'translate(-50%, -50%)', padding: 22, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 12, background: HUD_TOKENS.colors.panelStrong, boxShadow: '0 14px 42px rgba(0,0,0,0.52)', color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto', textAlign: 'center' }}>
+    <section aria-label={view.title} style={{ position: 'absolute', left: '50%', top: '50%', width: 390, transform: 'translate(-50%, -50%)', padding: 22, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 12, background: HUD_TOKENS.colors.panelStrong, boxShadow: '0 14px 42px rgba(0,0,0,0.52)', color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto', textAlign: 'center', ...HUD_TOKENS.borderImage.panel }}>
       {view.showLevelUp && <strong style={{ display: 'block', marginBottom: 10, color: '#f3c95d', fontSize: 30, letterSpacing: '0.12em', textShadow: '0 0 18px rgba(243,201,93,0.75)' }}>{view.levelUpText}</strong>}
       <h2 style={{ margin: '0 0 16px', fontSize: 21 }}>{view.title}</h2>
       <div style={{ display: 'grid', gap: 8 }}>

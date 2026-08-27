@@ -21,7 +21,7 @@ export function ShopPanel({ state, selectedItemId, ipMode, onSelect, onPurchase,
   }
 
   return (
-    <section aria-label={view.title} style={{ position: 'absolute', left: '50%', top: '50%', width: 760, height: 460, transform: 'translate(-50%, -50%)', display: 'grid', gridTemplateColumns: '310px 1fr', gridTemplateRows: '1fr 48px', gap: 12, padding: 18, boxSizing: 'border-box', ...panelStyle, color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto' }}>
+    <section aria-label={view.title} style={{ position: 'absolute', left: '50%', top: '50%', width: 760, height: 460, transform: 'translate(-50%, -50%)', display: 'grid', gridTemplateColumns: '310px 1fr', gridTemplateRows: '1fr 48px', gap: 12, padding: 18, boxSizing: 'border-box', ...panelStyle, ...HUD_TOKENS.borderImage.panel, color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto' }}>
       <div style={{ display: 'grid', gridTemplateRows: 'auto repeat(4, 1fr)', gap: 8 }}>
         <h2 style={{ margin: '0 0 2px', fontSize: 20 }}>{view.title}</h2>
         {view.items.map((item) => (
