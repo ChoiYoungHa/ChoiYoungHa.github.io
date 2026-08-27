@@ -27,8 +27,28 @@ const READ = `(() => { const s = globalThis.__R3F_SCENE__; const out = { badge: 
 
 const [a, b] = await Promise.all([launch('A'), launch('B')])
 const url = (n) => `${BASE}?game=1&scene=hunt&q=low&room=${ROOM}&name=${n}`
-await a.send('Page.navigate', { url: url('alpha') }); await sleep(5000)
-await b.send('Page.navigate', { url: url('bravo') }); await sleep(14000)
+// 라이브(CDN)는 자산 37MB 로딩이 느리다 — HUD(게임 씬 진입)와 접속 배지를 기다린다(최대 120초).
+const waitFor = async (page, expr, ms) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { if (await page.ev(expr)) return true; await sleep(500) } return false }
+const HUD = `!!document.querySelector('[aria-label="게임 HUD"]')`
+const ONLINE = `/^(host|client)$/.test(document.querySelector('[data-net-status]')?.getAttribute('data-net-status') ?? '')`
+// PROD 는 ?scene= 단축이 꺼져 있다 — 타이틀(시작 버튼 활성 대기) → 생성(확인) → HUD 를 실제 클릭으로 진행한다.
+const CLICK = (re) => `(() => { const b = [...document.querySelectorAll('button')].find((x) => !x.disabled && ${re}.test(x.textContent)); if (!b) return false; b.click(); return true })()`
+const enterGame = async (page) => {
+  if (await waitFor(page, HUD, 3000)) return true
+  await waitFor(page, `[...document.querySelectorAll('button')].some((x) => !x.disabled)`, 120000)
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await page.ev(CLICK('/시작|start/i')); await sleep(1500)
+    await page.ev(CLICK('/생성|시작|확인|모험/')); await sleep(500)
+    if (await waitFor(page, HUD, 12000)) return true
+    await page.shot(`enter-fail-${page.label}-${attempt}`)
+    console.log('enter retry', page.label, attempt, await page.ev(`JSON.stringify([...document.querySelectorAll('button')].map((x) => [x.textContent.trim().slice(0, 12), x.disabled]))`))
+  }
+  return false
+}
+await a.send('Page.navigate', { url: url('alpha') }); await b.send('Page.navigate', { url: url('bravo') })
+console.log('hud', await enterGame(a), await enterGame(b))
+console.log('online', await waitFor(a, ONLINE, 30000), await waitFor(b, ONLINE, 30000))
+await sleep(3000)
 console.log('A0', await a.ev(READ)); console.log('B0', await b.ev(READ))
 // B 가 앞으로 걸으면 A 에서 B 의 원격 아바타가 움직여야 한다
 await b.key('KeyW', 87, 2500); await sleep(800)
