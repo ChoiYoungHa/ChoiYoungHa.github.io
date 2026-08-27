@@ -205,6 +205,8 @@ try {
     await clickButton(`/구매/.test(x.textContent) && !x.disabled`); await sleep(500)
     const afterBuy = await readState(); const mesoAfter = coin(afterBuy.overlayText)
     await mark('S05', s05ok && mesoBefore - mesoAfter === 900, `meso ${mesoBefore}→${mesoAfter} (buttons=${JSON.stringify(shopState.buttons.slice(0, 6))})`)
+    { await tap('Escape' in KEY ? 'Escape' : 'Enter'); await sleep(400); const st = await readState(); result.shopLeave = { overlay: (st.overlayText ?? '').slice(0, 40), hasShop: /상점|나가기/.test(st.overlayText ?? '') }; process.stdout.write(`S05-leave ${JSON.stringify(result.shopLeave)}
+`) }
     // S06 공원
     await walkTo({ x: -30, z: 12 }, { tol: 1.5, run: true, timeoutMs: 90000 }); await walkTo({ x: PARK.x + 34, z: PARK.z }, { tol: 1.5, run: true, timeoutMs: 90000 }); await sleep(300); await shot('s06-park')
     const s06 = await waitFor((s) => s.pigs.length > 0, 8000); await mark('S06', !!s06 && s06.pigs.length <= 10, `pigs=${s06?.pigs.length ?? 0} banner=${(s06?.overlayText ?? '').slice(0, 60)}`)
@@ -243,8 +245,6 @@ try {
   }
 } catch (error) {
   result.error = String(error?.stack ?? error); process.stdout.write(`ERROR ${result.error}\n`)
-    { await tap('Escape' in KEY ? 'Escape' : 'Enter'); await sleep(400); const st = await readState(); result.shopLeave = { overlay: (st.overlayText ?? '').slice(0, 40), hasShop: /상점|나가기/.test(st.overlayText ?? '') }; process.stdout.write(`S05-leave ${JSON.stringify(result.shopLeave)}
-`) }
   try { await shot('error') } catch {}
   result.errors ??= consoleErrors(cdp)
 } finally {
