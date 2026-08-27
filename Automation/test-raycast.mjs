@@ -172,6 +172,7 @@ describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기�
     // lookX/lookY 는 포인터 delta 라 키 바인딩이 없다 → 바인딩은 12개
     assert.deepEqual(Object.keys(DEFAULT_BINDINGS).sort(), [
       'attack',
+      'cancel', // 2026-08-27 Esc: 상점/인벤토리 닫기
       'confirm',
       'interact',
       'inventory',
@@ -187,7 +188,7 @@ describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기�
     const src = readFileSync(join(PLAYER, 'input.ts'), 'utf8').replace(/\r\n/g, '\n') // R44-C CRLF
     const union = src.match(/export type Action =([\s\S]*?)\n\n/)?.[1] ?? ''
     const actions = [...union.matchAll(/'([a-zA-Z]+)'/g)].map((m) => m[1])
-    assert.equal(actions.length, 14, `Action 개수=${actions.length}`)
+    assert.equal(actions.length, 15, `Action 개수=${actions.length}`) // +cancel (Esc)
     assert.deepEqual(actions.sort(), [
       'attack',
       'confirm',

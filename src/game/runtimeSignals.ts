@@ -1,6 +1,7 @@
 let playerJumpRequested = false
 let playerAttackSeq = 0
 let playerSkillSeq = 0
+let playerTeleport: { x: number; z: number; yaw?: number } | null = null
 let cameraIntroElapsedMs: number | null = null
 
 export function requestPlayerJump(): void {
@@ -24,6 +25,17 @@ export function readPlayerSkillSeq(): number {
   return playerSkillSeq
 }
 
+/** 워프/포탈: 세션 teleport 이벤트 → 컨트롤러가 다음 프레임에 위치를 옮긴다. */
+export function requestPlayerTeleport(to: { x: number; z: number; yaw?: number }): void {
+  playerTeleport = { ...to }
+}
+
+export function consumePlayerTeleport(): { x: number; z: number; yaw?: number } | null {
+  const t = playerTeleport
+  playerTeleport = null
+  return t
+}
+
 export function consumePlayerJump(): boolean {
   const requested = playerJumpRequested
   playerJumpRequested = false
@@ -41,6 +53,7 @@ export function readCameraIntroElapsedMs(): number | null {
 export function resetGameRuntimeSignals(): void {
   playerAttackSeq = 0
   playerSkillSeq = 0
+  playerTeleport = null
   playerJumpRequested = false
   cameraIntroElapsedMs = null
 }

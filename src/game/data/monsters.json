@@ -6,13 +6,20 @@
     "hp": 65,
     "attack": 8,
     "speed": 1.8,
-    "detectionRadius": 6,
+    "detectionRadius": 12,
     "respawnSeconds": 8,
     "exp": 18,
     "drops": {
-      "meso": { "min": 10, "max": 30 },
+      "meso": {
+        "min": 10,
+        "max": 30
+      },
       "items": [
-        { "itemId": "head.pig-ribbon", "chance": 0.15, "quantity": 1 }
+        {
+          "itemId": "head.pig-ribbon",
+          "chance": 0.15,
+          "quantity": 1
+        }
       ]
     }
   }

@@ -81,6 +81,7 @@ export type SessionEventType =
   | 'clear-monster-aggro'
   | 'skill-rejected'
   | 'fx-spawn'
+  | 'teleport'
   | 'reward'
   | 'tutorial'
 
@@ -98,6 +99,8 @@ export interface SessionEvent {
   damage?: number
   critical?: boolean
   position?: SessionPosition
+  /** teleport 이벤트: 컨트롤러가 옮겨갈 좌표(+yaw). */
+  warpTo?: { x: number; z: number; yaw?: number }
   previousLevel?: number
   currentLevel?: number
   reason?: string
@@ -202,6 +205,11 @@ const NPCS = (placementData.npcs as unknown as PlacementNpc[]).map((npc) => ({
   position: { x: npc.position[0], z: npc.position[1] },
 }))
 const GATE = zoneData.triggers.villageGate as GateTrigger
+/** 워프 트리거(2026-08-27 영하님): 길 끝 큰나무 앞 → 돼지의 공원, 공원 동쪽 포탈 → 버섯마을. */
+export const WARPS = {
+  heroTreeToPark: { center: { x: 35, z: -86 }, radius: 4.5, to: { x: -50, z: 10, yaw: Math.PI / 2 } },
+  parkToVillage: { center: { x: -48, z: -4 }, radius: 2.5, to: { x: 0, z: 27, yaw: 0 } },
+} as const
 const ITEMS = itemData as unknown as ItemDefinition[]
 const JOBS = jobData as unknown as Record<JobId, JobDefinition>
 const SKILLS = skillData as unknown as Record<SkillId, SkillDefinition>
@@ -227,6 +235,8 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let purchased = false
   let inventoryOpen = false
   let shopOpen = false
+  let warpInside: keyof typeof WARPS | null = null
+  let warpCooldownUntilMs = 0
   let selectedShopItemId: string | null = null
   let aiRng = mulberry32(options.seed ^ 0x6030)
   let combatRng = mulberry32(options.seed ^ 0x6031)
@@ -481,6 +491,19 @@ export function createSession(options: CreateSessionOptions): GameSession {
           }
         }
 
+        // 워프 트리거: 원 안에 들어오면 1회 teleport 이벤트. 도착 직후 재발동을 막는 쿨다운·이탈 판정.
+        if (nowMs >= warpCooldownUntilMs) {
+          let hit: keyof typeof WARPS | null = null
+          for (const key of Object.keys(WARPS) as Array<keyof typeof WARPS>) {
+            const warp = WARPS[key]
+            if (Math.hypot(playerPos.x - warp.center.x, playerPos.z - warp.center.z) <= warp.radius) hit = key
+          }
+          if (hit !== null && warpInside !== hit) {
+            warpInside = hit
+            warpCooldownUntilMs = nowMs + 1_500
+            emit(events, { type: 'teleport', warpTo: { ...WARPS[hit].to } })
+          } else if (hit === null) warpInside = null
+        }
         const inside = inGate(playerPos)
         if (inside && !gateInside) {
           banner = { zone: 'village', startedAtMs: nowMs }
@@ -562,8 +585,8 @@ export function createSession(options: CreateSessionOptions): GameSession {
         }
       }
 
-      const inPark = zoneState.zone === 'park'
-      if (inPark && !dialogueOpenAtTickStart && activeDialogue === null) {
+      // 2026-08-27 영하님: 허공에서도 공격/스킬 FX 가 나와야 한다 → 공원 밖에서도 전투 블록을 돈다(대상은 비어 있음).
+      if (!dialogueOpenAtTickStart && activeDialogue === null && game.scene !== 'title' && game.scene !== 'create') {
         const burnHits: CombatHit[] = []
         burns = burns.flatMap((burn) => {
           let nextTickAtMs = burn.nextTickAtMs

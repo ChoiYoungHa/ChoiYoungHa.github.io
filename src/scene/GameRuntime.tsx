@@ -35,6 +35,7 @@ import { createSkillFxMaterial } from '../shaders/skillFx.ts'
 import { hashSeed, scatter } from './scatter/seededRandom.ts'
 import { createKeyboardInput } from '../player/input.ts'
 import { readPlayerFrame } from '../store/playerBridge.ts'
+import { WARPS } from '../game/session.ts'
 import { createGameProjector, installGameProjector } from '../systems/ui/projector.ts'
 import { sampleHeight } from './terrain/heightmap.ts'
 import { LevelUpRing } from './fx/LevelUpRing.tsx'
@@ -135,6 +136,21 @@ function makeTerracePoints(): TerracePoint[] {
     }
   }
   return result
+}
+
+/** 워프 포탈 링(큰나무 앞 → 공원, 공원 → 마을). 세션 WARPS 좌표와 동일. */
+function WarpPortals() {
+  const rings = useMemo(() => Object.entries(WARPS).map(([id, warp]) => ({ id, x: warp.center.x, z: warp.center.z, y: sampleHeight(warp.center.x, warp.center.z) + 0.15, r: warp.radius })), [])
+  return (
+    <group name="m6-warp-portals">
+      {rings.map((ring) => (
+        <mesh key={ring.id} name={`warp-${ring.id}`} position={[ring.x, ring.y, ring.z]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[Math.max(0.6, ring.r - 0.6), ring.r, 48]} />
+          <meshBasicMaterial color="#7fd7ff" transparent opacity={0.75} toneMapped={false} />
+        </mesh>
+      ))}
+    </group>
+  )
 }
 
 export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
@@ -333,6 +349,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
         />
       ))}
       <instancedMesh ref={dropRef} args={[dropGeometry, dropMaterial, MAX_DROPS]} frustumCulled={false} />
+      <WarpPortals />
       <SkillFx session={bootstrap.session} material={fxMaterial} />
       <LevelUpRing session={bootstrap.session} material={fxMaterial} />
     </group>

@@ -11,7 +11,7 @@ import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
 import { PlayerAvatar, type PlayerAvatarFrame } from './Player'
 import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
-import { consumePlayerJump, readPlayerAttackSeq, readPlayerSkillSeq } from '../game/runtimeSignals'
+import { consumePlayerJump, consumePlayerTeleport, readPlayerAttackSeq, readPlayerSkillSeq } from '../game/runtimeSignals'
 
 /**
  * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
@@ -96,6 +96,10 @@ export function Player() {
     const input = source ? source() : keys.read(yawRef.current)
     if (source) yawRef.current = input.yaw
 
+    if (GAME_INPUT_ENABLED) {
+      const warp = consumePlayerTeleport()
+      if (warp !== null) { controller.teleport(warp.x, warp.z); if (warp.yaw !== undefined) yawRef.current = warp.yaw }
+    }
     const jumpInput = GAME_INPUT_ENABLED
       ? { ...input, jump: consumePlayerJump() }
       : input

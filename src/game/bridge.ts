@@ -1,7 +1,7 @@
 import type { GameplayAction } from '../player/input.ts'
 import { setCameraDistanceMultiplier } from './cameraDistance.ts'
 import { CAMERA_INTRO_DURATION_MS } from './cameraIntro.ts'
-import { requestPlayerAttack, requestPlayerJump, requestPlayerSkill, resetGameRuntimeSignals, setCameraIntroElapsedMs } from './runtimeSignals.ts'
+import { requestPlayerAttack, requestPlayerJump, requestPlayerSkill, requestPlayerTeleport, resetGameRuntimeSignals, setCameraIntroElapsedMs } from './runtimeSignals.ts'
 import type { GameSession, SessionInputs, SessionPosition, SessionTickResult } from './session.ts'
 import { easeDistance } from './world/cameraEase.ts'
 
@@ -50,6 +50,7 @@ export function createGameFrameBridge(session: GameSession, input: EdgeInput) {
         playerYaw: frame.playerYaw,
         inputs: { move: frame.move, run: frame.run },
       })
+      for (const event of result.events) if (event.type === 'teleport' && event.warpTo !== undefined) requestPlayerTeleport(event.warpTo)
       if (cameraEaseStartedAtMs === null && result.events.some(({ type }) => type === 'camera-ease-start')) {
         cameraEaseStartedAtMs = result.snapshot.nowMs
       }

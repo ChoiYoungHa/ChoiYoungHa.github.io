@@ -351,3 +351,16 @@ test('소비품 use-item 은 HP 를 회복하고 재고를 1 줄인다', async (
   assert.equal(after.hp, 150)
   assert.equal(inventoryQuantity(after.inventory, potion.id), 1)
 })
+
+test('큰나무 앞 워프 트리거에 들어가면 teleport 이벤트(공원 좌표)가 1회 나온다', async () => {
+  const { createSession, WARPS } = await load('src/game/session.ts')
+  const session = createSession({ seed: 3, ipMode: 'own', initialScene: 'henesys' })
+  const at = (x, z) => session.tick({ dtMs: 16, playerPos: { x, z }, playerYaw: 0, inputs: {} })
+  at(20, -60)
+  const r1 = at(WARPS.heroTreeToPark.center.x, WARPS.heroTreeToPark.center.z)
+  const tp = r1.events.filter((e) => e.type === 'teleport')
+  assert.equal(tp.length, 1)
+  assert.deepEqual(tp[0].warpTo, WARPS.heroTreeToPark.to)
+  const r2 = at(WARPS.heroTreeToPark.center.x, WARPS.heroTreeToPark.center.z)
+  assert.equal(r2.events.filter((e) => e.type === 'teleport').length, 0) // 머물러도 재발동 없음
+})

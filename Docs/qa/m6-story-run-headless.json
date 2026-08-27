@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "seed": 45,
-  "gameTimeSeconds": 102.391,
+  "gameTimeSeconds": 99.007,
   "movementSpeedMetersPerSecond": 3.2,
-  "distanceMeters": 399.87,
-  "ticks": 712,
+  "distanceMeters": 375.346,
+  "ticks": 706,
   "kills": 10,
   "sceneTrace": [
     "title",
@@ -25,8 +25,8 @@
     "camera-ease-start": 1,
     "dialogue-open": 4,
     "dialogue-close": 4,
-    "fx-spawn": 42,
-    "floater": 58,
+    "fx-spawn": 37,
+    "floater": 65,
     "skill-rejected": 11,
     "level-up": 2,
     "drop-spawn": 11,
@@ -41,7 +41,7 @@
     "exp": 220,
     "questStatus": "done",
     "questKillCount": 10,
-    "hp": 188,
+    "hp": 196,
     "mp": 12
   }
 }

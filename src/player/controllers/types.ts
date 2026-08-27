@@ -27,6 +27,8 @@ export interface StepResult {
 export interface KinematicController {
   step(input: InputState, dt: number): StepResult
   readonly position: Vec3
+  /** 워프: 즉시 (x,z) 로 옮기고 지면에 앉힌다. */
+  teleport(x: number, z: number): void
 }
 
 /** (x,z) 의 지면 높이. 지면이 없으면 null. */

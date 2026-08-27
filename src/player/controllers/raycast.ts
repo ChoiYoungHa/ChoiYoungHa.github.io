@@ -151,6 +151,13 @@ export function createRaycastController(
     get position() {
       return position
     },
+    teleport(x: number, z: number) {
+      position.x = x
+      position.z = z
+      const ground = sampleGround(x, z)
+      if (ground !== null) position.y = ground + p.eyeOffset
+      velY = 0
+    },
   }
 }
 
