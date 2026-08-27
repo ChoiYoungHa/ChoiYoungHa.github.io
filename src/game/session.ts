@@ -124,6 +124,8 @@ export interface SessionSnapshot {
   activeDialogue: DialogueState | null
   purchased: boolean
   inventoryOpen: boolean
+  /** 상점 패널 표시 여부. 씬은 앞으로만 진행하므로 '나가기'는 패널을 닫는 것이다(마야와 다시 대화하면 열림). */
+  shopOpen: boolean
   selectedShopItemId: string | null
   spawner: SpawnerState
   drops: readonly DropEntity[]
@@ -224,6 +226,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let activeDialogue: DialogueState | null = null
   let purchased = false
   let inventoryOpen = false
+  let shopOpen = false
   let selectedShopItemId: string | null = null
   let aiRng = mulberry32(options.seed ^ 0x6030)
   let combatRng = mulberry32(options.seed ^ 0x6031)
@@ -267,6 +270,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
     activeDialogue,
     purchased,
     inventoryOpen,
+    shopOpen,
     selectedShopItemId,
     spawner,
     drops,
@@ -503,6 +507,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
           emit(events, { type: 'dialogue-close', dialogueId })
           if (dialogueId === 'maya') {
             changeScene('shop', events)
+            shopOpen = true
             shopConfirmGuard = true
           }
           if (dialogueId === 'stan' && game.quest.status === 'done') {
@@ -538,7 +543,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
       }
       if (inputs.cancel) {
         if (inventoryOpen) inventoryOpen = false
-        else if (game.scene === 'shop') changeScene('henesys', events)
+        else if (shopOpen) shopOpen = false
       }
       if (inputs.selectedItemId !== undefined) selectedShopItemId = inputs.selectedItemId
       // 상점 진입 직후 첫 confirm(대화 마지막 Enter 연타)은 삼킨다 — 입력이 없는 틱에 가드를 풀면 그다음 Enter가 곧장 구매로 샜다(D3 재발, 2026-08-27 실빌드).

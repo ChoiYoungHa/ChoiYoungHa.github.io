@@ -76,7 +76,7 @@ async function shot(name) {
   shots.push({ name, file, bytes: r.data.length })
   process.stdout.write(`shot ${name} ${Math.round(r.data.length * 0.75 / 1024)}KB\n`)
 }
-const KEY = { KeyW: ['w', 87], KeyS: ['s', 83], KeyA: ['a', 65], KeyD: ['d', 68], ShiftLeft: ['Shift', 16], Space: [' ', 32], KeyF: ['f', 70], Digit1: ['1', 49], Digit2: ['2', 50], KeyI: ['i', 73], Enter: ['Enter', 13] }
+const KEY = { Escape: ['Escape', 27], KeyW: ['w', 87], KeyS: ['s', 83], KeyA: ['a', 65], KeyD: ['d', 68], ShiftLeft: ['Shift', 16], Space: [' ', 32], KeyF: ['f', 70], Digit1: ['1', 49], Digit2: ['2', 50], KeyI: ['i', 73], Enter: ['Enter', 13] }
 const down = new Set()
 async function keyDown(code) { const [key, vk] = KEY[code]; down.add(code); await cdp.send('Input.dispatchKeyEvent', { type: key.length === 1 ? 'keyDown' : 'rawKeyDown', code, key, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk, modifiers: down.has('ShiftLeft') ? 8 : 0 }) }
 async function keyUp(code) { const [key, vk] = KEY[code]; down.delete(code); await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', code, key, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }) }
@@ -243,6 +243,8 @@ try {
   }
 } catch (error) {
   result.error = String(error?.stack ?? error); process.stdout.write(`ERROR ${result.error}\n`)
+    { await tap('Escape' in KEY ? 'Escape' : 'Enter'); await sleep(400); const st = await readState(); result.shopLeave = { overlay: (st.overlayText ?? '').slice(0, 40), hasShop: /상점|나가기/.test(st.overlayText ?? '') }; process.stdout.write(`S05-leave ${JSON.stringify(result.shopLeave)}
+`) }
   try { await shot('error') } catch {}
   result.errors ??= consoleErrors(cdp)
 } finally {

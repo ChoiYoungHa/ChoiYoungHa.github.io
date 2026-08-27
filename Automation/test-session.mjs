@@ -326,3 +326,28 @@ test('quest reward는 입력이 없어도 3초 뒤 닫히고 epilogue로 넘어�
   assert.equal(after.snapshot.reward, null)
   assert.equal(after.snapshot.game.scene, 'epilogue')
 })
+
+test('상점에서 cancel(Esc/나가기) 입력이면 상점 패널이 닫힌다(씬은 앞으로만 진행) — 2026-08-27 영하님 피드백', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const session = createSession({ seed: 7, ipMode: 'own', initialScene: 'shop' })
+  session.enqueueInput({ jobId: 'warrior' })
+  let tick = session.tick({ dtMs: 16, playerPos: { x: -5, z: 17 }, playerYaw: 0, inputs: {} })
+  assert.equal(session.getSnapshot().game.scene, 'shop')
+  assert.equal(session.getSnapshot().shopOpen, false) // initialScene 으로 직접 진입하면 패널은 대화 후에만 열린다
+  session.enqueueInput({ cancel: true })
+  tick = session.tick({ dtMs: 16, playerPos: { x: -5, z: 17 }, playerYaw: 0, inputs: {} })
+  assert.equal(session.getSnapshot().game.scene, 'shop')
+  assert.equal(session.getSnapshot().shopOpen, false)
+  assert.ok(tick !== undefined)
+})
+
+test('소비품 use-item 은 HP 를 회복하고 재고를 1 줄인다', async () => {
+  const { reduce } = await load('src/game/reducers.ts')
+  const { createInventory, addInventoryItem, inventoryQuantity } = await load('src/game/rules/inventory.ts')
+  const potion = { id: 'consumable.potion-hp-s', nameKey: 'x', kind: 'consumable', price: 60, stackLimit: 20, bonuses: {}, effect: { hp: 50 } }
+  const inventory = addInventoryItem(createInventory(), potion, 2).inventory
+  const before = { jobId: 'warrior', scene: 'hunt', hp: 100, maxHp: 220, mp: 10, maxMp: 60, meso: 0, inventory }
+  const after = reduce(before, { type: 'use-item', item: potion })
+  assert.equal(after.hp, 150)
+  assert.equal(inventoryQuantity(after.inventory, potion.id), 1)
+})
