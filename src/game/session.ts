@@ -570,7 +570,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
       }
       if (inputs.selectedItemId !== undefined) selectedShopItemId = inputs.selectedItemId
       // 상점 진입 직후 첫 confirm(대화 마지막 Enter 연타)은 삼킨다 — 입력이 없는 틱에 가드를 풀면 그다음 Enter가 곧장 구매로 샜다(D3 재발, 2026-08-27 실빌드).
-      if (game.scene === 'shop' && inputs.confirm && !dialogueHandled && shopConfirmGuard) {
+      if (game.scene === 'shop' && inputs.confirm && !dialogueHandled && shopConfirmGuard && inputs.selectedItemId === undefined) {
         shopConfirmGuard = false
       } else if (game.scene === 'shop' && inputs.confirm && !dialogueHandled) {
         // 명시적으로 고른 품목만 산다. 직업 기본 무기 자동 선택(fallback)은 의도 없는 구매의 원인이라 제거.

@@ -3,6 +3,7 @@ import type { QuestStatus } from '../../game/rules/quest.ts'
 import type { ZoneId } from '../../game/world/zones.ts'
 import { barPercent, cooldownPercent, HUD_ICON_URLS, hudLabels, hudPresentation } from './hudLogic.ts'
 import { HUD_TOKENS } from './hudTokens.ts'
+import { MiniMap, type MiniMapProps } from './MiniMap.tsx'
 
 export interface HudStats {
   level: number
@@ -36,6 +37,7 @@ export interface GameHudProps {
   meso: number
   ipMode: IpMode
   quickSlots?: readonly HudQuickSlot[]
+  minimap?: MiniMapProps
 }
 
 const DEFAULT_SLOTS: readonly HudQuickSlot[] = [
@@ -45,23 +47,25 @@ const DEFAULT_SLOTS: readonly HudQuickSlot[] = [
   { slot: 4, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
 ]
 
-function StatBar({ label, value, maximum, color }: {
+function StatBar({ label, value, maximum, color, text }: {
   label: string
   value: number
   maximum: number
   color: string
+  text?: string
 }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '30px 1fr', gap: 6, alignItems: 'center', fontSize: 10 }}>
-      <span style={{ color: HUD_TOKENS.colors.muted }}>{label}</span>
-      <div style={{ height: 7, overflow: 'hidden', borderRadius: 4, background: 'rgba(255,255,255,0.12)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: 6, alignItems: 'center', fontSize: 10 }}>
+      <span style={{ color: HUD_TOKENS.colors.muted, fontWeight: 700 }}>{label}</span>
+      <div style={{ position: 'relative', height: text === undefined ? 7 : 14, overflow: 'hidden', borderRadius: 4, background: 'rgba(255,255,255,0.12)' }}>
         <div style={{ width: `${barPercent(value, maximum)}%`, height: '100%', background: color }} />
+        {text !== undefined && <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', fontSize: 10, fontWeight: 700, color: '#fff', textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>{text}</span>}
       </div>
     </div>
   )
 }
 
-export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickSlots = DEFAULT_SLOTS }: GameHudProps) {
+export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickSlots = DEFAULT_SLOTS, minimap }: GameHudProps) {
   const visibility = hudPresentation({ dialogueOpen, zone, questStatus: quest.status })
   const labels = hudLabels(ipMode, quest.killCount)
   const panelBase = {
@@ -76,18 +80,20 @@ export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickS
   return (
     <div aria-label="게임 HUD" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', fontFamily: HUD_TOKENS.fontFamily }}>
       {visibility.showStats && (
-        <section aria-label="캐릭터 상태" style={{ ...panelBase, position: 'absolute', ...HUD_TOKENS.layout.stats, padding: '8px 12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5, fontSize: 12, fontWeight: 700 }}>
-            <span>Lv.{stats.level} {stats.name}</span>
-            <span style={{ color: HUD_TOKENS.colors.muted, fontSize: 10 }}>{Math.max(0, Math.round(stats.hp))}/{stats.maxHp}</span>
+        <section aria-label="캐릭터 상태" style={{ ...panelBase, position: 'absolute', left: HUD_TOKENS.layout.stats.left, bottom: HUD_TOKENS.layout.stats.bottom, width: HUD_TOKENS.layout.stats.width, transform: 'translateX(-50%)', padding: '8px 12px', boxSizing: 'border-box' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'baseline', marginBottom: 6, fontSize: 13, fontWeight: 700 }}>
+            <span style={{ color: '#e8c37a' }}>Lv.{stats.level}</span>
+            <span>{stats.name}</span>
           </div>
           <div style={{ display: 'grid', gap: 5 }}>
-            <StatBar label="HP" value={stats.hp} maximum={stats.maxHp} color={HUD_TOKENS.colors.hp} />
-            <StatBar label="MP" value={stats.mp} maximum={stats.maxMp} color={HUD_TOKENS.colors.mp} />
-            <StatBar label="EXP" value={stats.exp} maximum={stats.expRequired} color={HUD_TOKENS.colors.exp} />
+            <StatBar label="HP" value={stats.hp} maximum={stats.maxHp} color={HUD_TOKENS.colors.hp} text={`${Math.max(0, Math.round(stats.hp))} / ${stats.maxHp}`} />
+            <StatBar label="MP" value={stats.mp} maximum={stats.maxMp} color={HUD_TOKENS.colors.mp} text={`${Math.max(0, Math.round(stats.mp))} / ${stats.maxMp}`} />
+            <StatBar label="EXP" value={stats.exp} maximum={stats.expRequired} color={HUD_TOKENS.colors.exp} text={`${Math.floor(barPercent(stats.exp, stats.expRequired))}%`} />
           </div>
         </section>
       )}
+
+      {minimap !== undefined && !dialogueOpen && <MiniMap {...minimap} />}
 
       {visibility.showQuestTracker && (
         <section aria-label="퀘스트 추적" style={{ ...panelBase, position: 'absolute', ...HUD_TOKENS.layout.quest, padding: '10px 14px' }}>

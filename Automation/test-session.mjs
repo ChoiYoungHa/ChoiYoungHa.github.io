@@ -160,7 +160,8 @@ test('gate, NPC dialogue, quest acceptance, and shop purchase share one ordered 
   const shopOpened = tick(maya, 0, { confirm: true })
   assert.equal(shopOpened.snapshot.game.scene, 'shop')
 
-  const guarded = tick(maya, 0, { confirm: true, selectedItemId: 'weapon.hunting-bow' })
+  // 2026-08-27: 품목 선택 없는 Enter(대화 연타)만 삼킨다 — 구매 버튼(selectedItemId 동반)은 즉시 산다
+  const guarded = tick(maya, 0, { confirm: true })
   assert.equal(guarded.snapshot.game.meso, 1500)
   assert.equal(guarded.events.some(({ type }) => type === 'purchase'), false)
   const purchased = tick(maya, 0, { confirm: true, selectedItemId: 'weapon.hunting-bow' })
@@ -363,4 +364,17 @@ test('큰나무 앞 워프 트리거에 들어가면 teleport 이벤트(공원 �
   assert.deepEqual(tp[0].warpTo, WARPS.heroTreeToPark.to)
   const r2 = at(WARPS.heroTreeToPark.center.x, WARPS.heroTreeToPark.center.z)
   assert.equal(r2.events.filter((e) => e.type === 'teleport').length, 0) // 머물러도 재발동 없음
+})
+
+test('상점 진입 직후라도 품목을 고른 confirm(구매 버튼)은 삼키지 않고 산다 — 포션 구매 (2026-08-27)', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const session = createSession({ seed: 11, ipMode: 'own', initialScene: 'shop' })
+  const tick = () => session.tick({ dtMs: 16, playerPos: { x: -5, z: 17 }, playerYaw: 0, inputs: {} })
+  tick()
+  const before = session.getSnapshot().game.meso
+  session.enqueueInput({ confirm: true, selectedItemId: 'consumable.potion-hp-s' })
+  tick()
+  const after = session.getSnapshot().game
+  assert.equal(after.meso, before - 60)
+  assert.ok(after.inventory.slots.some((s) => s?.itemId === 'consumable.potion-hp-s'))
 })

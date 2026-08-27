@@ -62,7 +62,7 @@ test('동적 퀘스트·재화 문구는 두 ipMode 문자열 표를 경유한�
 
 test('HUD 토큰은 콘티 §5의 1280×720 위치·크기·색을 고정한다', async () => {
   const { HUD_TOKENS } = await load('src/systems/ui/hudTokens.ts')
-  assert.deepEqual(HUD_TOKENS.layout.stats, { left: 16, top: 16, width: 240, height: 92 })
+  assert.deepEqual(HUD_TOKENS.layout.stats, { left: '50%', bottom: 16, width: 320, height: 104 }) // 2026-08-27 하단 중앙
   assert.deepEqual(HUD_TOKENS.layout.quest, { right: 16, top: 16, width: 220, height: 64 })
   assert.equal(HUD_TOKENS.layout.quickSlotSize, 52)
   assert.equal(HUD_TOKENS.colors.panel, 'rgba(18,20,26,0.78)')

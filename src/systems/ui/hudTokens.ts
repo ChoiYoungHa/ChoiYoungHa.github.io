@@ -1,7 +1,8 @@
 export const HUD_TOKENS = {
   fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   layout: {
-    stats: { left: 16, top: 16, width: 240, height: 92 },
+    stats: { left: '50%', bottom: 16, width: 320, height: 104 }, // 2026-08-27 영하님: 하단 중앙
+    portrait: { bottom: 16, size: 72 },
     quest: { right: 16, top: 16, width: 220, height: 64 },
     quick: { left: 16, bottom: 16 },
     meso: { right: 16, bottom: 16 },

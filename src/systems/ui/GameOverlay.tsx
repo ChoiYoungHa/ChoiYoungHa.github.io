@@ -24,6 +24,16 @@ import { MobHpBar } from './MobHpBar.tsx'
 import { Portrait } from './Portrait.tsx'
 import { RewardPopup } from './RewardPopup.tsx'
 import { ShopPanel } from './ShopPanel.tsx'
+import placementData from '../../data/placement.json' with { type: 'json' }
+import { WARPS } from '../../game/session.ts'
+import { t, type IpMode } from '../../game/i18n.ts'
+const MINIMAP_NPCS = (placementData.npcs as unknown as Array<{ id: string; position: [number, number] }>).map((n) => ({ id: n.id, x: n.position[0], z: n.position[1], labelKey: n.id === 'stan' ? 's04.elder.name' : 's05.maya.name' }))
+const MINIMAP_WARPS = Object.entries(WARPS).map(([id, w]) => ({ id, x: w.center.x, z: w.center.z }))
+function zoneDisplayName(zone: string, ipMode: IpMode): string {
+  if (zone === 'park') return t('s06.name', ipMode)
+  if (zone === 'village') return t('s03.location', ipMode)
+  return '숲'
+}
 import rawItems from '../../game/data/items.json' with { type: 'json' }
 const ITEM_KIND_BY_ID: Readonly<Record<string, string>> = Object.fromEntries((rawItems as Array<{ id: string; kind: string }>).map((item) => [item.id, item.kind]))
 import { TitleScreen } from './TitleScreen.tsx'
@@ -160,9 +170,9 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     <div data-game-overlay="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {overlay}
       {scene === 'forest' && <TutorialHints inputEvents={snapshot.tutorialEvents} narrationLineIndex={snapshot.nowMs < 2_400 ? 0 : snapshot.nowMs < 4_800 ? 1 : null} ipMode={game.ipMode} />}
-      {hudVisible && <GameHud {...hud} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} />}
+      {hudVisible && <GameHud {...hud} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} minimap={{ zoneName: zoneDisplayName(snapshot.zone ?? 'forest', game.ipMode), player: { x: snapshot.playerPos.x, z: snapshot.playerPos.z, yaw: snapshot.playerYaw }, npcs: MINIMAP_NPCS.map((n) => ({ ...n, label: t(n.labelKey, game.ipMode) })), warps: MINIMAP_WARPS }} />}
       {hudVisible && snapshot.activeDialogue === null && (
-        <div aria-label="플레이어 초상" style={{ position: 'absolute', left: HUD_TOKENS.layout.stats.left + HUD_TOKENS.layout.stats.width + 8, top: HUD_TOKENS.layout.stats.top, width: 72, height: 72, overflow: 'hidden', border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, background: HUD_TOKENS.colors.panel, boxShadow: '0 6px 24px rgba(0,0,0,0.28)' }}>
+        <div aria-label="플레이어 초상" style={{ position: 'absolute', left: `calc(50% - ${HUD_TOKENS.layout.stats.width / 2 + HUD_TOKENS.layout.portrait.size + 8}px)`, bottom: HUD_TOKENS.layout.portrait.bottom, width: HUD_TOKENS.layout.portrait.size, height: HUD_TOKENS.layout.portrait.size, borderRadius: 8, overflow: 'hidden', border: `1px solid ${HUD_TOKENS.colors.border}`, background: HUD_TOKENS.colors.panel }}>
           <Portrait selection={portrait} imageUrl="/ui/portraits/player-warrior.png" size={72} />
         </div>
       )}
