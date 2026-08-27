@@ -92,7 +92,7 @@ const READ_STATE = `(() => {
     if (obj.isInstancedMesh && obj.parent?.name === 'm6-game-runtime') {
       const cap = obj.instanceMatrix.count; const list = []
       for (let i = 0; i < obj.count; i++) { const e = obj.instanceMatrix.array; const k = i * 16; list.push({ x: e[k + 12], y: e[k + 13], z: e[k + 14], s: Math.hypot(e[k], e[k + 1], e[k + 2]) }) }
-      if (obj.geometry?.type === 'PlaneGeometry') out.drops = list; else if (cap === 10) out.pigs = list; else out.terrace = { cap, count: obj.count }
+      if (/^drops-/.test(obj.name)) out.drops = out.drops.concat(list); else if (cap === 10) out.pigs = list; else if (obj.geometry?.type !== 'PlaneGeometry') out.terrace = { cap, count: obj.count }
     }
   })
   const q = (sel) => document.querySelector(sel)?.textContent ?? null

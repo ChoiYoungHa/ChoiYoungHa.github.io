@@ -44,7 +44,7 @@ export const TERRAIN_TILE_METERS = 4
  * 2차: mix 0.35·luma 0.9 → 채도 34.1~35.7(PASS)·hue 43.3·휘도 76.2. hue 를 45° 위로 올리려 곱색 기준색을 팔레트보다 따뜻한 #5C5A28(hue 57°)로.
  * 3차: #5C5A28·0.35·0.85 → S1/S3 근경 채도 34.6/36.3·hue 44.6/44.9·휘도 75.1/75.4 — 경계 0.4 미달이라 기준색 hue 60°·mix 0.3·luma 0.83 으로 4차.
  */
-export const TERRAIN_TEXTURE_TINT = { color: '#5f5f26', paletteMix: 0.3, lumaScale: 0.83 } as const
+export const TERRAIN_TEXTURE_TINT = { color: '#5f5f26', paletteMix: 0.1, lumaScale: 0.95 } as const // 2026-08-28: 코덱스 시트 F 타일(tile-grass/dirt-path)로 교체 — 타일 자체 색을 살리려 틴트 약화
 
 /** 청크 하나의 지오메트리. 정점 y 를 heightmap 으로 밀어올리고 길 마스크를 정점 속성으로 넣는다. */
 function buildChunkGeometry(originX: number, originZ: number, withPathMask: boolean): PlaneGeometry {

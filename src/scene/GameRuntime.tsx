@@ -2,12 +2,9 @@ import { useGLTF, useTexture } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
 import {
-  Color,
   DynamicDrawUsage,
   InstancedBufferAttribute,
-  MeshBasicMaterial,
   Object3D as Transform,
-  PlaneGeometry,
   SRGBColorSpace,
   Vector3,
   type BufferGeometry,
@@ -40,6 +37,7 @@ import { createGameProjector, installGameProjector } from '../systems/ui/project
 import { sampleHeight } from './terrain/heightmap.ts'
 import { LevelUpRing } from './fx/LevelUpRing.tsx'
 import { SkillFx } from './fx/SkillFx.tsx'
+import { bakeGlb } from './util/bakeGlb.ts'
 
 const NPC_SCALE = 0.01
 const PIG_SCALE = 0.005
@@ -52,7 +50,10 @@ const PIG_TINT = '#f2a7bd'
 const PIG_TINT_GAIN = 3.0
 const MAX_PIGS = 10
 const MAX_DROPS = 24
-const DROP_COLORS = { meso: new Color('#ffd35a'), item: new Color('#ff7eb6') } as const
+/** 2026-08-28 — 드롭은 코덱스 시트 A 3D(`3d-codex/inventory-loot`): 메소 더미(decimate 4K tris)·돼지 리본. 바닥 원점, 제자리 회전. */
+const DROP_MODEL_URLS = { meso: '/models/loot/itm-meso.glb', item: '/models/loot/itm-pigribbon.glb' } as const
+const DROP_SCALE = { meso: 3.5, item: 2.0 } as const
+const DROP_SPIN_RAD_PER_SEC = 1.5
 
 interface RuntimeAsset {
   geometry: BufferGeometry
@@ -160,10 +161,12 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
   const pig = useGLTF('/models/mob_pig.glb')
   const rocks = useGLTF('/models/props_rocks.glb')
   const stonewall = useGLTF('/models/prop_stonewall.glb')
-  const dropTexture = useTexture('/ui/items/itm-meso.png')
+  const mesoGlb = useGLTF(DROP_MODEL_URLS.meso)
+  const ribbonGlb = useGLTF(DROP_MODEL_URLS.item)
   const fxTexture = useTexture('/textures/fx_atlas.png')
   const pigRef = useRef<InstancedMesh>(null)
-  const dropRef = useRef<InstancedMesh>(null)
+  const mesoDropRef = useRef<InstancedMesh>(null)
+  const itemDropRef = useRef<InstancedMesh>(null)
   const terraceRef = useRef<InstancedMesh>(null)
   const runtimeRef = useRef<{
     bridge: ReturnType<typeof createGameFrameBridge>
@@ -195,16 +198,8 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     () => createGameProjector(camera, { width: size.width, height: size.height }),
     [camera, size.height, size.width],
   )
-  const dropGeometry = useMemo(() => new PlaneGeometry(0.7, 0.7), [])
-  const spriteTexture = useMemo(() => {
-    const texture = dropTexture.clone()
-    texture.colorSpace = SRGBColorSpace
-    texture.needsUpdate = true
-    return texture
-  }, [dropTexture])
-  const dropMaterial = useMemo(() => {
-    return new MeshBasicMaterial({ map: spriteTexture, transparent: true, alphaTest: 0.25, toneMapped: false, vertexColors: true })
-  }, [spriteTexture])
+  const mesoAsset = useMemo(() => bakeGlb(mesoGlb.scene), [mesoGlb.scene])
+  const ribbonAsset = useMemo(() => bakeGlb(ribbonGlb.scene), [ribbonGlb.scene])
   const fxAtlas = useMemo(() => {
     const texture = fxTexture.clone()
     texture.colorSpace = SRGBColorSpace
@@ -233,14 +228,13 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
     }
     pigAsset.geometry.dispose()
     rockAsset.geometry.dispose()
-    dropGeometry.dispose()
-    dropMaterial.dispose()
-    spriteTexture.dispose()
+    mesoAsset.geometry.dispose()
+    ribbonAsset.geometry.dispose()
     fxMaterial.dispose()
     fxAtlas.dispose()
     if (Array.isArray(pigMaterial)) pigMaterial.forEach((material) => material.dispose())
     else pigMaterial.dispose()
-  }, [dropGeometry, dropMaterial, fxAtlas, fxMaterial, gl, pigAsset.geometry, pigMaterial, rockAsset.geometry, spriteTexture])
+  }, [mesoAsset.geometry, ribbonAsset.geometry, fxAtlas, fxMaterial, gl, pigAsset.geometry, pigMaterial, rockAsset.geometry])
   useEffect(() => {
     const mesh = terraceRef.current
     if (mesh === null) return
@@ -301,21 +295,26 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
       commitMobWobbleSpeeds(pigSpeed)
     }
 
-    const drops = dropRef.current
-    if (drops !== null) {
-      const visible = result.snapshot.drops.slice(0, MAX_DROPS)
-      visible.forEach((drop, index) => {
-        const position = parabolicPosition(drop, result.snapshot.nowMs / 1000)
-        transform.position.set(position.x, sampleHeight(position.x, position.z) + position.y + 0.45, position.z)
-        transform.quaternion.copy(camera.quaternion)
-        transform.scale.setScalar(0.8)
+    const mesoDrops = mesoDropRef.current
+    const itemDrops = itemDropRef.current
+    if (mesoDrops !== null && itemDrops !== null) {
+      const nowSeconds = result.snapshot.nowMs / 1000
+      let mesoCount = 0
+      let itemCount = 0
+      for (const drop of result.snapshot.drops.slice(0, MAX_DROPS)) {
+        const position = parabolicPosition(drop, nowSeconds)
+        const isMeso = drop.payload.kind === 'meso'
+        transform.position.set(position.x, sampleHeight(position.x, position.z) + position.y, position.z)
+        transform.rotation.set(0, nowSeconds * DROP_SPIN_RAD_PER_SEC, 0)
+        transform.scale.setScalar(isMeso ? DROP_SCALE.meso : DROP_SCALE.item)
         transform.updateMatrix()
-        drops.setMatrixAt(index, transform.matrix)
-        drops.setColorAt(index, DROP_COLORS[drop.payload.kind])
-      })
-      drops.count = visible.length
-      drops.instanceMatrix.needsUpdate = true
-      if (drops.instanceColor !== null) drops.instanceColor.needsUpdate = true
+        if (isMeso) mesoDrops.setMatrixAt(mesoCount++, transform.matrix)
+        else itemDrops.setMatrixAt(itemCount++, transform.matrix)
+      }
+      mesoDrops.count = mesoCount
+      itemDrops.count = itemCount
+      mesoDrops.instanceMatrix.needsUpdate = true
+      itemDrops.instanceMatrix.needsUpdate = true
     }
   })
 
@@ -348,7 +347,8 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
           scale={statue.scale}
         />
       ))}
-      <instancedMesh ref={dropRef} args={[dropGeometry, dropMaterial, MAX_DROPS]} frustumCulled={false} />
+      <instancedMesh ref={mesoDropRef} name="drops-meso" args={[mesoAsset.geometry, mesoAsset.materials, MAX_DROPS]} frustumCulled={false} castShadow />
+      <instancedMesh ref={itemDropRef} name="drops-item" args={[ribbonAsset.geometry, ribbonAsset.materials, MAX_DROPS]} frustumCulled={false} castShadow />
       <WarpPortals />
       <SkillFx session={bootstrap.session} material={fxMaterial} />
       <LevelUpRing session={bootstrap.session} material={fxMaterial} />

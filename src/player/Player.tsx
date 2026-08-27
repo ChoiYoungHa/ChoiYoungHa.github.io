@@ -14,6 +14,7 @@ import {
   type LocomotionWeights,
 } from './animation'
 import { RAYCAST_DEFAULTS } from './controllers/types'
+import { useGame } from '../store/useGame'
 
 /**
  * M5-11 (R117-A) — 플레이어 아바타. 큐브를 대신해 `char_player.glb` 를 그리고
@@ -31,6 +32,14 @@ import { RAYCAST_DEFAULTS } from './controllers/types'
 export const PLAYER_MODEL_URL = '/models/char_player.glb'
 /** 강철검(콘티 wpn-sword-steel → Higgsfield 3D, Blender 정규화: 날 +Y·손잡이 끝 원점·길이 1.0m). 오른손 본에 장착. */
 export const PLAYER_WEAPON_URL = '/models/wpn_sword_steel.glb'
+/** 2026-08-28 (영하님): 장착 아이템 id → 3D 모델. 나무검은 코덱스 시트 B(`3d-codex/weapons`, 손잡이 끝 원점·날 +Y·1.016m). 미등록 id 는 강철검. */
+export const WEAPON_MODEL_URLS: Record<string, string> = {
+  'weapon.wooden-sword': '/models/weapons/wpn-sword-wooden.glb',
+  'weapon.steel-sword': PLAYER_WEAPON_URL,
+}
+export function weaponModelUrl(itemId: string | null): string {
+  return itemId === null ? PLAYER_WEAPON_URL : WEAPON_MODEL_URLS[itemId] ?? PLAYER_WEAPON_URL
+}
 export const WEAPON_HAND_BONE = 'RightHand'
 /** 손잡이 끝에서 손바닥 중심까지 거리(m). 검을 손 안쪽으로 이만큼 밀어 넣는다. */
 export const WEAPON_GRIP_OFFSET = 0.12
@@ -114,7 +123,8 @@ function AvatarModel({ frameRef }: AvatarProps) {
     return { object, scale, sourceHeight: height }
   }, [scene])
 
-  const weapon = useGLTF(PLAYER_WEAPON_URL)
+  const equippedWeaponId = useGame((state) => state.equipment.weapon)
+  const weapon = useGLTF(weaponModelUrl(equippedWeaponId))
   // 검을 오른손 본에 부착한다. 날 방향은 아래팔→손 방향(본 로컬 기준)으로 맞춰 리그 축 규약에 의존하지 않는다.
   useEffect(() => {
     const hand = model.object.getObjectByName(WEAPON_HAND_BONE)
@@ -123,7 +133,7 @@ function AvatarModel({ frameRef }: AvatarProps) {
     const holder = new Object3D()
     holder.name = 'weapon-holder'
     const sword = weapon.scene.clone(true)
-    sword.name = 'weapon-sword-steel'
+    sword.name = `weapon-${equippedWeaponId ?? 'default'}`
     sword.traverse((child) => { const mesh = child as Mesh; if (mesh.isMesh === true) { mesh.castShadow = true; mesh.receiveShadow = false; mesh.frustumCulled = false } })
     // 부모(아래팔) 위치를 손 로컬로 옮기면 "손목→손" 방향이 나온다. 날은 그 반대(손 밖)로 뻗는다.
     const wristLocal = forearm !== null ? hand.worldToLocal(forearm.getWorldPosition(new Vector3())) : new Vector3(0, -1, 0)
@@ -138,7 +148,7 @@ function AvatarModel({ frameRef }: AvatarProps) {
     holder.add(sword)
     hand.add(holder)
     return () => { hand.remove(holder) }
-  }, [model.object, model.scale, weapon.scene])
+  }, [model.object, model.scale, weapon.scene, equippedWeaponId])
 
   const mixer = useMemo(() => new AnimationMixer(model.object), [model.object])
 

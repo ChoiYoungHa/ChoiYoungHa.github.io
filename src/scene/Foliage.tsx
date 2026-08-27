@@ -42,9 +42,9 @@ export interface FoliageProps {
  * 그대로 구워 R21·R24 에서 "식생이 청록" 으로 보고됐다(m2-vista 원경 hue 234°). §6-2 수목/식생 #3B3E26 기준.
  */
 const SPECIES_COLOR: Record<(typeof SPECIES)[number], string> = {
-  grass: '#3b3e26',
-  flower_yellowA: '#5c5834', // 저채도 황록 — 꽃은 살짝 밝게, 채도 상한 §6-2 28% 안
-  plant_bush: '#363a25',
+  grass: '#5d7d33', // 2026-08-28: 코덱스 tile-grass 지면(밝은 황록)에 맞춰 상향 — 이전 #3b3e26 은 새 지면 위에서 검은 조각으로 보였다
+  flower_yellowA: '#8a8448',
+  plant_bush: '#4f6b2e',
 }
 
 function materialColor(_material: Material | Material[], species: string): Color {
@@ -93,13 +93,22 @@ export function readGrassLiteEnabled(search: string = location.search): boolean 
  * 검은 조각만 남는다. 아틀라스 하단 중앙 클럼프 영역(u 0.21~0.47, v 0.11~0.25; v=0 이 아래)만 쓴다. 자산이 바뀌면 이 값도 바뀐다.
  */
 export const GRASS_CARD_ATLAS_RECT = { u0: 0.21, v0: 0.11, u1: 0.47, v1: 0.25 } as const
+/**
+ * 2026-08-28 (영하님 "세상이 밋밋") — 지면을 코덱스 시트 F tile-grass(밝은 스타일라이즈드)로 바꾸자 사진 잔디 카드(어두운 실사)가
+ * 검은 조각처럼 떠 보였다. 카드 경로를 끄고 정점색 크로스 쿼드(SPECIES_COLOR.grass)로 되돌린다. 카드 자산·코드는 보존(재활성 시 true).
+ */
+export const GRASS_CARD_ENABLED = false
 
 function grassLiteGeometry(useAtlasRect = false): BufferGeometry {
   const data = buildGrassLiteGeometry(lookdev.grassLite.seed)
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new BufferAttribute(data.positions, 3))
   geometry.setAttribute('normal', new BufferAttribute(data.normals, 3))
-  geometry.setAttribute('color', new BufferAttribute(data.colors, 3))
+  // 2026-08-28: 그라스라이트 정점색(HSL L18~22 저휘도)을 SPECIES_COLOR.grass 로 덮어 새 지면 톤과 맞춘다.
+  const grassColor = new Color(SPECIES_COLOR.grass)
+  const colors = new Float32Array(data.colors.length)
+  for (let i = 0; i < colors.length; i += 3) { colors[i] = grassColor.r; colors[i + 1] = grassColor.g; colors[i + 2] = grassColor.b }
+  geometry.setAttribute('color', new BufferAttribute(colors, 3))
   // R75-C — 카드 텍스처 UV. 정점색 경로에선 재질이 읽지 않는다.
   const uvs = data.uvs.slice()
   if (useAtlasRect) {
@@ -188,7 +197,7 @@ export function Foliage({ sampleHeight }: FoliageProps) {
 
   const geometries = useMemo(
     () => SPECIES.map((species) => species === 'grass' && grassLiteEnabled
-      ? grassLiteGeometry(LOOK.grass.mode === 'texture')
+      ? grassLiteGeometry(GRASS_CARD_ENABLED && LOOK.grass.mode === 'texture')
       : geometryForSpecies(scene, species)),
     [grassLiteEnabled, scene],
   )
@@ -229,7 +238,7 @@ export function Foliage({ sampleHeight }: FoliageProps) {
     <group name="foliage-instances" userData={{ lodDistances: lod.coniferLodDistances }}>
       {SPECIES.map((species, index) => {
         const props = { name: species, geometry: geometries[index], points: pointSets[index], maxDistance, maxVisible: visibleCounts[index] }
-        return species === 'grass' && grassLiteEnabled && LOOK.grass.mode === 'texture'
+        return species === 'grass' && grassLiteEnabled && GRASS_CARD_ENABLED && LOOK.grass.mode === 'texture'
           ? <GrassCardInstances key={species} url={LOOK.grass.url} {...props} />
           : <SpeciesInstances key={species} {...props} />
       })}
@@ -238,4 +247,4 @@ export function Foliage({ sampleHeight }: FoliageProps) {
 }
 
 useGLTF.preload(MODEL_URL)
-if (LOOK.grass.mode === 'texture') useTexture.preload(LOOK.grass.url)
+if (GRASS_CARD_ENABLED && LOOK.grass.mode === 'texture') useTexture.preload(LOOK.grass.url)

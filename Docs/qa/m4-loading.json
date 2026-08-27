@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "testedHead": "4ba174b",
-  "manifestMeasuredFromHead": "30665a7",
+  "testedHead": "79c5917",
+  "manifestMeasuredFromHead": "a1e7272",
   "phaseOrder": [
     "boot",
     "core",
@@ -33,19 +33,19 @@
       "detail": 5
     },
     "manifestDeclared": {
-      "boot": 3314538,
+      "boot": 3320589,
       "core": 4801137,
-      "detail": 3177620
+      "detail": 6264140
     },
     "mockObserved": {
-      "boot": 3314538,
+      "boot": 3320589,
       "core": 4801137,
-      "detail": 3177620
+      "detail": 6264140
     },
     "currentBuildStat": {
-      "boot": 3314538,
-      "core": 4801137,
-      "detail": 3177620
+      "boot": 2955372,
+      "core": 2817307,
+      "detail": 6264140
     },
     "currentBuildStatComplete": {
       "boot": true,
@@ -53,8 +53,8 @@
       "detail": true
     },
     "declaredMatchesCurrentBuild": {
-      "boot": true,
-      "core": true,
+      "boot": false,
+      "core": false,
       "detail": true
     }
   },
@@ -65,34 +65,34 @@
       "manifestUrl": "dist/index.html",
       "physicalPath": "dist/index.html",
       "exists": true,
-      "statBytes": 538,
+      "statBytes": 697,
       "declaredBytes": 538
     },
     {
       "phase": "boot",
       "id": "boot.js-main",
-      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
-      "physicalPath": "dist/assets/main-s_PwUn7H.js",
+      "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
+      "physicalPath": "dist/assets/main-DzMJCG03.js",
       "exists": true,
-      "statBytes": 870195,
-      "declaredBytes": 870195
+      "statBytes": 883668,
+      "declaredBytes": 876032
     },
     {
       "phase": "boot",
       "id": "boot.js-renderer",
-      "manifestUrl": "dist/assets/createRenderer-CPda_t-U.js",
-      "physicalPath": "dist/assets/createRenderer-CPda_t-U.js",
+      "manifestUrl": "dist/assets/createRenderer-Btpp4TmX.js",
+      "physicalPath": "dist/assets/createRenderer-9GPnPvF3.js",
       "exists": true,
-      "statBytes": 1015045,
-      "declaredBytes": 1015045
+      "statBytes": 642247,
+      "declaredBytes": 1015259
     },
     {
       "phase": "boot",
       "id": "boot.heightmap-procedural",
-      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
-      "physicalPath": "dist/assets/main-s_PwUn7H.js",
+      "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
+      "physicalPath": "dist/assets/main-DzMJCG03.js",
       "exists": true,
-      "statBytes": 870195,
+      "statBytes": 883668,
       "declaredBytes": 0
     },
     {
@@ -107,10 +107,10 @@
     {
       "phase": "core",
       "id": "core.terrain-procedural",
-      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
-      "physicalPath": "dist/assets/main-s_PwUn7H.js",
+      "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
+      "physicalPath": "dist/assets/main-DzMJCG03.js",
       "exists": true,
-      "statBytes": 870195,
+      "statBytes": 883668,
       "declaredBytes": 0
     },
     {
@@ -125,10 +125,10 @@
     {
       "phase": "core",
       "id": "core.hero-lod1-procedural",
-      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
-      "physicalPath": "dist/assets/main-s_PwUn7H.js",
+      "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
+      "physicalPath": "dist/assets/main-DzMJCG03.js",
       "exists": true,
-      "statBytes": 870195,
+      "statBytes": 883668,
       "declaredBytes": 0
     },
     {
@@ -137,7 +137,7 @@
       "manifestUrl": "dist/textures/ground_grass_diffuse.jpg",
       "physicalPath": "dist/textures/ground_grass_diffuse.jpg",
       "exists": true,
-      "statBytes": 955945,
+      "statBytes": 404325,
       "declaredBytes": 955945
     },
     {
@@ -146,7 +146,7 @@
       "manifestUrl": "dist/textures/ground_dirt_diffuse.jpg",
       "physicalPath": "dist/textures/ground_dirt_diffuse.jpg",
       "exists": true,
-      "statBytes": 716010,
+      "statBytes": 277003,
       "declaredBytes": 716010
     },
     {
@@ -155,7 +155,7 @@
       "manifestUrl": "dist/textures/ground_grass_normal.jpg",
       "physicalPath": "dist/textures/ground_grass_normal.jpg",
       "exists": true,
-      "statBytes": 1440314,
+      "statBytes": 631899,
       "declaredBytes": 1440314
     },
     {
@@ -164,7 +164,7 @@
       "manifestUrl": "dist/textures/ground_dirt_normal.jpg",
       "physicalPath": "dist/textures/ground_dirt_normal.jpg",
       "exists": true,
-      "statBytes": 831959,
+      "statBytes": 647171,
       "declaredBytes": 831959
     },
     {
@@ -179,19 +179,19 @@
     {
       "phase": "detail",
       "id": "detail.village-procedural",
-      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
-      "physicalPath": "dist/assets/main-s_PwUn7H.js",
+      "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
+      "physicalPath": "dist/assets/main-DzMJCG03.js",
       "exists": true,
-      "statBytes": 870195,
+      "statBytes": 883668,
       "declaredBytes": 0
     },
     {
       "phase": "detail",
       "id": "detail.hero-lod0-procedural",
-      "manifestUrl": "dist/assets/main-s_PwUn7H.js",
-      "physicalPath": "dist/assets/main-s_PwUn7H.js",
+      "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
+      "physicalPath": "dist/assets/main-DzMJCG03.js",
       "exists": true,
-      "statBytes": 870195,
+      "statBytes": 883668,
       "declaredBytes": 0
     },
     {
@@ -209,8 +209,8 @@
       "manifestUrl": "dist/models/hero_tree.glb",
       "physicalPath": "dist/models/hero_tree.glb",
       "exists": true,
-      "statBytes": 1389012,
-      "declaredBytes": 1389012
+      "statBytes": 3407832,
+      "declaredBytes": 3407832
     },
     {
       "phase": "detail",
@@ -218,8 +218,8 @@
       "manifestUrl": "dist/models/house_a.glb",
       "physicalPath": "dist/models/house_a.glb",
       "exists": true,
-      "statBytes": 72524,
-      "declaredBytes": 72524
+      "statBytes": 586352,
+      "declaredBytes": 586352
     },
     {
       "phase": "detail",
@@ -227,8 +227,8 @@
       "manifestUrl": "dist/models/house_b.glb",
       "physicalPath": "dist/models/house_b.glb",
       "exists": true,
-      "statBytes": 99296,
-      "declaredBytes": 99296
+      "statBytes": 108340,
+      "declaredBytes": 108340
     },
     {
       "phase": "detail",
@@ -236,8 +236,17 @@
       "manifestUrl": "dist/models/house_c.glb",
       "physicalPath": "dist/models/house_c.glb",
       "exists": true,
-      "statBytes": 188028,
-      "declaredBytes": 188028
+      "statBytes": 206664,
+      "declaredBytes": 206664
+    },
+    {
+      "phase": "detail",
+      "id": "detail.village-tree-glb",
+      "manifestUrl": "dist/models/tree_village.glb",
+      "physicalPath": "dist/models/tree_village.glb",
+      "exists": true,
+      "statBytes": 526192,
+      "declaredBytes": 526192
     }
   ],
   "browserVerification": "pending-after-merge",

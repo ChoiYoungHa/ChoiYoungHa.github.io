@@ -10,6 +10,7 @@ import { MainPath } from './scene/MainPath'
 import { HeroTree } from './scene/HeroTree'
 import { Village } from './scene/Village'
 import { Foliage } from './scene/Foliage'
+import { CodexFoliage } from './scene/CodexFoliage'
 import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
 import { Player, setMouseSensitivity } from './player/Controller'
@@ -109,6 +110,7 @@ const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { w
       <Suspense fallback={null}>
         <Foliage sampleHeight={sampleHeight} />
         <RockInstances sampleHeight={sampleHeight} />
+        <CodexFoliage sampleHeight={sampleHeight} />
       </Suspense>
       {shot ? <VistaCamera id={shot} /> : <><Player />{GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameRuntime /></Suspense> : null}</>}
     </Canvas>

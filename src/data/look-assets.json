@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedFromHead": "d2d36e2",
+  "generatedFromHead": "79c5917",
   "assets": {
     "heroTreeGlb": {
       "url": "/models/hero_tree.glb",
@@ -26,19 +26,19 @@
     },
     "terrainGrassDiffuse": {
       "url": "/textures/ground_grass_diffuse.jpg",
-      "bytes": 955945
+      "bytes": 404325
     },
     "terrainGrassNormal": {
       "url": "/textures/ground_grass_normal.jpg",
-      "bytes": 1440314
+      "bytes": 631899
     },
     "terrainDirtDiffuse": {
       "url": "/textures/ground_dirt_diffuse.jpg",
-      "bytes": 716010
+      "bytes": 277003
     },
     "terrainDirtNormal": {
       "url": "/textures/ground_dirt_normal.jpg",
-      "bytes": 831959
+      "bytes": 647171
     }
   }
 }
