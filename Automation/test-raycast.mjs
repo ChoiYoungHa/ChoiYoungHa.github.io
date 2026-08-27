@@ -191,6 +191,7 @@ describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기�
     assert.equal(actions.length, 15, `Action 개수=${actions.length}`) // +cancel (Esc)
     assert.deepEqual(actions.sort(), [
       'attack',
+      'cancel',
       'confirm',
       'interact',
       'inventory',
