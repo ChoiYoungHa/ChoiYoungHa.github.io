@@ -26,6 +26,7 @@ export interface SettingsProps {
 
 export function Settings({ onSensitivityChange, restart = () => location.reload() }: SettingsProps) {
   const preset = useRuntime((s) => s.preset)
+  const autoFallback = useRuntime((s) => s.autoFallback)
   const set = useRuntime((s) => s.set)
   const [open, setOpen] = useState(false)
   const [sensitivity, setSensitivity] = useState(DEFAULT_MOUSE_SENSITIVITY)
@@ -67,6 +68,12 @@ export function Settings({ onSensitivityChange, restart = () => location.reload(
               <option value="base">base (기본)</option>
             </select>
           </label>
+          {/* R117-A — 자동 후퇴가 일어났을 때만 보인다. 사용자가 select 로 되돌릴 수 있다. */}
+          {autoFallback ? (
+            <small data-testid="settings-auto-fallback" style={{ color: '#ffd9a0' }}>
+              성능 관문 미달로 base → low 자동 전환됨
+            </small>
+          ) : null}
           <label>
             마우스 감도 <b style={{ color: '#ffd9a0' }}>{sensitivity.toFixed(2)}×</b>
             <input

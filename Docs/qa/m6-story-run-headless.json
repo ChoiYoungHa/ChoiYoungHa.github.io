@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "seed": 45,
-  "gameTimeSeconds": 84.981,
+  "gameTimeSeconds": 102.391,
   "movementSpeedMetersPerSecond": 3.2,
-  "distanceMeters": 369.411,
-  "ticks": 651,
+  "distanceMeters": 399.87,
+  "ticks": 712,
   "kills": 10,
   "sceneTrace": [
     "title",
@@ -25,9 +25,9 @@
     "camera-ease-start": 1,
     "dialogue-open": 4,
     "dialogue-close": 4,
-    "purchase": 1,
-    "fx-spawn": 5,
-    "floater": 36,
+    "fx-spawn": 4,
+    "floater": 58,
+    "skill-rejected": 11,
     "level-up": 2,
     "drop-spawn": 11,
     "drop-collect": 11,
@@ -36,12 +36,12 @@
   "eventOrderViolations": 0,
   "finalState": {
     "scene": "epilogue",
-    "meso": 3785,
+    "meso": 4685,
     "level": 4,
     "exp": 220,
     "questStatus": "done",
     "questKillCount": 10,
-    "hp": 136,
-    "mp": 5
+    "hp": 188,
+    "mp": 12
   }
 }

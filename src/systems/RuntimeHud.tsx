@@ -1,10 +1,13 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { isForcedWebGL, readBackend, type Backend } from '../gl/createRenderer'
 import { useRuntime } from '../store/useRuntime'
 import { CAMERA } from '../player/FollowCamera'
+import { GAME_INPUT_ENABLED } from '../player/input'
+import { readCameraDistanceMultiplier } from '../game/cameraDistance'
 import { LOD_SWITCH_DISTANCE, readHeroTreeLod } from '../scene/HeroTree'
 import { sampleRendererFrame, type RendererForPerf } from './perf'
+import { createAutoFallback, isAutoFallbackEligible } from './perf/autoFallback'
 
 /**
  * M0a-07 — backend·adapter·ANGLE·preset 을 화면(HUD)과 JSON 으로 동시에 남긴다.
@@ -20,6 +23,11 @@ export function RuntimeProbe() {
   const frames = useRef(0)
   const acc = useRef(0)
   const maxFrameCalls = useRef(0)
+  // R117-A — 기본 base 승격에 딸린 1회성 자동 후퇴. `?q` 지정·bench/final 측정 중에는 비활성이다.
+  const autoFallback = useMemo(
+    () => (isAutoFallbackEligible(location.search, window.__benchMode) ? createAutoFallback() : null),
+    [],
+  )
 
   // 검증 하네스(systems/report.ts)가 씬 요소 수를 셀 수 있게 노출한다. 카메라는 M4-05 감도 실측용(R41-A).
   const camera = useThree((s) => s.camera)
@@ -38,8 +46,8 @@ export function RuntimeProbe() {
       canvas: { w: canvas.width, h: canvas.height },
     })
 
-    // adapter / ANGLE 문자열
-    void (async () => {
+    // adapter / ANGLE 문자열 — WebGL2 컨텍스트 생성이 iGPU 에서 수 초를 먹는다(진입 프로파일 3.1s). 진입 후로 미룬다.
+    const probeTimer = setTimeout(() => void (async () => {
       let adapter = 'n/a'
       try {
         const a = await navigator.gpu?.requestAdapter?.()
@@ -56,11 +64,16 @@ export function RuntimeProbe() {
         /* ignore */
       }
       set({ adapter, angle })
-    })()
+    })(), 6000)
+    return () => clearTimeout(probeTimer)
   }, [gl, set])
 
   // 계획서 §3-3: 매 프레임이 아니라 **1초 1회** 집계만 올린다.
   useFrame((_, dt) => {
+    const decision = autoFallback?.step(dt) ?? null
+    if (decision !== null && decision.fallback && useRuntime.getState().preset === 'base') {
+      set({ preset: 'low', autoFallback: true })
+    }
     frames.current += 1
     acc.current += dt
     const perf = sampleRendererFrame(gl as unknown as RendererForPerf)
@@ -115,7 +128,7 @@ export function RuntimeHud() {
       <div>
         camera:{' '}
         <b data-testid="hud-camera">
-          FOV {CAMERA.fov}° · dist {CAMERA.distance}m · h {CAMERA.height}m · pitch{' '}
+          FOV {CAMERA.fov}° · dist {CAMERA.distance * (GAME_INPUT_ENABLED ? readCameraDistanceMultiplier() : 1)}m · h {CAMERA.height}m · pitch{' '}
           {CAMERA.pitchDeg}° · near {CAMERA.near} / far {CAMERA.far}
         </b>
       </div>

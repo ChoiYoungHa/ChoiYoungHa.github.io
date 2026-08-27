@@ -1,0 +1,267 @@
+{
+  "mode": "bench",
+  "url": "http://127.0.0.1:5213/?q=base&route=bench",
+  "at": "2026-08-27T00:27:57.466Z",
+  "samples": [
+    {
+      "t": 6,
+      "error": "no renderer"
+    },
+    {
+      "t": 12,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 36,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 0 · calls: 52 · tris: 확인 불"
+    },
+    {
+      "t": 17,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 1743,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 124 · calls: 56 · tris: 확인"
+    },
+    {
+      "t": 22,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 3582,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 121 · calls: 54 · tris: 확인"
+    },
+    {
+      "t": 27,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 5388,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 123 · calls: 49 · tris: 확인"
+    },
+    {
+      "t": 32,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 7356,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 140 · calls: 43 · tris: 확인"
+    },
+    {
+      "t": 38,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 9474,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 140 · calls: 42 · tris: 확인"
+    },
+    {
+      "t": 43,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 11553,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 138 · calls: 41 · tris: 확인"
+    },
+    {
+      "t": 48,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 13437,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 130 · calls: 41 · tris: 확인"
+    },
+    {
+      "t": 53,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 58,
+      "calls": 15213,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 113 · calls: 40 · tris: 확인"
+    },
+    {
+      "t": 58,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 59,
+      "calls": 17007,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 110 · calls: 39 · tris: 확인"
+    },
+    {
+      "t": 63,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 62,
+      "calls": 18705,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 130 · calls: 45 · tris: 확인"
+    },
+    {
+      "t": 68,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 63,
+      "calls": 20220,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 125 · calls: 62 · tris: 확인"
+    },
+    {
+      "t": 73,
+      "backend": "unknown",
+      "infoPrograms": 77,
+      "infoTextures": 21,
+      "infoGeometries": 63,
+      "calls": 22041,
+      "pipelines": 59,
+      "stages": {
+        "vertex": 56,
+        "fragment": 21,
+        "compute": 0
+      },
+      "materials": 20,
+      "textureMaps": 9,
+      "meshes": 44,
+      "shadowCasters": 18,
+      "hud": "backend: WebGPUcanvas: 1600×900preset: basemode: benchadapter: intel / xe-lpgANGLE: ANGLE (Intel, Intel(R) Arc(TM) Graphics (0x00007D55) Direct3D11 vs_5_0 ps_5_0, D3D11)fps: 122 · calls: 62 · tris: 확인"
+    }
+  ],
+  "peak": {
+    "pipelines": 59,
+    "infoPrograms": 77,
+    "infoTextures": 21,
+    "materials": 20,
+    "textureMaps": 9,
+    "shadowCasters": 18
+  },
+  "consoleErrors": 1
+}

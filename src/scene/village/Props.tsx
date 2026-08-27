@@ -1,11 +1,15 @@
 import { useGLTF } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { BufferGeometry, InstancedMesh, Material, Mesh, Object3D, Texture } from 'three'
-import { Object3D as Transform } from 'three'
+import { Box3, MathUtils, Object3D as Transform } from 'three'
 import { luminance, mix, texture, uv, vec3 } from 'three/tsl'
 import type { Node } from 'three/webgpu'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import placement from '../../data/placement.json'
+import { advanceGateDoor, INITIAL_GATE_DOOR, type GateDoorState } from '../../game/rules/gateDoor'
+import { GAME_INPUT_ENABLED } from '../../player/input'
+import { readPlayerFrame } from '../../store/playerBridge'
 import { useLookdevMaterial } from '../Atmosphere'
 import { sampleHeight } from '../terrain/heightmap'
 import { PROP_KINDS, propRuntimeScale, type PropKind, type PropPlacement } from './propsLayout'
@@ -109,6 +113,50 @@ function PropInstances({ kind, geometry, entries, material }: {
   )
 }
 
+function animatedArch(source: Object3D, material: Material) {
+  const root = source.clone(true)
+  root.traverse((object) => {
+    const mesh = object as Mesh
+    if (!mesh.isMesh) return
+    mesh.material = material
+    mesh.castShadow = true
+    mesh.receiveShadow = true
+  })
+  root.updateMatrixWorld(true)
+  const bounds = new Box3().setFromObject(root)
+  root.position.set(-(bounds.min.x + bounds.max.x) / 2, -bounds.min.y, -(bounds.min.z + bounds.max.z) / 2)
+  const left = root.getObjectByName('wall_straight_gate_door_left')
+  const right = root.getObjectByName('wall_straight_gate_door_right')
+  if (!left || !right) throw new Error('prop_arch.glb is missing gate door nodes')
+  return { root, left, right }
+}
+
+function useGateDoorMotion(left: Object3D, right: Object3D, center: readonly [number, number]) {
+  const state = useRef<GateDoorState>({ ...INITIAL_GATE_DOOR })
+  const doors = useRef({ left, right })
+  useEffect(() => { doors.current = { left, right } }, [left, right])
+  useFrame((_, dt) => {
+    const player = readPlayerFrame()
+    if (player === null) return
+    const distance = Math.hypot(player.position.x - center[0], player.position.z - center[1])
+    state.current = advanceGateDoor(true, state.current, distance, dt)
+    const angle = MathUtils.degToRad(state.current.angleDeg)
+    doors.current.left.rotation.y = angle
+    doors.current.right.rotation.y = -angle
+  })
+}
+
+function AnimatedArch({ source, entry, material }: { source: Object3D; entry: PropPlacement; material: Material }) {
+  const asset = useMemo(() => animatedArch(source, material), [material, source])
+  useGateDoorMotion(asset.left, asset.right, entry.position)
+  const [x, z] = entry.position
+  return (
+    <group name="village-prop-arch-animated" position={[x, sampleHeight(x, z), z]} rotation={[0, entry.yaw, 0]} scale={propRuntimeScale('arch')} userData={{ collision: 'none', source: 'gltf' }}>
+      <primitive object={asset.root} />
+    </group>
+  )
+}
+
 function LoadedVillageProps() {
   const gltfs = useGLTF(PROP_URL_LIST) as unknown as { scene: Object3D }[]
   const geometries = useMemo(
@@ -122,7 +170,7 @@ function LoadedVillageProps() {
 
   return (
     <group name="village-props">
-      {PROP_KINDS.map((kind) => (
+      {PROP_KINDS.filter((kind) => kind !== 'arch' || !GAME_INPUT_ENABLED).map((kind) => (
         <PropInstances
           key={kind}
           kind={kind}
@@ -131,6 +179,7 @@ function LoadedVillageProps() {
           material={material}
         />
       ))}
+      {GAME_INPUT_ENABLED ? <AnimatedArch source={gltfs[PROP_KINDS.indexOf('arch')].scene} entry={PROPS.find((entry) => entry.kind === 'arch')!} material={material} /> : null}
     </group>
   )
 }

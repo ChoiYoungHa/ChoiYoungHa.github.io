@@ -24,7 +24,8 @@ interface SkillDefinition { nameKey: string }
 
 const JOBS = rawJobs as unknown as Record<JobId, JobDefinition>
 const SKILLS = rawSkills as unknown as Record<string, SkillDefinition>
-const JOB_ORDER: readonly JobId[] = ['warrior', 'archer', 'mage', 'thief']
+// 영하님 결정(2026-08-27): 1차는 전사 단일 직업. 나머지는 데이터만 유지.
+const JOB_ORDER: readonly JobId[] = ['warrior']
 const JOB_COLORS: Readonly<Record<JobId, string>> = {
   warrior: '#e05a3a',
   archer: '#4fae63',

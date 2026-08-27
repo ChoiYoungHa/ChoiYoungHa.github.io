@@ -1,4 +1,5 @@
 import skillData from '../data/skills.json' with { type: 'json' }
+import { forwardFromYaw } from '../../player/input.ts'
 import { rollDamage } from './stats.ts'
 import type { Rng } from './rng.ts'
 import type { SkillDefinition, SkillEffect } from './skills.ts'
@@ -75,9 +76,8 @@ function inCone(
   if (targetDistance <= GEOMETRY_EPSILON) return true
 
   // Three.js 캐릭터 규약: yaw 0의 전방은 -Z다.
-  const forwardX = Math.sin(yaw)
-  const forwardZ = -Math.cos(yaw)
-  const cosine = (dx * forwardX + dz * forwardZ) / targetDistance
+  const forward = forwardFromYaw(yaw)
+  const cosine = (dx * forward.x + dz * forward.z) / targetDistance
   const minimumCosine = Math.cos((fovDeg * Math.PI / 180) / 2)
   return cosine + GEOMETRY_EPSILON >= minimumCosine
 }

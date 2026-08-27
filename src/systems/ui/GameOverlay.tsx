@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, useCallback } from 'react'
 import type { PortraitSelection } from '../../game/portrait/compose.ts'
 import { gameBootstrap } from '../../game/bootstrap.ts'
 import { DEFAULT_PORTRAIT_SELECTION } from '../../game/portrait/compose.ts'
@@ -6,6 +6,8 @@ import type { GameSession, SessionSnapshot } from '../../game/session.ts'
 import type { JobId } from '../../game/state.ts'
 import placement from '../../data/placement.json' with { type: 'json' }
 import { findInteractable } from '../../game/world/interact.ts'
+import { readGameRuntimeReady, subscribeGameRuntimeReady } from '../../game/runtimeReadiness.ts'
+import { INITIAL_TITLE_CONFIRM_BUFFER, queueTitleConfirm, releaseTitleConfirm, type TitleConfirmBuffer } from '../../game/titleConfirmBuffer.ts'
 import { useGame, selectHudProps, selectScene } from '../../store/useGame.ts'
 import { useRuntime } from '../../store/useRuntime.ts'
 import type { LoadingState } from '../loading.ts'
@@ -26,7 +28,7 @@ import { TutorialHints } from './TutorialHints.tsx'
 import { ZoneBanner } from './ZoneBanner.tsx'
 import { gameProjector, type GameProjector } from './projector.ts'
 
-const JOBS: readonly JobId[] = ['warrior', 'archer', 'mage', 'thief']
+const JOBS: readonly JobId[] = ['warrior']
 const NPCS = placement.npcs.map((npc) => ({
   id: npc.id,
   position: { x: npc.position[0], z: npc.position[1] },
@@ -66,13 +68,38 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
   const scene = selectScene(game)
   const hud = selectHudProps(game)
   const [name, setName] = useState('영하')
-  const [jobId, setJobId] = useState<JobId>('archer')
+  const [jobId, setJobId] = useState<JobId>('warrior')
   const [portrait, setPortrait] = useState<PortraitSelection>({
     ...DEFAULT_PORTRAIT_SELECTION,
-    outfitId: 'archer',
+    outfitId: 'warrior',
   })
   const [hoveredSlot, setHoveredSlot] = useState<number | null>(null)
   const randomSeed = useRef(95)
+  const titleConfirm = useRef<TitleConfirmBuffer>({ ...INITIAL_TITLE_CONFIRM_BUFFER })
+  const runtimeReady = useSyncExternalStore(subscribeGameRuntimeReady, readGameRuntimeReady, () => false)
+
+  // Enter 와 클릭이 같은 버퍼를 탄다 — 런타임 준비 전 첫 입력이 버려지지 않는다(2026-08-27 클릭 프로브: 첫 클릭 소실).
+  const requestTitleConfirm = useCallback(() => {
+    const next = queueTitleConfirm(titleConfirm.current, readGameRuntimeReady())
+    titleConfirm.current = next.state
+    if (next.emit) session.enqueueInput({ confirm: true })
+  }, [session])
+
+  useEffect(() => {
+    if (scene !== 'title') { titleConfirm.current = { ...INITIAL_TITLE_CONFIRM_BUFFER }; return }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Enter' || event.repeat) return
+      requestTitleConfirm()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [requestTitleConfirm, scene])
+  useEffect(() => {
+    if (scene !== 'title') return
+    const next = releaseTitleConfirm(titleConfirm.current, runtimeReady)
+    titleConfirm.current = next.state
+    if (next.emit) session.enqueueInput({ confirm: true })
+  }, [runtimeReady, scene, session])
 
   const floaters = useMemo(() => {
     let state = createDamageFloaterState()
@@ -101,7 +128,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     : null
 
   const overlay = scene === 'title' ? (
-    <TitleScreen bgUrl={bgUrl} loading={loading} backend={backend} preset={preset} ipMode={game.ipMode} onStart={() => session.enqueueInput({ confirm: true })} />
+    <TitleScreen bgUrl={bgUrl} loading={loading} backend={backend} preset={preset} ipMode={game.ipMode} onStart={requestTitleConfirm} />
   ) : scene === 'create' ? (
     <CharacterCreate
       name={name}

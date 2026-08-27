@@ -10,6 +10,7 @@ import { enter } from './flow.ts'
 import { clearSpawnerAggro, createSpawner, damageSpawnerMob, stepSpawner, type SpawnerState } from './mobs/spawner.ts'
 import { reduce, type GameAction } from './reducers.ts'
 import { applyMonsterHit, applyTimedMobEffect, leapDestination, resolveBasicAttack, resolveEquipmentCombatModifiers, resolveSkillAttack, type CombatHit, type PlayerCombatState, type SkillId } from './rules/combat.ts'
+import { forwardFromYaw } from '../player/input.ts'
 import type { DropTable } from './rules/drops.ts'
 import type { ItemDefinition } from './rules/inventory.ts'
 import { equipInventoryItem } from './rules/inventory.ts'
@@ -247,6 +248,8 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let banner: SessionSnapshot['banner'] = null
   let reward: SessionReward | null = null
   let epilogueStartedAtMs: number | null = null
+  let shopConfirmGuard = false
+  let epiloguePending = false
   let acquiredAtByItemId: Record<string, number> = {}
   let recentEvents: SessionEvent[] = []
   const listeners = new Set<() => void>()
@@ -375,7 +378,16 @@ export function createSession(options: CreateSessionOptions): GameSession {
       const dialogueOpenAtTickStart = activeDialogue !== null
 
       if (banner !== null && nowMs - banner.startedAtMs >= 4_000) banner = null
-      if (inputs.closeReward) reward = null
+      if (reward !== null && (
+        inputs.closeReward
+        || (inputs.confirm && !dialogueOpenAtTickStart)
+        || nowMs - reward.shownAtMs >= 3_000
+      )) reward = null
+      if (epiloguePending && reward === null) {
+        epiloguePending = false
+        changeScene('epilogue', events)
+        epilogueStartedAtMs = nowMs
+      }
       if (game.scene === 'epilogue' && inputs.epilogueAction === 'free') changeScene('free', events)
       if (game.scene === 'epilogue' && inputs.epilogueAction === 'retry') {
         game = { ...createInitialState(null, ''), ipMode: sessionIpMode }
@@ -408,6 +420,8 @@ export function createSession(options: CreateSessionOptions): GameSession {
         }
         reward = null
         epilogueStartedAtMs = null
+        shopConfirmGuard = false
+        epiloguePending = false
         tutorialEvents = []
         banner = null
         acquiredAtByItemId = {}
@@ -483,10 +497,12 @@ export function createSession(options: CreateSessionOptions): GameSession {
         dialogueHandled = true
         if (activeDialogue === null) {
           emit(events, { type: 'dialogue-close', dialogueId })
-          if (dialogueId === 'maya') changeScene('shop', events)
+          if (dialogueId === 'maya') {
+            changeScene('shop', events)
+            shopConfirmGuard = true
+          }
           if (dialogueId === 'stan' && game.quest.status === 'done') {
-            changeScene('epilogue', events)
-            epilogueStartedAtMs = nowMs
+            epiloguePending = true
           }
         }
       }
@@ -513,7 +529,9 @@ export function createSession(options: CreateSessionOptions): GameSession {
         }
       }
       if (inputs.selectedItemId !== undefined) selectedShopItemId = inputs.selectedItemId
-      if (game.scene === 'shop' && inputs.confirm && !dialogueHandled) {
+      if (game.scene === 'shop' && !dialogueHandled && shopConfirmGuard) {
+        shopConfirmGuard = false
+      } else if (game.scene === 'shop' && inputs.confirm && !dialogueHandled) {
         const itemId = inputs.selectedItemId ?? selectedShopItemId
           ?? ITEMS.find((item) => item.jobId === game.jobId && item.kind === 'weapon')?.id
         const item = ITEMS.find((candidate) => candidate.id === itemId)
@@ -599,9 +617,10 @@ export function createSession(options: CreateSessionOptions): GameSession {
               rng: combatRng,
             })
             const primaryTarget = targets.find(({ id }) => id === skillAttack.hits[0]?.targetId) ?? targets[0]
+            const forward = forwardFromYaw(playerYaw)
             const forwardPoint = {
-              x: playerPos.x + Math.sin(playerYaw) * 2.5,
-              z: playerPos.z - Math.cos(playerYaw) * 2.5,
+              x: playerPos.x + forward.x * 2.5,
+              z: playerPos.z + forward.z * 2.5,
             }
             const impactPosition = primaryTarget?.position ?? forwardPoint
             const landingPosition = skillAttack.effect.type === 'leap'
