@@ -21,11 +21,13 @@ import { GameHud } from './GameHud.tsx'
 import { InventoryPanel } from './InventoryPanel.tsx'
 import { InteractPrompt } from './InteractPrompt.tsx'
 import { MobHpBar } from './MobHpBar.tsx'
+import { Portrait } from './Portrait.tsx'
 import { RewardPopup } from './RewardPopup.tsx'
 import { ShopPanel } from './ShopPanel.tsx'
 import { TitleScreen } from './TitleScreen.tsx'
 import { TutorialHints } from './TutorialHints.tsx'
 import { ZoneBanner } from './ZoneBanner.tsx'
+import { HUD_TOKENS } from './hudTokens.ts'
 import { gameProjector, type GameProjector } from './projector.ts'
 
 const JOBS: readonly JobId[] = ['warrior']
@@ -48,6 +50,7 @@ export interface GameOverlayProps {
 export interface GameOverlayRuntimeProps {
   loading: LoadingState
   preset: string
+  bgUrl?: string
 }
 
 function useSessionSnapshot(session: GameSession): SessionSnapshot {
@@ -126,6 +129,12 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
   const interactableId = snapshot.activeDialogue === null
     ? findInteractable(snapshot.playerPos, snapshot.playerYaw, NPCS)
     : null
+  const dialoguePortraitUrl = snapshot.activeDialogue?.treeId === 'stan'
+    ? '/ui/portraits/stan.png'
+    : snapshot.activeDialogue?.treeId === 'maya'
+      ? '/ui/portraits/maya.png'
+      : undefined
+  const hudVisible = scene !== 'title' && scene !== 'create' && scene !== 'epilogue'
 
   const overlay = scene === 'title' ? (
     <TitleScreen bgUrl={bgUrl} loading={loading} backend={backend} preset={preset} ipMode={game.ipMode} onStart={requestTitleConfirm} />
@@ -149,10 +158,15 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     <div data-game-overlay="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {overlay}
       {scene === 'forest' && <TutorialHints inputEvents={snapshot.tutorialEvents} narrationLineIndex={snapshot.nowMs < 2_400 ? 0 : snapshot.nowMs < 4_800 ? 1 : null} ipMode={game.ipMode} />}
-      {scene !== 'title' && scene !== 'create' && scene !== 'epilogue' && <GameHud {...hud} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} />}
+      {hudVisible && <GameHud {...hud} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} />}
+      {hudVisible && snapshot.activeDialogue === null && (
+        <div aria-label="플레이어 초상" style={{ position: 'absolute', left: HUD_TOKENS.layout.stats.left + HUD_TOKENS.layout.stats.width + 8, top: HUD_TOKENS.layout.stats.top, width: 72, height: 72, overflow: 'hidden', border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, background: HUD_TOKENS.colors.panel, boxShadow: '0 6px 24px rgba(0,0,0,0.28)' }}>
+          <Portrait selection={portrait} imageUrl="/ui/portraits/player-warrior.png" size={72} />
+        </div>
+      )}
       <ZoneBanner banner={snapshot.banner} ipMode={game.ipMode} />
       <InteractPrompt interactableId={interactableId} />
-      {snapshot.activeDialogue !== null && <DialoguePanel state={snapshot.activeDialogue} ipMode={game.ipMode} onAdvance={() => session.enqueueInput({ confirm: true })} onChoose={(choice) => session.enqueueInput({ choice })} nowMs={snapshot.nowMs} />}
+      {snapshot.activeDialogue !== null && <DialoguePanel state={snapshot.activeDialogue} ipMode={game.ipMode} onAdvance={() => session.enqueueInput({ confirm: true })} onChoose={(choice) => session.enqueueInput({ choice })} npcImageUrl={dialoguePortraitUrl} nowMs={snapshot.nowMs} />}
       {scene === 'shop' && game.jobId !== null && <ShopPanel state={{ jobId: game.jobId, meso: game.meso, inventory: game.inventory }} selectedItemId={snapshot.selectedShopItemId} ipMode={game.ipMode} onSelect={(selectedItemId) => session.enqueueInput({ selectedItemId })} onPurchase={(result) => { if (result.ok) session.enqueueInput({ confirm: true, selectedItemId: snapshot.selectedShopItemId ?? undefined }) }} onAfterPurchase={() => undefined} />}
       <InventoryPanel open={snapshot.inventoryOpen} inventory={game.inventory} hoveredSlotIndex={hoveredSlot} acquiredAtByItemId={snapshot.acquiredAtByItemId} nowMs={snapshot.nowMs} ipMode={game.ipMode} onHoverSlot={setHoveredSlot} onEquip={(equipItemId) => session.enqueueInput({ equipItemId })} />
       <RewardPopup visible={snapshot.reward !== null} ipMode={game.ipMode} previousLevel={snapshot.reward?.previousLevel ?? game.level} currentLevel={snapshot.reward?.currentLevel ?? game.level} onClose={() => session.enqueueInput({ closeReward: true })} />
@@ -166,6 +180,6 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
 export default function GameOverlayRuntime(props: GameOverlayRuntimeProps) {
   const backend = useRuntime((state) => state.backend)
   return gameBootstrap === null ? null : (
-    <GameOverlay {...props} backend={backend} session={gameBootstrap.session} projector={gameProjector} />
+    <GameOverlay {...props} bgUrl={props.bgUrl ?? '/ui/title-keyart.webp'} backend={backend} session={gameBootstrap.session} projector={gameProjector} />
   )
 }

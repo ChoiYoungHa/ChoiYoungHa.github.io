@@ -38,7 +38,7 @@ export function CharacterCreate({ name, selectedJobId, portrait, ipMode, onNameC
       <h1 style={{ margin: '0 0 18px', textAlign: 'center', fontSize: 28 }}>{view.title}</h1>
       <div style={{ display: 'grid', gridTemplateColumns: '270px 1fr', gap: 24 }}>
         <aside style={{ padding: 14, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 12, background: HUD_TOKENS.colors.panel }}>
-          <div style={{ display: 'grid', placeItems: 'center', height: 210 }}><Portrait selection={displayPortrait} size={205} /></div>
+          <div style={{ display: 'grid', placeItems: 'center', height: 210 }}><Portrait selection={displayPortrait} imageUrl="/ui/portraits/player-warrior.png" size={205} /></div>
           <label style={{ display: 'grid', gap: 5, marginBottom: 12 }}><span>{view.nameLabel}</span><input value={name} maxLength={9} placeholder={view.namePlaceholder} onChange={(event) => onNameChange(event.target.value)} style={{ border: `1px solid ${view.nameError === null ? HUD_TOKENS.colors.border : '#d87367'}`, borderRadius: 6, padding: '9px 10px', background: 'rgba(0,0,0,0.25)', color: HUD_TOKENS.colors.text, font: 'inherit' }} />{view.nameError !== null && <small style={{ color: '#e38b81' }}>{view.nameError}</small>}</label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
             {PART_CONTROLS.map((part) => <div key={part.key} style={{ display: 'grid', gridTemplateColumns: '24px 1fr 24px', alignItems: 'center', gap: 3 }}><button type="button" onClick={() => onCyclePart(part.key, -1)}>‹</button><small style={{ textAlign: 'center' }}>{part.label}</small><button type="button" onClick={() => onCyclePart(part.key, 1)}>›</button></div>)}

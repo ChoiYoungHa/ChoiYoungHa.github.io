@@ -51,11 +51,12 @@ export function DialoguePanel({
         fontFamily: HUD_TOKENS.fontFamily,
         pointerEvents: 'auto',
         cursor: view.choices.length === 0 ? 'pointer' : 'default',
+        ...HUD_TOKENS.borderImage.panel,
       }}
     >
       <div aria-label="초상" style={{ display: 'grid', placeItems: 'center', overflow: 'hidden', border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, background: 'rgba(255,255,255,0.05)' }}>
         {portraitSelection !== undefined ? <Portrait selection={portraitSelection} size={124} /> : npcImageUrl !== undefined ? (
-          <img src={npcImageUrl} alt="NPC 초상" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={npcImageUrl} alt="NPC 초상" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         ) : <span style={{ color: HUD_TOKENS.colors.muted, fontSize: 12 }}>NPC</span>}
       </div>
       <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>

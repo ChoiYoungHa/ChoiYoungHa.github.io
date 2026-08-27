@@ -57,32 +57,17 @@ function alphaCoverage(pixels, width, cellX, cellY, threshold = 128) {
   return { coverage: covered / (256 * 256), cutoffRetention: covered / positive, antialiased }
 }
 
-function slashAngularSpanDegrees(pixels, width, cellX) {
-  const angles = []
-  for (let y = 0; y < 256; y += 1) {
-    for (let x = cellX * 256; x < (cellX + 1) * 256; x += 1) {
-      if (pixels[(y * width + x) * 4 + 3] < 128) continue
-      angles.push(Math.atan2(y + 0.5 - 128, x - cellX * 256 + 0.5 - 128))
-    }
-  }
-  return (Math.max(...angles) - Math.min(...angles)) * 180 / Math.PI
-}
-
-test('VFX atlas is deterministic 1024² RGBA PNG under 1MB', async () => {
+test('sheet-derived VFX atlas is the approved 1024² white RGBA mask under 1MB', async () => {
   const disk = await readFile(ATLAS)
-  const { buildFxAtlasPng } = await load('Automation/gen-fx-atlas.mjs')
-  const first = buildFxAtlasPng()
-  const second = buildFxAtlasPng()
 
   assert.equal(disk.length <= 1_000_000, true, `${disk.length} bytes exceeds 1MB`)
-  assert.deepEqual(first, second)
-  assert.deepEqual(first, disk)
-  assert.equal(
-    createHash('sha256').update(first).digest('hex'),
-    createHash('sha256').update(second).digest('hex'),
-  )
+  assert.equal(createHash('sha256').update(disk).digest('hex'), 'e2f8bc4d5dcf9c3ae9d7c3661c813921954e7b7c2ced3dcdb6b516042e132704')
   const decoded = decodeRgbaPng(disk)
   assert.deepEqual([decoded.width, decoded.height], [1024, 1024])
+  for (let offset = 0; offset < decoded.pixels.length; offset += 4) {
+    if (decoded.pixels[offset + 3] === 0) continue
+    assert.deepEqual([...decoded.pixels.subarray(offset, offset + 3)], [255, 255, 255])
+  }
 })
 
 test('all 16 cells retain 5–60% coverage at alphaTest 0.5', async () => {
@@ -100,10 +85,7 @@ test('all 16 cells retain 5–60% coverage at alphaTest 0.5', async () => {
   const ring = alphaCoverage(pixels, width, 3, 3)
   assert.equal(ring.antialiased > 0, true, 'shockwave ring must keep antialiased edges')
   assert.equal(coverage.length, 16)
-  for (let column = 0; column < 3; column += 1) {
-    const span = slashAngularSpanDegrees(pixels, width, column)
-    assert.equal(span >= 118 && span <= 122, true, `warrior frame ${column} spans ${span}°`)
-  }
+  assert.equal(coverage[0] < coverage[1] && coverage[1] < coverage[2], true, 'flame slash frames must expand')
 })
 
 test('fx.json fixes the four skill sequences and renderer handoff contract', async () => {

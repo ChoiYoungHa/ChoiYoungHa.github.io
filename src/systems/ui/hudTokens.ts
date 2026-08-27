@@ -18,4 +18,20 @@ export const HUD_TOKENS = {
     exp: '#c9a94a',
     cooldown: 'rgba(5,7,11,0.76)',
   },
+  borderImage: {
+    panel: {
+      borderImageSource: 'url("/ui/frame/panel-frame.png")',
+      borderImageSlice: 24,
+      borderImageWidth: '10px',
+      borderImageOutset: '4px',
+      borderImageRepeat: 'stretch',
+    },
+    button: {
+      borderImageSource: 'url("/ui/frame/button-frame.png")',
+      borderImageSlice: 24,
+      borderImageWidth: '8px',
+      borderImageOutset: '3px',
+      borderImageRepeat: 'stretch',
+    },
+  },
 } as const
