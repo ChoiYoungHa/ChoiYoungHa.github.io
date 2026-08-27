@@ -1,0 +1,16 @@
+tool: built-in image_gen.imagegen
+generated_at_kst: 2026-08-27 07:33:36 +09:00
+reference: Docs/lookdev/m5-tree-after-r105.png (palette only)
+reproducibility: semantic-only; no seed exposed
+postprocess: generator returned native RGBA 1254x1254 despite chroma-key request; no key removal; Pillow Lanczos resize to 1024x1024, then alpha threshold 0.5 to binary cutout for current fx.json alphaTest
+
+Use case: stylized-concept
+Asset type: game skill VFX sprite sheet candidate
+Primary request: one precise 4 by 4 sprite sheet, sixteen equal square cells, four effects with four animation frames each
+Input images: Image 1 is low-poly palette reference only; do not copy its scene
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background visible between every sprite for local background removal
+Subject: row 1 left-to-right four frames of a cool white and pale-blue arrow rain building from three falling arrow streaks to a dense nine-arrow volley; row 2 four frames of a red-orange sword energy wave sweeping wider then breaking into two sharp fragments; row 3 four frames of a mint-green and warm-gold healing ring forming, rising, and closing with four small plus-shaped sparks; row 4 four frames of a gold-white level-up radial burst growing from a compact star to a wide crown of rays
+Style/medium: polished stylized low-poly game VFX, faceted hard-edged opaque color shapes, clear alpha-cutout silhouettes suitable for alphaTest 0.5, no soft smoke
+Composition/framing: exact four columns by four rows; every effect centered inside its own equal cell with 12 percent padding; consistent scale within each row; strict left-to-right temporal progression; nothing crosses a cell boundary
+Constraints: no grid lines, borders, labels, numbers, text, logo, watermark, shadows, floor, reflections, or background texture; background must be a single uniform #00ff00; do not use #00ff00 within any sprite; hard readable edges; no semi-transparent haze or bloom; all sixteen cells populated
+Avoid: merged cells, uneven cell sizes, duplicated frames, photoreal fire, black background

@@ -1,0 +1,32 @@
+tool: built-in image_gen.imagegen
+generated_at_kst: front 2026-08-27 07:34:23; side 07:36:05 +09:00
+reference: Docs/lookdev/m5-tree-after-r105.png for front; generated front source as identity anchor for side
+reproducibility: semantic-only; no seed or 3D output control exposed
+3d_probe: unavailable — image_gen.imagegen returns raster ImageContent/output_hint only and exposes no glTF, GLB, mesh, texture, scale, or triangle-count output
+postprocess: remove_chroma_key.py border auto-key, soft matte, thresholds 12/220, despill; Pillow Lanczos resize 1254x1254 -> 768x768
+
+[mushroom-front.png]
+Use case: stylized-concept
+Asset type: game prop orthographic modeling reference, front view
+Primary request: one original squat mushroom prop inspired by a small rustic roof shape
+Input images: Image 1 is low-poly faceting and muted material reference only
+Subject: single sturdy mushroom with a thick warm-beige tapered stalk, broad asymmetrical muted brick-red cap shaped like a shallow cottage roof, five large polygon cap facets, two subtle cream spots, short grass-free base; plausible standalone prop
+Style/medium: polished stylized low-poly 3D render, matte hand-painted materials, simple geometry suitable for reconstruction under 500 triangles
+Composition/framing: exact front orthographic view, object centered, fully visible from base to cap with generous equal padding, no perspective tilt
+Lighting/mood: neutral soft frontal modeling light
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background for local background removal
+Constraints: one opaque object only; original own-IP design; background must be one uniform color without shadow, floor, gradient, texture, reflection, or lighting variation; crisp edges; do not use #00ff00 in object; no text, logo, watermark, dimension arrows, frame, or cast shadow
+Avoid: face, eyes, character limbs, tiny gills, photorealism, side view
+
+[mushroom-side.png]
+Use case: stylized-concept
+Asset type: game prop orthographic modeling reference, right-side view
+Primary request: render the exact same mushroom design from Image 1 as a right-side orthographic turnaround
+Input images: Image 1 is the identity and design anchor; preserve its cap silhouette family, five large facets, muted brick-red material, two cream cap spots, warm-beige tapered stalk, proportions, and simple low-poly construction
+Subject: one identical squat mushroom prop, rotated exactly 90 degrees to show its right side; the two cream spots shift naturally with the same cap surface
+Style/medium: same polished stylized low-poly 3D render, matte hand-painted materials, reconstruction target under 500 triangles
+Composition/framing: exact right-side orthographic view, same object scale and vertical placement as Image 1, fully visible with equal padding, no perspective tilt
+Lighting/mood: same neutral soft frontal modeling light
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background for local background removal
+Constraints: change only camera angle; one opaque object; background one uniform color without shadow, floor, gradient, texture, reflection, or lighting variation; crisp edges; do not use #00ff00 in object; no text, logo, watermark, dimension arrows, frame, or cast shadow
+Avoid: redesign, different mushroom species, face, eyes, limbs, photorealism, three-quarter view

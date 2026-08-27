@@ -1,0 +1,25 @@
+tool: built-in image_gen.imagegen (one call per icon)
+generated_at_kst: 2026-08-27 07:37:39–07:40:37 +09:00
+reference: Docs/lookdev/m5-tree-after-r105.png (faceting/palette only)
+reproducibility: semantic-only; no seed exposed
+postprocess: RGB outputs used remove_chroma_key.py with border auto-key, soft matte, thresholds 12/220, and despill; exp.png arrived as native RGBA; all resized by Pillow Lanczos from 1254x1254 to 64x64
+
+[common prompt]
+Use case: stylized-concept
+Asset type: 64 by 64 game HUD icon candidate
+Input images: Image 1 is low-poly faceting and muted rural palette reference only
+Style/medium: polished stylized low-poly 3D icon, bold faceted opaque forms, matte hand-painted material, readable at 64 pixels
+Composition/framing: one centered symbol or compact object cluster, straight-on, compact silhouette, generous 15 percent padding, no circular button backing
+Scene/backdrop: perfectly flat solid #00ff00 chroma-key background for local background removal
+Lighting/mood: soft neutral frontal icon lighting
+Constraints: original own-IP design; background one uniform color without shadow, floor, gradient, texture, reflection, or lighting variation; crisp opaque edges; do not use #00ff00 in object; no text, letters, number, logo, watermark, border, or cast shadow
+Avoid: photorealism, tiny detail, glow, translucent material, extra objects or scenery
+
+[coin.png] Primary request: one thick warm-gold coin standing at a slight angle, simple embossed four-point sun symbol without letters
+[exp.png] Primary request: one lavender six-point faceted experience star with a small warm-gold diamond center
+[hp.png] Primary request: one full bright brick-red heart made of chunky symmetrical facets, with a tiny cream highlight plane
+[mp.png] Primary request: one deep cobalt-blue mana droplet shaped like a solid crystal, with one pale-blue highlight facet
+[quest.png] Primary request: one rolled cream parchment scroll tied with a muted burgundy ribbon and a small gold diamond seal; no writing or glyph
+[arrow.png] Primary request: a compact bundle of three crossed wooden arrows with pale steel arrowheads and brick-red fletching
+[potion.png] Primary request: one opaque round brick-red ceramic potion bottle with a short neck, cork stopper, and a small cream diamond emblem; not glass
+[shop.png] Primary request: one tiny front-facing market stall canopy with alternating muted brick-red and cream fabric panels above a warm-brown counter
