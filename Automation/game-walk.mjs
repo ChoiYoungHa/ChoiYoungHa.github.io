@@ -86,7 +86,7 @@ async function tap(code, holdMs = 60) { await keyDown(code); await sleep(holdMs)
 const READ_STATE = `(() => {
   const scene = globalThis.__R3F_SCENE__; const out = { player: null, pigs: [], drops: [], npcs: {}, runtime: false, overlay: !!document.querySelector('[data-game-overlay]') }
   if (scene) scene.traverse((obj) => {
-    if (obj.isMesh && obj.geometry?.parameters?.width === 0.8 && obj.geometry?.parameters?.height === 1.8 && !obj.isInstancedMesh) out.player = { x: obj.position.x, y: obj.position.y, z: obj.position.z, heading: obj.rotation.y }
+    if (obj.name === 'player' && !obj.isMesh && out.player === null) out.player = { x: obj.position.x, y: obj.position.y, z: obj.position.z, heading: obj.rotation.y } // R117: 큐브 대신 아바타 그룹
     if (obj.name === 'm6-game-runtime') out.runtime = true
     if (/^npc-(stan|maya)$/.test(obj.name)) { const b = new (obj.position.constructor)(); out.npcs[obj.name.slice(4)] = { x: obj.position.x, y: obj.position.y, z: obj.position.z, scale: obj.children[0]?.scale?.x ?? null } }
     if (obj.isInstancedMesh && obj.parent?.name === 'm6-game-runtime') {
@@ -221,7 +221,7 @@ try {
       if (!pig) { await sleep(500); continue }
       if (pig.d > 1.6) { await walkTo(pig, { tol: 1.4, timeoutMs: 15000 }); continue }
       await setYaw(yawToward(p, pig)); await sleep(100)
-      await tap('Digit2'); await sleep(150); await tap('Digit1'); await sleep(450)
+      await tap('Digit2'); if (!result.fxShot) { await sleep(110); await shot('s07-skillfx'); await sleep(120); await shot('s07-skillfx-b'); result.fxShot = true } await sleep(150); await tap('Digit1'); if (!result.atkShot) { await sleep(120); await shot('s07-attackfx'); result.atkShot = true } await sleep(450)
       if (!shotHit) { const h = await readState(); if (h.hpBars > 0 || h.floaters > 0) { await shot('s07-hunt'); shotHit = true } }
     }
     if (!shotHit) await shot('s07-hunt')

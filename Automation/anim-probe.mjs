@@ -23,7 +23,7 @@ const PROBE = `(() => { const s = globalThis.__R3F_SCENE__; const out = { player
     if (o.isBone && ['LeftUpLeg','LeftArm','Hips','Spine'].includes(o.name)) { out.bones[o.name] = [o.quaternion.x, o.quaternion.y, o.quaternion.z, o.quaternion.w].map((v) => +v.toFixed(3)); if (o.name === 'Hips') out.hipsPos = [o.position.x, o.position.y, o.position.z].map((v) => +v.toFixed(3)) }
     if (o.isBone) out.boneNames.push(o.name) })
   out.boneNames = out.boneNames.slice(0, 6); return out })()`
-const KEY = { KeyW: ['w', 87], KeyS: ['s', 83], KeyA: ['a', 65], Digit1: ['1', 49], ShiftLeft: ['Shift', 16] }
+const KEY = { KeyW: ['w', 87], KeyS: ['s', 83], KeyA: ['a', 65], Digit1: ['1', 49], Digit2: ['2', 50], ShiftLeft: ['Shift', 16] }
 const key = (type, code) => send('Input.dispatchKeyEvent', { type, code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
 const samples = { idle: [], walk: [], attack: [] }
 const shotI = await send('Page.captureScreenshot', { format: 'png' }); await mkdir('Docs/qa/anim-probe', { recursive: true }); await writeFile('Docs/qa/anim-probe/idle.png', Buffer.from(shotI.data, 'base64'))
@@ -36,6 +36,10 @@ await key('keyDown', 'KeyW'); await sleep(1400); { const sh = await send('Page.c
 for (let i = 0; i < 4; i++) { samples.walk.push(await ev(PROBE)); await sleep(300) }
 const shotW = await send('Page.captureScreenshot', { format: 'png' }); await sleep(300)
 await key('keyDown', 'Digit1'); await sleep(60); await key('keyUp', 'Digit1'); await sleep(450)
+await key('keyDown', 'Digit2'); await sleep(60); await key('keyUp', 'Digit2'); await sleep(160)
+{ const sh = await send('Page.captureScreenshot', { format: 'png' }); await writeFile('Docs/qa/anim-probe/skill-160ms.png', Buffer.from(sh.data, 'base64')) }
+console.log('fxmats', await ev(`(() => { const s = globalThis.__R3F_SCENE__; const out = []; s.traverse((o) => { if (o.isInstancedMesh && o.parent?.name === 'm6-game-runtime' && o.count > 0 && o.geometry?.type === 'PlaneGeometry') { for (let i = 0; i < Math.min(o.count, 4); i++) { const e = o.instanceMatrix.array; const k = i * 16; out.push({ pos: [e[k+12], e[k+13], e[k+14]].map(v => +v.toFixed(2)), scale: [Math.hypot(e[k], e[k+1], e[k+2]), Math.hypot(e[k+4], e[k+5], e[k+6])].map(v => +v.toFixed(2)) }) } out.push({ mesh: o.name, count: o.count, frustumCulled: o.frustumCulled }) } }); return JSON.stringify(out).slice(0, 600) })()`))
+await sleep(250); { const sh = await send('Page.captureScreenshot', { format: 'png' }); await writeFile('Docs/qa/anim-probe/skill-400ms.png', Buffer.from(sh.data, 'base64')) }
 for (let i = 0; i < 3; i++) { samples.attack.push(await ev(PROBE)); await sleep(250) }
 const shotA = await send('Page.captureScreenshot', { format: 'png' })
 await mkdir('Docs/qa/anim-probe', { recursive: true }); await writeFile('Docs/qa/anim-probe/walk.png', Buffer.from(shotW.data, 'base64')); await writeFile('Docs/qa/anim-probe/attack.png', Buffer.from(shotA.data, 'base64'))
