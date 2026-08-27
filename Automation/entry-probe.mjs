@@ -1,6 +1,6 @@
 // 진입 프로브: 로딩 % 와 메인스레드 정지(rAF 간격) 타임라인. 사용: node Automation/entry-probe.mjs "<query>"
 import { spawn } from 'node:child_process'; import { mkdir, readFile } from 'node:fs/promises'; import { join } from 'node:path'; import { tmpdir } from 'node:os'
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms)); const query = process.argv[2] ?? 'game=1'
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms)); const query = process.argv[2] ?? 'game=1&net=0'
 const profile = join(tmpdir(), `web3d-entry-${Date.now()}`); await mkdir(profile, { recursive: true })
 const chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--no-sandbox', '--enable-unsafe-webgpu', '--use-angle=d3d11', '--no-first-run', '--disable-extensions', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--window-size=1280,720', 'about:blank'], { stdio: 'ignore', windowsHide: true })
 let port; for (let i = 0; i < 200 && !port; i++) { try { port = Number((await readFile(join(profile, 'DevToolsActivePort'), 'utf8')).split(/\r?\n/)[0]) } catch { await sleep(100) } }

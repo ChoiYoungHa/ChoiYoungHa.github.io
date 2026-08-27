@@ -1,4 +1,4 @@
-// 2026-08-28 드롭 3D 모델 확인 프로브: dev 5173 ?game=1&scene=hunt 에서 가장 가까운 돼지를 잡고 드롭이 생기면 즉시 캡처한다.
+// 2026-08-28 드롭 3D 모델 확인 프로브: dev 5173 ?game=1&net=0&scene=hunt 에서 가장 가까운 돼지를 잡고 드롭이 생기면 즉시 캡처한다.
 import { spawn } from 'node:child_process'; import { mkdir, readFile, writeFile } from 'node:fs/promises'; import { join } from 'node:path'; import { tmpdir } from 'node:os'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -21,7 +21,7 @@ let yaw = 0
 const setYaw = async (t) => { let d = t - yaw; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; const dx = -d / 0.005; await ev(`(() => { window.dispatchEvent(new PointerEvent('pointerdown', { clientX: 640, clientY: 360 })); window.dispatchEvent(new PointerEvent('pointermove', { clientX: 640 + (${dx}), clientY: 360 })); window.dispatchEvent(new PointerEvent('pointerup', { clientX: 640 + (${dx}), clientY: 360 })); return true })()`); yaw = t }
 const yawToward = (a, b) => Math.atan2(-(b.x - a.x), -(b.z - a.z)); const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z)
 const READ = `(() => { const s = globalThis.__R3F_SCENE__; const out = { player: null, pigs: [], drops: [] }; s.traverse((o) => { if (o.name === 'player' && !o.isMesh && !out.player) out.player = { x: o.position.x, z: o.position.z }; if (o.isInstancedMesh && o.parent?.name === 'm6-game-runtime') { const list = []; for (let i = 0; i < o.count; i++) { const e = o.instanceMatrix.array, k = i * 16; list.push({ x: e[k + 12], y: e[k + 13], z: e[k + 14], s: Math.hypot(e[k], e[k + 1], e[k + 2]) }) } if (/^drops-/.test(o.name)) out.drops.push(...list.map((d) => ({ ...d, mesh: o.name }))); else if (o.instanceMatrix.count === 10) out.pigs = list } }); return JSON.stringify(out) })()`
-await send('Page.navigate', { url: 'http://localhost:5173/?game=1&scene=hunt&q=base' }); await sleep(14000)
+await send('Page.navigate', { url: 'http://localhost:5173/?game=1&net=0&scene=hunt&q=base' }); await sleep(14000)
 const walkTo = async (t, tol = 1.5, timeoutMs = 60000) => { const t0 = Date.now(); let last = null; let stuck = Date.now(); let n = 0; await keyDown('KeyW'); try { while (Date.now() - t0 < timeoutMs) { const s = JSON.parse(await ev(READ)); const p = s.player; if (!p) { await sleep(200); continue } if (dist(p, t) <= tol) return; await setYaw(yawToward(p, t)); if (last && dist(last, p) > 0.05) stuck = Date.now(); if (Date.now() - stuck > 2500) { n += 1; stuck = Date.now(); const k = n % 2 ? 'KeyD' : 'KeyA'; await keyDown(k); await sleep(900); await keyUp(k) } last = p; await sleep(120) } } finally { await keyUp('KeyW') } }
 await walkTo({ x: -30, z: 12 }); await walkTo({ x: -60, z: 8 })
 const t0 = Date.now(); let walking = false; let found = null

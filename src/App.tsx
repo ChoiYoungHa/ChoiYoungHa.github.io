@@ -11,6 +11,8 @@ import { HeroTree } from './scene/HeroTree'
 import { Village } from './scene/Village'
 import { Foliage } from './scene/Foliage'
 import { CodexFoliage } from './scene/CodexFoliage'
+import { NetStatus } from './net/NetStatus'
+import { RemotePlayers } from './net/RemotePlayers'
 import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
 import { Player, setMouseSensitivity } from './player/Controller'
@@ -112,7 +114,7 @@ const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { w
         <RockInstances sampleHeight={sampleHeight} />
         <CodexFoliage sampleHeight={sampleHeight} />
       </Suspense>
-      {shot ? <VistaCamera id={shot} /> : <><Player />{GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameRuntime /></Suspense> : null}</>}
+      {shot ? <VistaCamera id={shot} /> : <><Player />{GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameRuntime /><RemotePlayers /></Suspense> : null}</>}
     </Canvas>
   )
 })
@@ -154,6 +156,7 @@ export default function App() {
       {/* R48-A: 로딩 ready 뒤에 마운트 — 5초 타이머 시작점 = ready(로드 중 메인 스레드 정지 구간을 피한다) */}
       {shot || loading.phase !== 'ready' ? null : <ControlsHint />}
       {shot ? null : <Settings onSensitivityChange={setMouseSensitivity} />}
+      {!shot && GAME_INPUT_ENABLED ? <NetStatus /> : null}
       <LoadingScreen phase={loading.phase} progress={loading.progress} error={loading.error} onRetry={loading.retry} />
     </div>
   )

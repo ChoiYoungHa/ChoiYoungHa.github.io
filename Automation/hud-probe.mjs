@@ -1,4 +1,4 @@
-// 아바타 애니메이션 프로브: dev 서버(5173) ?game=1&scene=hunt 에서 본 회전·액션 상태를 샘플링한다.
+// 아바타 애니메이션 프로브: dev 서버(5173) ?game=1&net=0&scene=hunt 에서 본 회전·액션 상태를 샘플링한다.
 import { spawn } from 'node:child_process'; import { mkdir, readFile, writeFile } from 'node:fs/promises'; import { join } from 'node:path'; import { tmpdir } from 'node:os'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -12,7 +12,7 @@ ws.addEventListener('message', (ev) => { const m = JSON.parse(String(ev.data)); 
 const send = (method, params = {}) => new Promise((resolve, reject) => { const i = ++id; pending.set(i, { resolve, reject }); ws.send(JSON.stringify({ id: i, method, params })) })
 await send('Page.enable'); await send('Runtime.enable')
 const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
-await send('Page.navigate', { url: 'http://localhost:5173/?game=1&scene=hunt&q=low' }); await sleep(12000)
+await send('Page.navigate', { url: 'http://localhost:5173/?game=1&net=0&scene=hunt&q=low' }); await sleep(12000)
 
 console.log('hud', await ev(`(() => { const hud = document.querySelector('[aria-label="게임 HUD"]'); if (!hud) return 'no hud'; const slots = [...hud.querySelectorAll('img')].map(i => { const r = i.getBoundingClientRect(); return { src: i.getAttribute('src'), x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), vis: getComputedStyle(i).visibility, op: getComputedStyle(i.parentElement).opacity } }); const all = [...hud.children].map(c => { const r = c.getBoundingClientRect(); return { tag: c.tagName, x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height), disp: getComputedStyle(c).display, text: c.textContent.slice(0, 20) } }); return JSON.stringify({ hudRect: hud.getBoundingClientRect().height, imgs: slots, children: all, inner: innerHeight }) })()`))
 { const sh = await send('Page.captureScreenshot', { format: 'png' }); await mkdir('Docs/qa/anim-probe', { recursive: true }); await writeFile('Docs/qa/anim-probe/hud-check.png', Buffer.from(sh.data, 'base64')) }

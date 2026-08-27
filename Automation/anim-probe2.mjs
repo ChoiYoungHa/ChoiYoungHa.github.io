@@ -10,7 +10,7 @@ ws.addEventListener('message', (ev) => { const m = JSON.parse(String(ev.data)); 
 const send = (method, params = {}) => new Promise((resolve, reject) => { const i = ++id; pending.set(i, { resolve, reject }); ws.send(JSON.stringify({ id: i, method, params })) })
 await send('Page.enable'); await send('Runtime.enable')
 const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
-await send('Page.navigate', { url: 'http://localhost:5173/?game=1&scene=hunt&q=low' }); await sleep(12000)
+await send('Page.navigate', { url: 'http://localhost:5173/?game=1&net=0&scene=hunt&q=low' }); await sleep(12000)
 const out = await ev(`(async () => {
   const THREE = await import('/node_modules/three/build/three.module.js'); const { GLTFLoader } = await import('/node_modules/three/examples/jsm/loaders/GLTFLoader.js')
   const s = globalThis.__R3F_SCENE__; let root = null; s.traverse((o) => { if (!root && o.name === 'player' && !o.isMesh) root = o })

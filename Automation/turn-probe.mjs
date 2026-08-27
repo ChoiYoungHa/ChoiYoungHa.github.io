@@ -1,4 +1,4 @@
-// 아바타 애니메이션 프로브: dev 서버(5173) ?game=1&scene=hunt 에서 본 회전·액션 상태를 샘플링한다.
+// 아바타 애니메이션 프로브: dev 서버(5173) ?game=1&net=0&scene=hunt 에서 본 회전·액션 상태를 샘플링한다.
 import { spawn } from 'node:child_process'; import { mkdir, readFile, writeFile } from 'node:fs/promises'; import { join } from 'node:path'; import { tmpdir } from 'node:os'
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -12,7 +12,7 @@ ws.addEventListener('message', (ev) => { const m = JSON.parse(String(ev.data)); 
 const send = (method, params = {}) => new Promise((resolve, reject) => { const i = ++id; pending.set(i, { resolve, reject }); ws.send(JSON.stringify({ id: i, method, params })) })
 await send('Page.enable'); await send('Runtime.enable')
 const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
-await send('Page.navigate', { url: 'http://localhost:5173/?game=1&scene=hunt&q=low' }); await sleep(12000)
+await send('Page.navigate', { url: 'http://localhost:5173/?game=1&net=0&scene=hunt&q=low' }); await sleep(12000)
 
 const KEY = { KeyW: ['w', 87] }; const key = (type, code) => send('Input.dispatchKeyEvent', { type, code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
 await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 640, y: 360, button: 'left', clickCount: 1 })

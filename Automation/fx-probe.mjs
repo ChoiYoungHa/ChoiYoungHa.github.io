@@ -76,7 +76,7 @@ try {
   await send('Page.enable')
   await send('Runtime.enable')
   await send('Page.bringToFront')
-  await send('Page.navigate', { url: `${baseUrl}/?game=1&scene=hunt&q=low${forceWebGl ? '&gl=webgl' : ''}` })
+  await send('Page.navigate', { url: `${baseUrl}/?game=1&net=0&scene=hunt&q=low${forceWebGl ? '&gl=webgl' : ''}` })
   for (let attempt = 0; attempt < 80; attempt += 1) {
     await sleep(250)
     const ready = await evaluate(`(() => { let fx = null; globalThis.__R3F_SCENE__?.traverse((o) => { if (o.name === 'm6-skill-fx') fx = o }); return !!fx })()`)

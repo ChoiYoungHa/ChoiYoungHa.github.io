@@ -97,6 +97,55 @@ function PlayerCube({ frameRef }: AvatarProps) {
   )
 }
 
+export interface PreparedAvatar { object: Object3D; scale: number; sourceHeight: number }
+
+/** GLB 씬을 복제해 키 PLAYER_HEIGHT_METERS 로 정규화하고 발을 원점에 붙인다. 로컬·원격 아바타 공용(2026-08-28 멀티플레이). */
+export function prepareAvatarModel(scene: Object3D): PreparedAvatar {
+  const object = cloneSkeleton(scene)
+  object.updateMatrixWorld(true)
+  const bounds = new Box3().setFromObject(object)
+  const height = bounds.max.y - bounds.min.y
+  const scale = height > 0 ? PLAYER_HEIGHT_METERS / height : 1
+  object.scale.setScalar(scale)
+  object.position.y = -bounds.min.y * scale // 발바닥을 그룹 원점에 붙인다
+  object.traverse((child) => {
+    const mesh = child as Mesh
+    if (mesh.isMesh !== true) return
+    mesh.castShadow = true
+    mesh.receiveShadow = false
+    // 스킨 메시의 bounding 은 바인드 포즈 기준이라 애니메이션 중 오컬전 판정이 어긋난다.
+    mesh.frustumCulled = false
+  })
+  return { object, scale, sourceHeight: height }
+}
+
+/**
+ * 검을 오른손 본에 부착한다. 날 방향은 아래팔→손 방향(본 로컬 기준)으로 맞춰 리그 축 규약에 의존하지 않는다.
+ * 반환값은 해제 함수(effect cleanup 용).
+ */
+export function mountWeapon(modelObject: Object3D, weaponScene: Object3D, name: string): (() => void) | undefined {
+  const hand = modelObject.getObjectByName(WEAPON_HAND_BONE)
+  if (!(hand instanceof Bone)) return undefined
+  const forearm = hand.parent
+  const holder = new Object3D()
+  holder.name = 'weapon-holder'
+  const sword = weaponScene.clone(true)
+  sword.name = name
+  sword.traverse((child) => { const mesh = child as Mesh; if (mesh.isMesh === true) { mesh.castShadow = true; mesh.receiveShadow = false; mesh.frustumCulled = false } })
+  // 부모(아래팔) 위치를 손 로컬로 옮기면 "손목→손" 방향이 나온다. 날은 그 반대(손 밖)로 뻗는다.
+  const wristLocal = forearm !== null ? hand.worldToLocal(forearm.getWorldPosition(new Vector3())) : new Vector3(0, -1, 0)
+  const bladeDir = wristLocal.clone().multiplyScalar(-1).normalize()
+  holder.quaternion.copy(new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), bladeDir))
+  // 손 본의 월드 스케일(Armature 0.01 × 그룹 정규화)을 상쇄해 검이 월드 기준 WEAPON_SCALE(m) 이 되게 한다.
+  modelObject.updateMatrixWorld(true)
+  const boneScale = hand.getWorldScale(new Vector3())
+  holder.scale.setScalar(WEAPON_SCALE / (boneScale.x || 1))
+  holder.position.copy(bladeDir.clone().multiplyScalar(-WEAPON_GRIP_OFFSET / (boneScale.x || 1)))
+  holder.add(sword)
+  hand.add(holder)
+  return () => { hand.remove(holder) }
+}
+
 function AvatarModel({ frameRef }: AvatarProps) {
   const groupRef = useRef<Group>(null)
   const yawRef = useRef(0)
@@ -104,51 +153,12 @@ function AvatarModel({ frameRef }: AvatarProps) {
   const { scene, animations } = useGLTF(PLAYER_MODEL_URL)
 
   // useGLTF 캐시를 직접 변형하지 않는다. 스킨 메시는 SkeletonUtils.clone 만 본 바인딩을 보존한다.
-  const model = useMemo(() => {
-    const object = cloneSkeleton(scene)
-    object.updateMatrixWorld(true)
-    const bounds = new Box3().setFromObject(object)
-    const height = bounds.max.y - bounds.min.y
-    const scale = height > 0 ? PLAYER_HEIGHT_METERS / height : 1
-    object.scale.setScalar(scale)
-    object.position.y = -bounds.min.y * scale // 발바닥을 그룹 원점에 붙인다
-    object.traverse((child) => {
-      const mesh = child as Mesh
-      if (mesh.isMesh !== true) return
-      mesh.castShadow = true
-      mesh.receiveShadow = false
-      // 스킨 메시의 bounding 은 바인드 포즈 기준이라 애니메이션 중 오컬전 판정이 어긋난다.
-      mesh.frustumCulled = false
-    })
-    return { object, scale, sourceHeight: height }
-  }, [scene])
+  const model = useMemo(() => prepareAvatarModel(scene), [scene])
 
   const equippedWeaponId = useGame((state) => state.equipment.weapon)
   const weapon = useGLTF(weaponModelUrl(equippedWeaponId))
   // 검을 오른손 본에 부착한다. 날 방향은 아래팔→손 방향(본 로컬 기준)으로 맞춰 리그 축 규약에 의존하지 않는다.
-  useEffect(() => {
-    const hand = model.object.getObjectByName(WEAPON_HAND_BONE)
-    if (!(hand instanceof Bone)) return
-    const forearm = hand.parent
-    const holder = new Object3D()
-    holder.name = 'weapon-holder'
-    const sword = weapon.scene.clone(true)
-    sword.name = `weapon-${equippedWeaponId ?? 'default'}`
-    sword.traverse((child) => { const mesh = child as Mesh; if (mesh.isMesh === true) { mesh.castShadow = true; mesh.receiveShadow = false; mesh.frustumCulled = false } })
-    // 부모(아래팔) 위치를 손 로컬로 옮기면 "손목→손" 방향이 나온다. 날은 그 반대(손 밖)로 뻗는다.
-    const wristLocal = forearm !== null ? hand.worldToLocal(forearm.getWorldPosition(new Vector3())) : new Vector3(0, -1, 0)
-    const bladeDir = wristLocal.clone().multiplyScalar(-1).normalize()
-    holder.quaternion.copy(new Quaternion().setFromUnitVectors(new Vector3(0, 1, 0), bladeDir))
-    // 본 스케일(Armature 0.01 등)이 검에 곱해지므로 상쇄한다.
-    // 손 본의 월드 스케일(Armature 0.01 × 그룹 정규화)을 상쇄해 검이 월드 기준 WEAPON_SCALE(m) 이 되게 한다.
-    model.object.updateMatrixWorld(true)
-    const boneScale = hand.getWorldScale(new Vector3())
-    holder.scale.setScalar(WEAPON_SCALE / (boneScale.x || 1))
-    holder.position.copy(bladeDir.clone().multiplyScalar(-WEAPON_GRIP_OFFSET / (boneScale.x || 1)))
-    holder.add(sword)
-    hand.add(holder)
-    return () => { hand.remove(holder) }
-  }, [model.object, model.scale, weapon.scene, equippedWeaponId])
+  useEffect(() => mountWeapon(model.object, weapon.scene, `weapon-${equippedWeaponId ?? 'default'}`), [model.object, model.scale, weapon.scene, equippedWeaponId])
 
   const mixer = useMemo(() => new AnimationMixer(model.object), [model.object])
 

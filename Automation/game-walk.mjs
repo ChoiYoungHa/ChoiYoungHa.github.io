@@ -2,7 +2,7 @@
 // 사용: node Automation/game-walk.mjs <baseline|final|game> --out-dir <dir> [--port 5190] [--tag r109]
 //   baseline : `/?q=low` 를 열어 [data-game-overlay]·m6-game-runtime 부재, game lazy 청크 요청 0, 콘솔 error 0 을 기록
 //   final    : `/?route=final&q=low&report=…` 재생 → finalPosition 과 마지막 waypoint 편차
-//   game     : `/?game=1&q=low` 에서 S00~S10 을 키·DOM 주입으로 진행, 씬별 PNG 캡처, 사냥 중 60초 프레임 샘플, 최종 state JSON
+//   game     : `/?game=1&net=0&q=low` 에서 S00~S10 을 키·DOM 주입으로 진행, 씬별 PNG 캡처, 사냥 중 60초 프레임 샘플, 최종 state JSON
 // 코드는 검증만 한다(게임 소스 수정 없음). 플레이어 위치는 씬 그래프의 플레이어 박스(0.8×1.8×0.8)에서 읽는다.
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { spawn, execFile } from 'node:child_process'
@@ -164,7 +164,7 @@ try {
     result.final = { routeHash: report.routeHash, finalPosition: fp, expected: { x: last[0], z: last[2] }, deviationM: fp ? +Math.hypot(fp.x - last[0], fp.z - last[2]).toFixed(3) : null, integratedSeconds: report.integratedSeconds, status: report.status ?? 'ok', trace: report.trace, grounding: report.grounding, maxWaypointDevM: report.trace ? +Math.max(...report.trace.map((p) => { const w = finalRoute.waypoints.find((x) => x.id === p.id); return w ? Math.hypot(p.x - w.pose.position[0], p.z - w.pose.position[2]) : 0 })).toFixed(3) : null, errors: consoleErrors(cdp), gameChunks: requestedUrls(cdp).filter((u) => /Game(Runtime|Overlay)/i.test(u)), overlay: (await readState()).overlay }
     process.stdout.write(`final deviation=${result.final.deviationM}m hash=${report.routeHash} errors=${result.final.errors.total}\n`)
   } else {
-    const url = `http://127.0.0.1:${o.port}/?game=1&q=low`; result.url = url
+    const url = `http://127.0.0.1:${o.port}/?game=1&net=0&q=low`; result.url = url
     await cdp.send('Page.navigate', { url })
     const scenes = {}
     const mark = async (id, ok, note) => { const s = await readState(); scenes[id] = { ok, note, hud: s.hud, player: s.player, pigs: s.pigs.length, drops: s.drops.length, buttons: s.buttons, overlayText: s.overlayText }; process.stdout.write(`${id} ${ok ? 'PASS' : 'FAIL'} ${note ?? ''}\n`) }
