@@ -86,7 +86,8 @@ async function tap(code, holdMs = 60) { await keyDown(code); await sleep(holdMs)
 const READ_STATE = `(() => {
   const scene = globalThis.__R3F_SCENE__; const out = { player: null, pigs: [], drops: [], npcs: {}, runtime: false, overlay: !!document.querySelector('[data-game-overlay]') }
   if (scene) scene.traverse((obj) => {
-    if (obj.isMesh && obj.geometry?.parameters?.width === 0.8 && obj.geometry?.parameters?.height === 1.8 && !obj.isInstancedMesh) out.player = { x: obj.position.x, y: obj.position.y, z: obj.position.z, heading: obj.rotation.y }
+    // R117-A: 플레이어는 큐브가 아니라 name='player' 그룹(아바타) 또는 폴백 큐브다.
+    if (obj.name === 'player' && out.player === null) out.player = { x: obj.position.x, y: obj.position.y, z: obj.position.z, heading: obj.rotation.y }
     if (obj.name === 'm6-game-runtime') out.runtime = true
     if (/^npc-(stan|maya)$/.test(obj.name)) { const b = new (obj.position.constructor)(); out.npcs[obj.name.slice(4)] = { x: obj.position.x, y: obj.position.y, z: obj.position.z, scale: obj.children[0]?.scale?.x ?? null } }
     if (obj.isInstancedMesh && obj.parent?.name === 'm6-game-runtime') {

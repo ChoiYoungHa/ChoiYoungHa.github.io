@@ -1,0 +1,90 @@
+{
+  "preset": "base",
+  "tag": "r117",
+  "steps": [],
+  "idle": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.383,
+      "z": 24,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 4797,
+    "preset": "basemode",
+    "fps": "144",
+    "autoFallbackLine": false
+  },
+  "walk": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.383,
+      "z": 16.349,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 6018,
+    "preset": "basemode",
+    "fps": "138",
+    "autoFallbackLine": false
+  },
+  "run": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.391,
+      "z": 2.05,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 7110,
+    "preset": "basemode",
+    "fps": "136",
+    "autoFallbackLine": false
+  },
+  "stopped": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.398,
+      "z": -1.683,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 7803,
+    "preset": "basemode",
+    "fps": "141",
+    "autoFallbackLine": false
+  },
+  "errors": []
+}

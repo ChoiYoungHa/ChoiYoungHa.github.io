@@ -1,0 +1,106 @@
+{
+  "mode": "final",
+  "tag": "r117",
+  "at": "2026-08-27T00:28:01.467Z",
+  "url": "http://127.0.0.1:5214/?q=low&route=final&report=final-r117",
+  "shots": [],
+  "walkLog": [],
+  "final": {
+    "routeHash": "a9f1339c4187",
+    "finalPosition": {
+      "x": 35.35105013890177,
+      "y": 0.7462899696147463,
+      "z": -87.20609120725119
+    },
+    "expected": {
+      "x": 35.271,
+      "z": -86.9
+    },
+    "deviationM": 0.316,
+    "integratedSeconds": 75.013,
+    "status": "ok",
+    "trace": [
+      {
+        "t": 0,
+        "id": "spawn",
+        "x": -0.01,
+        "z": 23.97
+      },
+      {
+        "t": 5,
+        "id": "village-gap",
+        "x": -4.6,
+        "z": 9.15
+      },
+      {
+        "t": 10,
+        "id": "village-north",
+        "x": -9.86,
+        "z": -5.86
+      },
+      {
+        "t": 17,
+        "id": "meadow-entry",
+        "x": -7.44,
+        "z": -27.88
+      },
+      {
+        "t": 24,
+        "id": "gentle-rise",
+        "x": 4.35,
+        "z": -46.77
+      },
+      {
+        "t": 30,
+        "id": "mid-vista",
+        "x": 18.48,
+        "z": -59.72
+      },
+      {
+        "t": 37,
+        "id": "tree-approach",
+        "x": 32.32,
+        "z": -77.07
+      },
+      {
+        "t": 40.2,
+        "id": "hero-approach",
+        "x": 35.34,
+        "z": -86.8
+      },
+      {
+        "t": 50,
+        "id": "hero-look",
+        "x": 35.35,
+        "z": -87.21
+      },
+      {
+        "t": 65,
+        "id": "turn-back",
+        "x": 35.35,
+        "z": -87.21
+      },
+      {
+        "t": 75,
+        "id": "village-lookback",
+        "x": 35.35,
+        "z": -87.21
+      }
+    ],
+    "grounding": {
+      "ungroundedFrames": 0,
+      "minY": -2.2638656324682
+    },
+    "maxWaypointDevM": 1.445,
+    "errors": {
+      "console": [],
+      "exceptions": [
+        "Error: m0b-intentional-rejection\n    at qb (http://127.0.0.1:5214/assets/main-bb66bLZO.js:4129:105763)\n    at Zb (http://127.0.0.1:5214/assets/main-bb66bLZO.js:4129:106185)"
+      ],
+      "log": [],
+      "total": 1
+    },
+    "gameChunks": [],
+    "overlay": false
+  }
+}

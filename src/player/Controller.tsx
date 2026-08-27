@@ -1,6 +1,5 @@
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
-import type { Mesh } from 'three'
 import mainPath from '../data/main-path.json' with { type: 'json' }
 import { sampleGround } from '../scene/terrain/heightmap'
 import placement from '../data/placement.json' with { type: 'json' }
@@ -10,8 +9,8 @@ import { createKeyboardInput, GAME_INPUT_ENABLED } from './input'
 import { createRaycastController } from './controllers/raycast'
 import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
+import { PlayerAvatar, type PlayerAvatarFrame } from './Player'
 import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
-import { useLookdevMaterial } from '../scene/Atmosphere'
 import { consumePlayerJump } from '../game/runtimeSignals'
 
 /**
@@ -33,11 +32,10 @@ export function getMouseSensitivity(): number {
 }
 
 export function Player() {
-  const bodyRef = useRef<Mesh>(null)
-  // M3-05 (R30-A) — 플레이어 큐브도 같은 거리 그레이딩 재질
-  const bodyMaterial = useLookdevMaterial({ color: '#8fa0b0', roughness: 0.6, metalness: 0 })
   const posRef = useRef<Vec3>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0 })
   const yawRef = useRef(0)
+  // M5-11 (R117-A) — 아바타에 넘길 프레임 값. 매 프레임 바뀌므로 스토어가 아니라 ref 다(§3-3).
+  const frameRef = useRef<PlayerAvatarFrame>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0, heading: 0, speed: 0 })
 
   // M1-07 — 접지 샘플러가 절차적 지형이다(M0-a 의 40m 평면 아님).
   // 스폰은 길의 첫 waypoint = 마을 입구(main-path.json landmarks.spawn).
@@ -103,19 +101,18 @@ export function Player() {
       : input
     const r = controller.step(jumpInput, dt)
     posRef.current = r.position
-    const body = bodyRef.current
-    if (body) {
-      body.position.set(r.position.x, r.position.y, r.position.z)
-      body.rotation.y = r.heading
-    }
+    const frame = frameRef.current
+    frame.x = r.position.x
+    frame.y = r.position.y
+    frame.z = r.position.z
+    frame.heading = r.heading
+    frame.speed = r.speed
     publishPlayerFrame(r, dt)
   })
 
   return (
     <>
-      <mesh ref={bodyRef} position={[0, RAYCAST_DEFAULTS.eyeOffset, 0]} material={bodyMaterial}>
-        <boxGeometry args={[0.8, 1.8, 0.8]} />
-      </mesh>
+      <PlayerAvatar frameRef={frameRef} />
       <FollowCamera targetRef={posRef} yawRef={yawRef} />
     </>
   )

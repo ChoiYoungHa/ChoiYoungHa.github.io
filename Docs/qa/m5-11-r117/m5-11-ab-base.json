@@ -1,0 +1,111 @@
+{
+  "preset": "base",
+  "tag": "ab",
+  "steps": [],
+  "idle": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.383,
+      "z": 24,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 4566,
+    "preset": "basemode",
+    "fps": "144",
+    "autoFallbackLine": false
+  },
+  "shadowAb": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.383,
+      "z": 24,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 5391,
+    "preset": "basemode",
+    "fps": "144",
+    "autoFallbackLine": false
+  },
+  "walk": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.383,
+      "z": 16.394,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 6801,
+    "preset": "basemode",
+    "fps": "138",
+    "autoFallbackLine": false
+  },
+  "run": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.391,
+      "z": 2.071,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 7908,
+    "preset": "basemode",
+    "fps": "138",
+    "autoFallbackLine": false
+  },
+  "stopped": {
+    "player": {
+      "type": "Group",
+      "x": 0,
+      "y": -2.397,
+      "z": -1.315,
+      "yaw": 0,
+      "children": 1
+    },
+    "skinnedMeshes": 7,
+    "meshes": 7,
+    "cubeFallback": false,
+    "bones": 67,
+    "pipelines": 59,
+    "programs": 77,
+    "textures": 21,
+    "calls": 8583,
+    "preset": "basemode",
+    "fps": "138",
+    "autoFallbackLine": false
+  },
+  "errors": []
+}
