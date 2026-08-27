@@ -1,5 +1,5 @@
 import { DoubleSide, type Texture } from 'three'
-import { attribute, positionLocal, texture, uv, vec2, vec4 } from 'three/tsl'
+import { attribute, texture, uv, vec2, vec4 } from 'three/tsl'
 import { MeshBasicNodeMaterial, type Node } from 'three/webgpu'
 
 export const SKILL_FX_ALPHA_TEST = 0.5
@@ -9,7 +9,6 @@ export function createSkillFxMaterial(atlas: Texture): MeshBasicNodeMaterial {
   const uvRect = attribute('uvRect', 'vec4') as unknown as Node<'vec4'>
   const instanceColor = attribute('color', 'vec3') as unknown as Node<'vec3'>
   const frame = attribute('frame', 'float') as unknown as Node<'float'>
-  const life = (attribute('life', 'float') as unknown as Node<'float'>).clamp(0, 1)
   const atlasUv = uv()
     .mul(uvRect.zw)
     .add(uvRect.xy)
@@ -24,8 +23,8 @@ export function createSkillFxMaterial(atlas: Texture): MeshBasicNodeMaterial {
     toneMapped: false,
   })
   material.colorNode = vec4(sampled.rgb.mul(instanceColor), sampled.a)
-  // 컷아웃 알파는 바꾸지 않고 쿼드 자체를 줄여 수명 페이드를 표현한다.
-  material.positionNode = positionLocal.mul(life)
+  // 수명 페이드(쿼드 축소)는 인스턴스 행렬 스케일로 한다 — positionNode 덮어쓰기는 인스턴스 행렬을 무시해
+  // 모든 FX가 원점에 그려지는 결함이 있었다(2026-08-27 실빌드 실측).
   material.name = 'm6-shared-skill-fx-level-ring'
   material.userData = { sharedFxMaterial: true, instanceAttributes: ['uvRect', 'color', 'frame', 'life'] }
   return material

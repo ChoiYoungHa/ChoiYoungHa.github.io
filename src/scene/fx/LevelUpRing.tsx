@@ -39,7 +39,8 @@ export function LevelUpRing({ session, material }: LevelUpRingProps) {
       const y = sampleHeight(instance.position.x, instance.position.z) + instance.position.y
       transform.position.set(instance.position.x, y, instance.position.z)
       transform.rotation.set(-Math.PI / 2, 0, 0)
-      transform.scale.set(instance.scale[0], instance.scale[1], 1)
+      const life = Math.min(1, Math.max(0, instance.life))
+      transform.scale.set(instance.scale[0] * life, instance.scale[1] * life, 1)
       transform.updateMatrix()
       mesh.setMatrixAt(index, transform.matrix)
     })

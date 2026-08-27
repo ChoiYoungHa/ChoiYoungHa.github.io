@@ -529,11 +529,12 @@ export function createSession(options: CreateSessionOptions): GameSession {
         }
       }
       if (inputs.selectedItemId !== undefined) selectedShopItemId = inputs.selectedItemId
-      if (game.scene === 'shop' && !dialogueHandled && shopConfirmGuard) {
+      // 상점 진입 직후 첫 confirm(대화 마지막 Enter 연타)은 삼킨다 — 입력이 없는 틱에 가드를 풀면 그다음 Enter가 곧장 구매로 샜다(D3 재발, 2026-08-27 실빌드).
+      if (game.scene === 'shop' && inputs.confirm && !dialogueHandled && shopConfirmGuard) {
         shopConfirmGuard = false
       } else if (game.scene === 'shop' && inputs.confirm && !dialogueHandled) {
+        // 명시적으로 고른 품목만 산다. 직업 기본 무기 자동 선택(fallback)은 의도 없는 구매의 원인이라 제거.
         const itemId = inputs.selectedItemId ?? selectedShopItemId
-          ?? ITEMS.find((item) => item.jobId === game.jobId && item.kind === 'weapon')?.id
         const item = ITEMS.find((candidate) => candidate.id === itemId)
         if (item !== undefined) {
           const mesoBefore = game.meso

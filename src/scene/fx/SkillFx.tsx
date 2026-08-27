@@ -48,7 +48,8 @@ export function SkillFx({ session, material }: SkillFxProps) {
         camera.position.x - instance.position.x,
         camera.position.z - instance.position.z,
       ), 0)
-      transform.scale.set(instance.scale[0], instance.scale[1], 1)
+      const life = Math.min(1, Math.max(0, instance.life))
+      transform.scale.set(instance.scale[0] * life, instance.scale[1] * life, 1)
       transform.updateMatrix()
       mesh.setMatrixAt(index, transform.matrix)
     })
