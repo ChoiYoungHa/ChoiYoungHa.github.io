@@ -46,6 +46,16 @@ export const GAME_INPUT_ENABLED = isGameInputEnabled(
   import.meta.env?.VITE_GAME,
 )
 
+export interface Forward2 {
+  x: number
+  z: number
+}
+
+/** Controller-authoritative Three.js convention: yaw 0 faces -Z, positive yaw turns toward -X. */
+export function forwardFromYaw(yaw: number): Forward2 {
+  return { x: -Math.sin(yaw), z: -Math.cos(yaw) }
+}
+
 /** 컨트롤러가 매 프레임 받는 입력 상태. 키 코드가 아니라 의미만 담는다. */
 export interface InputState {
   forward: number // -1..1  (W:+1, S:-1)

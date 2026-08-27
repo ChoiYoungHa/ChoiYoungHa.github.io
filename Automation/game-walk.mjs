@@ -17,10 +17,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 const args = process.argv.slice(2)
 const mode = args[0]
-const o = { outDir: null, port: 5190, tag: 'r109', q: 'low' }
+const o = { outDir: null, port: 5190, tag: 'r109' }
 for (let i = 1; i < args.length; i += 1) {
   const a = args[i]; const n = () => args[++i]
-  if (a === '--out-dir') o.outDir = n(); else if (a === '--port') o.port = Number(n()); else if (a === '--tag') o.tag = n(); else if (a === '--q') o.q = n()
+  if (a === '--out-dir') o.outDir = n(); else if (a === '--port') o.port = Number(n()); else if (a === '--tag') o.tag = n()
 }
 if (!['baseline', 'final', 'game'].includes(mode) || !o.outDir) throw new Error('usage: game-walk.mjs <baseline|final|game> --out-dir <dir>')
 await mkdir(o.outDir, { recursive: true })
@@ -86,8 +86,7 @@ async function tap(code, holdMs = 60) { await keyDown(code); await sleep(holdMs)
 const READ_STATE = `(() => {
   const scene = globalThis.__R3F_SCENE__; const out = { player: null, pigs: [], drops: [], npcs: {}, runtime: false, overlay: !!document.querySelector('[data-game-overlay]') }
   if (scene) scene.traverse((obj) => {
-    // R117-A: 플레이어는 큐브가 아니라 name='player' 그룹(아바타) 또는 폴백 큐브다.
-    if (obj.name === 'player' && out.player === null) out.player = { x: obj.position.x, y: obj.position.y, z: obj.position.z, heading: obj.rotation.y }
+    if (obj.isMesh && obj.geometry?.parameters?.width === 0.8 && obj.geometry?.parameters?.height === 1.8 && !obj.isInstancedMesh) out.player = { x: obj.position.x, y: obj.position.y, z: obj.position.z, heading: obj.rotation.y }
     if (obj.name === 'm6-game-runtime') out.runtime = true
     if (/^npc-(stan|maya)$/.test(obj.name)) { const b = new (obj.position.constructor)(); out.npcs[obj.name.slice(4)] = { x: obj.position.x, y: obj.position.y, z: obj.position.z, scale: obj.children[0]?.scale?.x ?? null } }
     if (obj.isInstancedMesh && obj.parent?.name === 'm6-game-runtime') {
@@ -101,7 +100,6 @@ const READ_STATE = `(() => {
   out.dialogue = !!document.querySelector('[data-dialogue-panel], [aria-label="대화"]') || [...document.querySelectorAll('[data-game-overlay] *')].some((el) => el.getAttribute('role') === 'dialog')
   out.buttons = [...document.querySelectorAll('[data-game-overlay] button')].map((b) => ({ text: b.textContent.trim().slice(0, 24), disabled: b.disabled }))
   out.overlayText = document.querySelector('[data-game-overlay]')?.innerText?.replace(/\\s+/g, ' ').slice(0, 400) ?? null
-  const rr = globalThis.__R3F_RENDERER__; out.pipelines = rr?._pipelines?.caches?.size ?? null; out.programs = rr?.info?.memory?.programs ?? null; out.interactPrompt = document.querySelector('[data-interact-prompt]')?.textContent ?? null
   out.hpBars = document.querySelectorAll('[data-mob-hp-bar], [aria-label="몬스터 체력"]').length
   out.floaters = document.querySelectorAll('[data-damage-floater]').length
   return out
@@ -118,7 +116,6 @@ async function setYaw(target) {
   yaw = target
 }
 const yawToward = (from, to) => Math.atan2(-(to.x - from.x), -(to.z - from.z)) // 이동 forward = (-sin, -cos)
-const aimToward = (from, to) => Math.atan2((to.x - from.x), -(to.z - from.z)) // 규칙(combat/interact) forward = (+sin, -cos) — 이동 규약과 x 부호가 다르다(검증 대상)
 const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z)
 const walkLog = []
 async function walkTo(target, { tol = 0.7, run = false, timeoutMs = 60000 } = {}) {
@@ -167,10 +164,10 @@ try {
     result.final = { routeHash: report.routeHash, finalPosition: fp, expected: { x: last[0], z: last[2] }, deviationM: fp ? +Math.hypot(fp.x - last[0], fp.z - last[2]).toFixed(3) : null, integratedSeconds: report.integratedSeconds, status: report.status ?? 'ok', trace: report.trace, grounding: report.grounding, maxWaypointDevM: report.trace ? +Math.max(...report.trace.map((p) => { const w = finalRoute.waypoints.find((x) => x.id === p.id); return w ? Math.hypot(p.x - w.pose.position[0], p.z - w.pose.position[2]) : 0 })).toFixed(3) : null, errors: consoleErrors(cdp), gameChunks: requestedUrls(cdp).filter((u) => /Game(Runtime|Overlay)/i.test(u)), overlay: (await readState()).overlay }
     process.stdout.write(`final deviation=${result.final.deviationM}m hash=${report.routeHash} errors=${result.final.errors.total}\n`)
   } else {
-    const url = `http://127.0.0.1:${o.port}/?game=1&q=${o.q}`; result.url = url
+    const url = `http://127.0.0.1:${o.port}/?game=1&q=low`; result.url = url
     await cdp.send('Page.navigate', { url })
     const scenes = {}
-    const mark = async (id, ok, note) => { const s = await readState(); scenes[id] = { ok, note, hud: s.hud, player: s.player, pigs: s.pigs.length, drops: s.drops.length, buttons: s.buttons, overlayText: s.overlayText, pipelines: s.pipelines, programs: s.programs }; process.stdout.write(`${id} ${ok ? 'PASS' : 'FAIL'} pipelines=${s.pipelines} ${note ?? ''}\n`) }
+    const mark = async (id, ok, note) => { const s = await readState(); scenes[id] = { ok, note, hud: s.hud, player: s.player, pigs: s.pigs.length, drops: s.drops.length, buttons: s.buttons, overlayText: s.overlayText }; process.stdout.write(`${id} ${ok ? 'PASS' : 'FAIL'} ${note ?? ''}\n`) }
     // S00 타이틀: 시작 버튼이 활성화될 때까지(로딩) 대기
     const s00 = await waitFor((s) => s.buttons.some((b) => !b.disabled), 60000, 500); await sleep(1500); await shot('s00-title')
     await mark('S00', !!s00 && s00.overlay, s00 ? `buttons=${JSON.stringify(s00.buttons)}` : 'start button never enabled'); result.pigsAtTitle = (await readState()).pigs
@@ -184,7 +181,7 @@ try {
     // S02 힌트 3입력: 이동 → 달리기 → 점프
     await keyDown('KeyW'); await sleep(900); await keyUp('KeyW'); await sleep(300)
     await keyDown('ShiftLeft'); await keyDown('KeyW'); await sleep(1500); await keyUp('KeyW'); await keyUp('ShiftLeft'); await sleep(300)
-    await tap('Space'); await sleep(180); await shot('r114-jump'); await sleep(200); await shot('s02-hints')
+    await tap('Space'); await sleep(300); await shot('s02-hints')
     await mark('S02', true, 'move/run/jump injected — hint DOM in overlayText')
     // S03 아치 통과: 게이트 중심으로
     await walkTo({ x: GATE.x, z: GATE.z + 4 }, { tol: 1 }); await walkTo({ x: GATE.x, z: GATE.z - 1.5 }, { tol: 0.8 }); await shot('s03-gate-0s'); await sleep(2200); await shot('s03-gate-2s')
@@ -193,17 +190,15 @@ try {
     const camDist = []; for (let i = 0; i < 3; i++) { camDist.push(await evaluate(`(() => { const r = globalThis.__R3F_RENDERER__; const cam = r?._activeCamera ?? null; return cam ? [cam.position.x, cam.position.y, cam.position.z] : null })()`)); await sleep(700) }
     result.cameraSamples = camDist
     // S04 스탄
-    await walkTo({ x: NPC.stan.x, z: NPC.stan.z + 1.8 }, { tol: 0.6 }); await setYaw(yawToward((await readState()).player, NPC.stan)); await sleep(400); result.interactPrompt = (await readState()).interactPrompt; await shot('r114-prompt'); await tap('KeyF'); await sleep(500)
-    let s04 = await readState(); let s04ok = s04.buttons.some((b) => /수락/.test(b.text)) || /스탄|장로/.test(s04.overlayText ?? '')
-    if (!s04ok) { await setYaw(yaw + Math.PI); await sleep(200); await tap('KeyF'); await sleep(500); s04 = await readState(); s04ok = s04.buttons.some((b) => /수락/.test(b.text)) || /스탄|장로/.test(s04.overlayText ?? ''); result.stanInteractNeededFlip = s04ok }
+    await walkTo({ x: NPC.stan.x, z: NPC.stan.z + 1.8 }, { tol: 0.6 }); await setYaw(yawToward((await readState()).player, NPC.stan)); await sleep(200); await tap('KeyF'); await sleep(500)
+    const s04 = await readState(); const s04ok = s04.buttons.some((b) => /수락/.test(b.text)) || /스탄|장로/.test(s04.overlayText ?? '')
     await shot('s04-stan'); await mark('S04', s04ok, `dialogue=${(s04.overlayText ?? '').slice(0, 120)}`)
     for (let i = 0; i < 6; i++) { const s = await readState(); if (s.buttons.some((b) => /수락/.test(b.text))) { await clickButton(`/수락/.test(x.textContent)`); await sleep(300); break } await tap('Enter'); await sleep(350) }
     for (let i = 0; i < 6; i++) { await tap('Enter'); await sleep(300) }
     const afterStan = await readState(); await mark('S04-accept', /1\/10|0\/10|사냥/.test(afterStan.hud.quest ?? ''), `quest=${afterStan.hud.quest}`)
     // S05 마야 상점
     await walkTo({ x: NPC.maya.x + 1.8, z: NPC.maya.z }, { tol: 0.6 }); await setYaw(yawToward((await readState()).player, NPC.maya)); await sleep(200); await tap('KeyF'); await sleep(500)
-    let s05 = await readState(); let s05ok = /마야|상점/.test(s05.overlayText ?? '')
-    if (!s05ok) { await setYaw(yaw + Math.PI); await sleep(200); await tap('KeyF'); await sleep(500); s05 = await readState(); s05ok = /마야|상점/.test(s05.overlayText ?? ''); result.mayaInteractNeededFlip = s05ok }
+    const s05 = await readState(); const s05ok = /마야|상점/.test(s05.overlayText ?? '')
     for (let i = 0; i < 8; i++) { const s = await readState(); if (s.buttons.some((b) => /구매/.test(b.text))) break; await tap('Enter'); await sleep(350) }
     const shopState = await readState(); const coin = (t) => Number((t ?? '').match(/(?:코인|메소)\s*(\d[\d,]*)/)?.[1]?.replace(/,/g, '') ?? NaN); const mesoBefore = coin(shopState.overlayText)
     await clickButton(`/활|사냥/.test(x.textContent) && !x.disabled`); await sleep(250); await shot('s05-shop')
@@ -225,9 +220,8 @@ try {
       const pig = s.pigs.map((g) => ({ ...g, d: dist(p, g) })).sort((a, b) => a.d - b.d)[0]
       if (!pig) { await sleep(500); continue }
       if (pig.d > 1.6) { await walkTo(pig, { tol: 1.4, timeoutMs: 15000 }); continue }
-      if (!result.aimExperiment) { const trial = async (fn, label) => { await setYaw(fn(p, pig)); await sleep(120); for (let k = 0; k < 3; k++) { await tap('Digit1'); await sleep(700) } const r = await readState(); return { label, floaters: r.floaters, hpBars: r.hpBars, quest: r.hud.quest } }; result.aimExperiment = [await trial(yawToward, 'move-yaw(-sin)'), await trial(aimToward, 'rule-yaw(+sin)')]; process.stdout.write(`aim ${JSON.stringify(result.aimExperiment)}\n`) }
-      await setYaw(aimToward(p, pig)); await sleep(100)
-      await tap('Digit2'); if (!result.skillShot) { await sleep(120); await shot('r114-skillfx'); result.skillShot = true; const ps = await readState(); result.pipelinesAfterSkill = ps.pipelines } await sleep(150); await tap('Digit1'); await sleep(450)
+      await setYaw(yawToward(p, pig)); await sleep(100)
+      await tap('Digit2'); await sleep(150); await tap('Digit1'); await sleep(450)
       if (!shotHit) { const h = await readState(); if (h.hpBars > 0 || h.floaters > 0) { await shot('s07-hunt'); shotHit = true } }
     }
     if (!shotHit) await shot('s07-hunt')
@@ -236,7 +230,7 @@ try {
     // S09 스탄 완료 → 보상
     await walkTo({ x: -30, z: 12 }, { tol: 1.5, run: true, timeoutMs: 90000 }); await walkTo({ x: NPC.stan.x, z: NPC.stan.z + 1.8 }, { tol: 0.6, run: true, timeoutMs: 90000 })
     await setYaw(yawToward((await readState()).player, NPC.stan)); await sleep(200); await tap('KeyF'); await sleep(500)
-    for (let i = 0; i < 10; i++) { const s = await readState(); if (s.buttons.some((b) => /완료|보상/.test(b.text))) { await clickButton(`/완료|보상/.test(x.textContent)`); await sleep(350); await shot('r114-levelup'); result.pipelinesAfterLevelUp = (await readState()).pipelines; break } await tap('Enter'); await sleep(350) }
+    for (let i = 0; i < 10; i++) { const s = await readState(); if (s.buttons.some((b) => /완료|보상/.test(b.text))) { await clickButton(`/완료|보상/.test(x.textContent)`); await sleep(400); break } await tap('Enter'); await sleep(350) }
     const s09 = await waitFor((s) => s.buttons.some((b) => /확인/.test(b.text)), 8000); await shot('s09-reward')
     await mark('S09', !!s09, `text=${(s09?.overlayText ?? '').slice(0, 120)}`)
     await clickButton(`/확인/.test(x.textContent)`); await sleep(300); for (let i = 0; i < 6; i++) { await tap('Enter'); await sleep(300) }

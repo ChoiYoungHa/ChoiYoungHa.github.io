@@ -81,6 +81,7 @@ export function runStory(options = {}) {
   moveTo(npc.maya)
   tick({ interact: true })
   finishDialogue()
+  tick() // shop panel readiness frame; consumes the post-dialogue confirm guard
   tick({ selectedItemId: 'weapon.hunting-bow', confirm: true })
   moveTo({ x: -80, z: 8 })
 
@@ -115,6 +116,7 @@ export function runStory(options = {}) {
   moveTo(npc.stan)
   tick({ interact: true })
   finishDialogue('complete')
+  tick({ confirm: true }) // close reward before the epilogue starts (D12)
   const remainingBaselineMs = STORY_BASELINE_MS - session.getSnapshot().nowMs
   if (remainingBaselineMs > 0) tick({}, remainingBaselineMs)
   if (options.epilogueAction !== undefined) tick({ epilogueAction: options.epilogueAction })

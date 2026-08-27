@@ -14,6 +14,7 @@ import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
 import { Player, setMouseSensitivity } from './player/Controller'
 import { RuntimeHud, RuntimeProbe } from './systems/RuntimeHud'
+import { shouldShowRuntimeHud } from './systems/runtimeHudGate'
 import { ControlsHint } from './systems/ui/ControlsHint'
 import { Settings } from './systems/ui/Settings'
 import { LoadingScreen, useLoadingState } from './systems/ui/LoadingScreen'
@@ -127,7 +128,7 @@ export default function App() {
   return (
     <div className="stage" style={{ width, height }}>
       <Stage width={width} height={height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
-      <RuntimeHud />
+      {shouldShowRuntimeHud(location.search, GAME_INPUT_ENABLED) ? <RuntimeHud /> : null}
       {!shot && GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameOverlay loading={loading} preset={preset} /></Suspense> : null}
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
       {/* R48-A: 로딩 ready 뒤에 마운트 — 5초 타이머 시작점 = ready(로드 중 메인 스레드 정지 구간을 피한다) */}
