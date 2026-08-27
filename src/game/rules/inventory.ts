@@ -3,7 +3,7 @@ export const INVENTORY_ROWS = 6
 export const INVENTORY_CAPACITY = INVENTORY_COLUMNS * INVENTORY_ROWS
 
 export type EquipmentSlot = 'weapon' | 'head'
-export type ItemKind = EquipmentSlot | 'currency'
+export type ItemKind = EquipmentSlot | 'currency' | 'consumable'
 export type ItemBonuses = Record<string, number>
 
 export interface ItemDefinition {
@@ -16,6 +16,8 @@ export interface ItemDefinition {
   sellPrice?: number
   stackLimit: number
   bonuses: ItemBonuses
+  /** 소비품 효과(HP/MP 회복). kind === 'consumable' 일 때만. */
+  effect?: { hp?: number; mp?: number }
 }
 
 export interface ItemStack {
@@ -91,6 +93,17 @@ export function addInventoryItem(
     added: quantity - remainder,
     remainder,
   }
+}
+
+/** 소비품 1개를 빼낸다. 없으면 null. */
+export function consumeInventoryItem(inventory: Inventory, itemId: string): Inventory | null {
+  const index = inventory.slots.findIndex((stack) => stack?.itemId === itemId && stack.quantity > 0)
+  if (index < 0) return null
+  const next = cloneInventory(inventory)
+  const stack = next.slots[index]!
+  stack.quantity -= 1
+  if (stack.quantity === 0) next.slots[index] = null
+  return next
 }
 
 export function equipInventoryItem(inventory: Inventory, item: ItemDefinition): Inventory {

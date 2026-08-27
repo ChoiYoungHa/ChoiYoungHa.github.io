@@ -24,6 +24,8 @@ import { MobHpBar } from './MobHpBar.tsx'
 import { Portrait } from './Portrait.tsx'
 import { RewardPopup } from './RewardPopup.tsx'
 import { ShopPanel } from './ShopPanel.tsx'
+import rawItems from '../../game/data/items.json' with { type: 'json' }
+const ITEM_KIND_BY_ID: Readonly<Record<string, string>> = Object.fromEntries((rawItems as Array<{ id: string; kind: string }>).map((item) => [item.id, item.kind]))
 import { TitleScreen } from './TitleScreen.tsx'
 import { TutorialHints } from './TutorialHints.tsx'
 import { ZoneBanner } from './ZoneBanner.tsx'
@@ -167,8 +169,8 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
       <ZoneBanner banner={snapshot.banner} ipMode={game.ipMode} />
       <InteractPrompt interactableId={interactableId} />
       {snapshot.activeDialogue !== null && <DialoguePanel state={snapshot.activeDialogue} ipMode={game.ipMode} onAdvance={() => session.enqueueInput({ confirm: true })} onChoose={(choice) => session.enqueueInput({ choice })} npcImageUrl={dialoguePortraitUrl} nowMs={snapshot.nowMs} />}
-      {scene === 'shop' && game.jobId !== null && <ShopPanel state={{ jobId: game.jobId, meso: game.meso, inventory: game.inventory }} selectedItemId={snapshot.selectedShopItemId} ipMode={game.ipMode} onSelect={(selectedItemId) => session.enqueueInput({ selectedItemId })} onPurchase={(result) => { if (result.ok) session.enqueueInput({ confirm: true, selectedItemId: snapshot.selectedShopItemId ?? undefined }) }} onAfterPurchase={() => undefined} />}
-      <InventoryPanel open={snapshot.inventoryOpen} inventory={game.inventory} hoveredSlotIndex={hoveredSlot} acquiredAtByItemId={snapshot.acquiredAtByItemId} nowMs={snapshot.nowMs} ipMode={game.ipMode} onHoverSlot={setHoveredSlot} onEquip={(equipItemId) => session.enqueueInput({ equipItemId })} />
+      {scene === 'shop' && game.jobId !== null && <ShopPanel state={{ jobId: game.jobId, meso: game.meso, inventory: game.inventory }} selectedItemId={snapshot.selectedShopItemId} ipMode={game.ipMode} onSelect={(selectedItemId) => session.enqueueInput({ selectedItemId })} onPurchase={(result) => { if (result.ok) session.enqueueInput({ confirm: true, selectedItemId: snapshot.selectedShopItemId ?? undefined }) }} onAfterPurchase={() => undefined} onLeave={() => session.enqueueInput({ cancel: true })} />}
+      <InventoryPanel open={snapshot.inventoryOpen} inventory={game.inventory} hoveredSlotIndex={hoveredSlot} acquiredAtByItemId={snapshot.acquiredAtByItemId} nowMs={snapshot.nowMs} ipMode={game.ipMode} onHoverSlot={setHoveredSlot} onEquip={(itemId) => session.enqueueInput(ITEM_KIND_BY_ID[itemId] === 'consumable' ? { useItemId: itemId } : { equipItemId: itemId })} />
       <RewardPopup visible={snapshot.reward !== null} ipMode={game.ipMode} previousLevel={snapshot.reward?.previousLevel ?? game.level} currentLevel={snapshot.reward?.currentLevel ?? game.level} onClose={() => session.enqueueInput({ closeReward: true })} />
       {scene === 'epilogue' && <Epilogue elapsedMs={snapshot.nowMs - (snapshot.epilogueStartedAtMs ?? snapshot.nowMs)} ipMode={game.ipMode} onRetry={() => session.enqueueInput({ epilogueAction: 'retry' })} onFreeExplore={() => session.enqueueInput({ epilogueAction: 'free' })} />}
       <DamageFloater state={floaters} nowMs={snapshot.nowMs} />

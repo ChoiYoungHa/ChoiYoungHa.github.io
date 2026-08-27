@@ -17,6 +17,7 @@ export type Action =
   | 'attack'
   | 'skill'
   | 'inventory'
+  | 'cancel'
   | 'confirm'
 
 export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string[]> = {
@@ -31,10 +32,11 @@ export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string
   attack: ['Digit1'],
   skill: ['Digit2'],
   inventory: ['KeyI'],
+  cancel: ['Escape'],
   confirm: ['Enter'],
 }
 
-export const GAMEPLAY_ACTIONS = ['jump', 'interact', 'attack', 'skill', 'inventory', 'confirm'] as const
+export const GAMEPLAY_ACTIONS = ['jump', 'interact', 'attack', 'skill', 'inventory', 'confirm', 'cancel'] as const
 export type GameplayAction = typeof GAMEPLAY_ACTIONS[number]
 
 export function isGameInputEnabled(search = '', viteGame = ''): boolean {

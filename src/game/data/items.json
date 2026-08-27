@@ -7,7 +7,9 @@
     "jobId": "warrior",
     "price": 800,
     "stackLimit": 1,
-    "bonuses": { "attack": 12 }
+    "bonuses": {
+      "attack": 12
+    }
   },
   {
     "id": "weapon.hunting-bow",
@@ -17,7 +19,10 @@
     "jobId": "archer",
     "price": 900,
     "stackLimit": 1,
-    "bonuses": { "attack": 10, "range": 12 }
+    "bonuses": {
+      "attack": 10,
+      "range": 12
+    }
   },
   {
     "id": "weapon.oak-staff",
@@ -27,7 +32,9 @@
     "jobId": "mage",
     "price": 1000,
     "stackLimit": 1,
-    "bonuses": { "magic": 14 }
+    "bonuses": {
+      "magic": 14
+    }
   },
   {
     "id": "weapon.iron-dagger",
@@ -37,7 +44,10 @@
     "jobId": "thief",
     "price": 850,
     "stackLimit": 1,
-    "bonuses": { "attack": 11, "attackSpeedPercent": 15 }
+    "bonuses": {
+      "attack": 11,
+      "attackSpeedPercent": 15
+    }
   },
   {
     "id": "currency.meso",
@@ -55,6 +65,53 @@
     "price": 0,
     "sellPrice": 120,
     "stackLimit": 20,
-    "bonuses": { "luck": 1 }
+    "bonuses": {
+      "luck": 1
+    }
+  },
+  {
+    "id": "weapon.steel-sword",
+    "nameKey": "item.weapon.steel-sword",
+    "kind": "weapon",
+    "equipSlot": "weapon",
+    "jobId": "warrior",
+    "price": 1200,
+    "stackLimit": 1,
+    "bonuses": {
+      "attack": 34
+    }
+  },
+  {
+    "id": "consumable.potion-hp-s",
+    "nameKey": "item.consumable.potion-hp-s",
+    "kind": "consumable",
+    "price": 60,
+    "stackLimit": 20,
+    "bonuses": {},
+    "effect": {
+      "hp": 50
+    }
+  },
+  {
+    "id": "consumable.potion-hp-m",
+    "nameKey": "item.consumable.potion-hp-m",
+    "kind": "consumable",
+    "price": 160,
+    "stackLimit": 20,
+    "bonuses": {},
+    "effect": {
+      "hp": 150
+    }
+  },
+  {
+    "id": "consumable.potion-mp-s",
+    "nameKey": "item.consumable.potion-mp-s",
+    "kind": "consumable",
+    "price": 70,
+    "stackLimit": 20,
+    "bonuses": {},
+    "effect": {
+      "mp": 40
+    }
   }
 ]

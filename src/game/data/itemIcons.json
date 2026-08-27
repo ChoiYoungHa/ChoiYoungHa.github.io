@@ -12,6 +12,10 @@
     "weapon.oak-staff": "/ui/icons/wpn-staff-oak.png",
     "weapon.iron-dagger": "/ui/icons/wpn-dagger-iron.png",
     "currency.meso": "/ui/icons/itm-meso.png",
-    "head.pig-ribbon": "/ui/icons/itm-pigribbon.png"
+    "head.pig-ribbon": "/ui/icons/itm-pigribbon.png",
+    "weapon.steel-sword": "/ui/icons/wpn-sword-steel.png",
+    "consumable.potion-hp-s": "/ui/icons/itm-potion-hp-s.png",
+    "consumable.potion-hp-m": "/ui/icons/itm-potion-hp-m.png",
+    "consumable.potion-mp-s": "/ui/icons/itm-potion-mp-s.png"
   }
 }

@@ -4,7 +4,8 @@ import { t, type IpMode } from '../../game/i18n.ts'
 import { tooltipForItem, type ItemDefinition } from '../../game/rules/inventory.ts'
 import { buyItem, type PurchaseResult, type ShopState } from '../../game/rules/shop.ts'
 
-const SHOP_ITEMS = (rawItems as unknown as ItemDefinition[]).filter((item) => item.kind === 'weapon')
+// 2026-08-27 영하님: 전사 단일 → 전사 무기 + 소비품만 판다.
+const SHOP_ITEMS = (rawItems as unknown as ItemDefinition[]).filter((item) => item.id === 'weapon.steel-sword' || item.kind === 'consumable') // 영하님: 나무검 대신 강철검
 const ITEM_ICONS: Readonly<Record<string, string>> = iconData.items
 
 export interface ShopItemPresentation {

@@ -1,6 +1,7 @@
 import itemData from './data/items.json' with { type: 'json' }
 import {
   addInventoryItem,
+  consumeInventoryItem,
   type ItemDefinition,
 } from './rules/inventory.ts'
 import {
@@ -32,6 +33,7 @@ export type GameAction =
   | { type: 'adjust-meso', amount: number }
   | { type: 'purchase', item: ItemDefinition }
   | { type: 'gain-item', item: ItemDefinition, quantity: number }
+  | { type: 'use-item', item: ItemDefinition }
   | { type: 'quest-accept' }
   | { type: 'quest-kill', quest: QuestDefinition, monsterId: string }
   | { type: 'quest-complete', quest: QuestDefinition }
@@ -82,6 +84,17 @@ export function reduce(state: GameState, action: GameAction): GameState {
       return result.ok
         ? withInventory({ ...state, meso: result.state.meso }, result.state.inventory)
         : state
+    }
+    case 'use-item': {
+      if (action.item.kind !== 'consumable') return state
+      const inventory = consumeInventoryItem(state.inventory, action.item.id)
+      if (inventory === null) return state
+      const effect = action.item.effect ?? {}
+      return withInventory({
+        ...state,
+        hp: Math.min(state.maxHp, state.hp + (effect.hp ?? 0)),
+        mp: Math.min(state.maxMp, state.mp + (effect.mp ?? 0)),
+      }, inventory)
     }
     case 'gain-item': {
       const result = addInventoryItem(state.inventory, action.item, action.quantity)

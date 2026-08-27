@@ -191,7 +191,8 @@ function AvatarModel({ frameRef }: AvatarProps) {
     group.position.set(frame.x, frame.y - RAYCAST_DEFAULTS.eyeOffset, frame.z)
     // 이동 중에는 속도 방향이 아니라 카메라 정면을 본다(후진도 정면 유지 + 클립 역재생). 정지 시엔 마지막 방향 유지.
     // 컨트롤러 heading 규약: forwardFromYaw(yaw)=(-sin,-cos) → heading = -yaw.
-    if (frame.speed > 0.05) yawRef.current = approachAngle(yawRef.current, -frame.cameraYaw, dt)
+    // 카메라 정면 = forwardFromYaw(yaw) = (-sin yaw, -cos yaw). 모델(+Z 정면)을 yaw+π 로 돌리면 (-sin, -cos) — 부호 실수(-yaw)였던 것을 정정(2026-08-27).
+    if (frame.speed > 0.05) yawRef.current = approachAngle(yawRef.current, frame.cameraYaw, dt)
     group.rotation.y = yawRef.current + MODEL_YAW_OFFSET
 
     // one-shot: 공격(edge 카운터)·점프(비접지). 재생 중엔 이동 클립을 눌러 섞임을 막는다.

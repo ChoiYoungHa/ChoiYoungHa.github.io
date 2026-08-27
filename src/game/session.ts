@@ -50,6 +50,10 @@ export interface SessionInputs {
   character?: SessionCharacterInput
   selectedItemId?: string
   equipItemId?: string
+  /** 소비품 사용(인벤토리 클릭). */
+  useItemId?: string
+  /** Esc/나가기 — 상점을 닫고 마을로, 인벤토리 닫기. */
+  cancel?: boolean
   closeReward?: boolean
   epilogueAction?: 'retry' | 'free'
 }
@@ -527,6 +531,14 @@ export function createSession(options: CreateSessionOptions): GameSession {
           game = { ...game, inventory, equipment: { ...inventory.equipment } }
           binding?.setState(game)
         }
+      }
+      if (inputs.useItemId !== undefined) {
+        const item = ITEMS.find((candidate) => candidate.id === inputs.useItemId)
+        if (item !== undefined && item.kind === 'consumable') dispatch({ type: 'use-item', item })
+      }
+      if (inputs.cancel) {
+        if (inventoryOpen) inventoryOpen = false
+        else if (game.scene === 'shop') changeScene('henesys', events)
       }
       if (inputs.selectedItemId !== undefined) selectedShopItemId = inputs.selectedItemId
       // 상점 진입 직후 첫 confirm(대화 마지막 Enter 연타)은 삼킨다 — 입력이 없는 틱에 가드를 풀면 그다음 Enter가 곧장 구매로 샜다(D3 재발, 2026-08-27 실빌드).

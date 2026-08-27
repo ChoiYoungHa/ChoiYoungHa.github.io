@@ -10,9 +10,10 @@ export interface ShopPanelProps {
   onSelect: (itemId: string) => void
   onPurchase: (result: PurchaseResult) => void
   onAfterPurchase: () => void
+  onLeave: () => void
 }
 
-export function ShopPanel({ state, selectedItemId, ipMode, onSelect, onPurchase, onAfterPurchase }: ShopPanelProps) {
+export function ShopPanel({ state, selectedItemId, ipMode, onSelect, onPurchase, onAfterPurchase, onLeave }: ShopPanelProps) {
   const view = shopPanelPresentation(state, selectedItemId, ipMode)
   const panelStyle = {
     border: `1px solid ${HUD_TOKENS.colors.border}`,
@@ -46,6 +47,7 @@ export function ShopPanel({ state, selectedItemId, ipMode, onSelect, onPurchase,
             }} style={{ marginTop: 'auto', border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, padding: '12px 16px', background: view.detail.disabled ? '#34343a' : '#81642b', color: view.detail.disabled ? '#85858b' : '#fff7dc', cursor: view.detail.disabled ? 'not-allowed' : 'pointer', font: 'inherit', fontWeight: 700 }}>
               구매 · {view.detail.price.toLocaleString('ko-KR')} {view.currency}
             </button>
+            <button type="button" data-testid="shop-leave" onClick={onLeave} style={{ marginLeft: 8, border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 8, padding: '10px 18px', background: 'rgba(255,255,255,0.06)', color: HUD_TOKENS.colors.text, cursor: 'pointer', font: 'inherit' }}>나가기 (Esc)</button>
           </div>
         )}
       </div>
