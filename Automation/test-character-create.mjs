@@ -17,13 +17,11 @@ test('이름은 1~8자이며 모든 공백을 거부한다', async () => {
 test('직업 카드 4장은 데이터의 스탯·대표 스킬과 선택 밝기를 표시한다', async () => {
   const { characterCreatePresentation } = await load('src/systems/ui/characterCreateLogic.ts')
   const view = characterCreatePresentation('영하', 'archer', 'conti')
-  assert.equal(view.jobs.length, 4)
-  assert.deepEqual(view.jobs.map(({ id, color }) => [id, color]), [
-    ['warrior', '#e05a3a'], ['archer', '#4fae63'], ['mage', '#4a90d9'], ['thief', '#9b6bd6'],
-  ])
-  assert.deepEqual(view.jobs.find(({ id }) => id === 'archer')?.startStats, { hp: 160, mp: 80, attack: 12 })
-  assert.equal(view.jobs.find(({ id }) => id === 'archer')?.skillName, '레인보우 활쏘기')
-  assert.equal(view.jobs.find(({ id }) => id === 'archer')?.intensity, 1)
+  assert.equal(view.jobs.length, 1) // 2026-08-27 영하님 결정: 전사 단일
+  assert.deepEqual(view.jobs.map(({ id, color }) => [id, color]), [['warrior', '#e05a3a']] /* 2026-08-27 전사 단일 */)
+  assert.deepEqual(view.jobs.find(({ id }) => id === 'warrior')?.startStats, { hp: 220, mp: 60, attack: 14 })
+  assert.equal(view.jobs.find(({ id }) => id === 'warrior')?.skillName, '불꽃베기')
+  assert.equal(view.jobs.find(({ id }) => id === 'warrior')?.intensity, 0.6)
   assert.ok(view.jobs.filter(({ id }) => id !== 'archer').every(({ intensity }) => intensity === 0.6))
   assert.equal(view.canConfirm, true)
 })

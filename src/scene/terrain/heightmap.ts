@@ -128,11 +128,36 @@ function baseHeight(x: number, z: number): number {
   const dVillage = Math.hypot(x - VILLAGE.x, z - VILLAGE.z)
   const w = falloff(dVillage, VILLAGE_FLAT_RADIUS, VILLAGE_BLEND_RADIUS)
   if (w === 0) return raw
-  const villageLevel = fbm(VILLAGE.x, VILLAGE.z, TERRAIN_SEED) * (MAX_RELIEF / 2)
-  return raw + (villageLevel - raw) * w
+  return raw + (villageLevel() - raw) * w
 }
 
 /** 가중치 특이점 방지(m²). 가장 가까운 세그먼트가 여전히 압도적으로 크다. */
+/** 마을 기준 높이는 상수다 — 샘플마다 fbm 을 다시 돌리지 않는다(값 동일). */
+let villageLevelCache: number | null = null
+function villageLevel(): number {
+  if (villageLevelCache === null) villageLevelCache = fbm(VILLAGE.x, VILLAGE.z, TERRAIN_SEED) * (MAX_RELIEF / 2)
+  return villageLevelCache
+}
+
+/** 경로 중심선까지의 최단 거리만 계산한다(pathLevelAt 의 distance 와 동일한 수식). */
+function pathDistanceAt(x: number, z: number): number {
+  let nearest = Number.POSITIVE_INFINITY
+  for (let i = 1; i < CENTERLINE.length; i++) {
+    const a = CENTERLINE[i - 1]
+    const b = CENTERLINE[i]
+    const dx = b.x - a.x
+    const dz = b.z - a.z
+    const lenSq = dx * dx + dz * dz
+    let t = lenSq === 0 ? 0 : ((x - a.x) * dx + (z - a.z) * dz) / lenSq
+    t = Math.min(1, Math.max(0, t))
+    const px = a.x + t * dx
+    const pz = a.z + t * dz
+    const d = Math.hypot(x - px, z - pz)
+    if (d < nearest) nearest = d
+  }
+  return nearest
+}
+
 const LEVEL_EPSILON = 0.25
 
 /**
@@ -178,6 +203,9 @@ function pathLevelAt(x: number, z: number): { level: number; distance: number } 
  */
 export function sampleHeight(x: number, z: number): number {
   const h = baseHeight(x, z)
+  // 경로 밖(w=0)에서는 level 이 결과에 쓰이지 않는다 — 세그먼트마다 fbm 을 도는 pathLevelAt 을 건너뛴다.
+  // 진입 정지 10초의 주범(2026-08-27 프로파일: 노이즈 5.7s + pathLevelAt 1.1s). 결과값은 이전과 비트 동일.
+  if (pathDistanceAt(x, z) >= PATH_BLEND_RADIUS) return h
   const { level, distance } = pathLevelAt(x, z)
   const w = falloff(distance, PATH_FLAT_RADIUS, PATH_BLEND_RADIUS)
   if (w === 0) return h

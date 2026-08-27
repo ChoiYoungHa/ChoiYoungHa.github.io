@@ -1,7 +1,7 @@
 import type { GameplayAction } from '../player/input.ts'
 import { setCameraDistanceMultiplier } from './cameraDistance.ts'
 import { CAMERA_INTRO_DURATION_MS } from './cameraIntro.ts'
-import { requestPlayerJump, resetGameRuntimeSignals, setCameraIntroElapsedMs } from './runtimeSignals.ts'
+import { requestPlayerAttack, requestPlayerJump, requestPlayerSkill, resetGameRuntimeSignals, setCameraIntroElapsedMs } from './runtimeSignals.ts'
 import type { GameSession, SessionInputs, SessionPosition, SessionTickResult } from './session.ts'
 import { easeDistance } from './world/cameraEase.ts'
 
@@ -40,6 +40,8 @@ export function createGameFrameBridge(session: GameSession, input: EdgeInput) {
       if (snapshot.activeDialogue === null && JUMP_SCENES.has(snapshot.game.scene) && actions.includes('jump')) {
         requestPlayerJump()
       }
+      if (snapshot.activeDialogue === null && actions.includes('attack')) requestPlayerAttack()
+      if (snapshot.activeDialogue === null && actions.includes('skill')) requestPlayerSkill()
       const edges = edgeInputs(actions, snapshot.activeDialogue !== null)
       if (Object.keys(edges).length > 0) session.enqueueInput(edges)
       const result = session.tick({

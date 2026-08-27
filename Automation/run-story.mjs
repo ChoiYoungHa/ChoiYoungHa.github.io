@@ -72,7 +72,7 @@ export function runStory(options = {}) {
   }
 
   tick({ confirm: true })
-  tick({ confirm: true, character: { jobId: 'archer', name: '영하' } })
+  tick({ confirm: true, character: { jobId: 'warrior', name: '영하' } })
   moveTo({ x: -1.5, z: 20 })
   tick({ jump: true })
   moveTo(npc.stan)

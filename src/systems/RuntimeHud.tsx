@@ -46,8 +46,8 @@ export function RuntimeProbe() {
       canvas: { w: canvas.width, h: canvas.height },
     })
 
-    // adapter / ANGLE 문자열
-    void (async () => {
+    // adapter / ANGLE 문자열 — WebGL2 컨텍스트 생성이 iGPU 에서 수 초를 먹는다(진입 프로파일 3.1s). 진입 후로 미룬다.
+    const probeTimer = setTimeout(() => void (async () => {
       let adapter = 'n/a'
       try {
         const a = await navigator.gpu?.requestAdapter?.()
@@ -64,7 +64,8 @@ export function RuntimeProbe() {
         /* ignore */
       }
       set({ adapter, angle })
-    })()
+    })(), 6000)
+    return () => clearTimeout(probeTimer)
   }, [gl, set])
 
   // 계획서 §3-3: 매 프레임이 아니라 **1초 1회** 집계만 올린다.

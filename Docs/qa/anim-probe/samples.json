@@ -1,0 +1,531 @@
+{
+ "samples": {
+  "idle": [
+   {
+    "player": {
+     "x": 0,
+     "z": 24,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.287,
+      -0.542,
+      0.694,
+      0.376
+     ],
+     "LeftUpLeg": [
+      0.403,
+      -0.407,
+      -0.627,
+      0.528
+     ],
+     "Spine": [
+      0.022,
+      0.078,
+      -0.009,
+      0.997
+     ],
+     "LeftArm": [
+      0.477,
+      0.013,
+      0.008,
+      0.879
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.411,
+     88.065,
+     0.726
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 24,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.314,
+      -0.532,
+      0.684,
+      0.388
+     ],
+     "LeftUpLeg": [
+      0.391,
+      -0.399,
+      -0.614,
+      0.558
+     ],
+     "Spine": [
+      0.021,
+      0.059,
+      -0.01,
+      0.998
+     ],
+     "LeftArm": [
+      0.477,
+      0.012,
+      0.03,
+      0.878
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.227,
+     87.827,
+     0.706
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 24,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.508,
+      -0.386,
+      0.563,
+      0.525
+     ],
+     "LeftUpLeg": [
+      0.317,
+      -0.39,
+      -0.52,
+      0.69
+     ],
+     "Spine": [
+      0.009,
+      0.086,
+      -0.017,
+      0.996
+     ],
+     "LeftArm": [
+      0.503,
+      0.022,
+      0.09,
+      0.859
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.284,
+     86.036,
+     1.528
+    ]
+   }
+  ],
+  "walk": [
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.333,
+      -0.532,
+      0.671,
+      0.394
+     ],
+     "LeftUpLeg": [
+      0.413,
+      -0.436,
+      -0.609,
+      0.519
+     ],
+     "Spine": [
+      0.015,
+      0.072,
+      -0.007,
+      0.997
+     ],
+     "LeftArm": [
+      0.471,
+      0.028,
+      0.019,
+      0.881
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.981,
+     89.815,
+     0.519
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.291,
+      -0.541,
+      0.695,
+      0.373
+     ],
+     "LeftUpLeg": [
+      0.4,
+      -0.407,
+      -0.627,
+      0.531
+     ],
+     "Spine": [
+      0.021,
+      0.07,
+      -0.011,
+      0.997
+     ],
+     "LeftArm": [
+      0.48,
+      0.014,
+      0.007,
+      0.877
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.396,
+     88.135,
+     0.701
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.324,
+      -0.526,
+      0.679,
+      0.397
+     ],
+     "LeftUpLeg": [
+      0.388,
+      -0.398,
+      -0.611,
+      0.564
+     ],
+     "Spine": [
+      0.02,
+      0.059,
+      -0.011,
+      0.998
+     ],
+     "LeftArm": [
+      0.479,
+      0.012,
+      0.038,
+      0.877
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.125,
+     87.748,
+     0.697
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.465,
+      -0.427,
+      0.597,
+      0.496
+     ],
+     "LeftUpLeg": [
+      0.334,
+      -0.388,
+      -0.548,
+      0.662
+     ],
+     "Spine": [
+      0.011,
+      0.08,
+      -0.014,
+      0.997
+     ],
+     "LeftArm": [
+      0.503,
+      0.016,
+      0.083,
+      0.86
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     0.228,
+     86.45,
+     1.346
+    ]
+   }
+  ],
+  "attack": [
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.868,
+      -0.245,
+      0.006,
+      0.432
+     ],
+     "LeftUpLeg": [
+      0.281,
+      -0.089,
+      -0.704,
+      0.646
+     ],
+     "Spine": [
+      -0.042,
+      -0.005,
+      0.004,
+      0.999
+     ],
+     "LeftArm": [
+      0.487,
+      -0.214,
+      0.518,
+      0.67
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     -16.196,
+     65.638,
+     33.394
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.638,
+      -0.345,
+      0.358,
+      0.587
+     ],
+     "LeftUpLeg": [
+      0.418,
+      -0.181,
+      -0.819,
+      0.349
+     ],
+     "Spine": [
+      -0.039,
+      -0.003,
+      0.002,
+      0.999
+     ],
+     "LeftArm": [
+      0.418,
+      -0.108,
+      0.41,
+      0.804
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     -5.233,
+     66.429,
+     11.48
+    ]
+   },
+   {
+    "player": {
+     "x": 0,
+     "z": 18.577699680696963,
+     "children": 1,
+     "childNames": [
+      "Scene:Group"
+     ]
+    },
+    "skinned": 1,
+    "bones": {
+     "Hips": [
+      0.634,
+      -0.357,
+      0.425,
+      0.538
+     ],
+     "LeftUpLeg": [
+      0.315,
+      -0.329,
+      -0.823,
+      0.339
+     ],
+     "Spine": [
+      -0.045,
+      0,
+      0.002,
+      0.999
+     ],
+     "LeftArm": [
+      0.299,
+      0.059,
+      0.469,
+      0.829
+     ]
+    },
+    "boneNames": [
+     "Hips",
+     "LeftUpLeg",
+     "LeftLeg",
+     "LeftFoot",
+     "LeftToeBase",
+     "RightUpLeg"
+    ],
+    "skeletonBones": 24,
+    "bindMatrixOk": true,
+    "hipsPos": [
+     -6.354,
+     75.615,
+     -0.283
+    ]
+   }
+  ]
+ },
+ "errors": []
+}

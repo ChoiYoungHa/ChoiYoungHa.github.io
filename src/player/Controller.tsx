@@ -11,7 +11,7 @@ import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
 import { PlayerAvatar, type PlayerAvatarFrame } from './Player'
 import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
-import { consumePlayerJump } from '../game/runtimeSignals'
+import { consumePlayerJump, readPlayerAttackSeq, readPlayerSkillSeq } from '../game/runtimeSignals'
 
 /**
  * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
@@ -35,7 +35,7 @@ export function Player() {
   const posRef = useRef<Vec3>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0 })
   const yawRef = useRef(0)
   // M5-11 (R117-A) — 아바타에 넘길 프레임 값. 매 프레임 바뀌므로 스토어가 아니라 ref 다(§3-3).
-  const frameRef = useRef<PlayerAvatarFrame>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0, heading: 0, speed: 0 })
+  const frameRef = useRef<PlayerAvatarFrame>({ x: 0, y: RAYCAST_DEFAULTS.eyeOffset, z: 0, heading: 0, speed: 0, grounded: true, attackSeq: 0, skillSeq: 0, cameraYaw: 0, backward: false })
 
   // M1-07 — 접지 샘플러가 절차적 지형이다(M0-a 의 40m 평면 아님).
   // 스폰은 길의 첫 waypoint = 마을 입구(main-path.json landmarks.spawn).
@@ -106,7 +106,13 @@ export function Player() {
     frame.y = r.position.y
     frame.z = r.position.z
     frame.heading = r.heading
+    frame.cameraYaw = jumpInput.yaw
+    // 후진 판정: 카메라 정면(-sin,-cos)과 실제 이동 방향(heading→(sin,-cos))의 내적이 음수.
+    frame.backward = r.speed > 0.05 && (-Math.sin(jumpInput.yaw) * Math.sin(r.heading) + Math.cos(jumpInput.yaw) * Math.cos(r.heading)) < 0
     frame.speed = r.speed
+    frame.grounded = r.grounded
+    frame.attackSeq = GAME_INPUT_ENABLED ? readPlayerAttackSeq() : 0
+    frame.skillSeq = GAME_INPUT_ENABLED ? readPlayerSkillSeq() : 0
     publishPlayerFrame(r, dt)
   })
 
