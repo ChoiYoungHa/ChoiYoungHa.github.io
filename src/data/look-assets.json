@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedFromHead": "a1e7272",
+  "generatedFromHead": "fddbbdf",
   "assets": {
     "heroTreeGlb": {
       "url": "/models/hero_tree.glb",
@@ -9,7 +9,7 @@
     "houseGlb": {
       "house-a": {
         "url": "/models/house_a.glb",
-        "bytes": 79272
+        "bytes": 586352
       },
       "house-b": {
         "url": "/models/house_b.glb",

@@ -97,7 +97,7 @@
       },
       { "id": "detail.house-a-glb",
         "url": "dist/models/house_a.glb",
-        "bytes": 79272,
+        "bytes": 586352,
         "kind": "glb"
       },
       { "id": "detail.house-b-glb",
@@ -109,6 +109,11 @@
         "url": "dist/models/house_c.glb",
         "bytes": 206664,
         "kind": "glb"
+      },
+      { "id": "detail.village-tree-glb",
+        "url": "dist/models/tree_village.glb",
+        "bytes": 526192,
+        "kind": "glb"
       }
     ]
   },
@@ -116,12 +121,12 @@
     "phaseBytes": {
       "boot": 3320589,
       "core": 4801137,
-      "detail": 5230868
+      "detail": 6264140
     },
     "cumulativeBytes": {
       "boot": 3320589,
       "core": 8121726,
-      "detail": 13352594
+      "detail": 14385866
     },
     "limitsBytes": {
       "boot": 4000000,
@@ -133,7 +138,7 @@
       "coreWithinBudget": true,
       "totalWithinBudget": true
     },
-    "itemCount": 20,
+    "itemCount": 21,
     "duplicateIdCount": 0,
     "detailTierNote": "No 2K HDR is present in public/env; the current <=2K tier preloads the measured sky_1k.hdr fallback."
   }

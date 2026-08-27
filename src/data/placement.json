@@ -19,6 +19,11 @@
     { "id": "village-07", "house": "house-a", "roof": "roof-a", "position": [13, -11], "rotationYDeg": 12, "scale": 0.85 },
     { "id": "village-08", "house": "house-b", "roof": "roof-b", "position": [-17, -17], "rotationYDeg": -20, "scale": 0.88 }
   ],
+  "villageTrees": [
+    { "id": "village-tree-01", "position": [-29, 18], "yaw": 0.25, "scale": 0.9 },
+    { "id": "village-tree-02", "position": [28, 7], "yaw": -0.55, "scale": 1.0 },
+    { "id": "village-tree-03", "position": [-28, -18], "yaw": 0.8, "scale": 0.95 }
+  ],
   "npcs": [
     {
       "id": "stan",

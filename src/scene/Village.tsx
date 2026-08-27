@@ -26,7 +26,16 @@ interface VillageEntry {
   scale: number
 }
 
+interface VillageTreeEntry {
+  id: string
+  position: [number, number]
+  yaw: number
+  scale: number
+}
+
 const VILLAGE = placement.village as VillageEntry[]
+const VILLAGE_TREES = placement.villageTrees as VillageTreeEntry[]
+const VILLAGE_TREE_URL = '/models/tree_village.glb'
 /**
  * R103-A(D4-2) — GLB 집 높이 정규화. KayKit 집은 bbox 높이 0.93~1.4 단위(≈1m)라 미니어처로 보였다(R100 S2).
  * GLB 종별 bbox 높이로 균일 스케일 k = 목표/높이 를 구하고 placement.scale(0.85~1)은 상대 배율로 곱한다.
@@ -213,30 +222,84 @@ function VillageGltf({ houses }: { houses: { id: HouseId; url: string }[] }) {
     () => houses.map((h, i) => ({ id: h.id, parts: splitHouseGltf(scenes[i].scene, h.url) })),
     [houses, scenes],
   )
-  const map = parts.find((p) => p.parts.map)?.parts.map
-  const colorNode = useMemo(() => (map ? houseColorNode(map) : undefined), [map])
-  const material = useLookdevMaterial({ map, color: map ? undefined : '#b5aa91', colorNode, roughness: 0.9, metalness: 0 })
-  const white = useMemo(() => new Color('#ffffff'), [])
 
   return (
     <>
       {parts.map(({ id, parts: p }) => {
         const entries = VILLAGE.filter((entry) => entry.house === id)
-        const capColors = entries.map((entry) => normalizedTint(ROOF_TINT_GLB[entry.roof])) // R105-A: 절차용 ROOF_COLORS 대신 GLB 곱색
-        const bodyColors = entries.map(() => white)
-        const k = HOUSE_TARGET_HEIGHT_METERS / p.height
         return (
-          <group key={id} name={`village-${id}`} userData={{ source: 'gltf', heightUnits: p.height, scaleMultiplier: k }}>
-            {p.body && (
-              <Instances name={`village-${id}-body`} geometry={p.body} entries={entries} roof={false} material={material} instanceColors={bodyColors} scaleMultiplier={k} />
-            )}
-            {p.cap && (
-              <Instances name={`village-${id}-cap`} geometry={p.cap} entries={entries} roof={false} material={material} instanceColors={capColors} scaleMultiplier={k} />
-            )}
-          </group>
+          <VillageGltfType key={id} id={id} parts={p} entries={entries} />
         )
       })}
     </>
+  )
+}
+
+/** GLB별 baseColor 맵을 보존한다. house-a의 독립 Meshy UV가 KayKit b/c 공용 아틀라스를 덮어쓰지 않게 한다. */
+function VillageGltfType({ id, parts, entries }: { id: HouseId; parts: HouseGltfParts; entries: VillageEntry[] }) {
+  const colorNode = useMemo(() => (parts.map ? houseColorNode(parts.map) : undefined), [parts.map])
+  const material = useLookdevMaterial({ map: parts.map, color: parts.map ? undefined : '#b5aa91', colorNode, roughness: 0.9, metalness: 0 })
+  const white = useMemo(() => new Color('#ffffff'), [])
+  const capColors = useMemo(() => entries.map((entry) => normalizedTint(ROOF_TINT_GLB[entry.roof])), [entries])
+  const bodyColors = useMemo(() => entries.map(() => white), [entries, white])
+  const k = HOUSE_TARGET_HEIGHT_METERS / parts.height
+
+  return (
+    <group name={`village-${id}`} userData={{ source: 'gltf', heightUnits: parts.height, scaleMultiplier: k }}>
+      {parts.body && (
+        <Instances name={`village-${id}-body`} geometry={parts.body} entries={entries} roof={false} material={material} instanceColors={bodyColors} scaleMultiplier={k} />
+      )}
+      {parts.cap && (
+        <Instances name={`village-${id}-cap`} geometry={parts.cap} entries={entries} roof={false} material={material} instanceColors={capColors} scaleMultiplier={k} />
+      )}
+    </group>
+  )
+}
+
+function VillageTrees() {
+  const { scene } = useGLTF(VILLAGE_TREE_URL) as unknown as { scene: Object3D }
+  const parts = useMemo(() => {
+    scene.updateMatrixWorld(true)
+    let source: Mesh | undefined
+    scene.traverse((object) => {
+      const mesh = object as Mesh
+      if (!source && mesh.isMesh) source = mesh
+    })
+    if (!source) throw new Error(`Village tree has no mesh: ${VILLAGE_TREE_URL}`)
+    const mesh = source as Mesh
+    const geometry = mesh.geometry.clone()
+    geometry.applyMatrix4(mesh.matrixWorld)
+    geometry.computeBoundingSphere()
+    return { geometry, map: mapOf(mesh.material) }
+  }, [scene])
+  const material = useLookdevMaterial({ map: parts.map, color: parts.map ? undefined : '#6f7f3f', roughness: 0.9, metalness: 0 })
+  const ref = useRef<InstancedMesh>(null)
+
+  useLayoutEffect(() => {
+    const mesh = ref.current
+    if (!mesh) return
+    const transform = new Object3D()
+    VILLAGE_TREES.forEach((entry, index) => {
+      const [x, z] = entry.position
+      transform.position.set(x, sampleHeight(x, z), z)
+      transform.rotation.set(0, entry.yaw, 0)
+      transform.scale.setScalar(entry.scale)
+      transform.updateMatrix()
+      mesh.setMatrixAt(index, transform.matrix)
+    })
+    mesh.instanceMatrix.needsUpdate = true
+    mesh.computeBoundingSphere()
+  }, [])
+
+  return (
+    <instancedMesh
+      ref={ref}
+      name="village-tree"
+      args={[parts.geometry, material, VILLAGE_TREES.length]}
+      castShadow
+      receiveShadow
+      userData={{ source: 'gltf', collision: 'none', heightMeters: 12 }}
+    />
   )
 }
 
@@ -261,6 +324,11 @@ export function Village() {
         </Suspense>
       )}
       <VillageProps enabled={propsEnabled} />
+      {propsEnabled && (
+        <Suspense fallback={null}>
+          <VillageTrees />
+        </Suspense>
+      )}
     </group>
   )
 }
@@ -269,3 +337,4 @@ for (const key of HOUSE_KEYS) {
   const entry = LOOK.village[key]
   if (entry.mode === 'gltf') useGLTF.preload(entry.url)
 }
+useGLTF.preload(VILLAGE_TREE_URL)
