@@ -1,20 +1,20 @@
 {
-  "buildHash": "a1e7272",
+  "buildHash": "fddbbdf",
   "mode": "actual-build",
   "manifestPath": "src/data/loading-manifest.json",
   "manifestMeasuredFromHead": "a1e7272",
   "note": "M4-16 actual-build mode resolves current hash-named dist chunks; manifest snapshot differences remain warnings.",
   "phaseBytes": {
-    "boot": 3320589,
+    "boot": 2950685,
     "core": 4801137,
-    "detail": 5230868
+    "detail": 6264140
   },
   "cumulativeBytes": {
-    "boot": 3320589,
-    "core": 8121726,
-    "detail": 13352594
+    "boot": 2950685,
+    "core": 7751822,
+    "detail": 14015962
   },
-  "totalBytes": 13352594,
+  "totalBytes": 14015962,
   "singleMax": {
     "id": "detail.hero-tree-glb",
     "url": "dist/models/hero_tree.glb",
@@ -31,12 +31,43 @@
     "coreWithinBudget": true,
     "totalWithinBudget": true,
     "singleWithinBudget": true,
-    "manifestPhaseSummaryMatches": true,
-    "manifestCumulativeSummaryMatches": true,
+    "manifestPhaseSummaryMatches": false,
+    "manifestCumulativeSummaryMatches": false,
     "duplicateIdCount": 0,
     "errors": 0
   },
   "errors": [],
-  "warnings": [],
+  "warnings": [
+    {
+      "type": "byte_mismatch",
+      "id": "boot.index-html",
+      "url": "dist/index.html",
+      "resolvedUrl": "dist/index.html",
+      "declared": 538,
+      "actual": 708
+    },
+    {
+      "type": "byte_mismatch",
+      "id": "boot.js-main",
+      "url": "dist/assets/main-D2g1X1Qi.js",
+      "resolvedUrl": "dist/assets/main-FS0mESfW.js",
+      "declared": 876032,
+      "actual": 878970
+    },
+    {
+      "type": "byte_mismatch",
+      "id": "boot.js-renderer",
+      "url": "dist/assets/createRenderer-Btpp4TmX.js",
+      "resolvedUrl": "dist/assets/createRenderer-9GPnPvF3.js",
+      "declared": 1015259,
+      "actual": 642247
+    },
+    {
+      "type": "manifest_phase_summary_differs_from_actual_build"
+    },
+    {
+      "type": "manifest_cumulative_summary_differs_from_actual_build"
+    }
+  ],
   "pass": true
 }
