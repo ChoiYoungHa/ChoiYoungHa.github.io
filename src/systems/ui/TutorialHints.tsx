@@ -18,7 +18,7 @@ export function TutorialHints({ inputEvents, narrationLineIndex, ipMode }: Tutor
           <span aria-hidden="true">{hint.completed ? '✓' : hint.current ? '›' : '·'}</span><span>{hint.label}</span>
         </div>) : <strong style={{ display: 'block', textAlign: 'center', color: '#e7ce8a' }}>{view.followText}</strong>}
       </section>
-      {narrationLineIndex !== null && <p aria-live="polite" style={{ position: 'absolute', left: '50%', bottom: 72, width: 720, transform: 'translateX(-50%)', margin: 0, padding: '11px 18px', borderRadius: 8, background: 'rgba(10,12,16,0.72)', textAlign: 'center', fontSize: 17, textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>{view.narrationLines[narrationLineIndex]}</p>}
+      {narrationLineIndex !== null && <p aria-live="polite" style={{ position: 'absolute', left: '50%', bottom: 136, width: 720, transform: 'translateX(-50%)', margin: 0, padding: '11px 18px', borderRadius: 8, background: 'rgba(10,12,16,0.72)', textAlign: 'center', fontSize: 17, textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>{view.narrationLines[narrationLineIndex]}</p>}
     </div>
   )
 }
