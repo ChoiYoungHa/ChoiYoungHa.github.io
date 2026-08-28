@@ -12,6 +12,8 @@ import { Foliage } from './scene/Foliage'
 import { CodexFoliage } from './scene/CodexFoliage'
 import { NetStatus } from './net/NetStatus'
 import { RemotePlayers } from './net/RemotePlayers'
+import { CodexDressing } from './scene/village/CodexDressing'
+import { GroundDressing } from './scene/village/GroundDressing'
 import { RockInstances } from './scene/RockInstances'
 import { sampleHeight } from './scene/terrain/heightmap'
 import { Player, setMouseSensitivity } from './player/Controller'
@@ -107,6 +109,11 @@ const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { w
       {/* M2-24 마을 8채. 지오메트리를 코드로 만들고 InstancedMesh 로 그린다 — suspend 하지 않으므로
           Foliage/RockInstances 의 Suspense 경계 밖에 둔다(로딩 중에도 마을은 보인다). */}
       <Village />
+      {/* 2026-08-28 심사안 #7·#8: 코덱스 소품·덩굴·바닥(광장/데크/텃밭). GLB·텍스처 로드는 suspend 하므로 경계 필요. */}
+      <Suspense fallback={null}>
+        <CodexDressing />
+        <GroundDressing />
+      </Suspense>
       {/* useGLTF 는 suspend 하므로 경계가 필요하다. 로딩 중에는 지형만 보인다. */}
       <Suspense fallback={null}>
         <Foliage sampleHeight={sampleHeight} />

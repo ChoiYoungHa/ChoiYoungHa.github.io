@@ -12,7 +12,16 @@ import { WORLD_HALF_EXTENT } from './bounds'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { hashSeed, scatter, type ScatterPoint } from './scatter/seededRandom'
 import { createSlopeExclusion, type SampleHeight } from './scatter/slopeMask'
+import { getSharedVertexColorMaterial } from './Atmosphere'
+import { isDressingBlocked } from './colliders/dressing'
 import { bakeGlb } from './util/bakeGlb'
+import { bakeGlbVertexColor } from './util/bakeGlbVertexColor'
+
+/** 2026-08-28 심사안 #5 — 기본은 정점색 베이크(종당 1 call·룩디브 재질 공유). `?codexBake=0` 이면 재질 그룹 유지 경로(bakeGlb)로 폴백. */
+export function readCodexBakeEnabled(search: string = typeof location === 'undefined' ? '' : location.search): boolean {
+  return new URLSearchParams(search).get('codexBake') !== '0'
+}
+export const CODEX_FOLIAGE_DESATURATE = 0.2
 
 /**
  * 2026-08-28 (master, 영하님 "세상이 너무 밋밋하다") — 코덱스 시트 E 식생 10종(`게임콘티/assets/3d-codex/foliage`)을
@@ -80,6 +89,8 @@ export function placeCodexSpecies(species: CodexSpecies, sampleHeight: SampleHei
     if (Math.hypot(x - hero.x, z - hero.z) < HERO_TREE_CLEARANCE) return true
     for (const npc of npcs) if (Math.hypot(x - npc.position[0], z - npc.position[1]) < NPC_CLEARANCE) return true
     for (const house of houses) if (Math.hypot(x - house.position[0], z - house.position[1]) < HOUSE_CLEARANCE) return true
+    // 2026-08-28 심사안 #7·#8: 소품·광장·데크·텃밭 위에는 심지 않는다.
+    if (isDressingBlocked(x, z)) return true
     if (species.large) {
       if (insideZone(zoneMap.village, x, z, 4)) return true
       if (insideZone(zoneMap.park, x, z, 0)) return true
@@ -97,7 +108,14 @@ export function placeCodexSpecies(species: CodexSpecies, sampleHeight: SampleHei
 
 function SpeciesInstances({ species, points }: { species: CodexSpecies; points: PlacedPoint[] }) {
   const { scene } = useGLTF(species.url)
-  const baked = useMemo(() => bakeGlb(scene), [scene])
+  const bakeEnabled = readCodexBakeEnabled()
+  const baked = useMemo(
+    () => bakeEnabled
+      ? { geometry: bakeGlbVertexColor(scene, { desaturate: CODEX_FOLIAGE_DESATURATE }).geometry, materials: null }
+      : { geometry: bakeGlb(scene).geometry, materials: bakeGlb(scene).materials },
+    [bakeEnabled, scene],
+  )
+  const vertexMaterial = getSharedVertexColorMaterial()
   const ref = useRef<InstancedMesh>(null)
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
@@ -131,7 +149,7 @@ function SpeciesInstances({ species, points }: { species: CodexSpecies; points: 
     <instancedMesh
       ref={ref}
       name={`codex-foliage-${species.id}`}
-      args={[baked.geometry, baked.materials, Math.max(1, points.length)]}
+      args={[baked.geometry, baked.materials ?? vertexMaterial, Math.max(1, points.length)]}
       castShadow={species.large}
       receiveShadow
     />

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "testedHead": "aa58c97",
+  "testedHead": "0ac305a",
   "manifestMeasuredFromHead": "a1e7272",
   "phaseOrder": [
     "boot",
@@ -43,7 +43,7 @@
       "detail": 6264140
     },
     "currentBuildStat": {
-      "boot": 3053399,
+      "boot": 3063062,
       "core": 2190332,
       "detail": 6264140
     },
@@ -72,27 +72,27 @@
       "phase": "boot",
       "id": "boot.js-main",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-0BpRVDxU.js",
+      "physicalPath": "dist/assets/main-D_BhCwH8.js",
       "exists": true,
-      "statBytes": 981695,
+      "statBytes": 991290,
       "declaredBytes": 876032
     },
     {
       "phase": "boot",
       "id": "boot.js-renderer",
       "manifestUrl": "dist/assets/createRenderer-Btpp4TmX.js",
-      "physicalPath": "dist/assets/createRenderer-9GPnPvF3.js",
+      "physicalPath": "dist/assets/createRenderer-HWlcY2NH.js",
       "exists": true,
-      "statBytes": 642247,
+      "statBytes": 642315,
       "declaredBytes": 1015259
     },
     {
       "phase": "boot",
       "id": "boot.heightmap-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-0BpRVDxU.js",
+      "physicalPath": "dist/assets/main-D_BhCwH8.js",
       "exists": true,
-      "statBytes": 981695,
+      "statBytes": 991290,
       "declaredBytes": 0
     },
     {
@@ -108,9 +108,9 @@
       "phase": "core",
       "id": "core.terrain-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-0BpRVDxU.js",
+      "physicalPath": "dist/assets/main-D_BhCwH8.js",
       "exists": true,
-      "statBytes": 981695,
+      "statBytes": 991290,
       "declaredBytes": 0
     },
     {
@@ -126,9 +126,9 @@
       "phase": "core",
       "id": "core.hero-lod1-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-0BpRVDxU.js",
+      "physicalPath": "dist/assets/main-D_BhCwH8.js",
       "exists": true,
-      "statBytes": 981695,
+      "statBytes": 991290,
       "declaredBytes": 0
     },
     {
@@ -180,18 +180,18 @@
       "phase": "detail",
       "id": "detail.village-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-0BpRVDxU.js",
+      "physicalPath": "dist/assets/main-D_BhCwH8.js",
       "exists": true,
-      "statBytes": 981695,
+      "statBytes": 991290,
       "declaredBytes": 0
     },
     {
       "phase": "detail",
       "id": "detail.hero-lod0-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-0BpRVDxU.js",
+      "physicalPath": "dist/assets/main-D_BhCwH8.js",
       "exists": true,
-      "statBytes": 981695,
+      "statBytes": 991290,
       "declaredBytes": 0
     },
     {

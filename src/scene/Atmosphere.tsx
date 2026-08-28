@@ -123,6 +123,16 @@ export function createLookdevMaterial(
   return material
 }
 
+/**
+ * 2026-08-28 (심사안 #5·#8) — 코덱스 정점색 베이크 메시(식생 10종·소품 13종)가 공유하는 재질 1개.
+ * 종마다 useLookdevMaterial 을 부르면 같은 노드그래프라도 재질 인스턴스가 늘어 pipelines 가 81→107 로 뛰었다(m6-game-dress).
+ */
+let sharedVertexColorMaterial: MeshStandardNodeMaterial | null = null
+export function getSharedVertexColorMaterial(): MeshStandardNodeMaterial {
+  if (sharedVertexColorMaterial === null) sharedVertexColorMaterial = createLookdevMaterial({ vertexColors: true, roughness: 0.9, metalness: 0 })
+  return sharedVertexColorMaterial
+}
+
 /** 컴포넌트용 메모 훅. 옵션 값이 바뀌지 않는 한 재질 1개를 유지한다(프로그램 수 예산). */
 export function useLookdevMaterial(opts: LookdevMaterialOptions): MeshStandardNodeMaterial {
   return useMemo(

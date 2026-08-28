@@ -1,0 +1,634 @@
+{
+  "mode": "game",
+  "tag": "dress3",
+  "at": "2026-08-28T05:54:41.537Z",
+  "url": "http://127.0.0.1:5190/?game=1&net=0&q=low",
+  "shots": [
+    {
+      "name": "s00-title",
+      "file": "Docs\\qa\\feedback-0828\\m6-s00-title-dress3.png",
+      "bytes": 1115460
+    },
+    {
+      "name": "s01-create",
+      "file": "Docs\\qa\\feedback-0828\\m6-s01-create-dress3.png",
+      "bytes": 526956
+    },
+    {
+      "name": "s02-hints",
+      "file": "Docs\\qa\\feedback-0828\\m6-s02-hints-dress3.png",
+      "bytes": 475092
+    },
+    {
+      "name": "s03-gate-0s",
+      "file": "Docs\\qa\\feedback-0828\\m6-s03-gate-0s-dress3.png",
+      "bytes": 776816
+    },
+    {
+      "name": "s03-gate-2s",
+      "file": "Docs\\qa\\feedback-0828\\m6-s03-gate-2s-dress3.png",
+      "bytes": 752780
+    },
+    {
+      "name": "s04-stan",
+      "file": "Docs\\qa\\feedback-0828\\m6-s04-stan-dress3.png",
+      "bytes": 856352
+    },
+    {
+      "name": "s05-shop",
+      "file": "Docs\\qa\\feedback-0828\\m6-s05-shop-dress3.png",
+      "bytes": 529120
+    },
+    {
+      "name": "s06-park",
+      "file": "Docs\\qa\\feedback-0828\\m6-s06-park-dress3.png",
+      "bytes": 970612
+    },
+    {
+      "name": "s07-skillfx",
+      "file": "Docs\\qa\\feedback-0828\\m6-s07-skillfx-dress3.png",
+      "bytes": 1003636
+    },
+    {
+      "name": "s07-skillfx-b",
+      "file": "Docs\\qa\\feedback-0828\\m6-s07-skillfx-b-dress3.png",
+      "bytes": 981060
+    },
+    {
+      "name": "s07-attackfx",
+      "file": "Docs\\qa\\feedback-0828\\m6-s07-attackfx-dress3.png",
+      "bytes": 980152
+    },
+    {
+      "name": "s07-hunt",
+      "file": "Docs\\qa\\feedback-0828\\m6-s07-hunt-dress3.png",
+      "bytes": 981456
+    },
+    {
+      "name": "s09-reward",
+      "file": "Docs\\qa\\feedback-0828\\m6-s09-reward-dress3.png",
+      "bytes": 844580
+    },
+    {
+      "name": "s10-epilogue",
+      "file": "Docs\\qa\\feedback-0828\\m6-s10-epilogue-dress3.png",
+      "bytes": 955164
+    }
+  ],
+  "walkLog": [
+    {
+      "target": {
+        "x": -1.5,
+        "z": 23.8
+      },
+      "reached": true,
+      "ms": 2715,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -1.5,
+        "z": 18.3
+      },
+      "reached": true,
+      "ms": 1854,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -4.104056,
+        "z": 5.076014
+      },
+      "reached": true,
+      "ms": 4421,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -3.64966,
+        "z": 17.660593
+      },
+      "reached": true,
+      "ms": 4114,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -30,
+        "z": 12
+      },
+      "reached": true,
+      "ms": 5776,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -46,
+        "z": 8
+      },
+      "reached": true,
+      "ms": 3066,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -70.1381607055664,
+        "y": -2.3175625801086426,
+        "z": 7.318838596343994,
+        "s": 0.004999999978441407,
+        "d": 23.51484412992213
+      },
+      "reached": true,
+      "ms": 7070,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -66.64216613769531,
+        "y": -2.532531976699829,
+        "z": 7.670660495758057,
+        "s": 0.004999999920149796,
+        "d": 2.2118144940137165
+      },
+      "reached": true,
+      "ms": 962,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -68.8989028930664,
+        "y": -2.471952199935913,
+        "z": 21.21811294555664,
+        "s": 0.005000000058273988,
+        "d": 13.705102193671376
+      },
+      "reached": true,
+      "ms": 4166,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -68.70975494384766,
+        "y": -2.4564929008483887,
+        "z": 18.357179641723633,
+        "s": 0.005000000160060203,
+        "d": 2.0599295526656918
+      },
+      "reached": true,
+      "ms": 936,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -81.122802734375,
+        "y": -1.8825225830078125,
+        "z": 17.837888717651367,
+        "s": 0.0050000000356882615,
+        "d": 12.440615460922597
+      },
+      "reached": true,
+      "ms": 3825,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -78.0514144897461,
+        "y": -1.9881302118301392,
+        "z": 18.07742691040039,
+        "s": 0.005000000044878862,
+        "d": 1.9666232687499432
+      },
+      "reached": true,
+      "ms": 914,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -79.20909118652344,
+        "y": -1.9027001857757568,
+        "z": 14.30410385131836,
+        "s": 0.004999999942855922,
+        "d": 3.760770732632274
+      },
+      "reached": true,
+      "ms": 1016,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -79.38484954833984,
+        "y": -1.887008786201477,
+        "z": 12.819823265075684,
+        "s": 0.004999999972253191,
+        "d": 2.1743140415252493
+      },
+      "reached": true,
+      "ms": 489,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -81.01903533935547,
+        "y": -1.8496599197387695,
+        "z": 14.939569473266602,
+        "s": 0.005000000018243817,
+        "d": 2.2606753511609092
+      },
+      "reached": true,
+      "ms": 449,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -30,
+        "z": 12
+      },
+      "reached": true,
+      "ms": 9194,
+      "nudges": 0
+    },
+    {
+      "target": {
+        "x": -4.104056,
+        "z": 5.076014
+      },
+      "reached": true,
+      "ms": 8305,
+      "nudges": 1
+    }
+  ],
+  "pigsAtTitle": [
+    {
+      "x": -80,
+      "y": -1.8605585098266602,
+      "z": 8,
+      "s": 0.004999999774238961
+    },
+    {
+      "x": -92,
+      "y": -1.242562174797058,
+      "z": 8,
+      "s": 0.004999999993569196
+    },
+    {
+      "x": -68,
+      "y": -2.4502756595611572,
+      "z": 8,
+      "s": 0.005000000178215174
+    },
+    {
+      "x": -80,
+      "y": -1.9547828435897827,
+      "z": 20,
+      "s": 0.00499999992546894
+    },
+    {
+      "x": -80,
+      "y": -1.8352302312850952,
+      "z": -4,
+      "s": 0.005000000189262845
+    },
+    {
+      "x": -92,
+      "y": -1.360666036605835,
+      "z": 20,
+      "s": 0.005000000027356824
+    },
+    {
+      "x": -68,
+      "y": -2.506531238555908,
+      "z": 20,
+      "s": 0.005000000066903249
+    },
+    {
+      "x": -92,
+      "y": -1.2158375978469849,
+      "z": -4,
+      "s": 0.004999999956139865
+    }
+  ],
+  "cameraSamples": [
+    null,
+    null,
+    null
+  ],
+  "shopLeave": {
+    "overlay": "Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% M",
+    "hasShop": false
+  },
+  "fxShot": true,
+  "atkShot": true,
+  "firstKillDialogue": 1,
+  "huntBench": {
+    "frames": 5111,
+    "avg": 85.17,
+    "low1": 20.62,
+    "hitch1s": 0,
+    "callsPerFrame": 3.1,
+    "programs": 139,
+    "textures": 33,
+    "pipelines": 107,
+    "heapMB": 128.2
+  },
+  "finalState": {
+    "hud": {
+      "stats": null,
+      "quest": null,
+      "hasHud": false
+    },
+    "overlayText": "F 대화 돼지 열 마리. 마을 사람들은 이걸 대단한 일이라고 했다. ...다음엔 조금 더 먼 곳까지 가 보기로 했다. 다음 예고 — 서쪽 절벽 너머, 아무도 돌아오지 않은 숲. 다시 하기 자유 탐험",
+    "player": {
+      "x": -3.207073891247727,
+      "y": -2.3847668115938903,
+      "z": 4.419695771425871,
+      "heading": 3.2931866247317836
+    },
+    "kills": 10
+  },
+  "scenes": {
+    "S00": {
+      "ok": true,
+      "note": "buttons=[{\"text\":\"시작하기\",\"disabled\":false}]",
+      "hud": {
+        "stats": null,
+        "quest": null,
+        "hasHud": false
+      },
+      "player": {
+        "x": 0,
+        "y": -2.3826036262798063,
+        "z": 24,
+        "heading": 3.141592653589793
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [
+        {
+          "text": "시작하기",
+          "disabled": false
+        }
+      ],
+      "overlayText": "WEB 3D VERTICAL SLICE 버섯마을 첫 여행자 준비 완료 100% 시작하기 RENDERER · WebGPU PRESET · low"
+    },
+    "S01": {
+      "ok": false,
+      "note": "Enter edge did not open create; clicked start button",
+      "hud": {
+        "stats": null,
+        "quest": null,
+        "hasHud": false
+      },
+      "player": {
+        "x": 0,
+        "y": -2.3826036262798063,
+        "z": 24,
+        "heading": 3.141592653589793
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [
+        {
+          "text": "전사앞에 서서 맞고, 앞에서 벤다.HP 22",
+          "disabled": false
+        },
+        {
+          "text": "모험 시작",
+          "disabled": false
+        }
+      ],
+      "overlayText": "캐릭터 생성 이름 전사 앞에 서서 맞고, 앞에서 벤다. HP 220 MP 60 공격 14 불꽃베기 모험 시작"
+    },
+    "S02-enter": {
+      "ok": true,
+      "note": "hud=Lv.1영하HP220 / 220MP60 / 60EXP0%",
+      "hud": {
+        "stats": "Lv.1영하HP220 / 220MP60 / 60EXP0%",
+        "quest": null,
+        "hasHud": true
+      },
+      "player": {
+        "x": 0,
+        "y": -2.3826036262798063,
+        "z": 24,
+        "heading": 3.141592653589793
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "› WASD 이동 · Shift 달리기 · Space 점프 Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 1 2 — 3 — 4 1,500"
+    },
+    "S02": {
+      "ok": true,
+      "note": "move/run/jump injected — hint DOM in overlayText",
+      "hud": {
+        "stats": "Lv.1영하HP220 / 220MP60 / 60EXP0%",
+        "quest": null,
+        "hasHud": true
+      },
+      "player": {
+        "x": 0,
+        "y": -2.383099426955966,
+        "z": 15.296335759730836,
+        "heading": 3.141592653589793
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 1 2 — 3 — 4 1,500 마을로 진입합니다. 버섯마을"
+    },
+    "S03": {
+      "ok": false,
+      "note": "banner text=Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 1 2 — 3 —",
+      "hud": {
+        "stats": "Lv.1영하HP220 / 220MP60 / 60EXP0%",
+        "quest": null,
+        "hasHud": true
+      },
+      "player": {
+        "x": -1.491569931005984,
+        "y": -2.3826199250171487,
+        "z": 18.63867069790312,
+        "heading": 3.152830474578589
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 1 2 — 3 — 4 1,500"
+    },
+    "S04": {
+      "ok": false,
+      "note": "dialogue=1,500 촌장 오릭 자네, 처음 보는 얼굴이군. 여행자인가? 클릭하여 계속",
+      "hud": {
+        "stats": null,
+        "quest": null,
+        "hasHud": true
+      },
+      "player": {
+        "x": -4.1101529706045135,
+        "y": -2.3837912049806853,
+        "z": 4.731694430079832,
+        "heading": 3.1429835623194995
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "1,500 촌장 오릭 자네, 처음 보는 얼굴이군. 여행자인가? 클릭하여 계속"
+    },
+    "S04-accept": {
+      "ok": true,
+      "note": "quest=(Lv.10) 돼지 사냥돼지 0/10",
+      "hud": {
+        "stats": "Lv.1영하HP220 / 220MP60 / 60EXP0%",
+        "quest": "(Lv.10) 돼지 사냥돼지 0/10",
+        "hasHud": true
+      },
+      "player": {
+        "x": -4.1101529706045135,
+        "y": -2.3837912049806853,
+        "z": 4.731694430079832,
+        "heading": 3.1429835623194995
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 (Lv.10) 돼지 사냥 돼지 0/10 1 2 — 3 — 4 1,500 F 대화"
+    },
+    "S05": {
+      "ok": false,
+      "note": "meso 1500→1500 (buttons=[{\"text\":\"강철 검1,200\",\"disabled\":false},{\"text\":\"HP 물약 (소)60\",\"disabled\":false},{\"text\":\"HP 물약 (중)160\",\"disabled\":false},{\"text\":\"MP 물약 (소)70\",\"disabled\":false}])",
+      "hud": {
+        "stats": "Lv.1영하HP220 / 220MP60 / 60EXP0%",
+        "quest": "(Lv.10) 돼지 사냥돼지 0/10",
+        "hasHud": true
+      },
+      "player": {
+        "x": -3.6595491699359735,
+        "y": -2.382713414255732,
+        "z": 17.734588838224724,
+        "heading": 4.862934160187055
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [
+        {
+          "text": "강철 검1,200",
+          "disabled": false
+        },
+        {
+          "text": "HP 물약 (소)60",
+          "disabled": false
+        },
+        {
+          "text": "HP 물약 (중)160",
+          "disabled": false
+        },
+        {
+          "text": "MP 물약 (소)70",
+          "disabled": false
+        }
+      ],
+      "overlayText": "Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 (Lv.10) 돼지 사냥 돼지 0/10 1 2 — 3 — 4 1,500 F 대화 무기 상점 강철 검 1,200 HP 물약 (소) 60 HP 물약 (중) 160 MP 물약 (소) 70 아이템을 선택하세요 보유 코인 1,500"
+    },
+    "S06": {
+      "ok": true,
+      "note": "pigs=8 banner=Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 분홍갈기 공원 ● 촌장",
+      "hud": {
+        "stats": "Lv.1영하HP220 / 220MP60 / 60EXP0%",
+        "quest": "(Lv.10) 돼지 사냥돼지 0/10",
+        "hasHud": true
+      },
+      "player": {
+        "x": -46.63526305678995,
+        "y": -3.0116564940047543,
+        "z": 8.068302782060288,
+        "heading": 4.4687094314220515
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "Lv.1 영하 HP 220 / 220 MP 60 / 60 EXP 0% MINI MAP 분홍갈기 공원 ● 촌장 오릭 ● 상인 리아 ● 포탈 (Lv.10) 돼지 사냥 돼지 0/10 1 2 — 3 — 4 1,500 분홍갈기 공원 새로운 필드에 진입합니다. 현재 지역 · 분홍갈기 공원"
+    },
+    "S07": {
+      "ok": true,
+      "note": "kills=10 pickups=0 dropFails=0 hpBars=1 floaters=0 quest=(Lv.10) 돼지 사냥돼지 10/10",
+      "hud": {
+        "stats": "Lv.3영하HP102 / 220MP0 / 60EXP77%",
+        "quest": "(Lv.10) 돼지 사냥돼지 10/10",
+        "hasHud": true
+      },
+      "player": {
+        "x": -80.37985180916856,
+        "y": -1.8653308552603196,
+        "z": 14.367017632791658,
+        "heading": 5.416113749868631
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [],
+      "overlayText": "Lv.3 영하 HP 102 / 220 MP 0 / 60 EXP 77% MINI MAP 분홍갈기 공원 ● 촌장 오릭 ● 상인 리아 ● 포탈 (Lv.10) 돼지 사냥 돼지 10/10 1 2 — 3 — 4 1,685 분홍갈기 공원 새로운 필드에 진입합니다. 현재 지역 · 분홍갈기 공원"
+    },
+    "S09": {
+      "ok": true,
+      "note": "text=Lv.4 영하 HP 102 / 220 MP 0 / 60 EXP 91% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 1 2 — 3 — 4 4,685 F 대화 LEVEL UP 보상 획득 코인 3,000 경험",
+      "hud": {
+        "stats": "Lv.4영하HP102 / 220MP0 / 60EXP91%",
+        "quest": null,
+        "hasHud": true
+      },
+      "player": {
+        "x": -3.207073891247727,
+        "y": -2.3847668115938903,
+        "z": 4.419695771425871,
+        "heading": 3.2931866247317836
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [
+        {
+          "text": "확인",
+          "disabled": false
+        }
+      ],
+      "overlayText": "Lv.4 영하 HP 102 / 220 MP 0 / 60 EXP 91% MINI MAP 숲 ● 촌장 오릭 ● 상인 리아 ● 포탈 1 2 — 3 — 4 4,685 F 대화 LEVEL UP 보상 획득 코인 3,000 경험치 +250 분홍 리본 (장식) 확인"
+    },
+    "S10": {
+      "ok": true,
+      "note": "buttons=[{\"text\":\"다시 하기\",\"disabled\":false},{\"text\":\"자유 탐험\",\"disabled\":false}]",
+      "hud": {
+        "stats": null,
+        "quest": null,
+        "hasHud": false
+      },
+      "player": {
+        "x": -3.207073891247727,
+        "y": -2.3847668115938903,
+        "z": 4.419695771425871,
+        "heading": 3.2931866247317836
+      },
+      "pigs": 8,
+      "drops": 0,
+      "buttons": [
+        {
+          "text": "다시 하기",
+          "disabled": false
+        },
+        {
+          "text": "자유 탐험",
+          "disabled": false
+        }
+      ],
+      "overlayText": "F 대화 돼지 열 마리. 마을 사람들은 이걸 대단한 일이라고 했다. ...다음엔 조금 더 먼 곳까지 가 보기로 했다. 다음 예고 — 서쪽 절벽 너머, 아무도 돌아오지 않은 숲. 다시 하기 자유 탐험"
+    }
+  },
+  "errors": {
+    "console": [],
+    "exceptions": [],
+    "log": [],
+    "total": 0
+  },
+  "gameChunks": [
+    "http://127.0.0.1:5190/assets/GameOverlay-UKru6p7Y.js",
+    "http://127.0.0.1:5190/assets/GameOverlay-C-eSCVzX.css",
+    "http://127.0.0.1:5190/assets/GameRuntime-CuIFExFY.js"
+  ]
+}

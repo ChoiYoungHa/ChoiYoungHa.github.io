@@ -4,6 +4,7 @@ import mainPath from '../data/main-path.json' with { type: 'json' }
 import { sampleGround } from '../scene/terrain/heightmap'
 import placement from '../data/placement.json' with { type: 'json' }
 import { heroTreeCollider, PLAYER_RADIUS, resolveCollision } from '../scene/colliders/heroTree'
+import { dressingColliders } from '../scene/colliders/dressing'
 import { resolveVillageCollision } from '../scene/colliders/village'
 import { createKeyboardInput, GAME_INPUT_ENABLED } from './input'
 import { createRaycastController } from './controllers/raycast'
@@ -24,6 +25,8 @@ import { consumePlayerJump, consumePlayerTeleport, readPlayerAttackSeq, readPlay
  * 매 프레임 값이 아니라 설정값이라 모듈 변수로 충분하다(스토어 §3-3 규칙과 무관). 영속하지 않는다.
  */
 let mouseSensitivity = 1
+const DRESSING_COLLIDERS = dressingColliders(PLAYER_RADIUS)
+
 export function setMouseSensitivity(multiplier: number): void {
   mouseSensitivity = Number.isFinite(multiplier) && multiplier > 0 ? multiplier : 1
 }
@@ -51,7 +54,8 @@ export function Player() {
         // village.ts 의 기본값 0.35 를 그대로 두면 벽 모서리에 0.05m 파고든다.
         (pos) =>
           resolveVillageCollision(
-            resolveCollision(pos, [heroTreeCollider(placement.heroTree)]),
+            // 2026-08-28: 코덱스 소품(우물·벤치·건초·수레·모루·상자) 원형 충돌체 추가(dressing.json).
+            resolveCollision(pos, [heroTreeCollider(placement.heroTree), ...DRESSING_COLLIDERS]),
             PLAYER_RADIUS,
           ),
       ),

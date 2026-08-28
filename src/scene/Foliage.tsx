@@ -10,6 +10,7 @@ import vistas from '../data/vistas.json'
 import { useRuntime } from '../store/useRuntime'
 import { getLookAssets } from '../systems/lookAssets'
 import { WORLD_HALF_EXTENT, WORLD_SIZE } from './bounds'
+import { isDressingBlocked } from './colliders/dressing'
 import { createPathExclusion, createVistaExclusion } from './scatter/exclusionMask'
 import { useLookdevMaterial } from './Atmosphere'
 import { lodConfigForPreset } from './foliage/lodConfig'
@@ -221,8 +222,9 @@ export function Foliage({ sampleHeight }: FoliageProps) {
     const pathReject = createPathExclusion(CENTERLINE, 2)
     const slopeReject = createSlopeExclusion(sampleHeight)
     const vistaReject = createVistaExclusion(VISTA_LINES)
+    // 2026-08-28: 코덱스 광장·데크·텃밭·소품 위(isDressingBlocked)에는 잔디 카드도 심지 않는다.
     const reject = (x: number, z: number) =>
-      pathReject(x, z) || slopeReject(x, z) || vistaReject(x, z)
+      pathReject(x, z) || slopeReject(x, z) || vistaReject(x, z) || isDressingBlocked(x, z)
 
     return SPECIES.map((species, index) =>
       scatter(hashSeed(`m1-${species}`), {
