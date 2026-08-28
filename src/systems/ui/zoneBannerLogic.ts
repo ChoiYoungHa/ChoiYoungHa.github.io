@@ -49,19 +49,23 @@ export interface ZoneBannerCopy {
   title: string
   subtitle: string
   largeTitle: string | null
+  /** 2026-08-28 영하님 — 첫 마을 진입(퀘스트 미수락)이면 촌장을 찾아가라는 안내. */
+  hint: string | null
 }
 
-export function zoneBannerCopy(zone: BannerZoneId, ipMode: IpMode): ZoneBannerCopy {
+export function zoneBannerCopy(zone: BannerZoneId, ipMode: IpMode, elderHint = false): ZoneBannerCopy {
   if (zone === 'park') {
     return {
       title: t('s06.enter', ipMode),
       subtitle: t('s06.currentRegion', ipMode),
       largeTitle: t('s06.name', ipMode),
+      hint: null,
     }
   }
   return {
     title: t('s03.enter', ipMode),
     subtitle: t('s03.location', ipMode),
     largeTitle: null,
+    hint: elderHint ? t('s03.hint.elder', ipMode) : null,
   }
 }

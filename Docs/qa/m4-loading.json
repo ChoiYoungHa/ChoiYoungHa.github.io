@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "testedHead": "a6b24cc",
+  "testedHead": "aec5aba",
   "manifestMeasuredFromHead": "a1e7272",
   "phaseOrder": [
     "boot",
@@ -43,7 +43,7 @@
       "detail": 6264140
     },
     "currentBuildStat": {
-      "boot": 3063861,
+      "boot": 3063848,
       "core": 2190332,
       "detail": 6264140
     },
@@ -72,9 +72,9 @@
       "phase": "boot",
       "id": "boot.js-main",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-BOj2VPX_.js",
+      "physicalPath": "dist/assets/main-Cc-b0GYR.js",
       "exists": true,
-      "statBytes": 992089,
+      "statBytes": 992076,
       "declaredBytes": 876032
     },
     {
@@ -90,9 +90,9 @@
       "phase": "boot",
       "id": "boot.heightmap-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-BOj2VPX_.js",
+      "physicalPath": "dist/assets/main-Cc-b0GYR.js",
       "exists": true,
-      "statBytes": 992089,
+      "statBytes": 992076,
       "declaredBytes": 0
     },
     {
@@ -108,9 +108,9 @@
       "phase": "core",
       "id": "core.terrain-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-BOj2VPX_.js",
+      "physicalPath": "dist/assets/main-Cc-b0GYR.js",
       "exists": true,
-      "statBytes": 992089,
+      "statBytes": 992076,
       "declaredBytes": 0
     },
     {
@@ -126,9 +126,9 @@
       "phase": "core",
       "id": "core.hero-lod1-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-BOj2VPX_.js",
+      "physicalPath": "dist/assets/main-Cc-b0GYR.js",
       "exists": true,
-      "statBytes": 992089,
+      "statBytes": 992076,
       "declaredBytes": 0
     },
     {
@@ -180,18 +180,18 @@
       "phase": "detail",
       "id": "detail.village-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-BOj2VPX_.js",
+      "physicalPath": "dist/assets/main-Cc-b0GYR.js",
       "exists": true,
-      "statBytes": 992089,
+      "statBytes": 992076,
       "declaredBytes": 0
     },
     {
       "phase": "detail",
       "id": "detail.hero-lod0-procedural",
       "manifestUrl": "dist/assets/main-D2g1X1Qi.js",
-      "physicalPath": "dist/assets/main-BOj2VPX_.js",
+      "physicalPath": "dist/assets/main-Cc-b0GYR.js",
       "exists": true,
-      "statBytes": 992089,
+      "statBytes": 992076,
       "declaredBytes": 0
     },
     {

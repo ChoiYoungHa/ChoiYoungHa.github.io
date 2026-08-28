@@ -47,6 +47,8 @@ export interface GameHudProps {
   onBindQuickSlot?: (itemId: string, slot: 3 | 4 | 5 | 6) => void
   /** 퀵슬롯 아이템을 슬롯 밖에 놓으면 해제. */
   onUnbindQuickSlot?: (slot: 3 | 4 | 5 | 6) => void
+  /** 마을 입구 게이트 통과 여부(씬 henesys 이후) — 촌장 안내 목표 표시 조건. */
+  enteredVillage?: boolean
 }
 
 const BINDABLE_SLOTS: ReadonlySet<number> = new Set([3, 4, 5, 6])
@@ -79,8 +81,8 @@ function StatBar({ label, value, maximum, color, text }: {
   )
 }
 
-export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickSlots = DEFAULT_SLOTS, minimap, onBindQuickSlot, onUnbindQuickSlot }: GameHudProps) {
-  const visibility = hudPresentation({ dialogueOpen, zone, questStatus: quest.status })
+export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickSlots = DEFAULT_SLOTS, minimap, onBindQuickSlot, onUnbindQuickSlot, enteredVillage }: GameHudProps) {
+  const visibility = hudPresentation({ dialogueOpen, zone, questStatus: quest.status, enteredVillage })
   const labels = hudLabels(ipMode, quest.killCount)
   const [dragOverSlot, setDragOverSlot] = useState<number | null>(null)
   const panelBase = {
@@ -110,6 +112,11 @@ export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickS
 
       {minimap !== undefined && !dialogueOpen && <MiniMap {...minimap} />}
 
+      {visibility.showObjective && (
+        <section aria-label="다음 목표" style={{ ...panelBase, position: 'absolute', ...HUD_TOKENS.layout.quest, padding: '10px 14px' }}>
+          <strong style={{ display: 'block', fontSize: 13, color: '#ffd9a0' }}>{t('s03.hint.elder', ipMode)}</strong>
+        </section>
+      )}
       {visibility.showQuestTracker && (
         <section aria-label="퀘스트 추적" style={{ ...panelBase, position: 'absolute', ...HUD_TOKENS.layout.quest, padding: '10px 14px' }}>
           <strong style={{ display: 'block', fontSize: 13 }}>{labels.questTitle}</strong>

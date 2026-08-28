@@ -18,7 +18,14 @@ test('HUD 표시 조건은 대화·공원·퀘스트 상태를 독립 적용한�
     showQuestTracker: true,
     showQuickSlots: true,
     showMeso: true,
+    showObjective: false,
   })
+  // 2026-08-28: 퀘스트 미수락 + 마을이면 촌장 안내 목표, 대화 중·마을 밖·수락 후에는 없음
+  assert.equal(hudPresentation({ dialogueOpen: false, zone: 'village', questStatus: 'none' }).showObjective, true)
+  assert.equal(hudPresentation({ dialogueOpen: true, zone: 'village', questStatus: 'none' }).showObjective, false)
+  assert.equal(hudPresentation({ dialogueOpen: false, zone: 'forest', questStatus: 'none' }).showObjective, false)
+  assert.equal(hudPresentation({ dialogueOpen: false, zone: 'forest', questStatus: 'none', enteredVillage: true }).showObjective, true) // 게이트 주변은 zone 이 아직 forest
+  assert.equal(hudPresentation({ dialogueOpen: false, zone: 'village', questStatus: 'active' }).showObjective, false)
   assert.equal(hudPresentation({
     dialogueOpen: true,
     zone: 'park',

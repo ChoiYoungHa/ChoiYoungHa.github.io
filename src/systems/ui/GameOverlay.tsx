@@ -207,7 +207,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
     <div data-game-overlay="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {overlay}
       {scene === 'forest' && <TutorialHints inputEvents={snapshot.tutorialEvents} narrationLineIndex={snapshot.nowMs < 2_400 ? 0 : snapshot.nowMs < 4_800 ? 1 : null} ipMode={game.ipMode} />}
-      {hudVisible && <GameHud {...hud} quickSlots={quickSlots} onBindQuickSlot={(itemId, slot) => session.enqueueInput({ bindQuickSlot: { slot, itemId } })} onUnbindQuickSlot={(slot) => session.enqueueInput({ bindQuickSlot: { slot, itemId: null } })} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} minimap={{ zoneName: zoneDisplayName(snapshot.zone ?? 'forest', game.ipMode), player: { x: snapshot.playerPos.x, z: snapshot.playerPos.z, yaw: snapshot.playerYaw }, npcs: MINIMAP_NPCS.map((n) => ({ ...n, label: t(n.labelKey, game.ipMode) })), warps: MINIMAP_WARPS }} />}
+      {hudVisible && <GameHud {...hud} quickSlots={quickSlots} enteredVillage={scene !== 'forest'} onBindQuickSlot={(itemId, slot) => session.enqueueInput({ bindQuickSlot: { slot, itemId } })} onUnbindQuickSlot={(slot) => session.enqueueInput({ bindQuickSlot: { slot, itemId: null } })} zone={snapshot.zone ?? 'forest'} dialogueOpen={snapshot.activeDialogue !== null} minimap={{ zoneName: zoneDisplayName(snapshot.zone ?? 'forest', game.ipMode), player: { x: snapshot.playerPos.x, z: snapshot.playerPos.z, yaw: snapshot.playerYaw }, npcs: MINIMAP_NPCS.map((n) => ({ ...n, label: t(n.labelKey, game.ipMode) })), warps: MINIMAP_WARPS }} />}
       {hudVisible && snapshot.activeDialogue === null && (
         <div aria-label="플레이어 초상" style={{ position: 'absolute', left: `calc(50% - ${HUD_TOKENS.layout.stats.width / 2 + HUD_TOKENS.layout.portrait.size + 8}px)`, bottom: HUD_TOKENS.layout.portrait.bottom, width: HUD_TOKENS.layout.portrait.size, height: HUD_TOKENS.layout.portrait.size, borderRadius: 8, overflow: 'hidden', border: `1px solid ${HUD_TOKENS.colors.border}`, background: HUD_TOKENS.colors.panel }}>
           <Portrait selection={portrait} imageUrl="/ui/portraits/player-warrior.png" size={72} />
@@ -216,7 +216,7 @@ export function GameOverlay({ session, loading, backend, preset, projector, bgUr
       {hudVisible && skillNotice !== null && (
         <div aria-label="스킬 안내" style={{ position: 'absolute', left: '50%', bottom: HUD_TOKENS.layout.stats.bottom + HUD_TOKENS.layout.stats.height + 10, transform: 'translateX(-50%)', padding: '4px 12px', borderRadius: 6, background: HUD_TOKENS.colors.panel, border: `1px solid ${HUD_TOKENS.colors.border}`, color: '#ff8a80', fontSize: 12, fontWeight: 700, fontFamily: HUD_TOKENS.fontFamily, whiteSpace: 'nowrap' }}>{skillNotice}</div>
       )}
-      <ZoneBanner banner={snapshot.banner} ipMode={game.ipMode} />
+      <ZoneBanner banner={snapshot.banner} ipMode={game.ipMode} elderHint={game.quest.status === 'none'} />
       {hudVisible && <BossBanner banner={snapshot.bossBanner} />}
       {hudVisible && snapshot.activeDialogue === null && <BossBar boss={snapshot.boss} />}
       <InteractPrompt interactableId={interactableId} />

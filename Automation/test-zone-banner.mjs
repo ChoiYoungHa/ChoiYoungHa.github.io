@@ -41,3 +41,11 @@ test('이탈·숲 이벤트는 배너를 만들지 않고 두 ipMode 문구만 �
   assert.ok(zoneBannerCopy('park', 'conti').largeTitle.length > 0)
   assert.ok(zoneBannerCopy('park', 'own').subtitle.length > 0)
 })
+
+test('2026-08-28 첫 마을 진입(퀘스트 미수락)이면 배너에 촌장 안내가 붙고, 공원·수락 후에는 없다', async () => {
+  const { zoneBannerCopy } = await load('src/systems/ui/zoneBannerLogic.ts')
+  assert.equal(zoneBannerCopy('village', 'own', true).hint, '촌장 오릭을 찾아가세요.')
+  assert.equal(zoneBannerCopy('village', 'conti', true).hint, '장로 스탄을 찾아가세요.')
+  assert.equal(zoneBannerCopy('village', 'own').hint, null)
+  assert.equal(zoneBannerCopy('park', 'own', true).hint, null)
+})
