@@ -4,3 +4,4 @@ public/models/**/*.glb filter=lfs diff=lfs merge=lfs -text
 public/textures/**/*.ktx2 filter=lfs diff=lfs merge=lfs -text
 public/env/**/*.hdr filter=lfs diff=lfs merge=lfs -text
 public/heightmaps/**/*.png filter=lfs diff=lfs merge=lfs -text
+Docs/trailer/*.mp4 filter=lfs diff=lfs merge=lfs -text

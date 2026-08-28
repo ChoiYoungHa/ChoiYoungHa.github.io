@@ -40,3 +40,9 @@ assets-src/
 
 # Claude 워커 격리 작업트리(로컬 전용)
 .claude/worktrees/
+
+# 트레일러 캡처 프레임(수천 장 JPEG, 로컬 전용) — 산출 mp4·stills 만 추적
+Docs/trailer/capture/
+
+# 트레일러 마스터(1600×900, ~100MB)는 로컬·게임콘티/trailer 에만 두고, 720p 만 LFS 로 추적
+Docs/trailer/trailer-*[0-9].mp4

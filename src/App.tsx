@@ -134,8 +134,11 @@ export default function App() {
   const preset = useRuntime((s) => s.preset)
   const quality = qualityPresets[preset]
   const loading = useLoadingState()
-  const width = Math.ceil(quality.renderResolution.width / quality.dprCap)
-  const height = Math.ceil(quality.renderResolution.height / quality.dprCap)
+  // 2026-08-28: `?dpr=1` 이면 스테이지를 렌더 해상도 그대로(CSS 1600×900)로 — 트레일러 캡처·DPR 1 모니터용. 기본은 프리셋 dprCap.
+  const dprQuery = Number(params.get('dpr'))
+  const dprCap = Number.isFinite(dprQuery) && dprQuery >= 1 && dprQuery <= 2 ? dprQuery : quality.dprCap
+  const width = Math.ceil(quality.renderResolution.width / dprCap)
+  const height = Math.ceil(quality.renderResolution.height / dprCap)
   // 스테이지는 고정 픽셀이라 창이 작으면 하단 HUD(스킬바)가 잘렸다(2026-08-27 영하님 피드백). 창에 맞춰 축소만 한다(확대 없음, 캡처 규약 불변).
   const stageSize = useStageFit(width, height, shot !== null)
 
@@ -155,7 +158,7 @@ export default function App() {
 
   return (
     <div className="stage" style={{ width: stageSize.width, height: stageSize.height }}>
-      <Stage width={stageSize.width} height={stageSize.height} shot={shot} hideHero={hideHero} dprCap={quality.dprCap} />
+      <Stage width={stageSize.width} height={stageSize.height} shot={shot} hideHero={hideHero} dprCap={dprCap} />
       {shouldShowRuntimeHud(location.search, GAME_INPUT_ENABLED) ? <RuntimeHud /> : null}
       {!shot && GAME_INPUT_ENABLED ? <Suspense fallback={null}><GameOverlay loading={loading} preset={preset} /></Suspense> : null}
       {/* M4-02·M4-05 (R30-A) — 시작 안내 5초·설정. LoadingScreen 은 M4-10 로더 뒤에 마운트한다. shot 모드에는 불필요. */}
