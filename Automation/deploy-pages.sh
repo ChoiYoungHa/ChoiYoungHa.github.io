@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # 2026-08-28 (master) — GitHub Pages 배포: VITE_GAME=1 실빌드 → dist 를 gh-pages 브랜치(orphan)로 푸시.
-# Actions 워크플로(Docs/deploy/pages.workflow.yml)는 PAT 에 workflow 스코프가 생기면 .github/workflows/ 로 옮겨 자동화한다.
+# main 푸시는 .github/workflows/pages.yml 이 자동 배포한다. 이 스크립트는 수동·비상용(gh-pages 직접 푸시).
+# 주의: Actions 배포(source=Actions)로 전환한 뒤엔 gh-pages 브랜치 푸시가 아니라 workflow_dispatch 를 쓴다.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 REMOTE=${REMOTE:-origin}
