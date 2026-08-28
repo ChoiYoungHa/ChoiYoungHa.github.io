@@ -1,10 +1,11 @@
 {
   "schema": "ip-check/1",
-  "mode": "src",
-  "root": "src",
+  "mode": "dist",
+  "root": "dist",
   "dist": {
-    "status": "not-run",
-    "reason": "explicit --src mode"
+    "status": "scanned",
+    "root": "dist",
+    "files": 153
   },
   "denylist": {
     "file": "src/game/data/ip-denylist.json",
@@ -41,16 +42,587 @@
     ]
   },
   "contiTreeShaking": {
-    "status": "excluded",
-    "reason": "runtime is forced to own and no conti-only denylist term remains in scanned output"
+    "status": "residual-warn",
+    "reason": "runtime is forced to own, but conti-only terms remain in scanned output"
   },
   "checks": {
     "forbiddenNames": {
-      "status": "pass",
-      "count": 0,
-      "failCount": 0,
-      "warnCount": 0,
-      "matches": []
+      "status": "fail",
+      "count": 95,
+      "failCount": 77,
+      "warnCount": 18,
+      "matches": [
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Stan",
+          "offset": 46566,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Stan",
+          "offset": 48441,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Stan",
+          "offset": 48462,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 12638,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 22567,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 22587,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 22825,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 22846,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 26987,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 29705,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 29870,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 35199,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 37467,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 37474,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 40750,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 50337,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameOverlay-BP3FnW56.js",
+          "term": "Meso",
+          "offset": 50344,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Henesys",
+          "offset": 684,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Stan",
+          "offset": 14204,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Stan",
+          "offset": 18359,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 12003,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 12026,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 12078,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 14342,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 17792,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 17884,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/GameRuntime-CXoPl2Pu.js",
+          "term": "Meso",
+          "offset": 19075,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/main-Dd20Jsfa.js",
+          "term": "스탄",
+          "offset": 822372,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/main-Dd20Jsfa.js",
+          "term": "마야",
+          "offset": 822387,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Henesys",
+          "offset": 20654,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Stan",
+          "offset": 2236,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Stan",
+          "offset": 3572,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Stan",
+          "offset": 21077,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Stan",
+          "offset": 21169,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Stan",
+          "offset": 21195,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Stan",
+          "offset": 21241,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 289,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 1344,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 10764,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 10775,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 10793,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 10800,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 12712,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 12727,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 13386,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 13413,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 16628,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 16635,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 19328,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 19335,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 19697,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 19704,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 21931,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 21968,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 22659,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/projector-CQ6RaBdr.js",
+          "term": "Meso",
+          "offset": 22666,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "헤네시스",
+          "offset": 20630,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "헤네시스",
+          "offset": 21877,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "스탄",
+          "offset": 21912,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "스탄",
+          "offset": 22282,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "스탄",
+          "offset": 22909,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "메소",
+          "offset": 21616,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "메소",
+          "offset": 22506,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "메소",
+          "offset": 23047,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "돼지리본",
+          "offset": 21644,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "돼지리본",
+          "offset": 23106,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "마야",
+          "offset": 22203,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "마야",
+          "offset": 22246,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "돼지의 공원",
+          "offset": 22608,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "돼지의 공원",
+          "offset": 22628,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "매직클로",
+          "offset": 21160,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "아이스에이지",
+          "offset": 21263,
+          "severity": "warn"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Henesys",
+          "offset": 26286,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Stan",
+          "offset": 11534,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Stan",
+          "offset": 26296,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 16197,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 16226,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 19103,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 19329,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 19336,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 21609,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 24364,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 26676,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27707,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27725,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27743,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27825,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27832,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27888,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 27901,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 28604,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 28611,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 28626,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 28993,
+          "severity": "fail"
+        },
+        {
+          "file": "dist/assets/useGame-DVBTWtrc.js",
+          "term": "Meso",
+          "offset": 29000,
+          "severity": "fail"
+        }
+      ]
     },
     "ownVisibleStrings": {
       "status": "pass",
@@ -58,13 +630,246 @@
       "matches": []
     },
     "referenceImageHashes": {
-      "status": "not-run",
-      "reason": "dist check skipped in --src mode"
+      "status": "fail",
+      "expectedCount": 4,
+      "references": [],
+      "matches": [],
+      "reason": "reference directory ../asset not found"
     },
     "registeredAssets": {
-      "status": "not-run",
-      "reason": "dist check skipped in --src mode"
+      "status": "fail",
+      "ledger": "src/data/assets.csv",
+      "assetFiles": [
+        "env/sky_1k.hdr",
+        "favicon.svg",
+        "gen-candidates/mushroom-prop/mushroom-front.png",
+        "gen-candidates/mushroom-prop/mushroom-side.png",
+        "gen-candidates/npc-portraits/maya.png",
+        "gen-candidates/npc-portraits/player-archer.png",
+        "gen-candidates/npc-portraits/stan.png",
+        "gen-candidates/skill-fx-sheet/fx-sheet.png",
+        "gen-candidates/title-background/title-background.png",
+        "gen-candidates/ui-icons/arrow.png",
+        "gen-candidates/ui-icons/coin.png",
+        "gen-candidates/ui-icons/exp.png",
+        "gen-candidates/ui-icons/hp.png",
+        "gen-candidates/ui-icons/mp.png",
+        "gen-candidates/ui-icons/potion.png",
+        "gen-candidates/ui-icons/quest.png",
+        "gen-candidates/ui-icons/shop.png",
+        "icons.svg",
+        "models/char_player.glb",
+        "models/foliage/bush-flower.glb",
+        "models/foliage/bush-round.glb",
+        "models/foliage/flower-white.glb",
+        "models/foliage/flower-yellow.glb",
+        "models/foliage/grass-tuft.glb",
+        "models/foliage/mushroom-small.glb",
+        "models/foliage/tree-mushroom-org.glb",
+        "models/foliage/tree-mushroom-red.glb",
+        "models/foliage/tree-oak-small.glb",
+        "models/foliage/tree-pine.glb",
+        "models/foliage/vine-hanging.glb",
+        "models/hero_tree.glb",
+        "models/house_a.glb",
+        "models/house_b.glb",
+        "models/house_c.glb",
+        "models/loot/itm-box-closed.glb",
+        "models/loot/itm-meso.glb",
+        "models/loot/itm-pigribbon.glb",
+        "models/mob_pig.glb",
+        "models/npc_maya.glb",
+        "models/npc_stan.glb",
+        "models/prop_arch.glb",
+        "models/prop_banner.glb",
+        "models/prop_fence.glb",
+        "models/prop_stonewall.glb",
+        "models/props/prop-anvil.glb",
+        "models/props/prop-barrel.glb",
+        "models/props/prop-bench.glb",
+        "models/props/prop-bucket.glb",
+        "models/props/prop-cart.glb",
+        "models/props/prop-crate.glb",
+        "models/props/prop-flowerpot.glb",
+        "models/props/prop-haystack.glb",
+        "models/props/prop-lantern.glb",
+        "models/props/prop-signpost.glb",
+        "models/props/prop-well.glb",
+        "models/props_rocks.glb",
+        "models/tree_village.glb",
+        "models/vegetation_kit.glb",
+        "models/weapons/wpn-sword-wooden.glb",
+        "models/wpn_sword_steel.glb",
+        "textures/fx_atlas.png",
+        "textures/grass_card.png",
+        "textures/ground_dirt_diffuse.jpg",
+        "textures/ground_dirt_normal.jpg",
+        "textures/ground_dirt_orm.png",
+        "textures/ground_grass_diffuse.jpg",
+        "textures/ground_grass_normal.jpg",
+        "textures/ground_grass_orm.png",
+        "textures/tiles_atlas_diffuse.jpg",
+        "textures/tiles_atlas_normal.jpg",
+        "ui/frame/button-frame.png",
+        "ui/frame/panel-frame.png",
+        "ui/icons/itm-meso.png",
+        "ui/icons/itm-pigribbon.png",
+        "ui/icons/itm-potion-hp-m.png",
+        "ui/icons/itm-potion-hp-s.png",
+        "ui/icons/itm-potion-mp-s.png",
+        "ui/icons/skl-flameslash.png",
+        "ui/icons/wpn-bow-hunting.png",
+        "ui/icons/wpn-dagger-iron.png",
+        "ui/icons/wpn-staff-oak.png",
+        "ui/icons/wpn-sword-steel.png",
+        "ui/icons/wpn-sword-wooden.png",
+        "ui/items/arm-body-chain.png",
+        "ui/items/arm-body-cloth.png",
+        "ui/items/arm-body-leather.png",
+        "ui/items/arm-body-plate.png",
+        "ui/items/arm-glove-cloth.png",
+        "ui/items/arm-glove-leather.png",
+        "ui/items/arm-glove-steel.png",
+        "ui/items/arm-hat-helm.png",
+        "ui/items/arm-hat-leather.png",
+        "ui/items/arm-hat-ribbon.png",
+        "ui/items/arm-hat-straw.png",
+        "ui/items/arm-shoe-cloth.png",
+        "ui/items/arm-shoe-leather.png",
+        "ui/items/arm-shoe-steel.png",
+        "ui/items/itm-box-closed.png",
+        "ui/items/itm-box-open.png",
+        "ui/items/itm-food-chicken.png",
+        "ui/items/itm-food-mackerel.png",
+        "ui/items/itm-food-pork.png",
+        "ui/items/itm-meso.png",
+        "ui/items/itm-pigribbon.png",
+        "ui/items/itm-potion-hp-l.png",
+        "ui/items/itm-potion-hp-m.png",
+        "ui/items/itm-potion-hp-s.png",
+        "ui/items/itm-potion-mp-l.png",
+        "ui/items/itm-potion-mp-m.png",
+        "ui/items/itm-potion-mp-s.png",
+        "ui/items/skl-flameslash.png",
+        "ui/items/skl-iceage.png",
+        "ui/items/skl-leapslash.png",
+        "ui/items/skl-rainbowshot.png",
+        "ui/items/ui-arrow.png",
+        "ui/items/ui-bag.png",
+        "ui/items/ui-coin.png",
+        "ui/items/ui-gear.png",
+        "ui/items/ui-heart.png",
+        "ui/items/ui-lock.png",
+        "ui/items/ui-map.png",
+        "ui/items/ui-star.png",
+        "ui/items/wpn-bow-hunting.png",
+        "ui/items/wpn-bow-long.png",
+        "ui/items/wpn-dagger-iron.png",
+        "ui/items/wpn-dagger-twin.png",
+        "ui/items/wpn-staff-arcane.png",
+        "ui/items/wpn-staff-oak.png",
+        "ui/items/wpn-sword-steel.png",
+        "ui/items/wpn-sword-wooden.png",
+        "ui/portraits/maya.png",
+        "ui/portraits/player-warrior.png",
+        "ui/portraits/stan.png",
+        "ui/title-keyart.webp"
+      ],
+      "registeredPaths": [
+        "env/sky_1k.hdr",
+        "favicon.svg",
+        "icons.svg",
+        "models/char_player.glb",
+        "models/foliage/bush-flower.glb",
+        "models/foliage/bush-round.glb",
+        "models/foliage/flower-white.glb",
+        "models/foliage/flower-yellow.glb",
+        "models/foliage/grass-tuft.glb",
+        "models/foliage/mushroom-small.glb",
+        "models/foliage/tree-mushroom-org.glb",
+        "models/foliage/tree-mushroom-red.glb",
+        "models/foliage/tree-oak-small.glb",
+        "models/foliage/tree-pine.glb",
+        "models/foliage/vine-hanging.glb",
+        "models/hero_tree.glb",
+        "models/house_a.glb",
+        "models/house_b.glb",
+        "models/house_c.glb",
+        "models/loot/itm-box-closed.glb",
+        "models/loot/itm-meso.glb",
+        "models/loot/itm-pigribbon.glb",
+        "models/mob_pig.glb",
+        "models/npc_maya.glb",
+        "models/npc_stan.glb",
+        "models/prop_arch.glb",
+        "models/prop_banner.glb",
+        "models/prop_fence.glb",
+        "models/prop_stonewall.glb",
+        "models/props/prop-anvil.glb",
+        "models/props/prop-barrel.glb",
+        "models/props/prop-bench.glb",
+        "models/props/prop-bucket.glb",
+        "models/props/prop-cart.glb",
+        "models/props/prop-crate.glb",
+        "models/props/prop-flowerpot.glb",
+        "models/props/prop-haystack.glb",
+        "models/props/prop-lantern.glb",
+        "models/props/prop-signpost.glb",
+        "models/props/prop-well.glb",
+        "models/props_rocks.glb",
+        "models/tree_village.glb",
+        "models/vegetation_kit.glb",
+        "models/weapons/wpn-sword-wooden.glb",
+        "models/wpn_sword_steel.glb",
+        "textures/fx_atlas.png",
+        "textures/grass_card.png",
+        "textures/ground_dirt_diffuse.jpg",
+        "textures/ground_grass_diffuse.jpg",
+        "textures/tiles_atlas_diffuse.jpg",
+        "ui/frame/panel-frame.png",
+        "ui/icons/itm-meso.png",
+        "ui/icons/itm-pigribbon.png",
+        "ui/icons/itm-potion-hp-m.png",
+        "ui/icons/itm-potion-hp-s.png",
+        "ui/icons/itm-potion-mp-s.png",
+        "ui/icons/skl-flameslash.png",
+        "ui/icons/wpn-bow-hunting.png",
+        "ui/icons/wpn-dagger-iron.png",
+        "ui/icons/wpn-staff-oak.png",
+        "ui/icons/wpn-sword-steel.png",
+        "ui/icons/wpn-sword-wooden.png",
+        "ui/items/wpn-sword-wooden.png",
+        "ui/portraits/player-warrior.png",
+        "ui/title-keyart.webp"
+      ],
+      "setPrefixes": [
+        "ui/frame/",
+        "ui/items/",
+        "ui/portraits/"
+      ],
+      "unregisteredFiles": [
+        "gen-candidates/mushroom-prop/mushroom-front.png",
+        "gen-candidates/mushroom-prop/mushroom-side.png",
+        "gen-candidates/npc-portraits/maya.png",
+        "gen-candidates/npc-portraits/player-archer.png",
+        "gen-candidates/npc-portraits/stan.png",
+        "gen-candidates/skill-fx-sheet/fx-sheet.png",
+        "gen-candidates/title-background/title-background.png",
+        "gen-candidates/ui-icons/arrow.png",
+        "gen-candidates/ui-icons/coin.png",
+        "gen-candidates/ui-icons/exp.png",
+        "gen-candidates/ui-icons/hp.png",
+        "gen-candidates/ui-icons/mp.png",
+        "gen-candidates/ui-icons/potion.png",
+        "gen-candidates/ui-icons/quest.png",
+        "gen-candidates/ui-icons/shop.png",
+        "textures/ground_dirt_normal.jpg",
+        "textures/ground_dirt_orm.png",
+        "textures/ground_grass_normal.jpg",
+        "textures/ground_grass_orm.png",
+        "textures/tiles_atlas_normal.jpg"
+      ]
     }
   },
-  "result": "PASS"
+  "result": "FAIL"
 }

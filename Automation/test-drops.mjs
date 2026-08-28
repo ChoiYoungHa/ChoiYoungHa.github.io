@@ -17,7 +17,7 @@ test('돼지 데이터는 콘티의 전투·드롭 값을 보존한다', async (
     hp: 65,
     attack: 8,
     speed: 1.8,
-    detectionRadius: 6,
+    detectionRadius: 12, // 2026-08-27 a66a3f2: 6→12 선공
     respawnSeconds: 8,
     exp: 18,
     drops: {

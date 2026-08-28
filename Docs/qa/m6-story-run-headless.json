@@ -31,6 +31,7 @@
     "level-up": 2,
     "drop-spawn": 11,
     "drop-collect": 11,
+    "boss-awaken": 1,
     "reward": 1
   },
   "eventOrderViolations": 0,

@@ -23,6 +23,8 @@ export interface HudQuest {
 
 export interface HudQuickSlot {
   slot: number
+  /** 2026-08-28 — 소비 아이템 슬롯의 보유 수량(배지). */
+  quantity?: number
   labelKey?: string
   iconUrl?: string
   cooldownRemainingMs: number
@@ -45,6 +47,8 @@ const DEFAULT_SLOTS: readonly HudQuickSlot[] = [
   { slot: 2, labelKey: 's07.skill', iconUrl: HUD_ICON_URLS.skill, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
   { slot: 3, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
   { slot: 4, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
+  { slot: 5, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
+  { slot: 6, cooldownRemainingMs: 0, cooldownTotalMs: 0 },
 ]
 
 function StatBar({ label, value, maximum, color, text }: {
@@ -103,8 +107,13 @@ export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickS
       )}
 
       {visibility.showQuickSlots && (
+        <div aria-label="키 안내" style={{ position: 'absolute', left: HUD_TOKENS.layout.quick.left, bottom: HUD_TOKENS.layout.quick.bottom + HUD_TOKENS.layout.quickSlotSize + 6, fontSize: 10, letterSpacing: 0.3, color: HUD_TOKENS.colors.muted, textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
+          I 아이템 · C 스탯 · 1~6 퀵슬롯 · F 대화
+        </div>
+      )}
+      {visibility.showQuickSlots && (
         <section aria-label="퀵슬롯" style={{ position: 'absolute', ...HUD_TOKENS.layout.quick, display: 'flex', gap: 6 }}>
-          {quickSlots.slice(0, 4).map((slot) => {
+          {quickSlots.slice(0, 6).map((slot) => {
             const cooldown = cooldownPercent(slot.cooldownRemainingMs, slot.cooldownTotalMs)
             return (
               <div key={slot.slot} style={{ ...panelBase, position: 'relative', width: HUD_TOKENS.layout.quickSlotSize, height: HUD_TOKENS.layout.quickSlotSize, overflow: 'hidden', display: 'grid', placeItems: 'center' }}>
@@ -114,6 +123,7 @@ export function GameHud({ stats, quest, zone, dialogueOpen, meso, ipMode, quickS
                   </span>
                 )}
                 <span style={{ position: 'absolute', left: 4, top: 3, fontSize: 9, color: HUD_TOKENS.colors.text }}>{slot.slot}</span>
+                {slot.quantity !== undefined && <span aria-label={`수량 ${slot.quantity}`} style={{ position: 'absolute', right: 4, bottom: 2, fontSize: 10, fontWeight: 700, color: slot.quantity > 0 ? '#f0c55b' : '#b05050' }}>{slot.quantity}</span>}
                 {cooldown > 0 && <span aria-label={`쿨다운 ${Math.round(cooldown)}%`} style={{ position: 'absolute', inset: `${100 - cooldown}% 0 0`, background: HUD_TOKENS.colors.cooldown }} />}
               </div>
             )

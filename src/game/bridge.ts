@@ -25,6 +25,7 @@ function edgeInputs(actions: readonly GameplayAction[], dialogueOpen: boolean): 
   const inputs: SessionInputs = {}
   for (const action of actions) {
     if (action === 'jump') inputs[dialogueOpen ? 'confirm' : 'jump'] = true
+    else if (action === 'quick3' || action === 'quick4' || action === 'quick5' || action === 'quick6') inputs.quickSlot = Number(action.slice(5)) as 3 | 4 | 5 | 6
     else inputs[action] = true
   }
   return inputs

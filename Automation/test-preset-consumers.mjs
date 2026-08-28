@@ -21,11 +21,11 @@ const expected = {
       cascades: 2,
       mapSize: 1024,
       maxDistance: 80,
-      bias: 0,
-      normalBias: 0,
+      bias: -0.0002,
+      normalBias: 0.02,
       lightCount: 1,
       strategy: 'single-shadow-frustum-fallback',
-      fallback: { activeCascades: 1, mapSize: 1024, cameraNear: 0.1, cameraFar: 80, frustumHalfExtent: 40 },
+      fallback: { activeCascades: 1, mapSize: 1024, cameraNear: 0.1, cameraFar: 80, frustumHalfExtent: 30 },
     },
     lod: {
       coniferLodDistances: [25, 60, 90],
@@ -33,18 +33,18 @@ const expected = {
       grassInstances: { count: 6000, radius: 25 },
       rockInstances: 300,
     },
-    texture: { anisotropy: 1, textureTier: { default: '1K', hero: '2K' } },
+    texture: { anisotropy: 4, textureTier: { default: '1K', hero: '2K' } },
   },
   base: {
     shadow: {
       cascades: 3,
       mapSize: 2048,
       maxDistance: 150,
-      bias: 0,
-      normalBias: 0,
+      bias: -0.0002,
+      normalBias: 0.02,
       lightCount: 1,
       strategy: 'single-shadow-frustum-fallback',
-      fallback: { activeCascades: 1, mapSize: 2048, cameraNear: 0.1, cameraFar: 150, frustumHalfExtent: 75 },
+      fallback: { activeCascades: 1, mapSize: 2048, cameraNear: 0.1, cameraFar: 150, frustumHalfExtent: 45 },
     },
     lod: {
       coniferLodDistances: [35, 80, 140],
@@ -52,7 +52,7 @@ const expected = {
       grassInstances: { count: 20000, radius: 40 },
       rockInstances: 600,
     },
-    texture: { anisotropy: 4, textureTier: { default: '2K', hero: '2K' } },
+    texture: { anisotropy: 8, textureTier: { default: '2K', hero: '2K' } },
   },
 }
 

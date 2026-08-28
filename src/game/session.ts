@@ -7,7 +7,7 @@ import placementData from '../data/placement.json' with { type: 'json' }
 import zoneData from './data/zones.json' with { type: 'json' }
 import { advance, createDialogue, type DialogueId, type DialogueState } from './dialogue.ts'
 import { enter } from './flow.ts'
-import { clearSpawnerAggro, createSpawner, damageSpawnerMob, stepSpawner, type SpawnerState } from './mobs/spawner.ts'
+import { allMobs, awakenBoss, BOSS_ID, BOSS_MONSTER_ID, clearSpawnerAggro, createSpawner, damageSpawnerMob, stepSpawner, type SpawnerState } from './mobs/spawner.ts'
 import { reduce, type GameAction } from './reducers.ts'
 import { applyMonsterHit, applyTimedMobEffect, leapDestination, resolveBasicAttack, resolveEquipmentCombatModifiers, resolveSkillAttack, type CombatHit, type PlayerCombatState, type SkillId } from './rules/combat.ts'
 import { forwardFromYaw } from '../player/input.ts'
@@ -52,6 +52,11 @@ export interface SessionInputs {
   equipItemId?: string
   /** 소비품 사용(인벤토리 클릭). */
   useItemId?: string
+  /** 2026-08-28 — 퀵슬롯 키(3~6). 등록된 소비 아이템을 쓴다. */
+  quickSlot?: 3 | 4 | 5 | 6
+  /** 퀵슬롯 등록/해제(인벤토리 툴팁 버튼). 세션 내부 game 이 정본이라 스토어 직접 dispatch 대신 입력으로 받는다. */
+  bindQuickSlot?: { slot: 3 | 4 | 5 | 6, itemId: string | null }
+  stats?: boolean
   /** Esc/나가기 — 상점을 닫고 마을로, 인벤토리 닫기. */
   cancel?: boolean
   closeReward?: boolean
@@ -68,6 +73,8 @@ export interface SessionTickInput {
 export type SessionEventType =
   | 'scene'
   | 'banner'
+  | 'boss-awaken'
+  | 'boss-defeated'
   | 'camera-ease-start'
   | 'dialogue-open'
   | 'dialogue-close'
@@ -127,6 +134,8 @@ export interface SessionSnapshot {
   activeDialogue: DialogueState | null
   purchased: boolean
   inventoryOpen: boolean
+  /** 2026-08-28 — 스탯창(C) 표시 여부. */
+  statsOpen: boolean
   /** 상점 패널 표시 여부. 씬은 앞으로만 진행하므로 '나가기'는 패널을 닫는 것이다(마야와 다시 대화하면 열림). */
   shopOpen: boolean
   selectedShopItemId: string | null
@@ -136,6 +145,10 @@ export interface SessionSnapshot {
   respawnState: RespawnState
   tutorialEvents: readonly TutorialInputEvent[]
   banner: { zone: 'village' | 'park', startedAtMs: number } | null
+  /** 2026-08-28 — 보스 상태(각성 후). null = 미각성 또는 격파. */
+  boss: { id: string, name: string, hp: number, maxHp: number, state: string, position: { x: number, z: number }, awakenedAtMs: number, attackSeq: number } | null
+  /** 보스 배너(각성/격파 문구, 4초). */
+  bossBanner: { title: string, subtitle: string, startedAtMs: number } | null
   reward: SessionReward | null
   epilogueStartedAtMs: number | null
   acquiredAtByItemId: Readonly<Record<string, number>>
@@ -164,6 +177,8 @@ export interface CreateSessionOptions {
   seed: number
   ipMode: IpMode
   initialScene?: GameScene
+  /** 2026-08-28 — 디버그(`?boss=1`, PROD 제외): 세션 시작 시 보스를 즉시 각성시킨다. */
+  bossAwake?: boolean
 }
 
 function mergeInputs(queue: readonly SessionInputs[], direct: SessionInputs): SessionInputs {
@@ -214,6 +229,8 @@ const ITEMS = itemData as unknown as ItemDefinition[]
 const JOBS = jobData as unknown as Record<JobId, JobDefinition>
 const SKILLS = skillData as unknown as Record<SkillId, SkillDefinition>
 const PIG = (monsterData as unknown as { pig: MonsterDefinition }).pig
+const MONSTER_DEFS = monsterData as unknown as Record<string, MonsterDefinition & { name?: string, awakenRadiusMeters?: number, spawn?: { x: number, z: number }, hitRadius?: number }>
+const BOSS_DEF = MONSTER_DEFS[BOSS_MONSTER_ID]
 const PIG_QUEST = (questData as unknown as Record<string, QuestDefinition>)['pig-cleanup']
 
 function inGate(position: SessionPosition): boolean {
@@ -234,6 +251,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let activeDialogue: DialogueState | null = null
   let purchased = false
   let inventoryOpen = false
+  let statsOpen = false
   let shopOpen = false
   let warpInside: keyof typeof WARPS | null = null
   let warpCooldownUntilMs = 0
@@ -263,6 +281,10 @@ export function createSession(options: CreateSessionOptions): GameSession {
   let tutorialEvents: TutorialInputEvent[] = []
   let previousPlayerPos: SessionPosition = { ...playerPos }
   let banner: SessionSnapshot['banner'] = null
+  let bossBanner: SessionSnapshot['bossBanner'] = null
+  let bossAwakenedAtMs: number | null = null
+  let bossAttackSeq = 0
+  if (options.bossAwake === true) { spawner = awakenBoss(spawner, aiRng); bossAwakenedAtMs = 0 }
   let reward: SessionReward | null = null
   let epilogueStartedAtMs: number | null = null
   let shopConfirmGuard = false
@@ -280,6 +302,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
     activeDialogue,
     purchased,
     inventoryOpen,
+    statsOpen,
     shopOpen,
     selectedShopItemId,
     spawner,
@@ -288,6 +311,8 @@ export function createSession(options: CreateSessionOptions): GameSession {
     respawnState,
     tutorialEvents,
     banner,
+    boss: spawner.boss.mob === null ? null : { id: spawner.boss.mob.id, name: BOSS_DEF?.name ?? '보스', hp: spawner.boss.mob.hp, maxHp: spawner.boss.mob.maxHp, state: spawner.boss.mob.state, position: { ...spawner.boss.mob.position }, awakenedAtMs: bossAwakenedAtMs ?? 0, attackSeq: bossAttackSeq },
+    bossBanner,
     reward,
     epilogueStartedAtMs,
     acquiredAtByItemId,
@@ -310,7 +335,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
     binding?.getState().dispatch({ type: 'scene-transition', scene: game.scene })
     emit(events, { type: 'scene', from, to: game.scene })
   }
-  const mobById = (mobId: string) => spawner.slots.find((slot) => slot.mob?.id === mobId)?.mob ?? null
+  const mobById = (mobId: string) => allMobs(spawner).find((mob) => mob.id === mobId) ?? null
   const weaponAttack = () => {
     const weaponId = game.equipment.weapon
     if (weaponId === null) return 0
@@ -337,19 +362,24 @@ export function createSession(options: CreateSessionOptions): GameSession {
       if (after === null || after.hp > 0 || before.hp <= 0) continue
 
       const previousLevel = game.level
-      dispatch({ type: 'gain-exp', amount: PIG.exp })
+      const def = MONSTER_DEFS[before.monsterId] ?? PIG
+      dispatch({ type: 'gain-exp', amount: def.exp })
       const previousKillCount = game.quest.killCount
-      dispatch({ type: 'quest-kill', quest: PIG_QUEST, monsterId: PIG.id })
+      if (before.monsterId === PIG.id) dispatch({ type: 'quest-kill', quest: PIG_QUEST, monsterId: PIG.id })
+      if (before.id === BOSS_ID) {
+        bossBanner = { title: '보스 격파', subtitle: `${BOSS_DEF?.name ?? '보스'} 를 쓰러뜨렸다`, startedAtMs: nowMs }
+        emit(events, { type: 'boss-defeated', mobId: before.id })
+      }
       if (game.level > previousLevel) {
         emit(events, { type: 'level-up', previousLevel, currentLevel: game.level })
       }
       dropSequence += 1
       const spawned = createDropEntities(
-        PIG.drops,
+        def.drops,
         { x: before.position.x, y: 0, z: before.position.z },
         nowMs / 1000,
         dropRng,
-        { sequence: dropSequence, sourceMonsterId: PIG.id },
+        { sequence: dropSequence, sourceMonsterId: def.id },
       )
       for (const drop of spawned) {
         dropCollection = addDropToCollection(dropCollection, drop, nowMs + dropSequence / 100).collection
@@ -396,6 +426,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
       const dialogueOpenAtTickStart = activeDialogue !== null
 
       if (banner !== null && nowMs - banner.startedAtMs >= 4_000) banner = null
+      if (bossBanner !== null && nowMs - bossBanner.startedAtMs >= 4_000) bossBanner = null
       if (reward !== null && (
         inputs.closeReward
         || (inputs.confirm && !dialogueOpenAtTickStart)
@@ -552,6 +583,13 @@ export function createSession(options: CreateSessionOptions): GameSession {
       }
 
       if (inputs.inventory) inventoryOpen = !inventoryOpen
+      if (inputs.stats) statsOpen = !statsOpen
+      if (inputs.bindQuickSlot !== undefined) dispatch({ type: 'bind-quick-slot', slot: inputs.bindQuickSlot.slot, itemId: inputs.bindQuickSlot.itemId })
+      if (inputs.quickSlot !== undefined) {
+        const boundId = game.quickSlots[String(inputs.quickSlot) as '3' | '4' | '5' | '6']
+        const item = boundId === null ? undefined : ITEMS.find((candidate) => candidate.id === boundId)
+        if (item !== undefined && item.kind === 'consumable') dispatch({ type: 'use-item', item })
+      }
       if (inputs.equipItemId !== undefined) {
         const item = ITEMS.find((candidate) => candidate.id === inputs.equipItemId)
         if (item !== undefined && item.equipSlot !== undefined) {
@@ -565,14 +603,17 @@ export function createSession(options: CreateSessionOptions): GameSession {
         if (item !== undefined && item.kind === 'consumable') dispatch({ type: 'use-item', item })
       }
       if (inputs.cancel) {
-        if (inventoryOpen) inventoryOpen = false
+        if (statsOpen) statsOpen = false
+        else if (inventoryOpen) inventoryOpen = false
         else if (shopOpen) shopOpen = false
       }
       if (inputs.selectedItemId !== undefined) selectedShopItemId = inputs.selectedItemId
       // 상점 진입 직후 첫 confirm(대화 마지막 Enter 연타)은 삼킨다 — 입력이 없는 틱에 가드를 풀면 그다음 Enter가 곧장 구매로 샜다(D3 재발, 2026-08-27 실빌드).
-      if (game.scene === 'shop' && inputs.confirm && !dialogueHandled && shopConfirmGuard && inputs.selectedItemId === undefined) {
+      // 2026-08-28: 조건을 scene==='shop' 이 아니라 shopOpen 으로 — 씬은 앞으로만 가므로 사냥 뒤 마야에게 돌아오면 구매가 막혀 있었다(ui-probe 실측).
+      const shopActive = shopOpen || game.scene === 'shop' // initialScene:'shop'(테스트·디버그)은 패널 없이도 구매 가능
+      if (shopActive && inputs.confirm && !dialogueHandled && shopConfirmGuard && inputs.selectedItemId === undefined) {
         shopConfirmGuard = false
-      } else if (game.scene === 'shop' && inputs.confirm && !dialogueHandled) {
+      } else if (shopActive && inputs.confirm && !dialogueHandled) {
         // 명시적으로 고른 품목만 산다. 직업 기본 무기 자동 선택(fallback)은 의도 없는 구매의 원인이라 제거.
         const itemId = inputs.selectedItemId ?? selectedShopItemId
         const item = ITEMS.find((candidate) => candidate.id === itemId)
@@ -599,6 +640,16 @@ export function createSession(options: CreateSessionOptions): GameSession {
           return remainingTicks > 0 ? [{ ...burn, nextTickAtMs, remainingTicks }] : []
         })
         applyCombatHits(burnHits, events)
+        // 2026-08-28 보스 각성: 돼지 퀘스트 목표(10) 달성 + 보스 둥지(공원 서쪽 단구) 30m 이내 접근 시 1회.
+        if (spawner.boss.mob === null && !spawner.bossDefeated && game.quest.killCount >= 10 && BOSS_DEF !== undefined) {
+          const nest = BOSS_DEF.spawn ?? spawner.boss.spawnPosition
+          if (Math.hypot(playerPos.x - nest.x, playerPos.z - nest.z) <= (BOSS_DEF.awakenRadiusMeters ?? 30)) {
+            spawner = awakenBoss(spawner, aiRng)
+            bossAwakenedAtMs = nowMs
+            bossBanner = { title: BOSS_DEF.name ?? '보스', subtitle: '제1막 보스가 깨어났다', startedAtMs: nowMs }
+            emit(events, { type: 'boss-awaken', mobId: BOSS_ID })
+          }
+        }
         const stepped = stepSpawner(spawner, {
           dtSeconds: input.dtMs / 1000,
           nowSeconds: nowMs / 1000,
@@ -608,6 +659,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
         if (respawnState.phase === 'alive') {
           for (const event of stepped.events) {
             if (event.type !== 'attack') continue
+            if (event.mobId === BOSS_ID) bossAttackSeq += 1
             const result = applyMonsterHit(playerCombat, {
               damage: event.damage,
               nowSeconds: nowMs / 1000,
@@ -632,12 +684,9 @@ export function createSession(options: CreateSessionOptions): GameSession {
           }
         }
 
-        const targets = spawner.slots.flatMap((slot) => {
-          const mob = slot.mob
-          return mob === null || mob.state === 'dying' || mob.state === 'dead'
-            ? []
-            : [{ id: mob.id, position: mob.position }]
-        })
+        const targets = allMobs(spawner).flatMap((mob) => mob.state === 'dying' || mob.state === 'dead'
+          ? []
+          : [{ id: mob.id, position: mob.position, radius: MONSTER_DEFS[mob.monsterId]?.hitRadius ?? 0 }])
         const job = game.jobId === null ? null : JOBS[game.jobId]
         const playerCanAct = respawnState.phase === 'alive'
         if (job !== null && inputs.skill && playerCanAct) {

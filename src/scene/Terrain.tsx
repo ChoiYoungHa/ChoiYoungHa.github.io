@@ -149,7 +149,9 @@ function TerrainPbr({ urls }: { urls: { grassDiffuse: string; dirtDiffuse: strin
     const xz = positionWorld.xz
     // 길 마스크에 노이즈를 더해 직선 경계를 흐린다(0~1 클램프).
     const maskRaw = attribute('pathMask', 'float') as unknown as Node<'float'>
-    const mask = clamp(maskRaw.add(mx_noise_float(xz.mul(0.4)).mul(TERRAIN_EDGE_NOISE)), 0, 1)
+    // 노이즈는 경계(0<mask<1)에서만: maskRaw·(1−maskRaw)·4 가 0·1 에서 0 이라 초원 전체에 흙이 새지 않는다(리뷰 2026-08-28).
+    const edgeWeight = maskRaw.mul(float(1).sub(maskRaw)).mul(4)
+    const mask = clamp(maskRaw.add(mx_noise_float(xz.mul(0.4)).mul(TERRAIN_EDGE_NOISE).mul(edgeWeight)), 0, 1)
     // 2m 디테일 + 23m 매크로 듀얼 스케일
     const grassRgb = mix(texture(grass, uvA).rgb, texture(grass, uvB).rgb, TERRAIN_MACRO_MIX)
     const dirtRgb = mix(texture(dirt, uvA).rgb, texture(dirt, uvB).rgb, TERRAIN_MACRO_MIX)

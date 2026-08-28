@@ -9,6 +9,8 @@ export interface GameBootstrapConfig {
   enabled: boolean
   initialScene: GameScene | null
   ipMode: IpMode
+  /** `?boss=1`(PROD 제외): 보스 즉시 각성 — 보스 연출·프로브용. */
+  bossAwake: boolean
 }
 
 export interface GameBootstrap extends GameBootstrapConfig {
@@ -29,6 +31,7 @@ export function parseGameBootstrapConfig(
     enabled,
     initialScene: enabled && !production ? parseSceneQuery(url.href) : null,
     ipMode: resolveIpMode(requestedIp, production),
+    bossAwake: enabled && !production && url.searchParams.get('boss') === '1',
   }
 }
 
@@ -38,6 +41,7 @@ export function createGameBootstrap(config: GameBootstrapConfig): GameBootstrap 
     seed: 45,
     ipMode: config.ipMode,
     initialScene: config.initialScene ?? undefined,
+    bossAwake: config.bossAwake,
   })
   const unbind = session.bind(useGame)
   return { ...config, enabled: true, session, dispose: unbind }

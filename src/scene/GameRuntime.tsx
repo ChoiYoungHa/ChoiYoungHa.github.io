@@ -40,6 +40,7 @@ import { createGameProjector, installGameProjector } from '../systems/ui/project
 import { sampleHeight } from './terrain/heightmap.ts'
 import { LevelUpRing } from './fx/LevelUpRing.tsx'
 import { SkillFx } from './fx/SkillFx.tsx'
+import { BossActor } from './BossActor.tsx'
 import { bakeGlb } from './util/bakeGlb.ts'
 
 const NPC_SCALE = 0.01
@@ -392,6 +393,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
       <instancedMesh ref={itemDropRef} name="drops-item" args={[ribbonAsset.geometry, ribbonAsset.materials, MAX_DROPS]} frustumCulled={false} castShadow />
       <WarpPortals />
       <SkillFx session={bootstrap.session} material={fxMaterial} />
+      <BossActor session={bootstrap.session} />
       <LevelUpRing session={bootstrap.session} material={fxMaterial} />
     </group>
   )

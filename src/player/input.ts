@@ -17,6 +17,11 @@ export type Action =
   | 'attack'
   | 'skill'
   | 'inventory'
+  | 'stats'
+  | 'quick3'
+  | 'quick4'
+  | 'quick5'
+  | 'quick6'
   | 'cancel'
   | 'confirm'
 
@@ -32,11 +37,19 @@ export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string
   attack: ['Digit1'],
   skill: ['Digit2'],
   inventory: ['KeyI'],
+  // 2026-08-28 영하님: 스탯창. S 는 후진(moveBack)과 충돌해 C 로 둔다.
+  stats: ['KeyC'],
+  quick3: ['Digit3'],
+  quick4: ['Digit4'],
+  quick5: ['Digit5'],
+  quick6: ['Digit6'],
   cancel: ['Escape'],
   confirm: ['Enter'],
 }
 
-export const GAMEPLAY_ACTIONS = ['jump', 'interact', 'attack', 'skill', 'inventory', 'confirm', 'cancel'] as const
+export const GAMEPLAY_ACTIONS = ['jump', 'interact', 'attack', 'skill', 'inventory', 'stats', 'quick3', 'quick4', 'quick5', 'quick6', 'confirm', 'cancel'] as const
+export const QUICK_SLOT_KEYS = [3, 4, 5, 6] as const
+export type QuickSlotKey = (typeof QUICK_SLOT_KEYS)[number]
 export type GameplayAction = typeof GAMEPLAY_ACTIONS[number]
 
 export function isGameInputEnabled(search = '', viteGame = ''): boolean {

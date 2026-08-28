@@ -45,8 +45,8 @@ export interface MobHpBarPresentation extends MobHpBarInput {
   percent: number
 }
 
-export function mobHpBarInput(mob: { id: string, hp: number }, screenX: number, screenY: number): MobHpBarInput {
-  return { id: mob.id, hp: mob.hp, maxHp: monsterData.pig.hp, screenX, screenY }
+export function mobHpBarInput(mob: { id: string, hp: number, maxHp?: number }, screenX: number, screenY: number): MobHpBarInput {
+  return { id: mob.id, hp: mob.hp, maxHp: mob.maxHp ?? monsterData.pig.hp, screenX, screenY }
 }
 
 export function createDamageFloaterState(): DamageFloaterState {

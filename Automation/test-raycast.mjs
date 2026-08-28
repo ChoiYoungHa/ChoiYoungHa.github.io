@@ -169,7 +169,7 @@ describe('M0b-11 부가 — 접지·경계 불변식', () => {
 
 describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기본 OFF', () => {
   test('DEFAULT_BINDINGS 와 Action 유니온이 M6 의미 동작 6개를 포함한다', () => {
-    // lookX/lookY 는 포인터 delta 라 키 바인딩이 없다 → 바인딩은 12개
+    // lookX/lookY 는 포인터 delta 라 키 바인딩이 없다 → 바인딩은 17개(2026-08-28 stats·quick3~6 추가)
     assert.deepEqual(Object.keys(DEFAULT_BINDINGS).sort(), [
       'attack',
       'cancel', // 2026-08-27 Esc: 상점/인벤토리 닫기
@@ -181,14 +181,19 @@ describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기�
       'moveForward',
       'moveLeft',
       'moveRight',
+      'quick3', // 2026-08-28 퀵슬롯 3~6·스탯창(C)
+      'quick4',
+      'quick5',
+      'quick6',
       'run',
       'skill',
+      'stats',
       'toggleQuality',
     ])
     const src = readFileSync(join(PLAYER, 'input.ts'), 'utf8').replace(/\r\n/g, '\n') // R44-C CRLF
     const union = src.match(/export type Action =([\s\S]*?)\n\n/)?.[1] ?? ''
-    const actions = [...union.matchAll(/'([a-zA-Z]+)'/g)].map((m) => m[1])
-    assert.equal(actions.length, 15, `Action 개수=${actions.length}`) // +cancel (Esc)
+    const actions = [...union.matchAll(/'([a-zA-Z0-9]+)'/g)].map((m) => m[1]) // 2026-08-28 quick3~6 숫자 포함
+    assert.equal(actions.length, 20, `Action 개수=${actions.length}`) // +cancel (Esc) +stats +quick3~6 (2026-08-28)
     assert.deepEqual(actions.sort(), [
       'attack',
       'cancel',
@@ -202,8 +207,13 @@ describe('M0b-10 + M6-02 입력 계약 — 이동 유지, 게임 edge 6개 기�
       'moveForward',
       'moveLeft',
       'moveRight',
+      'quick3',
+      'quick4',
+      'quick5',
+      'quick6',
       'run',
       'skill',
+      'stats',
       'toggleQuality',
     ])
     assert.deepEqual(DEFAULT_BINDINGS.jump, ['Space'])

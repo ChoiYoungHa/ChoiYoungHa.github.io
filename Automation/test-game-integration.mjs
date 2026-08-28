@@ -10,15 +10,15 @@ test('bootstrap gates game mode and production debug/IP overrides', async () => 
   const { parseGameBootstrapConfig } = await load('src/game/bootstrap.ts')
   assert.deepEqual(
     parseGameBootstrapConfig('https://local.invalid/?scene=hunt&ip=conti'),
-    { enabled: false, initialScene: null, ipMode: 'conti' },
+    { enabled: false, initialScene: null, ipMode: 'conti', bossAwake: false },
   )
   assert.deepEqual(
     parseGameBootstrapConfig('https://local.invalid/?game=1&scene=hunt&ip=conti'),
-    { enabled: true, initialScene: 'hunt', ipMode: 'conti' },
+    { enabled: true, initialScene: 'hunt', ipMode: 'conti', bossAwake: false },
   )
   assert.deepEqual(
     parseGameBootstrapConfig('https://local.invalid/?game=1&scene=hunt&ip=conti', '', true),
-    { enabled: true, initialScene: null, ipMode: 'own' },
+    { enabled: true, initialScene: null, ipMode: 'own', bossAwake: false },
   )
 })
 

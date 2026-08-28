@@ -28,7 +28,7 @@ test('궁수에게 다른 세 무기는 장착 불가이며 상태가 불변이�
   const initial = { jobId: 'archer', meso: 1500, inventory: createInventory() }
   const incompatible = items.filter((item) => item.kind === 'weapon' && item.jobId !== 'archer')
 
-  assert.equal(incompatible.length, 3)
+  assert.equal(incompatible.length, 4) // 2026-08-27 1b9c1cc: 강철검+포션 3종 카탈로그
   for (const item of incompatible) {
     assert.deepEqual(buyItem(initial, item), { ok: false, reason: 'unavailable', state: initial })
   }

@@ -25,7 +25,14 @@ export interface SpawnerState {
   slots: SpawnerSlot[]
   totalSpawned: number
   totalDeaths: number
+  /** 2026-08-28 — 보스 슬롯. mob=null 이면 미각성 또는 격파. 리스폰 없음. */
+  boss: SpawnerSlot
+  bossDefeated: boolean
 }
+
+export const BOSS_ID = 'boss-the-eleventh'
+export const BOSS_MONSTER_ID = 'the-eleventh'
+const BOSS_SPAWN = (monsters as unknown as Record<string, { spawn?: { x: number, z: number } }>)[BOSS_MONSTER_ID]?.spawn ?? { x: -104, z: 8 }
 
 export type SpawnerEvent = MobEvent
   | { type: 'despawn', mobId: string, respawnAtSeconds: number }
@@ -50,7 +57,23 @@ export function createSpawner(rng: Rng): SpawnerState {
     }),
     totalSpawned: points.length,
     totalDeaths: 0,
+    boss: { id: BOSS_ID, spawnPosition: { ...BOSS_SPAWN }, mob: null, respawnAtSeconds: null },
+    bossDefeated: false,
   }
+}
+
+/** 보스 각성(한 번만). */
+export function awakenBoss(state: SpawnerState, rng: Rng): SpawnerState {
+  if (state.boss.mob !== null || state.bossDefeated) return state
+  return { ...state, boss: { ...state.boss, mob: createMob(BOSS_ID, state.boss.spawnPosition, rng, BOSS_MONSTER_ID) } }
+}
+
+/** 일반 슬롯 + 보스 슬롯을 한 배열로(대상 선택·HP 바·렌더 공용). */
+export function allMobs(state: SpawnerState): Mob[] {
+  const mobs: Mob[] = []
+  for (const slot of state.slots) if (slot.mob !== null) mobs.push(slot.mob)
+  if (state.boss.mob !== null) mobs.push(state.boss.mob)
+  return mobs
 }
 
 export function damageSpawnerMob(
@@ -64,6 +87,9 @@ export function damageSpawnerMob(
     slots: state.slots.map((slot) => slot.mob?.id === mobId
       ? { ...slot, mob: damageMob(slot.mob, damage, nowSeconds).mob }
       : slot),
+    boss: state.boss.mob !== null && state.boss.mob.id === mobId
+      ? { ...state.boss, mob: damageMob(state.boss.mob, damage, nowSeconds).mob }
+      : state.boss,
   }
 }
 
@@ -98,6 +124,15 @@ export function stepSpawner(
   let totalSpawned = state.totalSpawned
   let totalDeaths = state.totalDeaths
 
+  // 보스: 리스폰 없음. dead 가 되면 슬롯을 비우고 bossDefeated 를 세운다.
+  let boss = state.boss
+  let bossDefeated = state.bossDefeated
+  if (boss.mob !== null) {
+    const result = stepMob(boss.mob, input, rng)
+    events.push(...result.events)
+    if (result.mob.state === 'dead') { boss = { ...boss, mob: null }; bossDefeated = true; events.push({ type: 'despawn', mobId: boss.id, respawnAtSeconds: Infinity }) }
+    else boss = { ...boss, mob: result.mob }
+  }
   const slots = state.slots.map((slot): SpawnerSlot => {
     if (slot.mob !== null) {
       const result = stepMob(slot.mob, input, rng)
@@ -126,7 +161,7 @@ export function stepSpawner(
   })
 
   return {
-    state: { slots, totalSpawned, totalDeaths },
+    state: { slots, totalSpawned, totalDeaths, boss, bossDefeated },
     events,
   }
 }

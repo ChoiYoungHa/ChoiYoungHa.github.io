@@ -64,7 +64,7 @@ test('HUD 토큰은 콘티 §5의 1280×720 위치·크기·색을 고정한다'
   const { HUD_TOKENS } = await load('src/systems/ui/hudTokens.ts')
   assert.deepEqual(HUD_TOKENS.layout.stats, { left: '50%', bottom: 16, width: 320, height: 104 }) // 2026-08-27 하단 중앙
   assert.deepEqual(HUD_TOKENS.layout.quest, { right: 16, top: 16, width: 220, height: 64 })
-  assert.equal(HUD_TOKENS.layout.quickSlotSize, 52)
+  assert.equal(HUD_TOKENS.layout.quickSlotSize, 44) // 2026-08-28 6슬롯
   assert.equal(HUD_TOKENS.colors.panel, 'rgba(18,20,26,0.78)')
   assert.equal(HUD_TOKENS.colors.border, 'rgba(214,178,102,0.55)')
   assert.equal(HUD_TOKENS.colors.hp, '#d94a4a')

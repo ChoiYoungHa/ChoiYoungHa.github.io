@@ -1,0 +1,40 @@
+{
+  "mode": "game",
+  "tag": "headchk",
+  "at": "2026-08-28T07:26:15.102Z",
+  "url": "http://127.0.0.1:5190/?game=1&net=0&q=low",
+  "shots": [
+    {
+      "name": "s00-title",
+      "file": "Docs\\qa\\boss\\m6-s00-title-headchk.png",
+      "bytes": 4480
+    },
+    {
+      "name": "s01-create",
+      "file": "Docs\\qa\\boss\\m6-s01-create-headchk.png",
+      "bytes": 4480
+    },
+    {
+      "name": "s02-hints",
+      "file": "Docs\\qa\\boss\\m6-s02-hints-headchk.png",
+      "bytes": 4480
+    },
+    {
+      "name": "error",
+      "file": "Docs\\qa\\boss\\m6-error-headchk.png",
+      "bytes": 4480
+    }
+  ],
+  "walkLog": [],
+  "pigsAtTitle": [],
+  "error": "Error: player mesh not found\n    at walkTo (file:///C:/Users/USER/Desktop/claude/%ED%95%B4%EC%BB%A4%ED%86%A4/web3d/Automation/game-walk.mjs:127:70)\n    at async file:///C:/Users/USER/Desktop/claude/%ED%95%B4%EC%BB%A4%ED%86%A4/web3d/Automation/game-walk.mjs:187:5",
+  "errors": {
+    "console": [],
+    "exceptions": [
+      "Error: R3F: Hooks can only be used within the Canvas component!\n    at em (http://127.0.0.1:5190/assets/main-Cwio8H4y.js:4128:20903)\n    at tm (http://127.0.0.1:5190/assets/main-Cwio8H4y.js:4128:21007)\n    at Eh (http://127.0.0.1:5190/assets/main-Cwio8H4y.js:4140:22624)\n    at Ng (http://127.0.0.1:5",
+      "Error: R3F: Hooks can only be used within the Canvas component!\n    at em (http://127.0.0.1:5190/assets/main-Cwio8H4y.js:4128:20903)\n    at tm (http://127.0.0.1:5190/assets/main-Cwio8H4y.js:4128:21007)\n    at Eh (http://127.0.0.1:5190/assets/main-Cwio8H4y.js:4140:22624)\n    at Ng (http://127.0.0.1:5"
+    ],
+    "log": [],
+    "total": 2
+  }
+}

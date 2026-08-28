@@ -44,6 +44,8 @@ export interface GameState {
   meso: number
   inventory: Inventory
   equipment: Record<EquipmentSlot, string | null>
+  /** 2026-08-28 — 퀵슬롯 3~6 에 등록한 소비 아이템 id(null = 비어 있음). 1·2 는 공격·스킬 고정. */
+  quickSlots: Record<'3' | '4' | '5' | '6', string | null>
   quest: QuestProgress
   scene: GameScene
   ipMode: IpMode
@@ -78,6 +80,7 @@ export function createInitialState(jobId: JobId | null, name: string): GameState
     meso: 1500,
     inventory,
     equipment: { ...inventory.equipment },
+    quickSlots: { '3': null, '4': null, '5': null, '6': null },
     quest: createQuestProgress('pig-cleanup'),
     scene: 'title',
     ipMode: IP_MODE_DEFAULT,

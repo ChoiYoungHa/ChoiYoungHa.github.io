@@ -6,7 +6,7 @@ export const HUD_TOKENS = {
     quest: { right: 16, top: 16, width: 220, height: 64 },
     quick: { left: 16, bottom: 16 },
     meso: { right: 16, bottom: 16 },
-    quickSlotSize: 52,
+    quickSlotSize: 44, // 2026-08-28: 6슬롯이 1280 스테이지에서 초상화와 겹치지 않도록 52→44
   },
   colors: {
     panel: 'rgba(18,20,26,0.78)',

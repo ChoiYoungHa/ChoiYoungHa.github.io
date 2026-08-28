@@ -10,6 +10,9 @@ export interface Vec2 {
 
 export interface Mob {
   id: string
+  /** 2026-08-28 — 몬스터 정의 키(monsters.json). 기본 'pig', 보스 'the-eleventh'. */
+  monsterId: string
+  maxHp: number
   state: MobAiState
   position: Vec2
   spawnPosition: Vec2
@@ -35,10 +38,25 @@ export interface MobStepResult {
   events: MobEvent[]
 }
 
+export interface MonsterStats {
+  hp: number
+  attack: number
+  speed: number
+  detectionRadius: number
+  attackRange?: number
+  attackCooldownSeconds?: number
+}
+const MONSTERS = monsters as unknown as Record<string, MonsterStats>
 const pig = monsters.pig
 export const WANDER_RADIUS_METERS = 5
 export const CONTACT_RANGE_METERS = 1.2
 export const ATTACK_COOLDOWN_SECONDS = 2
+export function monsterStats(monsterId: string): MonsterStats {
+  return MONSTERS[monsterId] ?? pig
+}
+export function attackRangeOf(mob: Pick<Mob, 'monsterId'>): number {
+  return monsterStats(mob.monsterId).attackRange ?? CONTACT_RANGE_METERS
+}
 export const DYING_SECONDS = 0.6
 
 function distance(left: Vec2, right: Vec2): number {
@@ -70,14 +88,17 @@ function changeState(mob: Mob, to: MobAiState): MobStepResult {
   }
 }
 
-export function createMob(id: string, spawnPosition: Vec2, rng: Rng): Mob {
+export function createMob(id: string, spawnPosition: Vec2, rng: Rng, monsterId = 'pig'): Mob {
+  const stats = monsterStats(monsterId)
   return {
     id,
+    monsterId,
+    maxHp: stats.hp,
     state: 'wander',
     position: { ...spawnPosition },
     spawnPosition: { ...spawnPosition },
     wanderTarget: randomWanderTarget(spawnPosition, rng),
-    hp: pig.hp,
+    hp: stats.hp,
     attackReadyAtSeconds: 0,
     dyingUntilSeconds: null,
     frozenUntilSeconds: 0,
@@ -109,14 +130,17 @@ export function stepMob(mob: Mob, input: MobStepInput, rng: Rng): MobStepResult 
   }
   if (input.nowSeconds < mob.frozenUntilSeconds) return { mob, events: [] }
 
+  const stats = monsterStats(mob.monsterId)
+  const contactRange = stats.attackRange ?? CONTACT_RANGE_METERS
+  const cooldown = stats.attackCooldownSeconds ?? ATTACK_COOLDOWN_SECONDS
   const playerDistance = distance(mob.position, input.playerPosition)
   if (mob.state === 'wander') {
-    if (playerDistance <= pig.detectionRadius) return changeState(mob, 'chase')
+    if (playerDistance <= stats.detectionRadius) return changeState(mob, 'chase')
 
     const position = moveToward(
       mob.position,
       mob.wanderTarget,
-      pig.speed * 0.5 * input.dtSeconds,
+      stats.speed * 0.5 * input.dtSeconds,
     )
     const reachedTarget = distance(position, mob.wanderTarget) <= 1e-6
     return {
@@ -130,8 +154,8 @@ export function stepMob(mob: Mob, input: MobStepInput, rng: Rng): MobStepResult 
   }
 
   if (mob.state === 'chase') {
-    if (playerDistance <= CONTACT_RANGE_METERS) return changeState(mob, 'attack')
-    if (playerDistance > pig.detectionRadius) {
+    if (playerDistance <= contactRange) return changeState(mob, 'attack')
+    if (playerDistance > stats.detectionRadius) {
       const result = changeState(mob, 'wander')
       return {
         mob: { ...result.mob, wanderTarget: randomWanderTarget(mob.spawnPosition, rng) },
@@ -141,14 +165,14 @@ export function stepMob(mob: Mob, input: MobStepInput, rng: Rng): MobStepResult 
     return {
       mob: {
         ...mob,
-        position: moveToward(mob.position, input.playerPosition, pig.speed * input.dtSeconds),
+        position: moveToward(mob.position, input.playerPosition, stats.speed * input.dtSeconds),
       },
       events: [],
     }
   }
 
-  if (playerDistance > CONTACT_RANGE_METERS) {
-    return playerDistance <= pig.detectionRadius
+  if (playerDistance > contactRange) {
+    return playerDistance <= stats.detectionRadius
       ? changeState(mob, 'chase')
       : {
         ...changeState(mob, 'wander'),
@@ -157,7 +181,7 @@ export function stepMob(mob: Mob, input: MobStepInput, rng: Rng): MobStepResult 
   }
   if (input.nowSeconds < mob.attackReadyAtSeconds) return { mob, events: [] }
   return {
-    mob: { ...mob, attackReadyAtSeconds: input.nowSeconds + ATTACK_COOLDOWN_SECONDS },
-    events: [{ type: 'attack', mobId: mob.id, damage: pig.attack }],
+    mob: { ...mob, attackReadyAtSeconds: input.nowSeconds + cooldown },
+    events: [{ type: 'attack', mobId: mob.id, damage: stats.attack }],
   }
 }

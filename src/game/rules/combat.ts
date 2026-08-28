@@ -12,6 +12,8 @@ export interface CombatPosition {
 export interface CombatTarget {
   id: string
   position: CombatPosition
+  /** 2026-08-28 — 몸집 반경(m). 보스(3.6×5.6m)는 중심점이 멀어도 가장자리가 사거리 안이면 맞아야 한다. 기본 0(돼지). */
+  radius?: number
 }
 
 export interface CombatHit {
@@ -89,7 +91,7 @@ function nearestInCone(
   limit: number,
 ): CombatTarget[] {
   return input.targets
-    .filter((target) => inCone(input.origin, input.yaw, target.position, rangeMeters, fovDeg))
+    .filter((target) => inCone(input.origin, input.yaw, target.position, rangeMeters + (target.radius ?? 0), fovDeg))
     .sort((left, right) => {
       const distanceDifference = distance(input.origin, left.position) - distance(input.origin, right.position)
       return Math.abs(distanceDifference) > GEOMETRY_EPSILON
@@ -130,7 +132,7 @@ function targetsInRadius(
   limit: number,
 ): CombatTarget[] {
   return targets
-    .filter((target) => distance(center, target.position) <= radiusMeters + GEOMETRY_EPSILON)
+    .filter((target) => distance(center, target.position) <= radiusMeters + (target.radius ?? 0) + GEOMETRY_EPSILON)
     .sort((left, right) => {
       const delta = distance(center, left.position) - distance(center, right.position)
       return Math.abs(delta) > GEOMETRY_EPSILON ? delta : left.id.localeCompare(right.id)

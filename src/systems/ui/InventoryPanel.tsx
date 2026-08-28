@@ -13,9 +13,12 @@ export interface InventoryPanelProps {
   ipMode: IpMode
   onHoverSlot: (slotIndex: number | null) => void
   onEquip: (itemId: string) => void
+  /** 2026-08-28 — 소비 아이템을 퀵슬롯 3~6 에 등록. */
+  onBind?: (itemId: string, slot: 3 | 4 | 5 | 6) => void
+  quickSlots?: Record<'3' | '4' | '5' | '6', string | null>
 }
 
-export function InventoryPanel({ open, inventory, hoveredSlotIndex, acquiredAtByItemId, nowMs, ipMode, onHoverSlot, onEquip }: InventoryPanelProps) {
+export function InventoryPanel({ open, inventory, hoveredSlotIndex, acquiredAtByItemId, nowMs, ipMode, onHoverSlot, onEquip, onBind, quickSlots }: InventoryPanelProps) {
   if (!open) return null
   const view = inventoryPanelPresentation(inventory, hoveredSlotIndex, acquiredAtByItemId, nowMs, ipMode)
   const box = { border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 9, background: HUD_TOKENS.colors.panelStrong }
@@ -49,6 +52,15 @@ export function InventoryPanel({ open, inventory, hoveredSlotIndex, acquiredAtBy
         {view.tooltip !== null && <div role="tooltip" style={{ ...box, alignSelf: 'end', padding: 12 }}>
           {view.tooltip.lines.map((line, index) => <div key={`${line}-${index}`} style={{ color: index === 0 ? HUD_TOKENS.colors.text : '#d8c692' }}>{line}</div>)}
           <small style={{ display: 'block', marginTop: 8, color: HUD_TOKENS.colors.muted }}>{view.tooltip.actionLabel}</small>
+          {view.tooltip.consumable && onBind !== undefined && (
+            <div aria-label="퀵슬롯 등록" style={{ marginTop: 8, display: 'flex', gap: 4, alignItems: 'center' }}>
+              <small style={{ color: HUD_TOKENS.colors.muted }}>퀵슬롯</small>
+              {([3, 4, 5, 6] as const).map((slot) => {
+                const bound = quickSlots?.[String(slot) as '3' | '4' | '5' | '6'] === view.tooltip?.itemId
+                return <button key={slot} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => view.tooltip !== null && onBind(view.tooltip.itemId, slot)} style={{ width: 26, height: 24, borderRadius: 5, border: `1px solid ${bound ? '#f0c55b' : HUD_TOKENS.colors.border}`, background: bound ? 'rgba(240,197,91,0.25)' : 'rgba(255,255,255,0.06)', color: HUD_TOKENS.colors.text, cursor: 'pointer', fontSize: 12 }}>{slot}</button>
+              })}
+            </div>
+          )}
         </div>}
       </aside>
     </section>

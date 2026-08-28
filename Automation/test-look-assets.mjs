@@ -65,7 +65,7 @@ after(() => { for (const r of tmpRoots) rmSync(r, { recursive: true, force: true
 describe('자산 파일명 계약', () => {
   test('계약 경로는 전부 배포 루트 기준 /models·/textures 이고 중복이 없다', () => {
     const urls = [C.heroTree.glb, ...Object.values(C.village.houses), C.grass.card, ...Object.values(C.terrain)]
-    assert.equal(urls.length, 9)
+    assert.equal(urls.length, 11) // 2026-08-28 ORM 2슬롯
     assert.equal(new Set(urls).size, urls.length)
     for (const u of urls) assert.match(u, /^\/(models|textures)\/[a-z0-9_]+\.(glb|png|jpg)$/, u)
     assert.deepEqual(HOUSE_KEYS, ['house-a', 'house-b', 'house-c'])
@@ -223,7 +223,7 @@ describe('스캐너 look-assets.mjs (placeholder 텍스처·GLB)', () => {
     assert.equal(resolved.terrain.mode, 'pbr')
     for (const k of HOUSE_KEYS) assert.equal(resolved.village[k].mode, 'gltf')
     const suggestions = scanner.manifestSuggestions(r)
-    assert.equal(suggestions.length, 9)
+    assert.equal(suggestions.length, 9) // manifestSuggestions 는 ORM 을 제안하지 않는다(core 5+detail 4)
     assert.ok(suggestions.every((s) => s.url.startsWith('public/') && s.bytes > 0 && ['core', 'detail'].includes(s.phase)))
   })
 

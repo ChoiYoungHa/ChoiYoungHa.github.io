@@ -6,6 +6,16 @@ import { readPlayerFrame } from '../store/playerBridge'
 import { useRuntime } from '../store/useRuntime'
 import { shadowConfigForPreset, type ShadowPresetName } from './shadows/shadowConfig'
 
+/**
+ * 2026-08-28 (룩 심사안 #1·#6) — 태양 방향(단위 벡터, 기존 position (48.4,14.6,-48.4) 정규화)과 색온도·강도.
+ * 그림자 광원은 매 프레임 플레이어(없으면 원점)를 target 으로 추적한다 — 이전엔 원점 고정 박스라 거대수목(38,-96)·길 끝이 그림자 밖이었다.
+ * 스위밍 방지: target 을 그림자 텍셀 크기로 스냅한다.
+ */
+export const SUN_DIRECTION = new Vector3(48.4, 14.6, -48.4).normalize()
+export const SUN_COLOR = '#ffe6c8'
+export const SUN_INTENSITY = 2.2
+export const SUN_DISTANCE_METERS = 70
+
 export const M1_SHADOW_CONFIG = {
   cascades: 1,
   mapSize: 1024,
@@ -24,7 +34,9 @@ export function applyShadowPreset(light: DirectionalLight, preset: ShadowPresetN
   const mapSizeChanged = light.shadow.mapSize.width !== shadow.mapSize
   light.shadow.mapSize.set(shadow.mapSize, shadow.mapSize)
   light.shadow.camera.near = shadow.fallback.cameraNear
-  light.shadow.camera.far = shadow.maxDistance
+  // 리뷰(2026-08-28): 광원이 target 에서 SUN_DISTANCE_METERS(70) 떨어져 있으므로 far 가 그보다 조금만 크면 역광 방향 수신면이 잘린다.
+  // 반경 halfExtent 가 고도각 sin 으로 투영되는 깊이(halfExtent / 0.209)를 더한다.
+  light.shadow.camera.far = Math.max(shadow.maxDistance, SUN_DISTANCE_METERS + halfExtent / Math.max(0.05, SUN_DIRECTION.y))
   light.shadow.camera.left = -halfExtent
   light.shadow.camera.right = halfExtent
   light.shadow.camera.top = halfExtent
@@ -45,16 +57,6 @@ export function applyShadowPreset(light: DirectionalLight, preset: ShadowPresetN
     strategy: shadow.strategy,
   }
 }
-
-/**
- * 2026-08-28 (룩 심사안 #1·#6) — 태양 방향(단위 벡터, 기존 position (48.4,14.6,-48.4) 정규화)과 색온도·강도.
- * 그림자 광원은 매 프레임 플레이어(없으면 원점)를 target 으로 추적한다 — 이전엔 원점 고정 박스라 거대수목(38,-96)·길 끝이 그림자 밖이었다.
- * 스위밍 방지: target 을 그림자 텍셀 크기로 스냅한다.
- */
-export const SUN_DIRECTION = new Vector3(48.4, 14.6, -48.4).normalize()
-export const SUN_COLOR = '#ffe6c8'
-export const SUN_INTENSITY = 2.2
-export const SUN_DISTANCE_METERS = 70
 
 export function createShadowLight(): DirectionalLight {
   const light = new DirectionalLight(SUN_COLOR, SUN_INTENSITY)

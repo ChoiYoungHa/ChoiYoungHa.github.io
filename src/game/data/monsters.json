@@ -22,5 +22,38 @@
         }
       ]
     }
+  },
+  "the-eleventh": {
+    "id": "the-eleventh",
+    "name": "열한 번째",
+    "level": 12,
+    "hp": 900,
+    "attack": 22,
+    "speed": 2.4,
+    "detectionRadius": 22,
+    "attackRange": 3.2,
+    "attackCooldownSeconds": 2.4,
+    "respawnSeconds": null,
+    "exp": 420,
+    "drops": {
+      "meso": {
+        "min": 400,
+        "max": 600
+      },
+      "items": [
+        {
+          "itemId": "head.pig-ribbon",
+          "chance": 1,
+          "quantity": 1
+        }
+      ]
+    },
+    "spawn": {
+      "x": -104,
+      "z": 8
+    },
+    "awakenRadiusMeters": 30,
+    "note": "제1막 보스(코덱스 bosses/boss-the-eleventh.glb, 정면 +Z, Pig_Attack 1.37s 충격 0.567s). 돼지 10마리 처치 후 공원 서쪽 단구(-104,8)에 30m 이내 접근하면 각성. 리스폰 없음.",
+    "hitRadius": 1.8
   }
 }

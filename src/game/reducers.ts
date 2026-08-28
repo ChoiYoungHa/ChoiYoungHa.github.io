@@ -35,6 +35,7 @@ export type GameAction =
   | { type: 'purchase', item: ItemDefinition }
   | { type: 'gain-item', item: ItemDefinition, quantity: number }
   | { type: 'use-item', item: ItemDefinition }
+  | { type: 'bind-quick-slot', slot: 3 | 4 | 5 | 6, itemId: string | null }
   | { type: 'quest-accept' }
   | { type: 'quest-kill', quest: QuestDefinition, monsterId: string }
   | { type: 'quest-complete', quest: QuestDefinition }
@@ -106,6 +107,17 @@ export function reduce(state: GameState, action: GameAction): GameState {
         hp: Math.min(state.maxHp, state.hp + (effect.hp ?? 0)),
         mp: Math.min(state.maxMp, state.mp + (effect.mp ?? 0)),
       }, inventory)
+    }
+    case 'bind-quick-slot': {
+      // 소비 아이템만 등록. 같은 아이템이 다른 슬롯에 있으면 그 슬롯은 비운다(중복 등록 방지).
+      if (action.itemId !== null) {
+        const item = ITEM_LIST.find((candidate) => candidate.id === action.itemId)
+        if (item === undefined || item.kind !== 'consumable') return state
+      }
+      const quickSlots = { ...state.quickSlots }
+      for (const key of Object.keys(quickSlots) as Array<keyof typeof quickSlots>) if (action.itemId !== null && quickSlots[key] === action.itemId) quickSlots[key] = null
+      quickSlots[String(action.slot) as keyof typeof quickSlots] = action.itemId
+      return { ...state, quickSlots }
     }
     case 'gain-item': {
       const result = addInventoryItem(state.inventory, action.item, action.quantity)

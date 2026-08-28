@@ -36,6 +36,8 @@ export interface InventoryTooltipPresentation {
   itemId: string
   lines: string[]
   actionLabel: string
+  /** 2026-08-28 — 소비 아이템이면 퀵슬롯 등록 버튼을 보인다. */
+  consumable: boolean
 }
 
 export interface InventoryPanelPresentation {
@@ -106,9 +108,12 @@ export function inventoryPanelPresentation(
     tooltip: hoveredItem === null || hoveredItem === undefined ? null : {
       itemId: hoveredItem.id,
       lines: tooltipForItem(hoveredItem, t(hoveredItem.nameKey, ipMode)).split('\n'),
-      actionLabel: Object.values(inventory.equipment).includes(hoveredItem.id)
-        ? t('s08.tooltip.unequip', ipMode)
-        : t('s08.tooltip.equip', ipMode),
+      actionLabel: hoveredItem.kind === 'consumable'
+        ? '클릭: 사용'
+        : Object.values(inventory.equipment).includes(hoveredItem.id)
+          ? t('s08.tooltip.unequip', ipMode)
+          : t('s08.tooltip.equip', ipMode),
+      consumable: hoveredItem.kind === 'consumable',
     },
   }
 }

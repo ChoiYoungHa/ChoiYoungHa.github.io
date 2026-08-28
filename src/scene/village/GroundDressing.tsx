@@ -1,7 +1,7 @@
 import { useTexture } from '@react-three/drei'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { BoxGeometry, BufferGeometry, Float32BufferAttribute, RepeatWrapping, SRGBColorSpace, type Texture } from 'three'
-import { attribute, float, fract, normalMap, positionWorld, texture, vec2 } from 'three/tsl'
+import { attribute, fract, positionWorld, texture, vec2 } from 'three/tsl'
 import type { Node } from 'three/webgpu'
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
 import dressing from '../../data/dressing.json' with { type: 'json' }
@@ -11,12 +11,13 @@ import { sampleHeight } from '../terrain/heightmap'
 
 /**
  * 2026-08-28 (룩 심사안 #7, master 직접) — 마을 바닥 드레싱: 광장(돌길)·상점 데크(목재)·텃밭(밭고랑).
- * 코덱스 시트 F 타일 4종을 2048² 2×2 아틀라스(diffuse·normal 2장)에 묶고, 정점 속성 `cell`(0 stone·1 wood·2 soil·3 moss)로 셀을 고른다.
- * 재질 1개·메시 1개(세 지오메트리 병합) → draw call +1, 텍스처 +2.
+ * 코덱스 시트 F 타일 4종을 2048² 2×2 아틀라스(diffuse 1장)에 묶고, 정점 속성 `cell`(0 stone·1 wood·2 soil·3 moss)로 셀을 고른다.
+ * 재질 1개·메시 1개(세 지오메트리 병합) → draw call +1, 텍스처 +1.
+ * 리뷰(2026-08-28): 병합 지오메트리에 uv 가 없어 normalMap 접선 프레임이 0 → 노멀 아틀라스가 no-op 였고 콘솔 경고만 냈다 → 노멀 경로 제거(텍스처 −1).
+ * lift 는 접지 샘플러가 heightmap 만 보므로 최소(광장 0.04·데크 상판 0.09·텃밭 0.05)로 — 처음 0.14~0.32 는 발이 파묻혔다.
  * 아틀라스는 `Automation/import-codex-tiles.py`(Blender 헤드리스)가 만든다. 셀 안 반복은 fract(xz/2)*0.5 + offset.
  */
 export const TILE_ATLAS_DIFFUSE_URL = '/textures/tiles_atlas_diffuse.jpg'
-export const TILE_ATLAS_NORMAL_URL = '/textures/tiles_atlas_normal.jpg'
 export const TILE_METERS = 2
 /** 셀 가장자리 mip 번짐 회피: 셀 안에서 쓰는 UV 범위를 살짝 안쪽으로(0.5 → 0.49). */
 export const CELL_INSET = 0.005
@@ -116,7 +117,7 @@ function prepareAtlas(tex: Texture, srgb: boolean): Texture {
 }
 
 export function GroundDressing() {
-  const [diffuse, normal] = useTexture([TILE_ATLAS_DIFFUSE_URL, TILE_ATLAS_NORMAL_URL])
+  const diffuse = useTexture(TILE_ATLAS_DIFFUSE_URL)
   const geometry = useMemo(() => {
     const g = dressing.ground
     const parts = [buildPlazaGeometry(g.plaza as Ring), buildDeckGeometry(g.deck as Deck), buildFarmGeometry(g.farm as Farm)]
@@ -125,9 +126,9 @@ export function GroundDressing() {
     merged.computeBoundingSphere()
     return merged
   }, [])
+  useEffect(() => () => { geometry.dispose() }, [geometry])
   const nodes = useMemo(() => {
     const d = prepareAtlas(diffuse, true)
-    const n = prepareAtlas(normal, false)
     const cell = attribute('cell', 'float') as unknown as Node<'float'>
     const ox = cell.mod(2).mul(0.5)
     const oy = cell.div(2).floor().mul(0.5)
@@ -135,12 +136,11 @@ export function GroundDressing() {
     const uv = vec2(local.x.add(ox), local.y.add(oy))
     const shade = attribute('color', 'vec3') as unknown as Node<'vec3'>
     const colorNode = texture(d, uv).rgb.mul(shade) as unknown as Node<'vec3'>
-    const normalNode = normalMap(texture(n, uv), vec2(float(0.7))) as unknown as Node<'vec3'>
-    return { colorNode, normalNode }
-  }, [diffuse, normal])
-  const material = useLookdevMaterial({ roughness: 0.85, metalness: 0, colorNode: nodes.colorNode, normalNode: nodes.normalNode })
+    return { colorNode }
+  }, [diffuse])
+  const material = useLookdevMaterial({ roughness: 0.85, metalness: 0, colorNode: nodes.colorNode })
   return <mesh name="ground-dressing" geometry={geometry} material={material} receiveShadow />
 }
 
-useTexture.preload([TILE_ATLAS_DIFFUSE_URL, TILE_ATLAS_NORMAL_URL])
+useTexture.preload(TILE_ATLAS_DIFFUSE_URL)
 export const GROUND_DRESSING_CELLS = { stone: 0, wood: 1, soil: 2, moss: 3 } as const

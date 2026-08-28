@@ -112,7 +112,7 @@ function SpeciesInstances({ species, points }: { species: CodexSpecies; points: 
   const baked = useMemo(
     () => bakeEnabled
       ? { geometry: bakeGlbVertexColor(scene, { desaturate: CODEX_FOLIAGE_DESATURATE }).geometry, materials: null }
-      : { geometry: bakeGlb(scene).geometry, materials: bakeGlb(scene).materials },
+      : (() => { const b = bakeGlb(scene); return { geometry: b.geometry, materials: b.materials } })(),
     [bakeEnabled, scene],
   )
   const vertexMaterial = getSharedVertexColorMaterial()
