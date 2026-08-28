@@ -353,11 +353,11 @@ test('소비품 use-item 은 HP 를 회복하고 재고를 1 줄인다', async (
   assert.equal(inventoryQuantity(after.inventory, potion.id), 1)
 })
 
-test('큰나무 앞 워프 트리거에 들어가면 teleport 이벤트(공원 좌표)가 1회 나온다', async () => {
+test('길 중간 워프 트리거에 들어가면 teleport 이벤트(공원 좌표)가 1회 나온다', async () => {
   const { createSession, WARPS } = await load('src/game/session.ts')
   const session = createSession({ seed: 3, ipMode: 'own', initialScene: 'henesys' })
   const at = (x, z) => session.tick({ dtMs: 16, playerPos: { x, z }, playerYaw: 0, inputs: {} })
-  at(20, -60)
+  at(30, -80) // 포탈(18,-60 r4.5) 밖에서 접근
   const r1 = at(WARPS.heroTreeToPark.center.x, WARPS.heroTreeToPark.center.z)
   const tp = r1.events.filter((e) => e.type === 'teleport')
   assert.equal(tp.length, 1)
@@ -386,4 +386,93 @@ test('전사 선택 시 나무 검이 장착된 채 시작한다 (2026-08-27 영
   const after = reduce(before, { type: 'select-job', jobId: 'warrior', name: '영하' })
   assert.equal(after.equipment.weapon, 'weapon.wooden-sword')
   assert.ok(after.inventory.slots.some((s) => s?.itemId === 'weapon.wooden-sword'))
+})
+
+test('2026-08-28 MP 물약으로 채운 MP 로 스킬을 다시 쓸 수 있다(skillState.mp ≠ game.mp 불일치 수정)', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const session = createSession({ seed: 95, ipMode: 'own' })
+  const tick = (playerPos, playerYaw = 0, inputs = {}, dtMs = 16) => session.tick({ dtMs, playerPos, playerYaw, inputs })
+  tick({ x: 0, z: 24 }, 0, { confirm: true })
+  tick({ x: 0, z: 24 }, 0, { confirm: true, character: { jobId: 'mage', name: '영하' } })
+  tick({ x: -1.5, z: 20 })
+  const stan = { x: -4.104056, z: 4.276014 }
+  tick(stan, 0, { interact: true })
+  for (let index = 0; index < 3; index += 1) tick(stan, 0, { confirm: true })
+  tick(stan, 0, { choice: 'accept' })
+  tick(stan, 0, { confirm: true })
+  tick(stan, 0, { confirm: true })
+  const maya = { x: -5.44966, z: 18.660593 }
+  tick(maya, 0, { interact: true })
+  tick(maya, 0, { confirm: true })
+  tick(maya, 0, { confirm: true })
+  tick(maya, 0, { confirm: true })
+  const bought = tick(maya, 0, { confirm: true, selectedItemId: 'consumable.potion-mp-s' })
+  assert.ok(bought.events.some(({ type }) => type === 'purchase'))
+
+  // 마법사 MP 140 = 20 × 7회. 다 쓰면 'MP 부족'. (ice-age 는 거리와 무관하게 targets[0] 을 때려 첫 처치 대화가 열린다 → 닫고 계속)
+  for (let cast = 0; cast < 7; cast += 1) {
+    const result = tick(maya, 0, { skill: true }, 5_000)
+    assert.ok(result.events.some(({ type }) => type === 'fx-spawn'), `${cast + 1}번째 시전`)
+    for (let guard = 0; guard < 8 && session.getSnapshot().activeDialogue !== null; guard += 1) tick(maya, 0, { confirm: true })
+  }
+  assert.equal(session.getSnapshot().game.mp, 0)
+  const empty = tick(maya, 0, { skill: true }, 5_000)
+  assert.equal(empty.events.find(({ type }) => type === 'skill-rejected')?.reason, 'MP 부족')
+
+  const drank = tick(maya, 0, { useItemId: 'consumable.potion-mp-s' })
+  assert.equal(drank.snapshot.game.mp, 40)
+  const recast = tick(maya, 0, { skill: true }, 5_000)
+  assert.ok(recast.events.some(({ type }) => type === 'fx-spawn'), '물약 뒤 스킬이 나간다')
+  assert.equal(recast.events.some(({ type }) => type === 'skill-rejected'), false)
+  assert.equal(recast.snapshot.game.mp, 20)
+  assert.equal(recast.snapshot.skillState.mp, 20)
+})
+
+test('2026-08-28 튜토리얼 run 은 걷기 속도(4.0)로는 안 뜨고 달리기 속도로만 뜬다', async () => {
+  const { createSession } = await load('src/game/session.ts')
+  const { RAYCAST_DEFAULTS, RUN_INPUT_SPEED_THRESHOLD } = await load('src/player/controllers/types.ts')
+  assert.ok(RAYCAST_DEFAULTS.walkSpeed < RUN_INPUT_SPEED_THRESHOLD && RUN_INPUT_SPEED_THRESHOLD < RAYCAST_DEFAULTS.runSpeed)
+  const session = createSession({ seed: 7, ipMode: 'own', initialScene: 'forest' })
+  let z = 24 // 스폰(0,24)에서 출발해야 첫 틱 이동량이 점프처럼 커지지 않는다
+  const step = (speed) => { z -= speed * 0.1; return session.tick({ dtMs: 100, playerPos: { x: 0, z }, playerYaw: 0, inputs: {} }) }
+  step(RAYCAST_DEFAULTS.walkSpeed)
+  const walked = step(RAYCAST_DEFAULTS.walkSpeed)
+  assert.deepEqual(walked.snapshot.tutorialEvents, ['move'])
+  const ran = step(RAYCAST_DEFAULTS.runSpeed)
+  assert.deepEqual(ran.snapshot.tutorialEvents, ['move', 'run'])
+})
+
+test('2026-08-28 에필로그 retry 는 워프 쿨다운·열린 패널·보스 배너도 초기화한다', async () => {
+  const { createSession, WARPS } = await load('src/game/session.ts')
+  const { dialogueView } = await load('src/game/dialogue.ts')
+  const session = createSession({ seed: 95, ipMode: 'own', initialScene: 'complete' })
+  const tick = (playerPos, inputs = {}, dtMs = 16) => session.tick({ dtMs, playerPos, playerYaw: 0, inputs })
+  const far = { x: 0, z: 40 }
+  tick(far, {}, 300_000) // 1회차 5분 경과
+  const warped = tick({ x: WARPS.parkToVillage.center.x, z: WARPS.parkToVillage.center.z })
+  assert.equal(warped.events.filter(({ type }) => type === 'teleport').length, 1)
+  tick(far, { stats: true })
+  assert.equal(session.getSnapshot().statsOpen, true)
+  // 스탠 대화 완료 → 보상 → 에필로그 → 다시 하기
+  const stan = { x: -4.104056, z: 4.276014 }
+  tick(stan, { interact: true })
+  for (let guard = 0; guard < 32 && session.getSnapshot().activeDialogue !== null; guard += 1) {
+    const view = dialogueView(session.getSnapshot().activeDialogue)
+    tick(stan, view.choices.length > 0 ? { choice: 'complete' } : { confirm: true })
+  }
+  assert.notEqual(session.getSnapshot().reward, null)
+  tick(stan, { closeReward: true })
+  for (let guard = 0; guard < 8 && session.getSnapshot().game.scene !== 'epilogue'; guard += 1) tick(stan)
+  assert.equal(session.getSnapshot().game.scene, 'epilogue')
+  const retried = tick(stan, { epilogueAction: 'retry' })
+  assert.equal(retried.snapshot.game.scene, 'title')
+  assert.equal(retried.snapshot.statsOpen, false)
+  assert.equal(retried.snapshot.shopOpen, false)
+  assert.equal(retried.snapshot.bossBanner, null)
+  // 2회차: 새 nowMs(≈0)에서도 포탈이 즉시 동작한다
+  tick({ x: 0, z: 24 }, { confirm: true })
+  tick({ x: 0, z: 24 }, { confirm: true, character: { jobId: 'warrior', name: '영하' } })
+  tick({ x: 30, z: -80 })
+  const again = tick({ x: WARPS.heroTreeToPark.center.x, z: WARPS.heroTreeToPark.center.z })
+  assert.equal(again.events.filter(({ type }) => type === 'teleport').length, 1, '재시작 직후 포탈이 바로 발동한다')
 })

@@ -42,7 +42,7 @@ export function ControlsHint({ visibleMs = HINT_VISIBLE_MS }: { visibleMs?: numb
       }}
     >
       <b style={{ color: '#ffd9a0' }}>W A S D</b> 이동 · <b style={{ color: '#ffd9a0' }}>Shift</b> 달리기 ·{' '}
-      <b style={{ color: '#ffd9a0' }}>마우스 드래그</b> 시선
+      <b style={{ color: '#ffd9a0' }}>마우스 드래그</b> 시선 · <b style={{ color: '#ffd9a0' }}>I</b> 아이템 · <b style={{ color: '#ffd9a0' }}>C</b> 스탯
     </div>
   )
 }

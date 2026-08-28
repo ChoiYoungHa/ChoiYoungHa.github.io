@@ -11,6 +11,7 @@ import { allMobs, awakenBoss, BOSS_ID, BOSS_MONSTER_ID, clearSpawnerAggro, creat
 import { reduce, type GameAction } from './reducers.ts'
 import { applyMonsterHit, applyTimedMobEffect, leapDestination, resolveBasicAttack, resolveEquipmentCombatModifiers, resolveSkillAttack, type CombatHit, type PlayerCombatState, type SkillId } from './rules/combat.ts'
 import { forwardFromYaw } from '../player/input.ts'
+import { RUN_INPUT_SPEED_THRESHOLD } from '../player/controllers/types.ts'
 import type { DropTable } from './rules/drops.ts'
 import type { ItemDefinition } from './rules/inventory.ts'
 import { equipInventoryItem } from './rules/inventory.ts'
@@ -220,9 +221,13 @@ const NPCS = (placementData.npcs as unknown as PlacementNpc[]).map((npc) => ({
   position: { x: npc.position[0], z: npc.position[1] },
 }))
 const GATE = zoneData.triggers.villageGate as GateTrigger
-/** 워프 트리거(2026-08-27 영하님): 길 끝 큰나무 앞 → 돼지의 공원, 공원 동쪽 포탈 → 버섯마을. */
+/**
+ * 워프 트리거(2026-08-27 영하님): 길 → 돼지의 공원, 공원 동쪽 포탈 → 버섯마을.
+ * 2026-08-28 영하님 "마을과 포탈 사이가 멀다": 공원행 포탈을 큰나무 앞(35,-86)에서 길 중간 전망(main-path wp5 = 18,-60)으로 당겼다.
+ * 마을 북단(-9,-6)까지 ≈60m(이전 ≈91m). 키 이름은 미니맵·테스트가 참조하므로 그대로 둔다.
+ */
 export const WARPS = {
-  heroTreeToPark: { center: { x: 35, z: -86 }, radius: 4.5, to: { x: -50, z: 10, yaw: Math.PI / 2 } },
+  heroTreeToPark: { center: { x: 18, z: -60 }, radius: 4.5, to: { x: -50, z: 10, yaw: Math.PI / 2 } },
   parkToVillage: { center: { x: -48, z: -4 }, radius: 2.5, to: { x: 0, z: 27, yaw: 0 } },
 } as const
 const ITEMS = itemData as unknown as ItemDefinition[]
@@ -454,6 +459,14 @@ export function createSession(options: CreateSessionOptions): GameSession {
         activeDialogue = null
         purchased = false
         inventoryOpen = false
+        // 2026-08-28 리뷰: 재시작 후 이전 판의 워프 쿨다운(nowMs 기준)·열린 패널·보스 배너가 남아 있었다 — 포탈이 수 분간 죽고 상점/스탯창이 떠 있었다.
+        statsOpen = false
+        shopOpen = false
+        warpInside = null
+        warpCooldownUntilMs = 0
+        bossBanner = null
+        bossAwakenedAtMs = null
+        bossAttackSeq = 0
         selectedShopItemId = null
         spawner = createSpawner(aiRng)
         dropCollection = createDropCollection()
@@ -500,7 +513,7 @@ export function createSession(options: CreateSessionOptions): GameSession {
         const speed = input.dtMs <= 0 ? 0 : moved / (input.dtMs / 1000)
         const tutorialCandidates: TutorialInputEvent[] = [
           ...(inputs.move || moved > 0.01 ? ['move' as const] : []),
-          ...(inputs.run || speed >= 3 ? ['run' as const] : []),
+          ...(inputs.run || speed >= RUN_INPUT_SPEED_THRESHOLD ? ['run' as const] : []),
           ...(inputs.jump ? ['jump' as const] : []),
         ]
         for (const candidate of tutorialCandidates) {
@@ -691,7 +704,9 @@ export function createSession(options: CreateSessionOptions): GameSession {
         const playerCanAct = respawnState.phase === 'alive'
         if (job !== null && inputs.skill && playerCanAct) {
           const skill = SKILLS[job.skillId]
-          const cast = tryCastSkill(skillState, skill, nowMs)
+          // 2026-08-28 영하님 "스킬 이펙트가 안 나간다": MP 정본은 game.mp(HUD·물약이 갱신)다.
+          // skillState.mp 만 보면 물약으로 MP 를 채워도 계속 'MP 부족'으로 거부됐다.
+          const cast = tryCastSkill({ ...skillState, mp: game.mp }, skill, nowMs)
           if (cast.ok) {
             skillState = cast.state
             dispatch({ type: 'spend-mp', amount: skill.mpCost })

@@ -8,14 +8,14 @@ import { dressingColliders } from '../scene/colliders/dressing'
 import { resolveVillageCollision } from '../scene/colliders/village'
 import { createKeyboardInput, GAME_INPUT_ENABLED } from './input'
 import { createRaycastController } from './controllers/raycast'
-import { RAYCAST_DEFAULTS, type Vec3 } from './controllers/types'
+import { RAYCAST_DEFAULTS, ROUTE_CONTROLLER_SPEEDS, type Vec3 } from './controllers/types'
 import { FollowCamera } from './FollowCamera'
 import { PlayerAvatar, type PlayerAvatarFrame } from './Player'
 import { publishPlayerFrame, readInputSource } from '../store/playerBridge'
 import { consumePlayerJump, consumePlayerTeleport, readPlayerAttackSeq, readPlayerSkillSeq } from '../game/runtimeSignals'
 
 /**
- * M0a-09 — WASD/Shift · 지면 접지 · 3인칭 카메라.
+ * M0a-09 — WASD(방향키 병행)/Shift · 지면 접지 · 3인칭 카메라.
  * 계획서.md §3-4 구현 A(raycast). **점프·상호작용 없음**(§1-2 제출 후 선택).
  *
  * 상태는 스토어에 넣지 않는다(§3-3). 위치·yaw 는 ref 로만 흐른다.
@@ -47,7 +47,8 @@ export function Player() {
       createRaycastController(
         sampleGround,
         { x: mainPath.landmarks.spawn.x, y: 0, z: mainPath.landmarks.spawn.z },
-        { jumpEnabled: GAME_INPUT_ENABLED },
+        // bench/final 러너는 routeHash 로 고정된 동선이라 피팅 당시 속도(3.2/5.6)를 유지한다(2026-08-28 걷기 4.0 상향과 분리).
+        { jumpEnabled: GAME_INPUT_ENABLED, ...(window.__benchMode === 'bench' || window.__benchMode === 'final' ? ROUTE_CONTROLLER_SPEEDS : {}) },
         // M2-10 거대 수목 줄기(원) → M2-27 마을 집 외벽(박스) 순으로 민다.
         // 수목과 마을은 130m 떨어져 있어 한 지점에서 둘 다 걸리는 일이 없다 — 순서가 결과를 바꾸지 않는다.
         // 반경은 heroTree 와 같은 PLAYER_RADIUS(0.4 = 캐릭터 큐브 0.8m 의 반폭)를 쓴다.

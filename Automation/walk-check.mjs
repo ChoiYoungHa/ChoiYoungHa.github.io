@@ -52,8 +52,10 @@ function run({ dt, seconds, run: running }) {
   }
 }
 
-// 이론값: 0->3.2 m/s 가속(12 m/s^2) 0.2667s 동안 0.4267m, 이후 등속
-const theoretical = 3.2 * 5 - (3.2 * 3.2) / (2 * 12)
+// 2026-08-28: 걷기 3.2→4.0, 달리기 5.6→6.5 (RAYCAST_DEFAULTS). 이론값: 0->4.0 m/s 가속(12 m/s^2) 0.333s 동안 0.667m 손실, 이후 등속
+const WALK = 4.0
+const RUN = 6.5
+const theoretical = WALK * 5 - (WALK * WALK) / (2 * 12)
 
 // 프레임레이트 독립성: 여러 dt 로 같은 거리가 나와야 한다
 const walk = [1 / 60, 1 / 120, 1 / 30].map((dt) => run({ dt, seconds: 5, run: false }))
@@ -63,13 +65,13 @@ const runCase = run({ dt: 1 / 60, seconds: 5, run: true })
 const boundary = run({ dt: 1 / 60, seconds: 60, run: true })
 
 const primary = walk[0]
-const TARGET = 16
+const TARGET = Math.round(theoretical)
 const TOL = 1
 const checks = {
-  'W 5초 이동거리 16m ±1m': {
+  [`↑ 5초 이동거리 ${TARGET}m ±${TOL}m`]: {
     value: primary.distance_m,
     pass: Math.abs(primary.distance_m - TARGET) <= TOL,
-    detail: `이론값 ${theoretical.toFixed(4)}m (가속 구간 손실 ${((3.2 * 3.2) / (2 * 12)).toFixed(4)}m 포함)`,
+    detail: `이론값 ${theoretical.toFixed(4)}m (가속 구간 손실 ${((WALK * WALK) / (2 * 12)).toFixed(4)}m 포함)`,
   },
   '지면 관통 0 (y가 항상 지면+eyeOffset)': {
     value: `minY=${primary.minY} maxY=${primary.maxY}`,
@@ -98,7 +100,7 @@ const report = {
   at: new Date().toISOString(),
   method:
     '결정론적 시뮬레이션 — 헤드리스 키 입력 대신 고정 dt 로 컨트롤러 step() 을 직접 호출했다. 컨트롤러가 three/React 비의존이라 가능하다.',
-  params: { walkSpeed: 3.2, runSpeed: 5.6, acceleration: 12, groundSnap: 0.35, eyeOffset: EYE },
+  params: { walkSpeed: WALK, runSpeed: RUN, acceleration: 12, groundSnap: 0.35, eyeOffset: EYE },
   theoretical_distance_m: +theoretical.toFixed(4),
   cases: { walk60: walk[0], walk120: walk[1], walk30: walk[2], run60: runCase, boundary60s: boundary },
   checks,

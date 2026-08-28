@@ -216,14 +216,16 @@ function AvatarModel({ frameRef }: AvatarProps) {
     group.rotation.y = yawRef.current + MODEL_YAW_OFFSET
 
     // one-shot: 공격(edge 카운터)·점프(비접지). 재생 중엔 이동 클립을 눌러 섞임을 막는다.
+    // 2026-08-28: 홀드 자동공격 중 스킬을 쓰면 두 one-shot 이 weight 1 로 겹쳐 스킬 모션이 뭉개진다 — 스킬 재생 중엔 공격 클립을 시작하지 않고, 스킬 시작 시 공격 클립을 멈춘다.
     if (actions.attack !== null && frame.attackSeq !== attackSeqRef.current) {
       attackSeqRef.current = frame.attackSeq
-      actions.attack.reset().setEffectiveWeight(1).setEffectiveTimeScale(ATTACK_CLIP_TIMESCALE).play()
+      if (!(actions.skill?.isRunning() ?? false)) actions.attack.reset().setEffectiveWeight(1).setEffectiveTimeScale(ATTACK_CLIP_TIMESCALE).play()
     }
     if (frame.skillSeq !== skillSeqRef.current) {
       skillSeqRef.current = frame.skillSeq
       // 스킬 클립이 아직 없으면 공격 클립으로 대신한다(클립 도착 전 폴백).
       const clip = actions.skill ?? actions.attack
+      if (actions.skill !== null) actions.attack?.stop()
       clip?.reset().setEffectiveWeight(1).setEffectiveTimeScale(actions.skill !== null ? SKILL_CLIP_TIMESCALE : ATTACK_CLIP_TIMESCALE).play()
     }
     if (actions.jump !== null) {

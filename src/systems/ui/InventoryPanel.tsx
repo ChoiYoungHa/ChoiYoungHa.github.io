@@ -23,12 +23,15 @@ export function InventoryPanel({ open, inventory, hoveredSlotIndex, acquiredAtBy
   const view = inventoryPanelPresentation(inventory, hoveredSlotIndex, acquiredAtByItemId, nowMs, ipMode)
   const box = { border: `1px solid ${HUD_TOKENS.colors.border}`, borderRadius: 9, background: HUD_TOKENS.colors.panelStrong }
   return (
-    <section aria-label={view.title} style={{ position: 'absolute', left: '50%', top: '50%', width: 690, height: 470, transform: 'translate(-50%, -50%)', display: 'grid', gridTemplateColumns: '400px 1fr', gap: 14, padding: 18, boxSizing: 'border-box', ...box, color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto' }}>
+    // 2026-08-28: top 을 중앙보다 40px 올려 1280×566 스테이지에서 하단 퀵슬롯(드롭 대상)을 가리지 않는다.
+    <section aria-label={view.title} style={{ position: 'absolute', left: '50%', top: 'calc(50% - 40px)', width: 690, height: 470, transform: 'translate(-50%, -50%)', display: 'grid', gridTemplateColumns: '400px 1fr', gap: 14, padding: 18, boxSizing: 'border-box', ...box, color: HUD_TOKENS.colors.text, fontFamily: HUD_TOKENS.fontFamily, pointerEvents: 'auto' }}>
       <div>
         <h2 style={{ margin: '0 0 12px', fontSize: 20 }}>{view.title}</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 82px)', gridAutoRows: '58px', gap: 8 }}>
           {view.cells.map((cell) => (
-            <button key={cell.index} type="button" className={cell.isNew ? styles.newItem : undefined} onMouseEnter={() => onHoverSlot(cell.index)} onMouseLeave={() => onHoverSlot(null)} onClick={() => cell.itemId !== null && onEquip(cell.itemId)} style={{ position: 'relative', border: cell.isNew ? '2px solid #f0c55b' : `1px solid ${cell.equipped ? '#c8924d' : HUD_TOKENS.colors.border}`, borderRadius: 7, background: 'rgba(255,255,255,0.05)', color: HUD_TOKENS.colors.text, cursor: cell.itemId === null ? 'default' : 'pointer' }}>
+            // 2026-08-28 영하님 "아이템이 퀵슬롯에 안 들어간다": 마우스가 칸을 벗어나면 툴팁(퀵슬롯 3~6 버튼)이 사라져 누를 수 없었다 → 마지막 아이템에 고정한다(onMouseLeave 제거).
+            // 소비 아이템은 HUD 퀵슬롯(3~6)으로 드래그앤드롭 등록도 된다(dataTransfer text/plain = itemId).
+            <button key={cell.index} type="button" className={cell.isNew ? styles.newItem : undefined} draggable={cell.consumable} onDragStart={(event) => { if (cell.itemId === null || !cell.consumable) { event.preventDefault(); return } event.dataTransfer.setData('text/plain', cell.itemId); event.dataTransfer.effectAllowed = 'copy'; onHoverSlot(cell.index) }} onMouseEnter={() => cell.itemId !== null && onHoverSlot(cell.index)} onClick={() => cell.itemId !== null && onEquip(cell.itemId)} style={{ position: 'relative', border: cell.isNew ? '2px solid #f0c55b' : `1px solid ${cell.equipped ? '#c8924d' : HUD_TOKENS.colors.border}`, borderRadius: 7, background: 'rgba(255,255,255,0.05)', color: HUD_TOKENS.colors.text, cursor: cell.itemId === null ? 'default' : cell.consumable ? 'grab' : 'pointer' }}>
               {cell.itemId !== null && <img src={cell.iconUrl} alt={cell.name} style={{ width: 46, height: 46, objectFit: 'contain' }} />}
               {cell.quantity > 1 && <span style={{ position: 'absolute', right: 5, bottom: 3, fontSize: 10 }}>×{cell.quantity}</span>}
             </button>

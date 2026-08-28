@@ -17,11 +17,11 @@ test('headless session driver completes the authored story deterministically', a
   assert.equal(first.finalState.questStatus, 'done')
   assert.equal(first.finalState.questKillCount, 10)
   assert.equal(first.kills, 10)
-  assert.equal(first.gameTimeSeconds, 87.027) // 2026-08-27 돼지 감지 6→12(a66a3f2)로 사냥 루프 단축 — 실측 재생성 2026-08-28
+  assert.equal(first.gameTimeSeconds, 84.981) // 2026-08-28 걷기 4.0 m/s 로 단축 → 기준선(STORY_BASELINE_MS)까지 패딩 — 실측 재생성 2026-08-28
   assert.ok(first.gameTimeSeconds <= 15 * 60)
   assert.equal(first.eventOrderViolations, 0)
   assert.ok(first.distanceMeters > 0)
-  assert.equal(first.movementSpeedMetersPerSecond, 3.2)
+  assert.equal(first.movementSpeedMetersPerSecond, 4.0)
 })
 
 test('saved headless story evidence matches the deterministic run', async () => {

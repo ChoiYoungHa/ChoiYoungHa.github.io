@@ -7,6 +7,8 @@ import { easeDistance } from './world/cameraEase.ts'
 
 interface EdgeInput {
   consumePressed(): GameplayAction[]
+  /** 2026-08-28 영하님 "공격이 안 나갈 때가 있다" — 기본공격은 누르고 있으면 쿨다운마다 자동 반복한다(쿨다운 중 누른 입력이 버려지지 않는다). */
+  isDown?(action: 'attack'): boolean
 }
 
 const JUMP_SCENES = new Set(['forest', 'henesys', 'park', 'hunt', 'complete', 'free'])
@@ -41,9 +43,8 @@ export function createGameFrameBridge(session: GameSession, input: EdgeInput) {
       if (snapshot.activeDialogue === null && JUMP_SCENES.has(snapshot.game.scene) && actions.includes('jump')) {
         requestPlayerJump()
       }
-      if (snapshot.activeDialogue === null && actions.includes('attack')) requestPlayerAttack()
-      if (snapshot.activeDialogue === null && actions.includes('skill')) requestPlayerSkill()
       const edges = edgeInputs(actions, snapshot.activeDialogue !== null)
+      if (input.isDown?.('attack') === true) edges.attack = true
       if (Object.keys(edges).length > 0) session.enqueueInput(edges)
       const result = session.tick({
         dtMs: Math.min(frame.dtMs, 50),
@@ -51,7 +52,15 @@ export function createGameFrameBridge(session: GameSession, input: EdgeInput) {
         playerYaw: frame.playerYaw,
         inputs: { move: frame.move, run: frame.run },
       })
-      for (const event of result.events) if (event.type === 'teleport' && event.warpTo !== undefined) requestPlayerTeleport(event.warpTo)
+      for (const event of result.events) {
+        if (event.type === 'teleport' && event.warpTo !== undefined) requestPlayerTeleport(event.warpTo)
+        // 2026-08-28 — 아바타 모션은 실제로 나간 공격/스킬(fx-spawn)에만 맞춘다.
+        // 이전엔 키 edge 마다 휘둘러서 쿨다운·MP 부족으로 거부된 입력도 "휘두르는데 이펙트가 안 나가는" 것처럼 보였다.
+        else if (event.type === 'fx-spawn') {
+          if (event.skillId === 'basic-attack') requestPlayerAttack()
+          else requestPlayerSkill()
+        }
+      }
       if (cameraEaseStartedAtMs === null && result.events.some(({ type }) => type === 'camera-ease-start')) {
         cameraEaseStartedAtMs = result.snapshot.nowMs
       }

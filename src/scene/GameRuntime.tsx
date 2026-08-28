@@ -34,6 +34,7 @@ import {
 import { createSkillFxMaterial } from '../shaders/skillFx.ts'
 import { hashSeed, scatter } from './scatter/seededRandom.ts'
 import { createKeyboardInput } from '../player/input.ts'
+import { RUN_INPUT_SPEED_THRESHOLD } from '../player/controllers/types.ts'
 import { readPlayerFrame } from '../store/playerBridge.ts'
 import { WARPS } from '../game/session.ts'
 import { createGameProjector, installGameProjector } from '../systems/ui/projector.ts'
@@ -290,7 +291,7 @@ export function GameRuntime({ bootstrap }: { bootstrap: GameBootstrap }) {
       playerPos: frame.position,
       playerYaw: Math.atan2(-viewDirection.x, -viewDirection.z),
       move: frame.speed > 0.05,
-      run: frame.speed > 3.3,
+      run: frame.speed > RUN_INPUT_SPEED_THRESHOLD,
     })
     const grade = epilogueGradeRef.current
     if (result.snapshot.game.scene === 'epilogue') {

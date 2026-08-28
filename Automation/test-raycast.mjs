@@ -41,12 +41,12 @@ function simulate(ground, inp, seconds, dt) {
 }
 
 describe('M0b-11 raycast 계약 — 계획서 §3-4 6개 수치', () => {
-  // ── 1. 보행 3.2 m/s ────────────────────────────────────────────────
-  test('1. 보행 정상속도 = 3.2 m/s', () => {
-    assert.equal(RAYCAST_DEFAULTS.walkSpeed, 3.2)
-    // 3초면 가속이 끝나고 등속에 도달한다(3.2 / 12 = 0.267초)
+  // ── 1. 보행 4.0 m/s ────────────────────────────────────────────────
+  test('1. 보행 정상속도 = 4.0 m/s', () => {
+    assert.equal(RAYCAST_DEFAULTS.walkSpeed, 4.0)
+    // 3초면 가속이 끝나고 등속에 도달한다(4.0 / 12 = 0.333초)
     const r = simulate(FLAT, input({ forward: 1 }), 3, 1 / 60)
-    assert.ok(Math.abs(r.speed - 3.2) < 1e-9, `speed=${r.speed}`)
+    assert.ok(Math.abs(r.speed - 4.0) < 1e-9, `speed=${r.speed}`)
 
     // 등속 구간 1초 이동거리로 교차검증
     const c = createRaycastController(FLAT, { x: 0, y: 0, z: 0 })
@@ -54,14 +54,14 @@ describe('M0b-11 raycast 계약 — 계획서 §3-4 6개 수치', () => {
     for (let n = 0; n < 60; n++) c.step(i, 1 / 60) // 가속 소진
     const z0 = c.position.z
     for (let n = 0; n < 60; n++) c.step(i, 1 / 60) // 등속 1초
-    assert.ok(Math.abs(Math.abs(c.position.z - z0) - 3.2) < 1e-9)
+    assert.ok(Math.abs(Math.abs(c.position.z - z0) - 4.0) < 1e-9)
   })
 
-  // ── 2. 달리기 5.6 m/s ──────────────────────────────────────────────
-  test('2. 달리기 정상속도 = 5.6 m/s', () => {
-    assert.equal(RAYCAST_DEFAULTS.runSpeed, 5.6)
+  // ── 2. 달리기 6.5 m/s ──────────────────────────────────────────────
+  test('2. 달리기 정상속도 = 6.5 m/s', () => {
+    assert.equal(RAYCAST_DEFAULTS.runSpeed, 6.5)
     const r = simulate(FLAT, input({ forward: 1, run: true }), 3, 1 / 60)
-    assert.ok(Math.abs(r.speed - 5.6) < 1e-9, `speed=${r.speed}`)
+    assert.ok(Math.abs(r.speed - 6.5) < 1e-9, `speed=${r.speed}`)
     const w = simulate(FLAT, input({ forward: 1 }), 3, 1 / 60)
     assert.ok(r.speed > w.speed)
   })
@@ -75,16 +75,16 @@ describe('M0b-11 raycast 계약 — 계획서 §3-4 6개 수치', () => {
     // 정지에서 1스텝: 속도 = 12 * dt = 0.2
     assert.ok(Math.abs(one.speed - 12 * dt) < 1e-12, `speed=${one.speed}`)
 
-    // 3.2 m/s 도달까지 3.2 / (12*dt) = 16스텝
+    // 4.0 m/s 도달까지 4.0 / (12*dt) = 16스텝
     const c2 = createRaycastController(FLAT, { x: 0, y: 0, z: 0 })
     const i = input({ forward: 1 })
     let stepsToTop = 0
     for (let n = 0; n < 120; n++) {
       const r = c2.step(i, dt)
       stepsToTop = n + 1
-      if (Math.abs(r.speed - 3.2) < 1e-9) break
+      if (Math.abs(r.speed - 4.0) < 1e-9) break
     }
-    assert.equal(stepsToTop, Math.ceil(3.2 / (12 * dt)))
+    assert.equal(stepsToTop, Math.ceil(4.0 / (12 * dt)))
   })
 
   // ── 4. 회전 보간 0.15 ──────────────────────────────────────────────

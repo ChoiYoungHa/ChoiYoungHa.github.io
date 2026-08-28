@@ -19,7 +19,7 @@ async function launch(label) {
   await send('Page.enable'); await send('Runtime.enable')
   const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
   const shot = async (name) => { const sh = await send('Page.captureScreenshot', { format: 'png' }); await writeFile(join(OUT, `${name}-${TAG}.png`), Buffer.from(sh.data, 'base64')) }
-  const key = async (code, vk, ms) => { await send('Input.dispatchKeyEvent', { type: 'keyDown', code, key: code.replace('Key', '').toLowerCase(), windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }); await sleep(ms); await send('Input.dispatchKeyEvent', { type: 'keyUp', code, key: code.replace('Key', '').toLowerCase(), windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }) }
+  const key = async (code, vk, ms) => { await send('Input.dispatchKeyEvent', { type: 'keyDown', code, key: code.startsWith('Arrow') ? code : code.replace('Key', '').toLowerCase(), windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }); await sleep(ms); await send('Input.dispatchKeyEvent', { type: 'keyUp', code, key: code.startsWith('Arrow') ? code : code.replace('Key', '').toLowerCase(), windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }) }
   return { label, chrome, ws, send, ev, shot, key, errors }
 }
 
@@ -51,7 +51,7 @@ console.log('online', await waitFor(a, ONLINE, 30000), await waitFor(b, ONLINE, 
 await sleep(3000)
 console.log('A0', await a.ev(READ)); console.log('B0', await b.ev(READ))
 // B 가 앞으로 걸으면 A 에서 B 의 원격 아바타가 움직여야 한다
-await b.key('KeyW', 87, 2500); await sleep(800)
+await b.key('ArrowUp', 38, 2500); await sleep(800)
 const A1 = JSON.parse(await a.ev(READ)); const B1 = JSON.parse(await b.ev(READ))
 console.log('A1', JSON.stringify(A1)); console.log('B1', JSON.stringify(B1))
 await a.shot('net-A-sees-B'); await b.shot('net-B-sees-A')

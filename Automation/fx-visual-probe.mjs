@@ -23,7 +23,7 @@ const PROBE = `(() => { const s = globalThis.__R3F_SCENE__; const out = { player
     if (o.isBone && ['LeftUpLeg','LeftArm','Hips','Spine'].includes(o.name)) { out.bones[o.name] = [o.quaternion.x, o.quaternion.y, o.quaternion.z, o.quaternion.w].map((v) => +v.toFixed(3)); if (o.name === 'Hips') out.hipsPos = [o.position.x, o.position.y, o.position.z].map((v) => +v.toFixed(3)) }
     if (o.isBone) out.boneNames.push(o.name) })
   out.boneNames = out.boneNames.slice(0, 6); return out })()`
-const KEY = { KeyW: ['w', 87], KeyS: ['s', 83], KeyA: ['a', 65], Digit1: ['1', 49], Digit2: ['2', 50], ShiftLeft: ['Shift', 16] }
+const KEY = { ArrowUp: ['ArrowUp', 38], ArrowDown: ['ArrowDown', 40], ArrowLeft: ['ArrowLeft', 37], Digit1: ['1', 49], Digit2: ['2', 50], ShiftLeft: ['Shift', 16] }
 const key = (type, code) => send('Input.dispatchKeyEvent', { type, code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
 
 await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 640, y: 360, button: 'left', clickCount: 1 }); await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 640, y: 360, button: 'left', clickCount: 1 }); await sleep(300)

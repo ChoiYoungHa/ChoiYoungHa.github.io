@@ -12,6 +12,7 @@ import {
 } from '../src/scene/colliders/heroTree.ts'
 import { resolveVillageCollision } from '../src/scene/colliders/village.ts'
 import { finalInputAt } from '../src/systems/bench/finalRoute.ts'
+import { ROUTE_CONTROLLER_SPEEDS } from '../src/player/controllers/types.ts'
 import placement from '../src/data/placement.json' with { type: 'json' }
 
 const DT = 1 / 60
@@ -121,7 +122,7 @@ export function simulateRoute(route, untilSeconds = route.durationSeconds) {
     PLAYER_RADIUS,
   )
   const start = route.waypoints[0].pose.position
-  const controller = createRaycastController(sampleGround, { x: start[0], y: start[1], z: start[2] }, {}, resolver)
+  const controller = createRaycastController(sampleGround, { x: start[0], y: start[1], z: start[2] }, { ...ROUTE_CONTROLLER_SPEEDS }, resolver) // 2026-08-28: 러너 모드 고정 속도(Controller.tsx 와 동일)
   const trace = []
   let nextWaypoint = 0
   const steps = Math.round(untilSeconds / DT)

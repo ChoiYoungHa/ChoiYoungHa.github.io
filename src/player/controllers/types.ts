@@ -50,9 +50,10 @@ export interface RaycastParams {
   gravity: number
 }
 
+// 2026-08-28 영하님 "걷는 속도 조금 더 빠르게": 걷기 3.2→4.0 · 달리기 5.6→6.5 m/s.
 export const RAYCAST_DEFAULTS: RaycastParams = {
-  walkSpeed: 3.2,
-  runSpeed: 5.6,
+  walkSpeed: 4.0,
+  runSpeed: 6.5,
   acceleration: 12,
   turnLerp: 0.15,
   maxSlopeDeg: 40,
@@ -62,3 +63,12 @@ export const RAYCAST_DEFAULTS: RaycastParams = {
   jumpSpeed: 5.2,
   gravity: -18,
 }
+
+/** 실측 속도로 "달리기" 를 판정하는 문턱(튜토리얼 힌트·세션 run 입력). 걷기와 달리기의 중간값이라 걷기만으로는 넘지 않는다. */
+export const RUN_INPUT_SPEED_THRESHOLD = (RAYCAST_DEFAULTS.walkSpeed + RAYCAST_DEFAULTS.runSpeed) / 2
+
+/**
+ * `?route=bench|final` 재생 전용 속도. bench/final-route.json 의 waypoint 시각·yaw 는 이 속도(3.2/5.6)로 피팅돼 routeHash 로 고정돼 있다.
+ * 걷기 속도를 올려도(2026-08-28) 측정 정본 동선이 깨지지 않도록 러너 모드에서만 이 값을 쓴다.
+ */
+export const ROUTE_CONTROLLER_SPEEDS: Pick<RaycastParams, 'walkSpeed' | 'runSpeed'> = { walkSpeed: 3.2, runSpeed: 5.6 }

@@ -5,7 +5,7 @@ import { expRequiredForLevel } from '../../game/rules/stats.ts'
 import { HUD_TOKENS } from './hudTokens.ts'
 
 /**
- * 2026-08-28 (영하님) — 스탯창. `C` 키(입력 액션 'stats')로 토글, Esc 로 닫힘. `S` 는 WASD 후진과 충돌해 C 를 썼다.
+ * 2026-08-28 (영하님) — 스탯창. `C` 키(입력 액션 'stats')로 토글, Esc 로 닫힘. `S` 는 WASD 후진과 충돌해 C 를 쓴다.
  * 순수 표시 컴포넌트: 값은 GameState(레벨·HP/MP·EXP·메소)와 인벤토리 보너스에서 온다.
  */
 const ITEM_BY_ID: Record<string, ItemDefinition> = Object.fromEntries((rawItems as unknown as ItemDefinition[]).map((item) => [item.id, item]))

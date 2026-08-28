@@ -76,7 +76,7 @@ async function shot(name) {
   shots.push({ name, file, bytes: r.data.length })
   process.stdout.write(`shot ${name} ${Math.round(r.data.length * 0.75 / 1024)}KB\n`)
 }
-const KEY = { Escape: ['Escape', 27], KeyW: ['w', 87], KeyS: ['s', 83], KeyA: ['a', 65], KeyD: ['d', 68], ShiftLeft: ['Shift', 16], Space: [' ', 32], KeyF: ['f', 70], Digit1: ['1', 49], Digit2: ['2', 50], KeyI: ['i', 73], Enter: ['Enter', 13] }
+const KEY = { Escape: ['Escape', 27], ArrowUp: ['ArrowUp', 38], ArrowDown: ['ArrowDown', 40], ArrowLeft: ['ArrowLeft', 37], ArrowRight: ['ArrowRight', 39], ShiftLeft: ['Shift', 16], Space: [' ', 32], KeyF: ['f', 70], Digit1: ['1', 49], Digit2: ['2', 50], KeyI: ['i', 73], Enter: ['Enter', 13] }
 const down = new Set()
 async function keyDown(code) { const [key, vk] = KEY[code]; down.add(code); await cdp.send('Input.dispatchKeyEvent', { type: key.length === 1 ? 'keyDown' : 'rawKeyDown', code, key, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk, modifiers: down.has('ShiftLeft') ? 8 : 0 }) }
 async function keyUp(code) { const [key, vk] = KEY[code]; down.delete(code); await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', code, key, windowsVirtualKeyCode: vk, nativeVirtualKeyCode: vk }) }
@@ -121,18 +121,18 @@ const walkLog = []
 async function walkTo(target, { tol = 0.7, run = false, timeoutMs = 60000 } = {}) {
   const t0 = Date.now(); let last = null; let stuckSince = Date.now(); let nudges = 0
   if (run) await keyDown('ShiftLeft')
-  await keyDown('KeyW')
+  await keyDown('ArrowUp')
   try {
     while (Date.now() - t0 < timeoutMs) {
       const s = await readState(); const p = s.player; if (!p) throw new Error('player mesh not found')
       const d = dist(p, target); if (d <= tol) { walkLog.push({ target, reached: true, ms: Date.now() - t0, nudges }); return p }
       await setYaw(yawToward(p, target))
       if (last && dist(last, p) > 0.05) stuckSince = Date.now()
-      if (Date.now() - stuckSince > 2500) { nudges += 1; stuckSince = Date.now(); await keyDown(nudges % 2 ? 'KeyD' : 'KeyA'); await sleep(900); await keyUp(nudges % 2 ? 'KeyD' : 'KeyA') }
+      if (Date.now() - stuckSince > 2500) { nudges += 1; stuckSince = Date.now(); await keyDown(nudges % 2 ? 'ArrowRight' : 'ArrowLeft'); await sleep(900); await keyUp(nudges % 2 ? 'ArrowRight' : 'ArrowLeft') }
       last = p
       await sleep(120)
     }
-  } finally { await keyUp('KeyW'); if (run) await keyUp('ShiftLeft') }
+  } finally { await keyUp('ArrowUp'); if (run) await keyUp('ShiftLeft') }
   const s = await readState(); walkLog.push({ target, reached: false, ms: Date.now() - t0, nudges, at: s.player }); return s.player
 }
 async function waitFor(pred, timeoutMs = 20000, every = 200) { const t0 = Date.now(); while (Date.now() - t0 < timeoutMs) { const s = await readState(); if (pred(s)) return s; await sleep(every) } return null }
@@ -179,8 +179,8 @@ try {
     await clickButton(`/생성|시작|확인|모험/.test(x.textContent) && !x.disabled`); const s02 = await waitFor((s) => s.hud.hasHud, 8000)
     await mark('S02-enter', !!s02, s02 ? `hud=${s02.hud.stats}` : 'HUD not shown after confirm')
     // S02 힌트 3입력: 이동 → 달리기 → 점프
-    await keyDown('KeyW'); await sleep(900); await keyUp('KeyW'); await sleep(300)
-    await keyDown('ShiftLeft'); await keyDown('KeyW'); await sleep(1500); await keyUp('KeyW'); await keyUp('ShiftLeft'); await sleep(300)
+    await keyDown('ArrowUp'); await sleep(900); await keyUp('ArrowUp'); await sleep(300)
+    await keyDown('ShiftLeft'); await keyDown('ArrowUp'); await sleep(1500); await keyUp('ArrowUp'); await keyUp('ShiftLeft'); await sleep(300)
     await tap('Space'); await sleep(300); await shot('s02-hints')
     await mark('S02', true, 'move/run/jump injected — hint DOM in overlayText')
     // S03 아치 통과: 게이트 중심으로

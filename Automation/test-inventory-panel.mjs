@@ -40,3 +40,19 @@ test('신규 아이템 금테 펄스는 획득부터 4초 미만이며 그 뒤 �
   assert.equal(inventoryPanelPresentation(inventory, null, times, 4_999, 'conti').cells[0].isNew, true)
   assert.equal(inventoryPanelPresentation(inventory, null, times, 5_000, 'conti').cells[0].isNew, false)
 })
+
+test('2026-08-28 셀 표시: 소비 아이템만 consumable(드래그 가능), 툴팁 안내에 퀵슬롯 드래그 문구', async () => {
+  const { inventoryPanelPresentation } = await load('src/systems/ui/inventoryPanelLogic.ts')
+  const { createInventory, addInventoryItem } = await load('src/game/rules/inventory.ts')
+  const items = (await import(pathToFileURL(join(ROOT, 'src/game/data/items.json')).href, { with: { type: 'json' } })).default
+  const potion = items.find((item) => item.id === 'consumable.potion-hp-s')
+  const sword = items.find((item) => item.id === 'weapon.wooden-sword')
+  let inventory = addInventoryItem(createInventory(), sword, 1).inventory
+  inventory = addInventoryItem(inventory, potion, 2).inventory
+  const view = inventoryPanelPresentation(inventory, 1, {}, 0, 'own')
+  assert.equal(view.cells[0].consumable, false)
+  assert.equal(view.cells[1].consumable, true)
+  assert.equal(view.cells[2].consumable, false)
+  assert.equal(view.tooltip?.consumable, true)
+  assert.match(view.tooltip?.actionLabel ?? '', /드래그/)
+})

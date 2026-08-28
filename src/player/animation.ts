@@ -10,8 +10,8 @@
  * `controllers/types.ts` 의 `RAYCAST_DEFAULTS.walkSpeed`·`runSpeed` 와 같은 값이다.
  * 여기에 다시 적는 이유: 이 모듈은 컨트롤러에 의존하지 않아야 Node 테스트가 컨트롤러 변경에 흔들리지 않는다.
  */
-export const WALK_CLIP_SPEED = 3.2
-export const RUN_CLIP_SPEED = 5.6
+export const WALK_CLIP_SPEED = 4.0
+export const RUN_CLIP_SPEED = 6.5
 
 /** 이 속도 이하는 정지로 본다. 감속 잔여 속도로 walk 가 깜빡이는 것을 막는다. */
 export const IDLE_SPEED_EPSILON = 0.05

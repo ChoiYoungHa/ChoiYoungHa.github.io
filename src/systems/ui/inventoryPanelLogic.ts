@@ -22,6 +22,8 @@ export interface InventoryCellPresentation {
   quantity: number
   equipped: boolean
   isNew: boolean
+  /** 2026-08-28 — 소비 아이템만 퀵슬롯으로 드래그할 수 있다. */
+  consumable: boolean
 }
 
 export interface EquipmentPresentation {
@@ -82,7 +84,7 @@ export function inventoryPanelPresentation(
   ipMode: IpMode,
 ): InventoryPanelPresentation {
   const cells = inventory.slots.map((stack, index): InventoryCellPresentation => {
-    if (stack === null) return { index, itemId: null, name: '', iconUrl: '', quantity: 0, equipped: false, isNew: false }
+    if (stack === null) return { index, itemId: null, name: '', iconUrl: '', quantity: 0, equipped: false, isNew: false, consumable: false }
     const item = ITEM_BY_ID[stack.itemId]
     return {
       index,
@@ -92,6 +94,7 @@ export function inventoryPanelPresentation(
       quantity: stack.quantity,
       equipped: Object.values(inventory.equipment).includes(stack.itemId),
       isNew: isNewItem(stack.itemId, acquiredAtByItemId, nowMs),
+      consumable: item?.kind === 'consumable',
     }
   })
   const hovered = hoveredSlotIndex === null ? null : inventory.slots[hoveredSlotIndex]
@@ -109,7 +112,7 @@ export function inventoryPanelPresentation(
       itemId: hoveredItem.id,
       lines: tooltipForItem(hoveredItem, t(hoveredItem.nameKey, ipMode)).split('\n'),
       actionLabel: hoveredItem.kind === 'consumable'
-        ? '클릭: 사용'
+        ? '클릭: 사용 · 퀵슬롯(3~6)으로 드래그하거나 아래 번호를 누르세요'
         : Object.values(inventory.equipment).includes(hoveredItem.id)
           ? t('s08.tooltip.unequip', ipMode)
           : t('s08.tooltip.equip', ipMode),

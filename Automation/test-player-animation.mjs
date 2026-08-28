@@ -33,30 +33,30 @@ test('정지 판정 임계 이하(0.05 m/s)는 idle 100%', () => {
   assert.ok(anim.targetWeights(0.06).walk > 0)
 })
 
-test('1.6 m/s → idle 50% + walk 50%', () => {
-  const w = anim.targetWeights(1.6)
+test('2.0 m/s → idle 50% + walk 50%', () => {
+  const w = anim.targetWeights(2.0)
   assert.ok(near(w.idle, 0.5))
   assert.ok(near(w.walk, 0.5))
   assert.equal(w.run, 0)
   assert.ok(near(sum(w), 1))
 })
 
-test('3.2 m/s → walk 100%', () => {
-  const w = anim.targetWeights(3.2)
+test('4.0 m/s → walk 100%', () => {
+  const w = anim.targetWeights(4.0)
   assert.ok(near(w.walk, 1))
   assert.ok(near(w.idle, 0))
   assert.equal(w.run, 0)
 })
 
-test('4.4 m/s(walk~run 중간) → walk 50% + run 50%', () => {
-  const w = anim.targetWeights(4.4)
+test('5.25 m/s(walk~run 중간) → walk 50% + run 50%', () => {
+  const w = anim.targetWeights(5.25)
   assert.ok(near(w.walk, 0.5))
   assert.ok(near(w.run, 0.5))
   assert.ok(near(sum(w), 1))
 })
 
-test('5.6 m/s 이상 → run 100%', () => {
-  assert.deepEqual(anim.targetWeights(5.6), { idle: 0, walk: 0, run: 1 })
+test('6.5 m/s 이상 → run 100%', () => {
+  assert.deepEqual(anim.targetWeights(6.5), { idle: 0, walk: 0, run: 1 })
   assert.deepEqual(anim.targetWeights(9), { idle: 0, walk: 0, run: 1 })
 })
 
@@ -71,7 +71,7 @@ test('모든 속도에서 가중치 합은 1이고 음수가 없다', () => {
 test('크로스페이드 0.2s 안에 목표에 95% 이상 수렴한다(dt=1/60)', () => {
   let w = { ...anim.IDLE_WEIGHTS }
   const dt = 1 / 60
-  for (let t = 0; t < anim.CROSSFADE_SECONDS - 1e-9; t += dt) w = anim.blendWeights(w, 5.6, dt)
+  for (let t = 0; t < anim.CROSSFADE_SECONDS - 1e-9; t += dt) w = anim.blendWeights(w, 6.5, dt)
   assert.ok(w.run >= 0.95, `run=${w.run}`)
   assert.ok(near(sum(w), 1, 1e-9))
 })
@@ -79,7 +79,7 @@ test('크로스페이드 0.2s 안에 목표에 95% 이상 수렴한다(dt=1/60)'
 test('페이드는 프레임레이트에 독립이다(dt=1/30 vs 1/120, 0.2s 후 차 ≤0.02)', () => {
   const advance = (dt) => {
     let w = { ...anim.IDLE_WEIGHTS }
-    for (let t = 0; t < anim.CROSSFADE_SECONDS - 1e-9; t += dt) w = anim.blendWeights(w, 3.2, dt)
+    for (let t = 0; t < anim.CROSSFADE_SECONDS - 1e-9; t += dt) w = anim.blendWeights(w, 4.0, dt)
     return w
   }
   assert.ok(Math.abs(advance(1 / 30).walk - advance(1 / 120).walk) <= 0.02)
@@ -87,13 +87,13 @@ test('페이드는 프레임레이트에 독립이다(dt=1/30 vs 1/120, 0.2s 후
 
 test('dt 0 이하는 현재 가중치를 유지한다', () => {
   const w = { idle: 0.25, walk: 0.75, run: 0 }
-  assert.deepEqual(anim.blendWeights(w, 5.6, 0), w)
-  assert.deepEqual(anim.blendWeights(w, 5.6, -1), w)
+  assert.deepEqual(anim.blendWeights(w, 6.5, 0), w)
+  assert.deepEqual(anim.blendWeights(w, 6.5, -1), w)
 })
 
 test('블렌드는 정규화되어 합 1을 유지한다(무작위 시퀀스)', () => {
   let w = { ...anim.IDLE_WEIGHTS }
-  const speeds = [0, 1.1, 3.2, 5.6, 4.0, 0.2, 0]
+  const speeds = [0, 1.1, 4.0, 6.5, 4.0, 0.2, 0]
   for (const speed of speeds) {
     for (let i = 0; i < 20; i += 1) {
       w = anim.blendWeights(w, speed, 1 / 60)
@@ -104,8 +104,8 @@ test('블렌드는 정규화되어 합 1을 유지한다(무작위 시퀀스)', 
 })
 
 test('clipTimeScale: 기준 속도에서 1, 범위 밖은 클램프', () => {
-  assert.ok(near(anim.clipTimeScale(3.2, anim.WALK_CLIP_SPEED), 1))
-  assert.ok(near(anim.clipTimeScale(5.6, anim.RUN_CLIP_SPEED), 1))
+  assert.ok(near(anim.clipTimeScale(4.0, anim.WALK_CLIP_SPEED), 1))
+  assert.ok(near(anim.clipTimeScale(6.5, anim.RUN_CLIP_SPEED), 1))
   assert.equal(anim.clipTimeScale(0, anim.WALK_CLIP_SPEED), 1)
   assert.equal(anim.clipTimeScale(100, anim.WALK_CLIP_SPEED), anim.MAX_CLIP_TIME_SCALE)
   assert.equal(anim.clipTimeScale(0.2, anim.RUN_CLIP_SPEED), anim.MIN_CLIP_TIME_SCALE)

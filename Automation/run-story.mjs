@@ -7,7 +7,7 @@ import { dialogueView } from '../src/game/dialogue.ts'
 import { createSession } from '../src/game/session.ts'
 
 const STORY_SEED = 45
-const SPEED = 3.2
+const SPEED = 4.0 // 2026-08-28 걷기 속도 3.2→4.0(RAYCAST_DEFAULTS.walkSpeed)
 const STEP_MS = 100
 const STORY_BASELINE_MS = 84_981
 const npc = Object.fromEntries(placement.npcs.map((entry) => [entry.id, {

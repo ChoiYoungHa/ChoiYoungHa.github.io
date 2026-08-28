@@ -25,6 +25,7 @@ export type Action =
   | 'cancel'
   | 'confirm'
 
+// 2026-08-28 영하님: 이동은 WASD(방향키 병행), 스탯창은 C(S 는 후진과 충돌), 아이템은 I.
 export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string[]> = {
   moveForward: ['KeyW', 'ArrowUp'],
   moveBack: ['KeyS', 'ArrowDown'],
@@ -37,7 +38,6 @@ export const DEFAULT_BINDINGS: Record<Exclude<Action, 'lookX' | 'lookY'>, string
   attack: ['Digit1'],
   skill: ['Digit2'],
   inventory: ['KeyI'],
-  // 2026-08-28 영하님: 스탯창. S 는 후진(moveBack)과 충돌해 C 로 둔다.
   stats: ['KeyC'],
   quick3: ['Digit3'],
   quick4: ['Digit4'],
@@ -88,10 +88,22 @@ export interface KeyboardInputOptions {
   gameInputEnabled?: boolean
 }
 
-function acceptsGameKey(target: EventTarget | null): boolean {
+/**
+ * 텍스트 입력 요소에 포커스가 있으면 게임 키를 무시한다.
+ * 2026-08-28: HUD 버튼을 클릭하면 포커스가 버튼에 남아 숫자키·I·S 가 전부 삼켜졌다("공격이 안 나갈 때가 있다").
+ * 버튼은 Space/Enter(버튼 활성화 키)만 양보하고 나머지 키는 받는다.
+ */
+function acceptsGameKey(target: EventTarget | null, code: string): boolean {
   if (typeof HTMLElement === 'undefined' || !(target instanceof HTMLElement)) return true
-  return !target.isContentEditable && !['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(target.tagName)
+  if (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return false
+  if (target.tagName === 'BUTTON') return code !== 'Space' && code !== 'Enter'
+  return true
 }
+
+const MOVEMENT_CODES = new Set([
+  ...DEFAULT_BINDINGS.moveForward, ...DEFAULT_BINDINGS.moveBack,
+  ...DEFAULT_BINDINGS.moveLeft, ...DEFAULT_BINDINGS.moveRight,
+])
 
 /** 키보드를 InputState 와 게이트된 M6 edge 동작으로 바꾸는 최소 구독기. */
 export function createKeyboardInput(
@@ -105,7 +117,10 @@ export function createKeyboardInput(
     const keyboard = e as KeyboardEvent
     const firstPress = !pressed.has(keyboard.code)
     pressed.add(keyboard.code)
-    if (!gameInputEnabled || !firstPress || keyboard.repeat || !acceptsGameKey(e.target)) return
+    const accepted = acceptsGameKey(e.target, keyboard.code)
+    // 방향키가 페이지 스크롤·버튼 포커스 이동으로 새지 않게 한다(텍스트 입력 중은 제외).
+    if (accepted && MOVEMENT_CODES.has(keyboard.code)) keyboard.preventDefault()
+    if (!gameInputEnabled || !firstPress || keyboard.repeat || !accepted) return
     for (const action of GAMEPLAY_ACTIONS) {
       if (DEFAULT_BINDINGS[action].includes(keyboard.code)) pressedEdges.add(action)
     }
@@ -113,8 +128,11 @@ export function createKeyboardInput(
   const onUp = (e: Event) => {
     pressed.delete((e as KeyboardEvent).code)
   }
+  // 창 포커스를 잃으면(알트탭 등) keyup 이 오지 않는다. 눌림 상태를 비워 이동·자동공격이 멈추지 않는 일을 막는다.
+  const onBlur = () => pressed.clear()
   target.addEventListener('keydown', onDown)
   target.addEventListener('keyup', onUp)
+  target.addEventListener('blur', onBlur)
 
   const held = (action: keyof typeof DEFAULT_BINDINGS) =>
     DEFAULT_BINDINGS[action].some((code) => pressed.has(code))
@@ -128,7 +146,9 @@ export function createKeyboardInput(
         yaw,
       }
     },
-    isDown: (action: keyof typeof DEFAULT_BINDINGS) => held(action),
+    // 홀드 판정도 edge 와 같은 포커스 가드를 따른다(설정 패널 select·슬라이더에 포커스가 있으면 자동공격도 멈춘다).
+    isDown: (action: keyof typeof DEFAULT_BINDINGS) => DEFAULT_BINDINGS[action].some((code) =>
+      pressed.has(code) && (typeof document === 'undefined' || acceptsGameKey(document.activeElement, code))),
     consumePressed(): GameplayAction[] {
       const edges = [...pressedEdges]
       pressedEdges.clear()
@@ -137,6 +157,7 @@ export function createKeyboardInput(
     dispose() {
       target.removeEventListener('keydown', onDown)
       target.removeEventListener('keyup', onUp)
+      target.removeEventListener('blur', onBlur)
       pressed.clear()
       pressedEdges.clear()
     },

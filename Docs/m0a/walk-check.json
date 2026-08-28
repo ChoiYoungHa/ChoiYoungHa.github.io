@@ -1,27 +1,27 @@
 {
-  "at": "2026-08-26T04:29:44.040Z",
+  "at": "2026-08-28T13:01:17.176Z",
   "method": "결정론적 시뮬레이션 — 헤드리스 키 입력 대신 고정 dt 로 컨트롤러 step() 을 직접 호출했다. 컨트롤러가 three/React 비의존이라 가능하다.",
   "params": {
-    "walkSpeed": 3.2,
-    "runSpeed": 5.6,
+    "walkSpeed": 4,
+    "runSpeed": 6.5,
     "acceleration": 12,
     "groundSnap": 0.35,
     "eyeOffset": 0.9
   },
-  "theoretical_distance_m": 15.5733,
+  "theoretical_distance_m": 19.3333,
   "cases": {
     "walk60": {
       "dt": 0.016666666666666666,
       "steps": 300,
       "seconds": 5,
       "run": false,
-      "distance_m": 15.6,
+      "distance_m": 19.3667,
       "final": {
         "x": 0,
         "y": 0.9,
-        "z": -15.6
+        "z": -19.3667
       },
-      "speed_final_mps": 3.2,
+      "speed_final_mps": 4,
       "minY": 0.9,
       "maxY": 0.9,
       "ungroundedSteps": 0
@@ -31,13 +31,13 @@
       "steps": 600,
       "seconds": 5,
       "run": false,
-      "distance_m": 15.5867,
+      "distance_m": 19.35,
       "final": {
         "x": 0,
         "y": 0.9,
-        "z": -15.5867
+        "z": -19.35
       },
-      "speed_final_mps": 3.2,
+      "speed_final_mps": 4,
       "minY": 0.9,
       "maxY": 0.9,
       "ungroundedSteps": 0
@@ -47,13 +47,13 @@
       "steps": 150,
       "seconds": 5,
       "run": false,
-      "distance_m": 15.6267,
+      "distance_m": 19.4,
       "final": {
         "x": 0,
         "y": 0.9,
-        "z": -15.6267
+        "z": -19.4
       },
-      "speed_final_mps": 3.2,
+      "speed_final_mps": 4,
       "minY": 0.9,
       "maxY": 0.9,
       "ungroundedSteps": 0
@@ -63,13 +63,13 @@
       "steps": 300,
       "seconds": 5,
       "run": true,
-      "distance_m": 26.74,
+      "distance_m": 30.7933,
       "final": {
         "x": 0,
         "y": 0.9,
-        "z": -26.74
+        "z": -30.7933
       },
-      "speed_final_mps": 5.6,
+      "speed_final_mps": 6.5,
       "minY": 0.9,
       "maxY": 0.9,
       "ungroundedSteps": 0
@@ -88,14 +88,14 @@
       "speed_final_mps": 0,
       "minY": 0.9,
       "maxY": 0.9,
-      "ungroundedSteps": 3157
+      "ungroundedSteps": 3207
     }
   },
   "checks": {
-    "W 5초 이동거리 16m ±1m": {
-      "value": 15.6,
+    "↑ 5초 이동거리 19m ±1m": {
+      "value": 19.3667,
       "pass": true,
-      "detail": "이론값 15.5733m (가속 구간 손실 0.4267m 포함)"
+      "detail": "이론값 19.3333m (가속 구간 손실 0.6667m 포함)"
     },
     "지면 관통 0 (y가 항상 지면+eyeOffset)": {
       "value": "minY=0.9 maxY=0.9",
@@ -106,11 +106,11 @@
       "pass": true
     },
     "프레임레이트 독립 (dt 60/120/30 편차 ≤0.05m)": {
-      "value": "15.6 / 15.5867 / 15.6267",
+      "value": "19.3667 / 19.35 / 19.4",
       "pass": true
     },
     "달리기가 걷기보다 빠름": {
-      "value": "26.74 > 15.6",
+      "value": "30.7933 > 19.3667",
       "pass": true
     },
     "화면 이탈 0 (60초 달려도 바닥 경계 안)": {

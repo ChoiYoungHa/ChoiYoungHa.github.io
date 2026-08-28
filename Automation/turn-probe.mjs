@@ -14,9 +14,9 @@ await send('Page.enable'); await send('Runtime.enable')
 const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
 await send('Page.navigate', { url: 'http://localhost:5173/?game=1&net=0&scene=hunt&q=low' }); await sleep(12000)
 
-const KEY = { KeyW: ['w', 87] }; const key = (type, code) => send('Input.dispatchKeyEvent', { type, code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
+const KEY = { ArrowUp: ['ArrowUp', 38] }; const key = (type, code) => send('Input.dispatchKeyEvent', { type, code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
 await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 640, y: 360, button: 'left', clickCount: 1 })
 for (let i = 1; i <= 20; i++) { await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: 640 + i * 18, y: 360, button: 'left', buttons: 1 }); await sleep(16) }
 await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 1000, y: 360, button: 'left', clickCount: 1 }); await sleep(300)
-await key('keyDown', 'KeyW'); await sleep(1300); { const sh = await send('Page.captureScreenshot', { format: 'png' }); await mkdir('Docs/qa/anim-probe', { recursive: true }); await writeFile('Docs/qa/anim-probe/turn-walk.png', Buffer.from(sh.data, 'base64')) } await key('keyUp', 'KeyW')
+await key('keyDown', 'ArrowUp'); await sleep(1300); { const sh = await send('Page.captureScreenshot', { format: 'png' }); await mkdir('Docs/qa/anim-probe', { recursive: true }); await writeFile('Docs/qa/anim-probe/turn-walk.png', Buffer.from(sh.data, 'base64')) } await key('keyUp', 'ArrowUp')
 console.log('done'); ws.close(); chrome.kill()

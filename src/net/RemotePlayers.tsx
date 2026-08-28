@@ -79,13 +79,17 @@ function RemoteAvatar({ remote }: { remote: RemotePlayer }) {
     group.position.set(pose.x, pose.y, pose.z)
     group.rotation.y = pose.rotY
     const actions = actionsRef.current
+    // 2026-08-28: 로컬 아바타(Player.tsx)와 같은 규칙 — 스킬 재생 중엔 공격 클립을 겹치지 않는다.
     if (actions.attack !== null && pose.attackSeq !== seqRef.current.attack) {
-      if (seqRef.current.attack >= 0) actions.attack.reset().setEffectiveWeight(1).setEffectiveTimeScale(ATTACK_CLIP_TIMESCALE).play()
+      if (seqRef.current.attack >= 0 && !(actions.skill?.isRunning() ?? false)) actions.attack.reset().setEffectiveWeight(1).setEffectiveTimeScale(ATTACK_CLIP_TIMESCALE).play()
       seqRef.current.attack = pose.attackSeq
     }
     if (pose.skillSeq !== seqRef.current.skill) {
       const clip = actions.skill ?? actions.attack
-      if (seqRef.current.skill >= 0) clip?.reset().setEffectiveWeight(1).setEffectiveTimeScale(actions.skill !== null ? SKILL_CLIP_TIMESCALE : ATTACK_CLIP_TIMESCALE).play()
+      if (seqRef.current.skill >= 0) {
+        if (actions.skill !== null) actions.attack?.stop()
+        clip?.reset().setEffectiveWeight(1).setEffectiveTimeScale(actions.skill !== null ? SKILL_CLIP_TIMESCALE : ATTACK_CLIP_TIMESCALE).play()
+      }
       seqRef.current.skill = pose.skillSeq
     }
     const oneShot = (actions.attack?.isRunning() ?? false) || (actions.skill?.isRunning() ?? false)

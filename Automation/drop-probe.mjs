@@ -14,7 +14,7 @@ const send = (method, params = {}) => new Promise((resolve, reject) => { const i
 await send('Page.enable'); await send('Runtime.enable')
 const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
 const shot = async (name) => { const sh = await send('Page.captureScreenshot', { format: 'png' }); await writeFile(join(OUT, `${name}-${TAG}.png`), Buffer.from(sh.data, 'base64')) }
-const KEY = { KeyW: ['w', 87], KeyA: ['a', 65], KeyD: ['d', 68], Digit1: ['1', 49], ShiftLeft: ['Shift', 16] }
+const KEY = { ArrowUp: ['ArrowUp', 38], ArrowLeft: ['ArrowLeft', 37], ArrowRight: ['ArrowRight', 39], Digit1: ['1', 49], ShiftLeft: ['Shift', 16] }
 const keyDown = (code) => send('Input.dispatchKeyEvent', { type: 'keyDown', code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
 const keyUp = (code) => send('Input.dispatchKeyEvent', { type: 'keyUp', code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] })
 let yaw = 0
@@ -22,15 +22,15 @@ const setYaw = async (t) => { let d = t - yaw; while (d > Math.PI) d -= 2 * Math
 const yawToward = (a, b) => Math.atan2(-(b.x - a.x), -(b.z - a.z)); const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z)
 const READ = `(() => { const s = globalThis.__R3F_SCENE__; const out = { player: null, pigs: [], drops: [] }; s.traverse((o) => { if (o.name === 'player' && !o.isMesh && !out.player) out.player = { x: o.position.x, z: o.position.z }; if (o.isInstancedMesh && o.parent?.name === 'm6-game-runtime') { const list = []; for (let i = 0; i < o.count; i++) { const e = o.instanceMatrix.array, k = i * 16; list.push({ x: e[k + 12], y: e[k + 13], z: e[k + 14], s: Math.hypot(e[k], e[k + 1], e[k + 2]) }) } if (/^drops-/.test(o.name)) out.drops.push(...list.map((d) => ({ ...d, mesh: o.name }))); else if (o.instanceMatrix.count === 10) out.pigs = list } }); return JSON.stringify(out) })()`
 await send('Page.navigate', { url: 'http://localhost:5173/?game=1&net=0&scene=hunt&q=base' }); await sleep(14000)
-const walkTo = async (t, tol = 1.5, timeoutMs = 60000) => { const t0 = Date.now(); let last = null; let stuck = Date.now(); let n = 0; await keyDown('KeyW'); try { while (Date.now() - t0 < timeoutMs) { const s = JSON.parse(await ev(READ)); const p = s.player; if (!p) { await sleep(200); continue } if (dist(p, t) <= tol) return; await setYaw(yawToward(p, t)); if (last && dist(last, p) > 0.05) stuck = Date.now(); if (Date.now() - stuck > 2500) { n += 1; stuck = Date.now(); const k = n % 2 ? 'KeyD' : 'KeyA'; await keyDown(k); await sleep(900); await keyUp(k) } last = p; await sleep(120) } } finally { await keyUp('KeyW') } }
+const walkTo = async (t, tol = 1.5, timeoutMs = 60000) => { const t0 = Date.now(); let last = null; let stuck = Date.now(); let n = 0; await keyDown('ArrowUp'); try { while (Date.now() - t0 < timeoutMs) { const s = JSON.parse(await ev(READ)); const p = s.player; if (!p) { await sleep(200); continue } if (dist(p, t) <= tol) return; await setYaw(yawToward(p, t)); if (last && dist(last, p) > 0.05) stuck = Date.now(); if (Date.now() - stuck > 2500) { n += 1; stuck = Date.now(); const k = n % 2 ? 'ArrowRight' : 'ArrowLeft'; await keyDown(k); await sleep(900); await keyUp(k) } last = p; await sleep(120) } } finally { await keyUp('ArrowUp') } }
 await walkTo({ x: -30, z: 12 }); await walkTo({ x: -60, z: 8 })
 const t0 = Date.now(); let walking = false; let found = null
 while (Date.now() - t0 < 120000) {
   const s = JSON.parse(await ev(READ)); if (!s.player) { await sleep(300); continue }
-  if (s.drops.length > 0) { found = s.drops; if (walking) { await keyUp('KeyW'); walking = false } const d = s.drops[0]; await setYaw(yawToward(s.player, d)); await sleep(250); await shot('s07-drop3d'); await sleep(1500); await shot('s07-drop3d-b'); break }
+  if (s.drops.length > 0) { found = s.drops; if (walking) { await keyUp('ArrowUp'); walking = false } const d = s.drops[0]; await setYaw(yawToward(s.player, d)); await sleep(250); await shot('s07-drop3d'); await sleep(1500); await shot('s07-drop3d-b'); break }
   const pig = s.pigs.map((g) => ({ ...g, d: dist(s.player, g) })).sort((a, b) => a.d - b.d)[0]; if (!pig) { await sleep(300); continue }
-  if (pig.d > 1.6) { await setYaw(yawToward(s.player, pig)); if (!walking) { await keyDown('KeyW'); walking = true } await sleep(150); continue }
-  if (walking) { await keyUp('KeyW'); walking = false }
+  if (pig.d > 1.6) { await setYaw(yawToward(s.player, pig)); if (!walking) { await keyDown('ArrowUp'); walking = true } await sleep(150); continue }
+  if (walking) { await keyUp('ArrowUp'); walking = false }
   await setYaw(yawToward(s.player, pig)); await keyDown('Digit1'); await sleep(60); await keyUp('Digit1'); await sleep(400)
 }
 await shot('s07-drop3d-end'); console.log('quest', await ev("document.querySelector('[aria-label=\"퀘스트 추적\"]')?.textContent"), 'last', JSON.stringify(JSON.parse(await ev(READ))).slice(0,300)); console.log('drops', JSON.stringify(found)?.slice(0, 400), 'errors', JSON.stringify(errors.slice(0, 5)))

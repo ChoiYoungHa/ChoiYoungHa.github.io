@@ -22,7 +22,7 @@ async function launch(label, w = W, h = H, dsf = 1) {
   // base 프리셋 스테이지는 CSS 1067×600(백킹 1600×900, dprCap 1.5) — 뷰포트를 그 크기로 두고 DPR 1.5 로 찍어야 프레임(1600×900)이 꽉 찬다.
   await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: dsf, mobile: false })
   const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description ?? r.exceptionDetails.text); return r.result.value }
-  const KEY = { KeyW: ['w', 87], KeyA: ['a', 65], KeyD: ['d', 68], KeyS: ['s', 83], KeyF: ['f', 70], KeyI: ['i', 73], KeyC: ['c', 67], Digit1: ['1', 49], Digit2: ['2', 50], Digit4: ['4', 52], Space: [' ', 32], ShiftLeft: ['Shift', 16], Enter: ['Enter', 13], Escape: ['Escape', 27] }
+  const KEY = { ArrowUp: ['ArrowUp', 38], ArrowLeft: ['ArrowLeft', 37], ArrowRight: ['ArrowRight', 39], ArrowDown: ['ArrowDown', 40], KeyF: ['f', 70], KeyI: ['i', 73], KeyC: ['c', 67], Digit1: ['1', 49], Digit2: ['2', 50], Digit4: ['4', 52], Space: [' ', 32], ShiftLeft: ['Shift', 16], Enter: ['Enter', 13], Escape: ['Escape', 27] }
   const down = new Set()
   const keyDown = (code) => { down.add(code); return send('Input.dispatchKeyEvent', { type: KEY[code][0].length === 1 ? 'keyDown' : 'rawKeyDown', code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1], modifiers: down.has('ShiftLeft') ? 8 : 0 }) }
   const keyUp = (code) => { down.delete(code); return send('Input.dispatchKeyEvent', { type: 'keyUp', code, key: KEY[code][0], windowsVirtualKeyCode: KEY[code][1], nativeVirtualKeyCode: KEY[code][1] }) }
@@ -34,7 +34,7 @@ async function launch(label, w = W, h = H, dsf = 1) {
   const yawToward = (a, b) => Math.atan2(-(b.x - a.x), -(b.z - a.z)); const dist = (a, b) => Math.hypot(a.x - b.x, a.z - b.z)
   const READ = `(() => { const s = globalThis.__R3F_SCENE__; const out = { player: null, pigs: [], boss: null, text: (document.querySelector('[data-game-overlay]')?.textContent ?? '').replace(/\\s+/g, ' ').slice(0, 120) }; if (!s) return JSON.stringify(out); s.traverse((o) => { if (o.name === 'player' && !o.isMesh && !out.player) out.player = { x: o.position.x, z: o.position.z }; if (o.isInstancedMesh && o.parent?.name === 'm6-game-runtime' && o.instanceMatrix.count === 10) { for (let i = 0; i < o.count; i++) { const e = o.instanceMatrix.array, k = i * 16; out.pigs.push({ x: e[k + 12], z: e[k + 14] }) } } if (o.name === 'boss-the-eleventh') out.boss = { visible: o.visible, x: o.position.x, z: o.position.z } }); return JSON.stringify(out) })()`
   const read = async () => JSON.parse(await ev(READ))
-  const walkTo = async (t, { tol = 1.5, run = false, timeoutMs = 60000 } = {}) => { const t0 = Date.now(); let last = null; let stuck = Date.now(); let n = 0; if (run) await keyDown('ShiftLeft'); await keyDown('KeyW'); try { while (Date.now() - t0 < timeoutMs) { const s = await read(); const p = s.player; if (!p) { await sleep(200); continue } if (dist(p, t) <= tol) return; await setYaw(yawToward(p, t)); if (last && dist(last, p) > 0.05) stuck = Date.now(); if (Date.now() - stuck > 2500) { n += 1; stuck = Date.now(); const k = n % 2 ? 'KeyD' : 'KeyA'; await keyDown(k); await sleep(900); await keyUp(k) } last = p; await sleep(100) } } finally { await keyUp('KeyW'); if (run) await keyUp('ShiftLeft') } }
+  const walkTo = async (t, { tol = 1.5, run = false, timeoutMs = 60000 } = {}) => { const t0 = Date.now(); let last = null; let stuck = Date.now(); let n = 0; if (run) await keyDown('ShiftLeft'); await keyDown('ArrowUp'); try { while (Date.now() - t0 < timeoutMs) { const s = await read(); const p = s.player; if (!p) { await sleep(200); continue } if (dist(p, t) <= tol) return; await setYaw(yawToward(p, t)); if (last && dist(last, p) > 0.05) stuck = Date.now(); if (Date.now() - stuck > 2500) { n += 1; stuck = Date.now(); const k = n % 2 ? 'ArrowRight' : 'ArrowLeft'; await keyDown(k); await sleep(900); await keyUp(k) } last = p; await sleep(100) } } finally { await keyUp('ArrowUp'); if (run) await keyUp('ShiftLeft') } }
   const CLICK = (re) => `(() => { const b = [...document.querySelectorAll('button')].find((x) => !x.disabled && ${re}.test(x.textContent)); if (!b) return false; b.click(); return true })()`
   // 트레일러 오버레이(카드·자막) — 게임 DOM 위에 주입
   const overlay = async (html, opts = {}) => ev(`(() => { let el = document.getElementById('trailer-overlay'); if (!el) { el = document.createElement('div'); el.id = 'trailer-overlay'; el.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;font-family:"Segoe UI",system-ui,sans-serif;color:#f5f0e4;'; document.body.appendChild(el) } el.innerHTML = ${JSON.stringify(html)}; el.style.opacity = ${opts.opacity ?? 1}; el.style.transition = 'opacity ${opts.fadeMs ?? 500}ms ease'; return true })()`)
@@ -80,7 +80,7 @@ mark('create'); await A.ev(A.CLICK('/시작/')); await sleep(1800)
 await A.overlay(A.caption('전사를 만들고, 마을로', '캐릭터 생성'), { opacity: 0 }); await sleep(60); await A.fadeOverlay(1); await sleep(1800); await A.fadeOverlay(0)
 await A.ev(A.CLICK('/생성|시작|확인|모험/')); await A.waitFor(HUD, 20000); await sleep(300); await A.overlay('')
 mark('forest'); await sleep(2600) // 자막 1
-await A.keyDown('KeyW'); await sleep(2600); await A.keyUp('KeyW') // 자막 2 동안 전진
+await A.keyDown('ArrowUp'); await sleep(2600); await A.keyUp('ArrowUp') // 자막 2 동안 전진
 // ③ 멀티플레이 동행: B 가 같은 방에 들어와 A 앞에 선다
 const B = await launch('B', 1280, 720)
 await B.send('Page.navigate', { url: `${BASE}?game=1&scene=hunt&q=low&room=${ROOM}` })
@@ -89,7 +89,7 @@ await stopCast(); await A.walkTo({ x: -1, z: 16.5 }, { tol: 1.2 }); await bReady
 await A.sweepYaw(A.yaw + 0.6, 1200); await A.sweepYaw(A.yaw - 1.2, 2200); await A.sweepYaw(A.yaw + 0.6, 1200)
 await B.walkTo({ x: 0.5, z: 19.5 }, { tol: 1.0, timeoutMs: 40000 })
 mark('multiplayer'); const a0 = await A.read(); await A.setYaw(A.yawToward(a0.player, { x: 0.5, z: 19.5 })); await A.overlay(A.caption('친구와 함께', '실시간 멀티플레이 · 같은 방 URL 공유'), { opacity: 0 }); await sleep(60); await A.fadeOverlay(1)
-await B.keyDown('KeyA'); await sleep(900); await B.keyUp('KeyA'); await B.tap('Space'); await sleep(900); await B.keyDown('KeyD'); await sleep(900); await B.keyUp('KeyD'); await sleep(600)
+await B.keyDown('ArrowLeft'); await sleep(900); await B.keyUp('ArrowLeft'); await B.tap('Space'); await sleep(900); await B.keyDown('ArrowRight'); await sleep(900); await B.keyUp('ArrowRight'); await sleep(600)
 await A.fadeOverlay(0); await sleep(500); await A.overlay('')
 // ④ 광장·촌장 오릭
 mark('village'); await A.overlay(A.caption('버섯마을', '광장 · 우물 · 상점'), { opacity: 0 }); await sleep(60); await A.fadeOverlay(1)
