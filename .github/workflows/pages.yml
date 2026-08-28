@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: true # public/models/**/*.glb·env/*.hdr 는 Git LFS — 없으면 포인터 파일(132B)이 배포된다(2026-08-28 라이브 실측)
       - uses: actions/setup-node@v4
         with:
           node-version: 22
