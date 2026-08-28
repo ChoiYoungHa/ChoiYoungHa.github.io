@@ -37,3 +37,6 @@ dist/
 # Mixamo raw FBX: license forbids redistribution — keep local only (DCC/incoming), runtime uses converted GLB
 DCC/incoming/asset.char.*/*.fbx
 assets-src/
+
+# Claude 워커 격리 작업트리(로컬 전용)
+.claude/worktrees/
