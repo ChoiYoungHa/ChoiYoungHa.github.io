@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedFromHead": "83aa5af",
+  "generatedFromHead": "aa58c97",
   "assets": {
     "heroTreeGlb": {
       "url": "/models/hero_tree.glb",
@@ -39,6 +39,14 @@
     "terrainDirtNormal": {
       "url": "/textures/ground_dirt_normal.jpg",
       "bytes": 647171
+    },
+    "terrainGrassOrm": {
+      "url": "/textures/ground_grass_orm.png",
+      "bytes": 1497955
+    },
+    "terrainDirtOrm": {
+      "url": "/textures/ground_dirt_orm.png",
+      "bytes": 1467020
     }
   }
 }

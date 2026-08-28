@@ -34,6 +34,9 @@ export const LOOK_ASSET_CONTRACT = {
     grassNormal: '/textures/ground_grass_normal.jpg',
     dirtDiffuse: '/textures/ground_dirt_diffuse.jpg',
     dirtNormal: '/textures/ground_dirt_normal.jpg',
+    /** 2026-08-28 — ORM(R=AO,G=roughness,B=metallic, 선형). 둘 다 있을 때만 사용. */
+    grassOrm: '/textures/ground_grass_orm.png',
+    dirtOrm: '/textures/ground_dirt_orm.png',
   },
 } as const
 
@@ -54,6 +57,8 @@ export interface LookAssetRegistry {
     terrainGrassNormal: LookAssetEntry
     terrainDirtDiffuse: LookAssetEntry
     terrainDirtNormal: LookAssetEntry
+    terrainGrassOrm?: LookAssetEntry
+    terrainDirtOrm?: LookAssetEntry
   }
 }
 
@@ -68,7 +73,7 @@ export interface ResolvedLookAssets {
   grass: { mode: 'texture'; url: string } | { mode: 'vertex' }
   /** 지형: diffuse 2장이 모두 있어야 PBR. normal 은 둘 다 있을 때만(하나만 있으면 무시). */
   terrain:
-    | { mode: 'pbr'; grassDiffuse: string; dirtDiffuse: string; grassNormal: string | null; dirtNormal: string | null }
+    | { mode: 'pbr'; grassDiffuse: string; dirtDiffuse: string; grassNormal: string | null; dirtNormal: string | null; grassOrm: string | null; dirtOrm: string | null }
     | { mode: 'flat' }
 }
 
@@ -87,6 +92,8 @@ export function emptyLookAssetRegistry(head = 'unknown'): LookAssetRegistry {
       terrainGrassNormal: { ...EMPTY },
       terrainDirtDiffuse: { ...EMPTY },
       terrainDirtNormal: { ...EMPTY },
+      terrainGrassOrm: { ...EMPTY },
+      terrainDirtOrm: { ...EMPTY },
     },
   }
 }
@@ -107,6 +114,7 @@ export function resolveLookAssets(registry: LookAssetRegistry, forceProcedural =
   ) as ResolvedLookAssets['village']
 
   const normals = present(a.terrainGrassNormal) && present(a.terrainDirtNormal)
+  const orms = a.terrainGrassOrm !== undefined && a.terrainDirtOrm !== undefined && present(a.terrainGrassOrm) && present(a.terrainDirtOrm)
   const terrain: ResolvedLookAssets['terrain'] =
     present(a.terrainGrassDiffuse) && present(a.terrainDirtDiffuse)
       ? {
@@ -115,6 +123,8 @@ export function resolveLookAssets(registry: LookAssetRegistry, forceProcedural =
           dirtDiffuse: a.terrainDirtDiffuse.url as string,
           grassNormal: normals ? (a.terrainGrassNormal.url as string) : null,
           dirtNormal: normals ? (a.terrainDirtNormal.url as string) : null,
+          grassOrm: orms ? (a.terrainGrassOrm?.url as string) : null,
+          dirtOrm: orms ? (a.terrainDirtOrm?.url as string) : null,
         }
       : { mode: 'flat' }
 

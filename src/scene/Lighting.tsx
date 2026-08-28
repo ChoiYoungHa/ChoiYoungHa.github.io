@@ -1,6 +1,8 @@
 /* oxlint-disable react/only-export-components -- smoke probe verifies the constructed shadow light. */
-import { useLayoutEffect, useMemo } from 'react'
-import { DirectionalLight } from 'three'
+import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { DirectionalLight, Vector3 } from 'three'
+import { readPlayerFrame } from '../store/playerBridge'
 import { useRuntime } from '../store/useRuntime'
 import { shadowConfigForPreset, type ShadowPresetName } from './shadows/shadowConfig'
 
@@ -44,21 +46,55 @@ export function applyShadowPreset(light: DirectionalLight, preset: ShadowPresetN
   }
 }
 
+/**
+ * 2026-08-28 (룩 심사안 #1·#6) — 태양 방향(단위 벡터, 기존 position (48.4,14.6,-48.4) 정규화)과 색온도·강도.
+ * 그림자 광원은 매 프레임 플레이어(없으면 원점)를 target 으로 추적한다 — 이전엔 원점 고정 박스라 거대수목(38,-96)·길 끝이 그림자 밖이었다.
+ * 스위밍 방지: target 을 그림자 텍셀 크기로 스냅한다.
+ */
+export const SUN_DIRECTION = new Vector3(48.4, 14.6, -48.4).normalize()
+export const SUN_COLOR = '#ffe6c8'
+export const SUN_INTENSITY = 2.2
+export const SUN_DISTANCE_METERS = 70
+
 export function createShadowLight(): DirectionalLight {
-  const light = new DirectionalLight(0xffffff, 1)
+  const light = new DirectionalLight(SUN_COLOR, SUN_INTENSITY)
   light.castShadow = true
-  light.position.set(48.4, 14.6, -48.4)
+  light.position.copy(SUN_DIRECTION).multiplyScalar(SUN_DISTANCE_METERS)
   applyShadowPreset(light, 'low')
   return light
+}
+
+/** 플레이어 위치를 그림자 텍셀 격자에 스냅해 광원·타깃을 옮긴다(순수 계산, 테스트 가능). */
+export function trackShadowTarget(light: DirectionalLight, focus: Vector3, out: { target: Vector3; position: Vector3 }): void {
+  const halfExtent = light.shadow.camera.right
+  const worldPerTexel = (halfExtent * 2) / Math.max(1, light.shadow.mapSize.width)
+  out.target.set(
+    Math.round(focus.x / worldPerTexel) * worldPerTexel,
+    Math.round(focus.y / worldPerTexel) * worldPerTexel,
+    Math.round(focus.z / worldPerTexel) * worldPerTexel,
+  )
+  out.position.copy(out.target).addScaledVector(SUN_DIRECTION, SUN_DISTANCE_METERS)
 }
 
 export function Lighting() {
   const preset = useRuntime((state) => state.preset)
   const light = useMemo(() => createShadowLight(), [])
+  const scratch = useRef({ target: new Vector3(), position: new Vector3(), focus: new Vector3() })
 
   useLayoutEffect(() => {
     applyShadowPreset(light, preset)
   }, [light, preset])
 
-  return <primitive object={light} />
+  useFrame(() => {
+    const frame = readPlayerFrame()
+    const s = scratch.current
+    if (frame !== null) s.focus.set(frame.position.x, frame.position.y, frame.position.z)
+    else s.focus.set(0, 0, 0)
+    trackShadowTarget(light, s.focus, s)
+    light.target.position.copy(s.target)
+    light.position.copy(s.position)
+    light.target.updateMatrixWorld()
+  })
+
+  return <><primitive object={light} /><primitive object={light.target} /></>
 }

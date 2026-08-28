@@ -12,7 +12,7 @@
   },
   "exposure": {
     "property": "toneMappingExposure",
-    "start": 0.44,
+    "start": 0.4,
     "tuningRange": [
       0.85,
       1.25
@@ -68,7 +68,7 @@
   },
   "sky": {
     "backgroundIntensity": 1.75,
-    "environmentIntensity": 1.0,
+    "environmentIntensity": 0.75,
     "hazeMix": 0.4,
     "hazeDirection": {
       "enabled": false,

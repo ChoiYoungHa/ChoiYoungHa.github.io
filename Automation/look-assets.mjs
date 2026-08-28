@@ -45,6 +45,8 @@ export async function scanLookAssets(root, head = 'unknown') {
   registry.assets.terrainGrassNormal = entryFor(root, c.terrain.grassNormal)
   registry.assets.terrainDirtDiffuse = entryFor(root, c.terrain.dirtDiffuse)
   registry.assets.terrainDirtNormal = entryFor(root, c.terrain.dirtNormal)
+  registry.assets.terrainGrassOrm = entryFor(root, c.terrain.grassOrm)
+  registry.assets.terrainDirtOrm = entryFor(root, c.terrain.dirtOrm)
   return registry
 }
 

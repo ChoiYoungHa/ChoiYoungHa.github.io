@@ -6,7 +6,6 @@ import { Atmosphere } from './scene/Atmosphere'
 import { Lighting } from './scene/Lighting'
 import { Prototype } from './scene/Prototype'
 import { Terrain } from './scene/Terrain'
-import { MainPath } from './scene/MainPath'
 import { HeroTree } from './scene/HeroTree'
 import { Village } from './scene/Village'
 import { Foliage } from './scene/Foliage'
@@ -103,7 +102,7 @@ const Stage = memo(function Stage({ width, height, shot, hideHero, dprCap }: { w
       <RuntimeProbe />
       <Prototype />
       <Terrain />
-      <MainPath />
+      {/* 2026-08-28 심사안 #4: 단색 길 스트립 제거 — 지형 pathMask 가 코덱스 흙길 타일(+normal·ORM)을 직접 드러낸다. MainPath.tsx 는 보존(참조 0). */}
       {hideHero ? null : <HeroTree />}
       {/* M2-24 마을 8채. 지오메트리를 코드로 만들고 InstancedMesh 로 그린다 — suspend 하지 않으므로
           Foliage/RockInstances 의 Suspense 경계 밖에 둔다(로딩 중에도 마을은 보인다). */}

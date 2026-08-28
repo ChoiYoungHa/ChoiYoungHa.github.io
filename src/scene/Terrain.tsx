@@ -1,12 +1,13 @@
 import { useTexture } from '@react-three/drei'
 import { Suspense, useMemo } from 'react'
 import { BufferAttribute, PlaneGeometry, RepeatWrapping, SRGBColorSpace, type Texture } from 'three'
-import { attribute, color, float, luminance, mix, normalMap, positionWorld, texture, vec2, vec3 } from 'three/tsl'
+import { attribute, clamp, color, float, luminance, mix, mx_noise_float, normalMap, positionWorld, texture, vec2, vec3 } from 'three/tsl'
 import type { MeshStandardNodeMaterial, Node } from 'three/webgpu'
 import { useLookdevMaterial } from './Atmosphere'
 import { WORLD_SIZE } from './bounds'
 import mainPath from '../data/main-path.json' with { type: 'json' }
 import { getLookAssets, pathBlendMask } from '../systems/lookAssets'
+import { getActiveTexturePolicy } from '../gl/createRenderer'
 import { distanceToCenterline, type PathPoint } from './scatter/exclusionMask'
 import { sampleHeight } from './terrain/heightmap'
 
@@ -35,7 +36,18 @@ const CENTERLINE: PathPoint[] = mainPath.waypoints.map((w) => ({ x: w.x, z: w.z 
 /** 길 폭 밖으로 흙이 번지는 거리(m). 길 strip(3m)은 MainPath 가 그리고, 이 마스크는 그 가장자리를 지형에 녹인다. */
 export const PATH_BLEND_FEATHER = 2.5
 /** PBR 타일 크기(m). 1K 텍스처가 4m 마다 반복 — 근경(2~6m)에서 픽셀이 뭉개지지 않는 최소. */
-export const TERRAIN_TILE_METERS = 4
+export const TERRAIN_TILE_METERS = 2 // 2026-08-28 심사안 #3: 코덱스 타일 제작 주기(2m)와 일치. 반복은 매크로 스케일·노이즈로 숨긴다.
+/** 심사안 #3 — 두 번째 샘플 스케일(m)과 혼합비: 2m 디테일 + 23m 매크로를 섞어 격자 반복을 깬다. */
+export const TERRAIN_MACRO_TILE_METERS = 23
+export const TERRAIN_MACRO_MIX = 0.35
+/** 매크로 명암 변주(mx_noise, 0.035/m) 하한·상한 곱색. */
+export const TERRAIN_MACRO_DARK = [0.88, 0.9, 0.84] as const
+export const TERRAIN_MACRO_LIGHT = [1.08, 1.05, 0.97] as const
+/** 길 경계에 노이즈(0.4/m, ±0.15)를 더해 직선 경계를 흐린다. */
+export const TERRAIN_EDGE_NOISE = 0.15
+export const TERRAIN_NORMAL_STRENGTH = 0.8
+/** ORM: AO 는 70% 만 반영(과한 어둠 방지), roughness 는 0.5 이상으로 클램프. */
+export const TERRAIN_AO_MIX = 0.7
 /**
  * R91-A(D2) — 텍스처 곱색 = mix(백색, 휘도 정규화 팔레트(TERRAIN_COLOR/자기 휘도), paletteMix) × lumaScale.
  * 텍스처 밝기를 대체로 보존하면서 hue·채도만 팔레트(52°) 쪽으로 조금 옮긴다.
@@ -111,6 +123,8 @@ function prepareTile(tex: Texture, srgb: boolean): Texture {
   tex.wrapS = RepeatWrapping
   tex.wrapT = RepeatWrapping
   if (srgb) tex.colorSpace = SRGBColorSpace
+  // 2026-08-28 심사안 #2: preload 가 renderer.init 이전에 텍스처를 만들어 DEFAULT_ANISOTROPY 가 안 먹었다 — 정책값을 직접 적용.
+  tex.anisotropy = getActiveTexturePolicy().anisotropy
   tex.needsUpdate = true
   return tex
 }
@@ -124,33 +138,51 @@ function worldTileUv(): Node<'vec2'> {
  * 풀/흙 diffuse(+normal) 블렌딩 노드. 재질은 여전히 1개(colorNode·normalNode 만 교체) — 재질 추가 0.
  * 순서: mask 0 = 풀, 1 = 흙. 곱색은 `TERRAIN_COLOR × TERRAIN_TEXTURE_TINT_SCALE`.
  */
-function TerrainPbr({ urls }: { urls: { grassDiffuse: string; dirtDiffuse: string; grassNormal: string | null; dirtNormal: string | null } }) {
+function TerrainPbr({ urls }: { urls: { grassDiffuse: string; dirtDiffuse: string; grassNormal: string | null; dirtNormal: string | null; grassOrm: string | null; dirtOrm: string | null } }) {
   const diffuse = useTexture([urls.grassDiffuse, urls.dirtDiffuse])
   const normals = useTexture(urls.grassNormal && urls.dirtNormal ? [urls.grassNormal, urls.dirtNormal] : [])
+  const orms = useTexture(urls.grassOrm && urls.dirtOrm ? [urls.grassOrm, urls.dirtOrm] : [])
   const nodes = useMemo(() => {
     const [grass, dirt] = diffuse.map((t) => prepareTile(t, true))
-    const uv = worldTileUv()
-    const mask = attribute('pathMask', 'float') as unknown as Node<'float'>
+    const uvA = worldTileUv()
+    const uvB = positionWorld.xz.mul(1 / TERRAIN_MACRO_TILE_METERS)
+    const xz = positionWorld.xz
+    // 길 마스크에 노이즈를 더해 직선 경계를 흐린다(0~1 클램프).
+    const maskRaw = attribute('pathMask', 'float') as unknown as Node<'float'>
+    const mask = clamp(maskRaw.add(mx_noise_float(xz.mul(0.4)).mul(TERRAIN_EDGE_NOISE)), 0, 1)
+    // 2m 디테일 + 23m 매크로 듀얼 스케일
+    const grassRgb = mix(texture(grass, uvA).rgb, texture(grass, uvB).rgb, TERRAIN_MACRO_MIX)
+    const dirtRgb = mix(texture(dirt, uvA).rgb, texture(dirt, uvB).rgb, TERRAIN_MACRO_MIX)
+    const macro = mx_noise_float(xz.mul(0.035)).mul(0.5).add(0.5)
+    const macroTint = mix(vec3(...TERRAIN_MACRO_DARK), vec3(...TERRAIN_MACRO_LIGHT), macro)
     const palette = color(TERRAIN_TEXTURE_TINT.color)
     const tint = mix(vec3(1.0), palette.div(luminance(palette)), float(TERRAIN_TEXTURE_TINT.paletteMix)).mul(TERRAIN_TEXTURE_TINT.lumaScale)
-    const colorNode = mix(texture(grass, uv).rgb, texture(dirt, uv).rgb, mask).mul(tint) as unknown as Node<'vec3'>
+    const colorNode = mix(grassRgb, dirtRgb, mask).mul(macroTint).mul(tint) as unknown as Node<'vec3'>
     let normalNode: Node<'vec3'> | undefined
     if (normals.length === 2) {
       const [gN, dN] = normals.map((t) => prepareTile(t, false))
-      normalNode = normalMap(mix(texture(gN, uv), texture(dN, uv), mask), vec2(float(0.6))) as unknown as Node<'vec3'>
+      normalNode = normalMap(mix(texture(gN, uvA), texture(dN, uvA), mask), vec2(float(TERRAIN_NORMAL_STRENGTH))) as unknown as Node<'vec3'>
     }
-    return { colorNode, normalNode }
-  }, [diffuse, normals])
-  const material = useLookdevMaterial({ roughness: 0.95, metalness: 0, colorNode: nodes.colorNode, normalNode: nodes.normalNode })
+    let aoNode: Node<'float'> | undefined
+    let roughnessNode: Node<'float'> | undefined
+    if (orms.length === 2) {
+      const [gO, dO] = orms.map((t) => prepareTile(t, false))
+      const orm = mix(texture(gO, uvA), texture(dO, uvA), mask)
+      aoNode = mix(float(1), orm.r, TERRAIN_AO_MIX) as unknown as Node<'float'>
+      roughnessNode = clamp(orm.g, 0.5, 1) as unknown as Node<'float'>
+    }
+    return { colorNode, normalNode, aoNode, roughnessNode }
+  }, [diffuse, normals, orms])
+  const material = useLookdevMaterial({ roughness: 0.95, metalness: 0, colorNode: nodes.colorNode, normalNode: nodes.normalNode, aoNode: nodes.aoNode, roughnessNode: nodes.roughnessNode })
   return <TerrainChunks material={material} withPathMask />
 }
 
 export function Terrain() {
   if (LOOK.terrain.mode === 'pbr') {
-    const { grassDiffuse, dirtDiffuse, grassNormal, dirtNormal } = LOOK.terrain
+    const { grassDiffuse, dirtDiffuse, grassNormal, dirtNormal, grassOrm, dirtOrm } = LOOK.terrain
     return (
       <Suspense fallback={<TerrainFlat />}>
-        <TerrainPbr urls={{ grassDiffuse, dirtDiffuse, grassNormal, dirtNormal }} />
+        <TerrainPbr urls={{ grassDiffuse, dirtDiffuse, grassNormal, dirtNormal, grassOrm, dirtOrm }} />
       </Suspense>
     )
   }
@@ -160,4 +192,5 @@ export function Terrain() {
 if (LOOK.terrain.mode === 'pbr') {
   useTexture.preload([LOOK.terrain.grassDiffuse, LOOK.terrain.dirtDiffuse])
   if (LOOK.terrain.grassNormal && LOOK.terrain.dirtNormal) useTexture.preload([LOOK.terrain.grassNormal, LOOK.terrain.dirtNormal])
+  if (LOOK.terrain.grassOrm && LOOK.terrain.dirtOrm) useTexture.preload([LOOK.terrain.grassOrm, LOOK.terrain.dirtOrm])
 }

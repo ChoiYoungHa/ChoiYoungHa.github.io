@@ -24,7 +24,9 @@ let activeTexturePolicy: RendererTexturePolicy = {
 
 /** Resolve the sampler and asset tier selected before renderer creation. */
 export function readRendererTexturePolicy(search: string = location.search): RendererTexturePolicy {
-  const preset: RendererPreset = new URLSearchParams(search).get('q') === 'base' ? 'base' : 'low'
+  // 2026-08-28: useRuntime 기본 'base' 와 일치시킨다(이전 'low' 기본은 anisotropy 1 로 지면이 뭉개졌다).
+  const q = new URLSearchParams(search).get('q')
+  const preset: RendererPreset = q === 'low' ? 'low' : 'base'
   return { preset, ...textureConfigForPreset(preset) }
 }
 

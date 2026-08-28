@@ -51,6 +51,8 @@ type SceneWithBackgroundNode = Scene & { backgroundNode: unknown }
  * (8~12%·205~215°)에 못 든다. three 의 배경은 어차피 NodeMaterial 구(Background.js)라 `scene.backgroundNode` 로
  * 같은 프로그램 안에서 안개색 쪽으로 섞는다(프로그램 수 불변). 휘도는 보존하고(안개색을 하늘 휘도에 맞춰 스케일) 색만 옮긴다.
  */
+export const ENVIRONMENT_ROTATION_Y_RAD = -81 * Math.PI / 180
+
 export function applySkyTexture(
   scene: Scene,
   sky: Texture,
@@ -58,6 +60,8 @@ export function applySkyTexture(
   hazeDirectionEnabled = uniform(0),
 ): void {
   scene.environment = sky
+  // 2026-08-28 심사안 #6: HDR 태양 방위와 방향광(azimuth 135°) 정렬 — IBL 밝은 면이 직사광과 같은 쪽이 되게 회전.
+  scene.environmentRotation.set(0, ENVIRONMENT_ROTATION_Y_RAD, 0)
   const k = readSkyMix()
   if (k <= 0) {
     scene.background = sky

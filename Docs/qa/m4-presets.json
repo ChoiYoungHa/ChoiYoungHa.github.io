@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "testedHead": "83aa5af",
+  "testedHead": "aa58c97",
   "sources": [
     "계획서.md §3-6",
     "로드맵.md M4-03",
@@ -142,8 +142,8 @@
       "preset": "low",
       "item": "anisotropy",
       "expected": 1,
-      "current": 1,
-      "matches": true
+      "current": 4,
+      "matches": false
     },
     {
       "preset": "base",
@@ -263,11 +263,26 @@
       "preset": "base",
       "item": "anisotropy",
       "expected": 4,
-      "current": 4,
-      "matches": true
+      "current": 8,
+      "matches": false
     }
   ],
-  "contractDeviations": [],
+  "contractDeviations": [
+    {
+      "preset": "low",
+      "item": "anisotropy",
+      "expected": 1,
+      "current": 4,
+      "matches": false
+    },
+    {
+      "preset": "base",
+      "item": "anisotropy",
+      "expected": 4,
+      "current": 8,
+      "matches": false
+    }
+  ],
   "runtimeConnections": [
     {
       "item": "renderResolution",

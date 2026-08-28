@@ -37,8 +37,9 @@ export function shadowConfigForPreset(preset: ShadowPresetName): ShadowConfig {
     cascades: source.shadowCascades.count,
     mapSize,
     maxDistance,
-    bias: 0,
-    normalBias: 0,
+    // 2026-08-28 심사안 #1: 추적 프러스텀이라 반경을 줄여 텍셀 밀도를 올리고, 아크네 방지 bias.
+    bias: -0.0002,
+    normalBias: 0.02,
     lightCount: 1,
     strategy: 'single-shadow-frustum-fallback',
     fallback: {
@@ -46,7 +47,7 @@ export function shadowConfigForPreset(preset: ShadowPresetName): ShadowConfig {
       mapSize,
       cameraNear: 0.1,
       cameraFar: maxDistance,
-      frustumHalfExtent: maxDistance / 2,
+      frustumHalfExtent: preset === 'low' ? 30 : 45,
     },
   }
 }

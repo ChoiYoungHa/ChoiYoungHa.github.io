@@ -29,7 +29,7 @@
       "default": "1K",
       "hero": "2K"
     },
-    "anisotropy": 1,
+    "anisotropy": 4,
     "rockDrawDistance": 80
   },
   "base": {
@@ -65,7 +65,7 @@
       "default": "2K",
       "hero": "2K"
     },
-    "anisotropy": 4,
+    "anisotropy": 8,
     "rockDrawDistance": 150
   }
 }

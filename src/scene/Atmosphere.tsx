@@ -89,6 +89,9 @@ export interface LookdevMaterialOptions {
   /** R75-C — 지형 PBR 블렌딩처럼 diffuse 를 TSL 로 직접 만들 때. map 대신 쓴다. */
   colorNode?: Node<'vec3'>
   normalNode?: Node<'vec3'>
+  /** 2026-08-28 심사안 #3 — ORM 연결용. aoNode 는 간접광에 곱해지고, roughnessNode 는 roughness 상수를 대체한다. */
+  aoNode?: Node<'float'>
+  roughnessNode?: Node<'float'>
 }
 
 /**
@@ -113,6 +116,8 @@ export function createLookdevMaterial(
   })
   if (opts.colorNode) material.colorNode = opts.colorNode
   if (opts.normalNode) material.normalNode = opts.normalNode
+  if (opts.aoNode) material.aoNode = opts.aoNode
+  if (opts.roughnessNode) material.roughnessNode = opts.roughnessNode
   const params = depthGradeParamsFor(level)
   if (params) material.outputNode = depthGradeOutput({ ...params, ...readGradeOverrides() })
   return material
@@ -123,6 +128,6 @@ export function useLookdevMaterial(opts: LookdevMaterialOptions): MeshStandardNo
   return useMemo(
     () => createLookdevMaterial(opts),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 값 단위 비교
-    [opts.color, opts.vertexColors, opts.roughness, opts.metalness, opts.map, opts.alphaTest, opts.side, opts.colorNode, opts.normalNode],
+    [opts.color, opts.vertexColors, opts.roughness, opts.metalness, opts.map, opts.alphaTest, opts.side, opts.colorNode, opts.normalNode, opts.aoNode, opts.roughnessNode],
   )
 }
