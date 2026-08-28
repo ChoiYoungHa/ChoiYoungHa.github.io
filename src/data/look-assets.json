@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedFromHead": "06eccf1",
+  "generatedFromHead": "83aa5af",
   "assets": {
     "heroTreeGlb": {
       "url": "/models/hero_tree.glb",
@@ -22,7 +22,7 @@
     },
     "grassCard": {
       "url": "/textures/grass_card.png",
-      "bytes": 840009
+      "bytes": 213034
     },
     "terrainGrassDiffuse": {
       "url": "/textures/ground_grass_diffuse.jpg",

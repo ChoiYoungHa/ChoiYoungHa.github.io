@@ -21,7 +21,14 @@ export interface GrassLiteGeometryData {
  * The 0.23~0.27m height and ~0.38m maximum width follow the Kenney grass bounds;
  * every bottom vertex is y=0 so scatter placement keeps its ground pivot.
  */
-export function buildGrassLiteGeometry(seed = GRASS_LITE_SEED): GrassLiteGeometryData {
+export interface GrassLiteOptions {
+  /** 위 폭/아래 폭 비율. 기본(undefined)은 0.28~0.40 무작위 테이퍼(정점색 풀). 카드 텍스처는 1(직사각형)로 왜곡을 없앤다. */
+  taper?: number
+  /** 쿼드 높이(m). 기본 0.23~0.27. 카드(정사각 텍스처)는 폭과 맞춘 0.36. */
+  height?: number
+}
+
+export function buildGrassLiteGeometry(seed = GRASS_LITE_SEED, options: GrassLiteOptions = {}): GrassLiteGeometryData {
   const random = mulberry32(seed >>> 0)
   const positions: number[] = []
   const normals: number[] = []
@@ -36,8 +43,10 @@ export function buildGrassLiteGeometry(seed = GRASS_LITE_SEED): GrassLiteGeometr
     const normalX = -axisZ
     const normalZ = axisX
     const halfBottom = 0.17 + random() * 0.025
-    const halfTop = halfBottom * (0.28 + random() * 0.12)
-    const height = 0.23 + random() * 0.04
+    const taperRandom = 0.28 + random() * 0.12
+    const halfTop = halfBottom * (options.taper ?? taperRandom)
+    const heightRandom = 0.23 + random() * 0.04
+    const height = options.height ?? heightRandom
     const lean = (random() - 0.5) * 0.025
     const lightness = 18 + random() * 4
     const srgb = hslToRgb(GRASS_LITE_COLOR_HSL.h, GRASS_LITE_COLOR_HSL.s, lightness)

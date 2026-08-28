@@ -97,10 +97,14 @@ export const GRASS_CARD_ATLAS_RECT = { u0: 0.21, v0: 0.11, u1: 0.47, v1: 0.25 } 
  * 2026-08-28 (영하님 "세상이 밋밋") — 지면을 코덱스 시트 F tile-grass(밝은 스타일라이즈드)로 바꾸자 사진 잔디 카드(어두운 실사)가
  * 검은 조각처럼 떠 보였다. 카드 경로를 끄고 정점색 크로스 쿼드(SPECIES_COLOR.grass)로 되돌린다. 카드 자산·코드는 보존(재활성 시 true).
  */
-export const GRASS_CARD_ENABLED = false
+export const GRASS_CARD_ENABLED = true
+/** 2026-08-28 (영하님 "저품질 잔디 대체") — grass_card.png 를 코덱스 grass-tuft.glb 를 Blender 로 구운 512² 알파 카드로 교체. 전체 UV(아틀라스 아님)·직사각 쿼드·높이 0.36. */
+export const GRASS_CARD_FULL_UV = { u0: 0, v0: 0, u1: 1, v1: 1 } as const
+export const GRASS_CARD_QUAD = { taper: 1, height: 0.36 } as const
+export const GRASS_CARD_TINT = '#b4dc6e'
 
 function grassLiteGeometry(useAtlasRect = false): BufferGeometry {
-  const data = buildGrassLiteGeometry(lookdev.grassLite.seed)
+  const data = buildGrassLiteGeometry(lookdev.grassLite.seed, useAtlasRect ? GRASS_CARD_QUAD : {})
   const geometry = new BufferGeometry()
   geometry.setAttribute('position', new BufferAttribute(data.positions, 3))
   geometry.setAttribute('normal', new BufferAttribute(data.normals, 3))
@@ -112,7 +116,7 @@ function grassLiteGeometry(useAtlasRect = false): BufferGeometry {
   // R75-C — 카드 텍스처 UV. 정점색 경로에선 재질이 읽지 않는다.
   const uvs = data.uvs.slice()
   if (useAtlasRect) {
-    const r = GRASS_CARD_ATLAS_RECT
+    const r = GRASS_CARD_ENABLED ? GRASS_CARD_FULL_UV : GRASS_CARD_ATLAS_RECT
     for (let i = 0; i < uvs.length; i += 2) {
       uvs[i] = r.u0 + uvs[i] * (r.u1 - r.u0)
       uvs[i + 1] = r.v0 + uvs[i + 1] * (r.v1 - r.v0)
@@ -151,7 +155,8 @@ function SpeciesInstances({
   const transform = useMemo(() => new Transform(), [])
   const lastCamera = useRef(new Vector3(Infinity, Infinity, Infinity))
   // M3-05 (R30-A) — 거리 그레이딩 재질(종별 1개)
-  const material = useLookdevMaterial({ vertexColors: !map, roughness: 0.95, metalness: 0, map, alphaTest: map ? 0.5 : undefined }) // R91-A(D3): 카드 텍스처면 정점색(#3B3E26, 선형 0.05) 곱을 빼 이중 어두움 제거
+  // 2026-08-28: 코덱스 베이크 카드는 흰 월드광 렌더라 바래 보인다 — 지면(tile-grass) 톤의 황록 틴트를 곱한다.
+  const material = useLookdevMaterial({ vertexColors: !map, color: map ? GRASS_CARD_TINT : undefined, roughness: 0.95, metalness: 0, map, alphaTest: map ? 0.5 : undefined }) // R91-A(D3): 카드 텍스처면 정점색(#3B3E26, 선형 0.05) 곱을 빼 이중 어두움 제거
 
   useLayoutEffect(() => {
     if (ref.current) ref.current.count = 0
@@ -223,12 +228,13 @@ export function Foliage({ sampleHeight }: FoliageProps) {
       scatter(hashSeed(`m1-${species}`), {
         count: counts[index],
         halfExtent: WORLD_HALF_EXTENT,
-        scaleMin: index === 0 ? 0.75 : 0.85,
-        scaleMax: index === 0 ? 1.2 : 1.35,
+        // 카드 풀은 0.36m 쿼드라 1.2~1.9 배(≈0.43~0.68m)로 키운다(코덱스 tuft 0.98m 의 절반 안팎).
+        scaleMin: index === 0 ? (grassLiteEnabled && GRASS_CARD_ENABLED ? 1.2 : 0.75) : 0.85,
+        scaleMax: index === 0 ? (grassLiteEnabled && GRASS_CARD_ENABLED ? 1.9 : 1.2) : 1.35,
         reject,
       }).map((point) => ({ ...point, y: sampleHeight(point.x, point.z) })),
     )
-  }, [lod.grassInstances.count, lod.grassInstances.radius, sampleHeight])
+  }, [grassLiteEnabled, lod.grassInstances.count, lod.grassInstances.radius, sampleHeight])
 
   // This GLB has no lower-detail conifer meshes yet, so retain the existing
   // grass-radius cull and expose the planned conifer bands on the scene node.

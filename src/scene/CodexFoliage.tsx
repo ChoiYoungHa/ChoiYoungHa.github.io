@@ -46,7 +46,7 @@ export const CODEX_SPECIES: readonly CodexSpecies[] = [
   { id: 'bush-flower', url: '/models/foliage/bush-flower.glb', count: 90, scaleMin: 0.6, scaleMax: 1.1, maxDistance: 80, large: false },
   { id: 'flower-white', url: '/models/foliage/flower-white.glb', count: 260, scaleMin: 0.7, scaleMax: 1.2, maxDistance: 45, large: false },
   { id: 'flower-yellow', url: '/models/foliage/flower-yellow.glb', count: 260, scaleMin: 0.7, scaleMax: 1.2, maxDistance: 45, large: false },
-  { id: 'grass-tuft', url: '/models/foliage/grass-tuft.glb', count: 420, scaleMin: 0.6, scaleMax: 1.1, maxDistance: 40, large: false },
+  { id: 'grass-tuft', url: '/models/foliage/grass-tuft.glb', count: 900, scaleMin: 0.55, scaleMax: 1.0, maxDistance: 30, large: false },
   { id: 'mushroom-small', url: '/models/foliage/mushroom-small.glb', count: 140, scaleMin: 0.7, scaleMax: 1.3, maxDistance: 45, large: false },
 ] as const
 
